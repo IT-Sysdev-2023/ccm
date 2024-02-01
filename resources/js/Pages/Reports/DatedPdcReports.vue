@@ -1,6 +1,8 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head } from '@inertiajs/vue3';
+
+const colors = 'red';
 </script>
 
 <template>
@@ -9,7 +11,6 @@ import { Head } from '@inertiajs/vue3';
     <AdminLayout>
         <template #header>
         </template>
-
         <div class="py-4">
 
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -22,33 +23,42 @@ import { Head } from '@inertiajs/vue3';
                     <div class="flex">
                         <a-range-picker v-model:value="dateRange" class="mt-2 mr-2" style="width: 250px;" />
                         <div class="mr-2">
-                            <a-select class="mt-2" ref="select" v-model:value="bunitCode" style="width: 160px"
-                                placeholder="Business Unit" @change="handleChange">
-                                <a-select-option v-for="bu in bunit" v-model:value="bu.businessunit_id">{{ bu.bname
-                                }}</a-select-option>
+                            <a-tooltip :open="isTooltipVisible" :color="colors" title="select business unit first">
+                                <a-select class="mt-2" ref="select" v-model:value="bunitCode" style="width: 160px"
+                                    placeholder="Business Unit" @change="handleChange">
+                                    <a-select-option v-for="bu in bunit" v-model:value="bu.businessunit_id">{{ bu.bname
+                                    }}</a-select-option>
 
-                            </a-select>
+                                </a-select>
+                            </a-tooltip>
                         </div>
                         <div class="mr-2">
-                            <a-select class="mt-2" ref="select" v-model:value="pdcdatedChecks" style="width: 150px"
-                                placeholder="Check Type" @change="handleChange">
-                                <a-select-option value="2">PDC</a-select-option>
-                                <a-select-option value="1">DATED CHECKS</a-select-option>
-                            </a-select>
+                            <a-tooltip :color="colors" :open="isTooltipVisible" title="select check type first">
+
+                                <a-select class="mt-2" ref="select" v-model:value="pdcdatedChecks" style="width: 150px"
+                                    placeholder="Check Type" @change="handleChange">
+
+                                    <a-select-option value="1">PDC</a-select-option>
+                                    <a-select-option value="2">DATED CHECKS</a-select-option>
+                                </a-select>
+                            </a-tooltip>
                         </div>
                         <div class="mr-2">
-                            <a-select class="mt-2" ref="select" v-model:value="repportType" style="width: 150px"
-                                placeholder="Deposit Status" @change="handleChange">
-                                <a-select-option value="0">VIEW ALL</a-select-option>
-                                <a-select-option value="1">PENDING</a-select-option>
-                                <a-select-option value="2">DEPOSITED</a-select-option>
-                            </a-select>
+                            <a-tooltip :color="colors" :open="isTooltipVisible" title="select report type first">
+                                <a-select class="mt-2" ref="select" v-model:value="repportType" style="width: 150px"
+                                    placeholder="Deposit Status" @change="handleChange">
+                                    <a-select-option value="0">VIEW ALL</a-select-option>
+                                    <a-select-option value="1">PENDING</a-select-option>
+                                    <a-select-option value="2">DEPOSITED</a-select-option>
+                                </a-select>
+                            </a-tooltip>
                         </div>
                     </div>
 
                     <div class="mt-2">
-                        <a-button style="background-color: rgb(207, 250, 225); margin-right: 10px; width: 200px"
-                            v-on:click="generateReport">
+                        <a-button class="animate-pulse"
+                            style="background-color: rgb(207, 250, 225); margin-right: 10px; width: 200px"
+                            v-on:click="generateReport" v-if="showGenerateButton">
                             Generate to Excel
                         </a-button>
                         <a-button style="background-color: rgb(193, 224, 253); margin-right: 10px; width: 200px"
@@ -92,13 +102,11 @@ import { Head } from '@inertiajs/vue3';
                         </template>
 
                     </a-table>
-                    <div v-if="showPagination"  class="mt-3 mb-5" style="border: 1px solid rgb(224, 224, 224); border-radius: 10px; padding: 10px">
+                    <div v-if="showPagination" class="mt-3 mb-5"
+                        style="border: 1px solid rgb(224, 224, 224); border-radius: 10px; padding: 10px">
                         <div class="flex justify-end">
-                            <a-pagination class="mt-0 mb-0"  
-                                v-model:current="pagination.current"
-                                v-model:page-size="pagination.pageSize"
-                                :show-size-changer="false"
-                                :total="pagination.total" 
+                            <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
+                                v-model:page-size="pagination.pageSize" :show-size-changer="false" :total="pagination.total"
                                 :show-total="(total, range) => `${range[0]}-${range[1]} of ${total} reports`"
                                 @change="handleTableChange" />
                         </div>
@@ -117,6 +125,9 @@ import { Head } from '@inertiajs/vue3';
 import { BarsOutlined, InfoCircleOutlined, FileSearchOutlined } from '@ant-design/icons-vue';
 import debounce from 'lodash/debounce'
 import axios from 'axios';
+import { useToast } from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
+
 export default {
     props: {
         bunit: Array,
@@ -124,14 +135,16 @@ export default {
     },
     data() {
         return {
+            showGenerateButton: false,
             showPagination: false,
-            dateRange: [],
+            dateRange: null,
             bunitCode: null,
             repportType: null,
             dataSource: [],
             pdcdatedChecks: null,
             loading: false,
             searchBar: null,
+            isTooltipVisible: false,
             pagination: {
                 current: 1,
                 total: '',
@@ -194,36 +207,97 @@ export default {
                         search: this.query.search,
                     },
                 });
+                this.showGenerateButton = true;
                 this.dataSource = res.data.data;
                 this.pagination = res.data.pagination;
+                if (response.data.data.length > 0) {
+                        this.showGenerateButton = true;
+
+                    } else {
+
+                        this.showGenerateButton = false;
+                    }
+
             }, 500)
         },
     },
 
     methods: {
+
         async fetchData(page = 1) {
+
             this.loading = true;
-            this.pageCustom = page;
-            try {
-                const response = await axios.get(`get_dated_pdc_checks_rep?page=${page}`, {
-                    params: {
-                        dt_from: this.dateRange[0].toISOString(),
-                        dt_to: this.dateRange[1].toISOString(),
-                        bu: this.bunitCode,
-                        ch_type: this.pdcdatedChecks,
-                        repporttype: this.repportType,
-                        search: this.searchBar,
-                    },
-                });
 
-                this.showPagination = true;
-                this.dataSource = response.data.data;
-                this.pagination = response.data.pagination;
+            if(this.bunitCode === null && this.pdcdatedChecks === null && this.repportType === null){
+                this.isTooltipVisible = true;
+            }else{
+                this.isTooltipVisible = false;
+            }
 
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                this.loading = false;
+            if (!this.dateRange) {
+                try {
+                    const response = await axios.get(`get_dated_pdc_checks_rep?page=${page}`, {
+                        params: {
+                            dt_from: '',
+                            dt_to: '',
+                            bu: this.bunitCode,
+                            ch_type: this.pdcdatedChecks,
+                            repporttype: this.repportType,
+                            search: this.searchBar,
+                        },
+                    });
+
+                    this.showPagination = true;
+                    this.showGenerateButton = true;
+                    this.dataSource = response.data.data;
+                    this.pagination = response.data.pagination;
+                    if (response.data.data.length > 0) {
+                        this.showGenerateButton = true;
+
+                    } else {
+
+                        this.showGenerateButton = false;
+                    }
+
+
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                } finally {
+                    this.loading = false;
+                }
+            } else {
+
+
+                try {
+                    const response = await axios.get(`get_dated_pdc_checks_rep?page=${page}`, {
+                        params: {
+
+                            dt_from: this.dateRange[0].toISOString(),
+                            dt_to: this.dateRange[1].toISOString(),
+                            bu: this.bunitCode,
+                            ch_type: this.pdcdatedChecks,
+                            repporttype: this.repportType,
+                            search: this.searchBar,
+                        },
+                    });
+
+                    this.showPagination = true;
+                    this.dataSource = response.data.data;
+                    this.pagination = response.data.pagination;
+                    if (response.data.data.length > 0) {
+                        this.showGenerateButton = true;
+
+                    } else {
+
+                        this.showGenerateButton = false;
+                    }
+
+                } catch (error) {
+
+                    console.error('Error fetching data:', error);
+                } finally {
+                    this.loading = false;
+                }
             }
         },
 
@@ -268,20 +342,30 @@ export default {
             }
             const urlWithParams = '/generate_reps_to_excel?' + new URLSearchParams(params).toString();
 
-            // Navigate to the URL
+
             window.location.href = urlWithParams;
 
-            //   axios.get('generate_reps_to_excel', {
-            //             params: {
-            //                 dt_from: this.dateRange[0].toISOString(),
-            //             dt_to: this.dateRange[1].toISOString(),
-            //             bu: this.bunitCode,
-            //             ch_type: this.pdcdatedChecks,
-            //             repporttype: this.repportType,
-            //             }
-            //         })
+            axios.get(urlWithParams)
+                .then(response => {
+                    // Handle success
+                    this.$toast.open({
+                        message: 'Exported to Excel SuccessFully!',
+                        type: 'success',
+                        position: 'top'
 
-            // console.log(data.data)
+                    });
+                })
+                .catch(error => {
+                    // Handle error
+                    this.$toast.open({
+                        message: 'Opps! It might having an error on exporting',
+                        type: 'success',
+                        position: 'error'
+
+                    });
+                });
+
+
         }
 
     },

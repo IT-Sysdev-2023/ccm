@@ -153,7 +153,7 @@ const handleOpen = val => {
                 </template>
             </a-tour>
 
-            <a-modal v-model:open="openModalCreate" width="1000px" title="Add User" :ok-button-props="{ hidden: true }"
+            <a-modal style="top: 20px" v-model:open="openModalCreate" width="1000px" title="Add User" :ok-button-props="{ hidden: true }"
                 :cancel-button-props="{ hidden: true }">
                 <form @submit.prevent="createFormSubmit">
                     <div class="flex">

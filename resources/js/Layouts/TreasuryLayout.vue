@@ -7,141 +7,215 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 
+const placements = 'bottom';
+
 const showingNavigationDropdown = ref(false);
+
+const visible = ref(false);
+const hide = () => {
+    visible.value = false;
+};
 </script>
 
 <template>
     <div>
-        <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
-                <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('treasury_dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
-                                </Link>
-                            </div>
+        <div class="min-h-screen">
+            <nav style="height: 30px;  background: #0B2447;" class="relative px-4 py-2 flex justify-between items-center">
 
-                            <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink :href="route('treasury_dashboard')" :active="route().current('treasury_dashboard')">
-                                    treasury_Dashboard
-                                </NavLink>
-                            </div>
-                        </div>
+                <a class="text-2xl font-bold text-violet-600 dark:text-white" href="#">
+                    CCM CS
+                </a>
 
-                        <div class="hidden sm:flex sm:items-center sm:ms-6">
-                            <!-- Settings Dropdown -->
-                            <div class="ms-3 relative">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                            >
-                                                {{ $page.props.auth.user.name }}
-
-                                                <svg
-                                                    class="ms-2 -me-0.5 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fill-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
-                                        <DropdownLink :href="route('logout')" method="post" as="button">
-                                            Log Out
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <!-- Hamburger -->
-                        <div class="-me-2 flex items-center sm:hidden">
-                            <button
-                                @click="showingNavigationDropdown = !showingNavigationDropdown"
-                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
-                            >
-                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path
-                                        :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex': !showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex': showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                <div class="lg:hidden">
+                    <button class="navbar-burger flex items-center text-violet-600 dark:text-gray-100 p-1"
+                        id="navbar_burger">
+                        <svg class="block h-6 w-6 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <title>Hamberger menu</title>
+                            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+                        </svg>
+                    </button>
                 </div>
 
-                <!-- Responsive Navigation Menu -->
-                <div
-                    :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }"
-                    class="sm:hidden"
-                >
-                    <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('treasury_dashboard')" :active="route().current('treasury_dashboard')">
-                            treasury_Dashboard
-                        </ResponsiveNavLink>
-                    </div>
+                <ul
+                    class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
 
-                    <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200">
-                        <div class="px-4">
-                            <div class="font-medium text-base text-gray-800">
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="font-medium text-sm text-gray-500">{{ $page.props.auth.user.email }}</div>
-                        </div>
 
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
+                </ul>
+
+
+                <div class="hidden lg:flex">
+                    <div class=" relative mx-auto text-white">
+                        {{ $page.props.auth.user.name }}
                     </div>
                 </div>
             </nav>
 
+
             <!-- Page Heading -->
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
+
+            <header v-if="$slots.header" style="width: 76%;"
+                class="mt-1 bg-white mx-auto w-full w-full border border-gray-100  py-3 shadow backdrop-blur-lg md:top-6 md:rounded-xl">
+                <div class="px-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex shrink-0">
+                            <a aria-current="page" class="flex items-center" href="/">
+                                <img class="h-7 w-auto" src="/Logo/treasury.png" alt="">
+                                <p class="sr-only">Website Title</p>
+                            </a>
+                        </div>
+                        <div class="hidden md:flex md:items-center md:justify-center md:gap-5">
+                            <a aria-current="page"
+                                class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                href="admin/dashboard">Dashboard</a>
+                            <!-- <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                href="#">Reports</a> -->
+                            <a-dropdown  arrow :placement="placements">
+                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                    href="#">Retrieve Checks</a> -->
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item class="mb-3">
+                                            <a class="mb-4" href="/datedpdcchecks-reports">Update ATP Database</a>
+                                        </a-menu-item>
+                                        <a-menu-item class="mb-5">
+                                            <a class="mb-4" href="/datedpdcchecks-reports">Institional Cheque(TextFile)</a>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                            <a-dropdown  arrow :placement="placements">
+                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                    href="#">Check Receiving</a> -->
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Dated Cheques</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Post Dated Cheques</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Leasing Cheques</a>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                            <a-dropdown  arrow :placement="placements">
+                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                    href="#">Dated Checks/Pdc</a> -->
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Dated Cheques</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Post Dated Cheques</a>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                            <a-dropdown  arrow :placement="placements">
+                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                    href="#">Ds/Bounce Tagging</a> -->
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Ds Tagging</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Bounce Tagging</a>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                            <a-dropdown  arrow :placement="placements">
+                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                    href="#">Transaction</a> -->
+                                <template #overlay>
+                                    <a-menu>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Chec Manual Entry</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Merge Checks</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Bounc Cheques</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Check Replacements</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Partial Payment</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Dated/Pdc Reports</a>
+                                        </a-menu-item>
+                                        <a-menu-item>
+                                            <a href="/datedpdcchecks-reports">Due Pdc Reports</a>
+                                        </a-menu-item>
+                                    </a-menu>
+                                </template>
+                            </a-dropdown>
+                        </div>
+                        <div class="flex items-center justify-end gap-3">
+                            <a-popover v-model:open="visible" title="Settings" trigger="click">
+                                <img class="icons" style="color: white; border: 1px solid white; cursor: pointer;"
+                                    src="/icons/settings.png " alt="imaeg">
+                                <!-- <SettingOutlined /> -->
+
+                                <template #content>
+                                    <div class="max-w-xs bg-white p-4 rounded-md">
+                                        <div class="flex items-center justify-center mb-4">
+                                            <img src="https://placekitten.com/100/100" alt="Profile Picture"
+                                                class="rounded-full w-16 h-16">
+                                        </div>
+                                        <div class="text-center">
+                                            <h2 class="text-lg font-semibold">{{ $page.props.auth.user.name }}</h2>
+                                            <p class="text-gray-500 font-bold">Admin</p>
+                                        </div>
+                                        <ul class="mt-4">
+                                            <li class="flex items-center space-x-2">
+                                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M3 12h18M3 6h18M3 18h18"></path>
+                                                </svg>
+                                                <span class="text-gray-700">Location: New York</span>
+                                            </li>
+                                            <li class="flex items-center space-x-2">
+                                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                                </svg>
+                                                <span class="text-gray-700">Username: {{ $page.props.auth.user.username }}
+                                                </span>
+                                            </li>
+                                            <li class="flex items-center space-x-2">
+                                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M4 6h16M4 12h16m-7 6h7"></path>
+                                                </svg>
+                                                <span class="text-gray-700">{{ $page.props.auth.user.ContactNo }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="text-center">
+                                        <a-button class="mt-2">
+                                            <NavLink :href="route('logout')" method="post" as="button">
+                                                Logout
+                                            </NavLink>
+                                        </a-button>
+                                    </div>
+                                </template>
+                            </a-popover>
+                        </div>
+                    </div>
                 </div>
             </header>
+
 
             <!-- Page Content -->
             <main>
@@ -150,3 +224,16 @@ const showingNavigationDropdown = ref(false);
         </div>
     </div>
 </template>
+<style>
+.icons {
+    margin-top: 1px;
+    height: 30px;
+    background: white;
+    border-radius: 10%;
+}
+
+.b-icons {
+    height: 16px;
+    width: 100%
+}
+</style>
