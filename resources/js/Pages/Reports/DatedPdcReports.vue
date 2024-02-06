@@ -1,7 +1,6 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head } from '@inertiajs/vue3';
-
 const colors = 'red';
 </script>
 
@@ -12,6 +11,7 @@ const colors = 'red';
         <template #header>
         </template>
         <div class="py-4">
+
 
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <a-page-header
@@ -127,6 +127,7 @@ import debounce from 'lodash/debounce'
 import axios from 'axios';
 import { useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
+import { message } from 'ant-design-vue';
 
 export default {
     props: {
@@ -347,22 +348,11 @@ export default {
 
             axios.get(urlWithParams)
                 .then(response => {
-                    // Handle success
-                    this.$toast.open({
-                        message: 'Exported to Excel SuccessFully!',
-                        type: 'success',
-                        position: 'top'
+                        message.success('Successfully Generating the excel file');
 
-                    });
                 })
                 .catch(error => {
-                    // Handle error
-                    this.$toast.open({
-                        message: 'Opps! It might having an error on exporting',
-                        type: 'success',
-                        position: 'error'
-
-                    });
+                     message.error('Oppss! Something went wrong');
                 });
 
 

@@ -7,6 +7,8 @@ use Inertia\Inertia;
 use App\Models\User;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ImportUpdateController;
+use App\Http\Controllers\DsBounceTaggingController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -58,6 +60,16 @@ Route::middleware('auth')->group(function () {
     Route::get('datedpdcchecks-reports', [ReportController::class, 'datedpdcchecksreports'])->name('reports.dpdc');
     Route::get('get_dated_pdc_checks_rep', [ReportController::class, 'get_dated_pdc_checks_rep'])->name('get.dpdc');
     Route::get('generate_reps_to_excel', [ReportController::class, 'generate_reps_to_excel'])->name('excel.dpdc');
+
+
+
+
+    Route::get('/indeximportupdates', [ImportUpdateController::class, 'indeximportupdates'])->name('indeximportupdates');
+    Route::get('instImport', [ImportUpdateController::class, 'instImportfunction'])->name('instImport');
+
+    Route::get('/bounce_tagging', [DsBounceTaggingController::class, 'indexBounceTagging'])->name('bounce_tagging');
+    Route::get('/ds_tagging', [DsBounceTaggingController::class, 'indexDsTagging'])->name('ds_tagging');
+    Route::get('/get_bounce_tagging', [DsBounceTaggingController::class, 'get_bounce_tagging'])->name('get_bounce_tagging');
 ;});
 
 require __DIR__.'/auth.php';

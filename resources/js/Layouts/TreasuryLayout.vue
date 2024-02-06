@@ -64,26 +64,17 @@ const hide = () => {
                             </a>
                         </div>
                         <div class="hidden md:flex md:items-center md:justify-center md:gap-5">
-                            <a aria-current="page"
-                                class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
-                                href="admin/dashboard">Dashboard</a>
-                            <!-- <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
-                                href="#">Reports</a> -->
-                            <a-dropdown  arrow :placement="placements">
-                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
-                                    href="#">Retrieve Checks</a> -->
-                                <template #overlay>
-                                    <a-menu>
-                                        <a-menu-item class="mb-3">
-                                            <a class="mb-4" href="/datedpdcchecks-reports">Update ATP Database</a>
-                                        </a-menu-item>
-                                        <a-menu-item class="mb-5">
-                                            <a class="mb-4" href="/datedpdcchecks-reports">Institional Cheque(TextFile)</a>
-                                        </a-menu-item>
-                                    </a-menu>
-                                </template>
-                            </a-dropdown>
-                            <a-dropdown  arrow :placement="placements">
+                            <Link class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
+                                :class="{ 'bg-orange-300 text-white': route().current('treasury_dashboard'), 'text-black-900': !route().current('treasury_dashboard') }"
+                                :href="route('treasury_dashboard')">
+                            Dashboard
+                            </Link>
+                            <Link class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
+                                :class="{ 'bg-orange-300 text-white': route().current('indeximportupdates'), 'text-black-900': !route().current('indeximportupdates') }"
+                                :href="route('indeximportupdates')">
+                            Import&Update Checks
+                            </Link>
+                            <a-dropdown arrow :placement="placements">
                                 <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
                                     href="#">Check Receiving</a> -->
                                 <template #overlay>
@@ -100,7 +91,7 @@ const hide = () => {
                                     </a-menu>
                                 </template>
                             </a-dropdown>
-                            <a-dropdown  arrow :placement="placements">
+                            <a-dropdown arrow :placement="placements">
                                 <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
                                     href="#">Dated Checks/Pdc</a> -->
                                 <template #overlay>
@@ -114,21 +105,24 @@ const hide = () => {
                                     </a-menu>
                                 </template>
                             </a-dropdown>
-                            <a-dropdown  arrow :placement="placements">
-                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
-                                    href="#">Ds/Bounce Tagging</a> -->
+                            <a-dropdown arrow :placement="placements">
+                                <a class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
+                                    :class="{
+                                        'bg-orange-300 text-white': route().current('bounce_tagging') || route().current('ds_tagging'),
+                                        'text-black-100': !route().current('bounce_tagging') && !route().current('ds_tagging'),
+                                    }" href="#">Ds/Bounce Tagging</a> -->
                                 <template #overlay>
                                     <a-menu>
                                         <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Ds Tagging</a>
+                                            <Link :href="route('ds_tagging')">Ds Tagging</Link>
                                         </a-menu-item>
                                         <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Bounce Tagging</a>
+                                            <Link :href="route('bounce_tagging')">Bounce Tagging</Link>
                                         </a-menu-item>
                                     </a-menu>
                                 </template>
                             </a-dropdown>
-                            <a-dropdown  arrow :placement="placements">
+                            <a-dropdown arrow :placement="placements">
                                 <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
                                     href="#">Transaction</a> -->
                                 <template #overlay>

@@ -58,6 +58,7 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
+    'qoute_api' => env('APP_QOUTE'),
 
     /*
     |--------------------------------------------------------------------------
