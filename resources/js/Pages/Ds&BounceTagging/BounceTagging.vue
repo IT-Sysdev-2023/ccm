@@ -1,8 +1,30 @@
 <script setup>
 import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { SmileOutlined, QuestionOutlined, TagsOutlined, UploadOutlined, BarsOutlined, HomeOutlined } from '@ant-design/icons-vue';
+import {
+    SmileOutlined,
+    QuestionOutlined,
+    TagsOutlined,
+    UploadOutlined,
+    BarsOutlined,
+    HomeOutlined,
+    SettingOutlined,
+    ExclamationCircleOutlined,
+    InfoCircleOutlined,
+    FileSearchOutlined,
+    LoadingOutlined
+}
+    from '@ant-design/icons-vue';
+import { h } from 'vue';
+
 import axios from 'axios';
+
+const indicator = h(LoadingOutlined, {
+    style: {
+        fontSize: '18px',
+    },
+    spin: true,
+});
 </script>
 
 <template>
@@ -27,9 +49,22 @@ import axios from 'axios';
                         <a-breadcrumb-item>Bounce Tagging</a-breadcrumb-item>
                         <a-breadcrumb-item>Deposited Checks</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <div>
-                        <a-date-picker @change="onDateChange" v-model:value="dtYear" picker="year" style=" width: 200px;" />
-                    </div>
+
+
+                    <!-- <a-input-search v-model:value="value" placeholder="input search loading deault" loading /> -->
+
+                </div>
+                <div style="display: flex; justify-content: space-between;" class="mb-3">
+
+                    <a-date-picker @change="onDateChange" v-model:value="dtYear" picker="year" style=" width: 250px;" />
+                    <a-input placeholder="Search Cheques" style="width: 250px; " v-model:value="query.search">
+                        <template #suffix>
+                            <a-tooltip title="Please input name or check number to filter ">
+                                <a-spin size="small" v-if="isSearchLoading" :indicator="indicator" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+
                 </div>
 
                 <a-table :dataSource="dataSource" :columns="columns" :pagination="false" :loading="loading"
@@ -49,15 +84,22 @@ import axios from 'axios';
                             {{ formattedDate(record.date_deposit) }}
                         </template>
                         <template v-else-if="column.key === 'action'">
-                            <a-popconfirm title="Continue for tagging?" @confirm="confirm" @cancel="cancel">
-                                <a-button style="margin-right: 5px; background: #356e00; color: white;">
-                                    <TagsOutlined />
-                                </a-button>
-                            </a-popconfirm>
 
-                            <a-button v-on:click="openModalDetails(record)"
-                                style="margin-right: 5px; background: #cccccc; color: black;">
-                                <BarsOutlined />
+
+                            <a-button class="mx-1" shape="square" ref="ref4"
+                                style="background-color: rgba(115, 236, 91, 0.685);"
+                                v-on:click="confirmBounceTagg(record.checks_id)">
+
+                                <template #icon>
+                                    <TagsOutlined />
+                                </template>
+                            </a-button>
+
+
+                            <a-button shape="square" v-on:click="openModalDetails(record)">
+                                <template #icon>
+                                    <SettingOutlined />
+                                </template>
                             </a-button>
                         </template>
 
@@ -165,22 +207,14 @@ import axios from 'axios';
                         </tr>
                     </tbody>
                 </table>
-                <!-- From	{ "checks_id": 195446, "checksreceivingtransaction_id": 
-                17764, "customer_id": 48637, "businessunit_id": 4, "department_from": 15, 
-                "leasing_docno": null, "check_bounced_id": 0, "check_no": "83037813", 
-                "check_class": "COMPANY", "check_category": "LOCAL", "check_expiry": null, 
-                "check_date": "2022-12-26", "check_received": "2022-12-21", "check_type": "POST DATED", 
-                "account_no": "500717082", "account_name": "FA RONG FOODS", "bank_id": 7785, 
-                "check_amount": "175245.72", "cash": null, "currency_id": 1, 
-                "approving_officer": "MERCY", "check_status": "CLEARED", 
-                "date_deposit": "2023-07-17", "batch_date": null, "is_exist": 1, "is_manual_entry": 0, 
-                "deleted_at": null, "user": "20", "date_time": "2023-07-15 16:01:30", "cus_code": 10047262, 
-                "fullname": ". FAN RONG FOODS INC.", "id": 20, "is_blacklist": 0, "created_at": "2019-03-02 14:49:36", 
-                "updated_at": "2019-10-10 08:27:14", "empid": "01000001225", "name": "Apale, Candida Patron", 
-                "username": "candie", "password": "$2y$10$J6g5ifJ.pMDZO30DIDzzO.0pEqSeCwvTQgI9rgZDNmVKq3g.vsmnK", 
-                "ContactNo": "81+3820", "company_id": 1, "department_id": 8, "usertype_id": 9, "user_status": "active",
-                 "user_ipaddress": "", "remember_token": "BUfL7kYnujWFAwds9hcKHag2psrAxc9wvC17oUku3REbszgzjGKuNesbNx4I", 
-                 "ds_no": "3114", "department": "ATP" } -->
+            </a-modal>
+
+            <a-modal v-model:open="tagAsBounced" title="Tag as Bounce" :ok-button-props="{ hidden: true }"
+                :cancel-button-props="{ hidden: true }">
+                <a-date-picker @change="onDateChangeReturn" v-model:value="returnDate"
+                    style="width: 63%; margin-right: 5px;" class="mt-3" />
+                <a-button style="width: 35%; background: #b5fcb2d0;" v-on:click="continueToTagg">Continue
+                    tagging?</a-button>
             </a-modal>
         </div>
     </TreasuryLayout>
@@ -188,17 +222,25 @@ import axios from 'axios';
 
 <script>
 import dayjs from 'dayjs';
-
+import { message } from 'ant-design-vue';
+import debounce from 'lodash/debounce'
 export default {
     data() {
         return {
             dataSource: [],
+            isSearchLoading: false,
             loading: false,
             dtYear: dayjs(),
             showPag: false,
             c_page: '',
             openDetails: false,
             selectDataDetails: [],
+            tagAsBounced: false,
+            returnDate: dayjs(),
+            checksId: null,
+            query: {
+                search: '',
+            },
             pagination: {
                 current: 1,
                 total: 0,
@@ -249,10 +291,46 @@ export default {
             ],
         };
     },
+    watch: {
+        query: {
+            deep: true,
+            handler: debounce(async function (page = 1) {
+                this.loading = true;
+                this.isSearchLoading = true;
+                try {
+                    const response = await axios.get(`get_bounce_tagging?page=${page}`, {
+                        params: {
+                            dt_year: this.dtYear.year(),
+                            search: this.query.search,
+                        },
+                    });
+                    
+                    if (!response.data.data) {
+                        this.showPag = false;
+                    } else {
+                        this.showPag = true;
+                    }
+
+
+                    this.dataSource = response.data.data;
+                    this.pagination = response.data.pagination;
+                } catch (error) {
+                    console.error("Error in watcher:", error);
+                } finally {
+                    this.loading = false;
+                    this.isSearchLoading = false;
+                }
+            }, 500)
+        },
+    },
     methods: {
         onDateChange(dateObj, dateStr) {
             this.dtYear = dateObj;
+
             this.getBounceTagging()
+        },
+        onDateChangeReturn(dateObj, dateStr) {
+            this.returnDate = dateObj;
         },
         async getBounceTagging(page = 1) {
             this.loading = true;
@@ -307,6 +385,23 @@ export default {
             this.selectDataDetails = data;
 
             console.log(this.selectDataDetails);
+        },
+        confirmBounceTagg(checks_id) {
+            this.checksId = checks_id;
+            console.log(this.checksId);
+            this.tagAsBounced = true;
+        },
+        continueToTagg() {
+            axios.post(route('tag_check_bounce'), {
+                date: this.returnDate.format('YYYY-MM-DD'),
+                check_id: this.checksId
+            }).then(response => {
+                message.success('Successfully tag as bounce');
+                this.tagAsBounced = false;
+                this.returnDate = dayjs();
+            }).catch(error => {
+                // Handle error if needed
+            });
         }
 
 

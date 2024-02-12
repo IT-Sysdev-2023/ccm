@@ -100,9 +100,29 @@ class UserController extends Controller
     {
         $query = $request->input('query');
 
+        if ($query !== null) {
+
+            $results = DB::connection('pis')
+                ->table('employee3')
+                ->where('name', 'like', "%$query%")
+                ->limit(5)
+                ->get();
+        } else {
+            $results = [];
+        }
+
+
+        return response()->json($results);
+    }
+    public function searchAnEmployeeName(Request $request)
+    {
+        $query = $request->input('query');
+
         $results = DB::connection('pis')
             ->table('employee3')
-            ->where('name', 'like', "%$query%")
+            // ->join('applicant', 'employee3.emp_id', '=', 'applicant.app_id')
+            ->where('name', 'like', '%' . $query . '%')
+            // ->whereIn('name', ['Cadutdut, Jelarry Maestre', 'Baay, Rey Joseph Tubo', 'LUMOD, HELEN ARAIZ'])
             ->limit(10)
             ->get();
 
@@ -145,86 +165,86 @@ class UserController extends Controller
         return response()->json($results);
     }
 
- public function exportExcel()
-{
-    $users = User::join('company', 'company.company_id', '=', 'users.company_id')
-        ->join('department', 'department.department_id', '=', 'users.department_id')
-        ->join('businessunit', 'businessunit.businessunit_id', '=', 'users.businessunit_id')
-        ->join('usertype', 'usertype.usertype_id', '=', 'users.usertype_id')
-        ->select('users.*', 'company.*', 'department.*', 'businessunit.*', 'usertype.*')
-        ->orderBy('users.updated_at', 'desc')
-        ->get();
+    public function exportExcel()
+    {
+        $users = User::join('company', 'company.company_id', '=', 'users.company_id')
+            ->join('department', 'department.department_id', '=', 'users.department_id')
+            ->join('businessunit', 'businessunit.businessunit_id', '=', 'users.businessunit_id')
+            ->join('usertype', 'usertype.usertype_id', '=', 'users.usertype_id')
+            ->select('users.*', 'company.*', 'department.*', 'businessunit.*', 'usertype.*')
+            ->orderBy('users.updated_at', 'desc')
+            ->get();
 
-    // Create a new Spreadsheet object
-    $spreadsheet = new Spreadsheet();
+        // Create a new Spreadsheet object
+        $spreadsheet = new Spreadsheet();
 
 
-    $headerRow = [
-        'Name',
-        'Username',
-        'Company',
-        'Business Unit',
-        'Contact No',
-        'Department',
-        'User Type',
-        'Status',
-    ];
-
-    $spreadsheet->getActiveSheet()->getStyle('A1:H1')->applyFromArray([
-        'font' => [
-            'bold' => true,
-        ],
-        'borders' => [
-            'allBorders' => [
-                'borderStyle' => Border::BORDER_THIN,
-            ],
-        ],
-    ]);
-
-    $spreadsheet->getActiveSheet()->fromArray($headerRow, null, 'A1');
-
-    $row = 2;
-    foreach ($users as $user) {
-
-        $userData = [
-            $user->name,
-            $user->username,
-            $user->company,
-            $user->bname,
-            $user->ContactNo,
-            $user->department,
-            $user->usertype_name,
-            $user->user_status,
+        $headerRow = [
+            'Name',
+            'Username',
+            'Company',
+            'Business Unit',
+            'Contact No',
+            'Department',
+            'User Type',
+            'Status',
         ];
 
-        $spreadsheet->getActiveSheet()->fromArray($userData, null, "A$row");
-
-        foreach (range('A', 'H') as $column) {
-            $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
-
-            // Apply border to each cell
-            $spreadsheet->getActiveSheet()->getStyle($column . $row)->applyFromArray([
-                'borders' => [
-                    'allBorders' => [
-                        'borderStyle' => Border::BORDER_THIN,
-                    ],
+        $spreadsheet->getActiveSheet()->getStyle('A1:H1')->applyFromArray([
+            'font' => [
+                'bold' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
                 ],
-            ]);
+            ],
+        ]);
+
+        $spreadsheet->getActiveSheet()->fromArray($headerRow, null, 'A1');
+
+        $row = 2;
+        foreach ($users as $user) {
+
+            $userData = [
+                $user->name,
+                $user->username,
+                $user->company,
+                $user->bname,
+                $user->ContactNo,
+                $user->department,
+                $user->usertype_name,
+                $user->user_status,
+            ];
+
+            $spreadsheet->getActiveSheet()->fromArray($userData, null, "A$row");
+
+            foreach (range('A', 'H') as $column) {
+                $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
+
+                // Apply border to each cell
+                $spreadsheet->getActiveSheet()->getStyle($column . $row)->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                        ],
+                    ],
+                ]);
+            }
+
+            $row++;
         }
 
-        $row++;
+        // Create a temporary file to store the spreadsheet
+        $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($tempFilePath);
+
+        $filename = 'UsersData_' . now()->format('M, d Y') . '.xlsx';
+
+        // Download the file
+        return response()->download($tempFilePath, $filename)->deleteFileAfterSend(true);
     }
-
-    // Create a temporary file to store the spreadsheet
-    $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
-    $writer = new Xlsx($spreadsheet);
-    $writer->save($tempFilePath);
-
-    $filename = 'UsersData_' . now()->format('M, d Y') . '.xlsx';
-
-    // Download the file
-    return response()->download($tempFilePath, $filename)->deleteFileAfterSend(true);
-}
 
 
     public function resignReactive(Request $request, $id)
@@ -244,6 +264,25 @@ class UserController extends Controller
         return redirect()->back();
 
     }
+
+    public function userDetails(Request $request, $id)
+    {
+        $user = User::join('company', 'company.company_id', '=', 'users.company_id')
+            ->join('department', 'department.department_id', '=', 'users.department_id')
+            ->join('businessunit', 'businessunit.businessunit_id', '=', 'users.businessunit_id')
+            ->join('usertype', 'usertype.usertype_id', '=', 'users.usertype_id')
+            ->where('users.id', $id)
+            ->select('users.*', 'company.*', 'department.*', 'businessunit.*', 'usertype.*')
+            ->orderBy('users.created_at', 'desc')
+            ->firstOrFail();
+
+        // dd($user);
+
+        return Inertia::render('Users/UsersDetails', [
+            'user' => $user,
+        ]);
+    }
+
 
 
 }

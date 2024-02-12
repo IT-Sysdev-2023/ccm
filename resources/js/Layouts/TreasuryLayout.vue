@@ -15,45 +15,14 @@ const visible = ref(false);
 const hide = () => {
     visible.value = false;
 };
+import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
 </script>
 
 <template>
     <div>
         <div class="min-h-screen">
-            <nav style="height: 30px;  background: #0B2447;" class="relative px-4 py-2 flex justify-between items-center">
 
-                <a class="text-2xl font-bold text-violet-600 dark:text-white" href="#">
-                    CCM CS
-                </a>
-
-                <div class="lg:hidden">
-                    <button class="navbar-burger flex items-center text-violet-600 dark:text-gray-100 p-1"
-                        id="navbar_burger">
-                        <svg class="block h-6 w-6 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <title>Hamberger menu</title>
-                            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
-                        </svg>
-                    </button>
-                </div>
-
-                <ul
-                    class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
-
-
-                </ul>
-
-
-                <div class="hidden lg:flex">
-                    <div class=" relative mx-auto text-white">
-                        {{ $page.props.auth.user.name }}
-                    </div>
-                </div>
-            </nav>
-
-
-            <!-- Page Heading -->
-
-            <header v-if="$slots.header" style="width: 76%;"
+            <header v-if="$slots.header" style="width: 100%; background: #001529;"
                 class="mt-1 bg-white mx-auto w-full w-full border border-gray-100  py-3 shadow backdrop-blur-lg md:top-6 md:rounded-xl">
                 <div class="px-4">
                     <div class="flex items-center justify-between">
@@ -65,17 +34,17 @@ const hide = () => {
                         </div>
                         <div class="hidden md:flex md:items-center md:justify-center md:gap-5">
                             <Link class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
-                                :class="{ 'bg-orange-300 text-white': route().current('treasury_dashboard'), 'text-black-900': !route().current('treasury_dashboard') }"
+                                :class="{ 'bg-gray-600 text-white': route().current('treasury_dashboard'), 'text-white': !route().current('treasury_dashboard') }"
                                 :href="route('treasury_dashboard')">
                             Dashboard
                             </Link>
                             <Link class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
-                                :class="{ 'bg-orange-300 text-white': route().current('indeximportupdates'), 'text-black-900': !route().current('indeximportupdates') }"
+                                :class="{ 'bg-gray-600 text-white': route().current('indeximportupdates'), 'text-white': !route().current('indeximportupdates') }"
                                 :href="route('indeximportupdates')">
                             Import&Update Checks
                             </Link>
                             <a-dropdown arrow :placement="placements">
-                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
                                     href="#">Check Receiving</a> -->
                                 <template #overlay>
                                     <a-menu>
@@ -92,7 +61,7 @@ const hide = () => {
                                 </template>
                             </a-dropdown>
                             <a-dropdown arrow :placement="placements">
-                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
                                     href="#">Dated Checks/Pdc</a> -->
                                 <template #overlay>
                                     <a-menu>
@@ -106,9 +75,9 @@ const hide = () => {
                                 </template>
                             </a-dropdown>
                             <a-dropdown arrow :placement="placements">
-                                <a class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
+                                <a class="inline-block rounded px-2 p-2 text-sm text-white transition-all duration-200"
                                     :class="{
-                                        'bg-orange-300 text-white': route().current('bounce_tagging') || route().current('ds_tagging'),
+                                        'bg-gray-600 text-white': route().current('bounce_tagging') || route().current('ds_tagging'),
                                         'text-black-100': !route().current('bounce_tagging') && !route().current('ds_tagging'),
                                     }" href="#">Ds/Bounce Tagging</a> -->
                                 <template #overlay>
@@ -123,7 +92,7 @@ const hide = () => {
                                 </template>
                             </a-dropdown>
                             <a-dropdown arrow :placement="placements">
-                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
                                     href="#">Transaction</a> -->
                                 <template #overlay>
                                     <a-menu>
@@ -154,9 +123,10 @@ const hide = () => {
                         </div>
                         <div class="flex items-center justify-end gap-3">
                             <a-popover v-model:open="visible" title="Settings" trigger="click">
-                                <img class="icons" style="color: white; border: 1px solid white; cursor: pointer;"
-                                    src="/icons/settings.png " alt="imaeg">
-                                <!-- <SettingOutlined /> -->
+                                <div style="color: white; font-size: 25px; cursor: pointer;">
+                                    <UserOutlined />
+                                </div>
+
 
                                 <template #content>
                                     <div class="max-w-xs bg-white p-4 rounded-md">

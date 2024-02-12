@@ -14,46 +14,16 @@ const visible = ref(false);
 const hide = () => {
     visible.value = false;
 };
+const placement = 'bottom';
+
+import {SettingOutlined,  UserOutlined } from '@ant-design/icons-vue'
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen">
-            <nav style="height: 30px;  background: #0B2447;" class="relative px-4 py-2 flex justify-between items-center">
 
-                <a class="text-2xl font-bold text-violet-600 dark:text-white" href="#">
-                    CCM CS
-                </a>
-
-                <div class="lg:hidden">
-                    <button class="navbar-burger flex items-center text-violet-600 dark:text-gray-100 p-1"
-                        id="navbar_burger">
-                        <svg class="block h-6 w-6 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <title>Hamberger menu</title>
-                            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
-                        </svg>
-                    </button>
-                </div>
-
-                <ul
-                    class="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
-
-
-                </ul>
-
-
-                <div class="hidden lg:flex">
-                    <div class=" relative mx-auto text-white">
-                        {{ $page.props.auth.user.name }}
-                    </div>
-                </div>
-            </nav>
-
-
-            <!-- Page Heading -->
-
-            <header v-if="$slots.header" style="width: 76%;"
-                class="mt-1 bg-white mx-auto w-full w-full border border-gray-100  py-3 shadow backdrop-blur-lg md:top-6 md:rounded-xl">
+        <div class="">
+            <header v-if="$slots.header" style="width: 100%; background: #001529;"
+                class="bg-white mx-auto  py-3 backdrop-blur-lg md:top-6 md:rounded">
                 <div class="px-4">
                     <div class="flex items-center justify-between">
                         <div class="flex shrink-0">
@@ -64,33 +34,34 @@ const hide = () => {
                         </div>
                         <div class="hidden md:flex md:items-center md:justify-center md:gap-5">
                             <a aria-current="page"
-                                class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-black"
                                 href="admin/dashboard">Dashboard</a>
-                            <!-- <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                            <!-- <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-white"
                                 href="#">Reports</a> -->
-                            <a-dropdown  arrow>
-                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                            <a-dropdown arrow :placement="placement">
+                                <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white-100 hover:text-white-900"
                                     href="#">Reports</a> -->
                                 <template #overlay>
-                                    <a-menu>
-                                        <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Dated/PostDated Checks Reports</a>
+                                    <a-menu class="hovering">
+                                        <a-menu-item >
+                                            <a style="color: white;" href="/datedpdcchecks-reports">Dated/PostDated Checks Reports</a>
                                         </a-menu-item>
                                     </a-menu>
                                 </template>
                             </a-dropdown>
-                            <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                            <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-black"
                                 href="/users">Usermaintinance</a>
-                            <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                            <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-black"
                                 href="#">Adjustments</a>
-                            <a class="inline-block rounded-lg px-2 py-1 text-sm text-gray-900 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                            <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-black"
                                 href="#">MasterFile</a>
                         </div>
                         <div class="flex items-center justify-end gap-3">
                             <a-popover v-model:open="visible" title="Settings" trigger="click">
-                                <img class="icons" style="color: white; border: 1px solid white; cursor: pointer;"
-                                    src="/icons/settings.png " alt="imaeg">
-                                <!-- <SettingOutlined /> -->
+                               
+                                <div style="color: white; font-size: 25px;">
+                                 <UserOutlined />
+                                </div>
 
                                 <template #content>
                                     <div class="max-w-xs bg-white p-4 rounded-md">
@@ -100,33 +71,33 @@ const hide = () => {
                                         </div>
                                         <div class="text-center">
                                             <h2 class="text-lg font-semibold">{{ $page.props.auth.user.name }}</h2>
-                                            <p class="text-gray-500 font-bold">Admin</p>
+                                            <p class="text-white font-bold">Admin</p>
                                         </div>
                                         <ul class="mt-4">
                                             <li class="flex items-center space-x-2">
-                                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M3 12h18M3 6h18M3 18h18"></path>
                                                 </svg>
-                                                <span class="text-gray-700">Location: New York</span>
+                                                <span class="text-white">Location: New York</span>
                                             </li>
                                             <li class="flex items-center space-x-2">
-                                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                                 </svg>
-                                                <span class="text-gray-700">Username: {{ $page.props.auth.user.username }}
+                                                <span class="text-white">Username: {{ $page.props.auth.user.username }}
                                                 </span>
                                             </li>
                                             <li class="flex items-center space-x-2">
-                                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M4 6h16M4 12h16m-7 6h7"></path>
                                                 </svg>
-                                                <span class="text-gray-700">{{ $page.props.auth.user.ContactNo }}</span>
+                                                <span class="text-white">{{ $page.props.auth.user.ContactNo }}</span>
                                             </li>
                                         </ul>
                                     </div>
@@ -150,15 +121,21 @@ const hide = () => {
                 <slot />
             </main>
         </div>
-    </div>
 </template>
-<style>
+<style scoped>
 .icons {
     margin-top: 1px;
     height: 30px;
     background: white;
     border-radius: 10%;
 }
+.hovering{
+    background-color: #001529; 
+}
+.hovering:hover{
+  color: green;
+}
+
 
 .b-icons {
     height: 16px;

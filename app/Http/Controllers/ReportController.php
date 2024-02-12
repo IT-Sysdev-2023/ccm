@@ -121,8 +121,7 @@ class ReportController extends Controller
                     ->from('new_ds_checks')
                     ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
                 }),
-
-            default => $q,
+            '0' => $q,
         };
 
 
@@ -133,7 +132,7 @@ class ReportController extends Controller
         $spreadsheet = new Spreadsheet();
 
         $title = '';
-        $h_type = 'new_ds_checks';
+        $h_type = '';
 
 
         if ($request->ch_type == 2) {
@@ -177,10 +176,10 @@ class ReportController extends Controller
 
 
 
-        if ($request->ch_type === 1 && $request->repporttype === 'default') {
+        if ($request->ch_type === '2' && $request->repporttype === '0') {
             $h_type = 'ALL DATED CHECKS';
             $title = 'AllDATEDCHECKS';
-        } else if ($request->ch_type === 2 && $request->repporttype === 'default') {
+        } else if ($request->ch_type === '1' && $request->repporttype === '0') {
             $h_type = 'ALL PENDING CHECKS';
             $title = 'ALLPDC';
         } else if ($request->ch_type === '1' && $request->repporttype === '1') {
@@ -195,10 +194,10 @@ class ReportController extends Controller
         } else if ($request->ch_type === '2' && $request->repporttype === '2') {
             $h_type = 'DEPOSITED DATED CHECKS';
             $title = 'DEPOSITEDDATEDCHECKS';
-        } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '1' && $request->repporttype === 'default') {
+        } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '1' && $request->repporttype === 0) {
             $h_type = 'ALL DATED CHECKS';
             $title = 'AllDATEDCHECKS';
-        } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '2' && $request->repporttype === 'default') {
+        } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '2' && $request->repporttype === 0) {
             $h_type = 'ALL PENDING CHECKS';
             $title = 'ALLPDC';
         } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '1' && $request->repporttype === '1') {
@@ -337,7 +336,7 @@ class ReportController extends Controller
 
                 $secs = $datetime1 - $datetime2;
                 $days = $secs / 86400;
-            }else if($request->ch_type === '1'){
+            } else if ($request->ch_type === '1') {
                 $days = '';
             }
 

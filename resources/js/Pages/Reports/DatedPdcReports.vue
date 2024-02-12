@@ -56,9 +56,8 @@ const colors = 'red';
                     </div>
 
                     <div class="mt-2">
-                        <a-button class="animate-pulse"
-                            style="background-color: rgb(207, 250, 225); margin-right: 10px; width: 200px"
-                            v-on:click="generateReport" v-if="showGenerateButton">
+                        <a-button style="background-color: rgb(207, 250, 225); margin-right: 10px; width: 200px"
+                            v-on:click="generateReport" v-if="showGenerateButton" :loading="loadingGenerate">
                             Generate to Excel
                         </a-button>
                         <a-button style="background-color: rgb(193, 224, 253); margin-right: 10px; width: 200px"
@@ -81,8 +80,8 @@ const colors = 'red';
                     </a-input>
                 </div>
                 <div class="mt-4">
-                    <a-table :total="85" :dataSource="dataSource" class="components-table-demo-nested" :pagination="false"
-                        :columns="columns" :loading="loading" bordered @change="handleTableChange">
+                    <a-table :total="85" :dataSource="dataSource" size="middle" class="components-table-demo-nested"
+                        :pagination="false" :columns="columns" :loading="loading" bordered @change="handleTableChange">
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'checks_r'">
                                 {{ formattedDate(record.check_received) }}
@@ -144,6 +143,7 @@ export default {
             dataSource: [],
             pdcdatedChecks: null,
             loading: false,
+            loadingGenerate: false,
             searchBar: null,
             isTooltipVisible: false,
             pagination: {
@@ -198,27 +198,33 @@ export default {
         query: {
             deep: true,
             handler: debounce(async function () {
-                const res = await axios.get(`get_dated_pdc_checks_rep?page=${this.pageCustom}`, {
-                    params: {
-                        dt_from: this.dateRange[0].toISOString(),
-                        dt_to: this.dateRange[1].toISOString(),
-                        bu: this.bunitCode,
-                        ch_type: this.pdcdatedChecks,
-                        repporttype: this.repportType,
-                        search: this.query.search,
-                    },
-                });
-                this.showGenerateButton = true;
-                this.dataSource = res.data.data;
-                this.pagination = res.data.pagination;
-                if (response.data.data.length > 0) {
+                this.loading = true;
+                try {
+                    const res = await axios.get(`get_dated_pdc_checks_rep?page=${this.pageCustom}`, {
+                        params: {
+                            dt_from: this.dateRange[0].toISOString(),
+                            dt_to: this.dateRange[1].toISOString(),
+                            bu: this.bunitCode,
+                            ch_type: this.pdcdatedChecks,
+                            repporttype: this.repportType,
+                            search: this.query.search,
+                        },
+                    });
+                    this.showGenerateButton = true;
+                    this.dataSource = res.data.data;
+                    this.pagination = res.data.pagination;
+
+                    if (res.data.data.length > 0) {
                         this.showGenerateButton = true;
-
                     } else {
-
                         this.showGenerateButton = false;
                     }
-
+                } catch (error) {
+                    // Handle error, you can log it or show a message
+                    console.error("Error in watcher:", error);
+                } finally {
+                    this.loading = false;
+                }
             }, 500)
         },
     },
@@ -229,9 +235,9 @@ export default {
 
             this.loading = true;
 
-            if(this.bunitCode === null && this.pdcdatedChecks === null && this.repportType === null){
+            if (this.bunitCode === null && this.pdcdatedChecks === null && this.repportType === null) {
                 this.isTooltipVisible = true;
-            }else{
+            } else {
                 this.isTooltipVisible = false;
             }
 
@@ -333,7 +339,9 @@ export default {
         searchQ() {
             this.fetchData(this.searchBar);
         },
+
         generateReport() {
+            this.loadingGenerate = true;
             const params = {
                 dt_from: this.dateRange[0].toISOString(),
                 dt_to: this.dateRange[1].toISOString(),
@@ -341,6 +349,7 @@ export default {
                 ch_type: this.pdcdatedChecks,
                 repporttype: this.repportType,
             }
+
             const urlWithParams = '/generate_reps_to_excel?' + new URLSearchParams(params).toString();
 
 
@@ -348,11 +357,12 @@ export default {
 
             axios.get(urlWithParams)
                 .then(response => {
-                        message.success('Successfully Generating the excel file');
+                    message.success('Successfully Generating the excel file');
+                    this.loadingGenerate = false;
 
                 })
                 .catch(error => {
-                     message.error('Oppss! Something went wrong');
+                    message.error('Oppss! Something went wrong');
                 });
 
 

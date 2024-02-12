@@ -19,17 +19,21 @@
 
 <body class="antialiased">
     @inertia
-<style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Oswald&family=Poppins&family=Roboto+Condensed:wght@300&display=swap');
 
-     *{
-  /* font-family: Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji; */
-     font-family: Tahoma, Verdana, sans-serif;
-}
-.antialiased {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-</style>
+        * {
+
+            font-family: 'Fira Sans', sans-serif;
+            text-decoration: none;
+        }
+
+        .antialiased {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+    </style>
 </body>
 
 </html>
