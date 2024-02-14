@@ -252,21 +252,25 @@ export default {
                     title: 'Check receive',
                     dataIndex: 'check_received',
                     key: 'checks_r',
+                    width: '12%'
                 },
                 {
                     title: 'Check date',
                     dataIndex: 'check_date',
                     key: 'check_dep',
+                    width: '12%'
                 },
                 {
                     title: 'Date Deposited',
                     dataIndex: 'date_deposit',
                     key: 'check_d',
+                    width: '12%'
                 },
                 {
                     title: 'Customer name',
                     dataIndex: 'fullname',
                     key: 'fullname',
+                    width: '30%'
                 },
                 {
                     title: 'Check No',
@@ -282,11 +286,13 @@ export default {
                     title: 'Ds No',
                     dataIndex: 'ds_no',
                     key: 'address',
+                    width: '7%'
                 },
                 {
                     title: 'Actions',
                     dataIndex: 'action',
                     key: 'action',
+                    width: '12%'
                 },
             ],
         };
@@ -304,7 +310,7 @@ export default {
                             search: this.query.search,
                         },
                     });
-                    
+
                     if (!response.data.data) {
                         this.showPag = false;
                     } else {

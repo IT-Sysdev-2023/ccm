@@ -7,7 +7,9 @@ use App\Models\CheckHistory;
 use App\Models\Checks;
 use App\Models\SavedCheck;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
 use Inertia\Inertia;
@@ -18,6 +20,18 @@ class DsBounceTaggingController extends Controller
     public function indexBounceTagging()
     {
         return Inertia::render('Ds&BounceTagging/BounceTagging');
+    }
+
+    public function updateSwitch(Request $request)
+    {
+        $r = SavedCheck::where('checks_id', $request->id)
+            ->update([
+                'done' => 'check'
+            ]);
+
+        // dd($r);
+        // // $id
+        return response()->json(['success' => 'Success MF']);
     }
     public function indexDsTagging(Request $request)
     {
@@ -39,89 +53,103 @@ class DsBounceTaggingController extends Controller
             ->where('new_saved_checks.status', '')
             // ->whereBetween('check_received', [$request->dt_from, $request->dt_to])
             ->where('checks.businessunit_id', Auth::user()->businessunit_id)
+            // ->where('checks.check_date', '<=', date('Y-m-d'))
             ->orderBy('checks.check_received', 'DESC')
             ->whereNotExists(function ($query) {
                 $query->select(DB::raw(1))
                     ->from('new_ds_checks')
                     ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
-            })->paginate(10);
+            })->paginate(550);
 
-            // dd($ds_checks_table);
 
-        $type = '';
 
+        // dump($ds_checks_table->pluck('check_date'));
+
+        // dd(today());
         foreach ($ds_checks_table as $value) {
-            if ($value->check_date <= date('Y-m-d')) {
+
+            $type = '';
+            if (Date::parse($value->check_date)->lessThanOrEqualTo(today())) {
                 $type = 'DATED';
             } else {
-                $type = 'POST DATED';
+                $type = 'POST-DATED';
             }
+
+
+
+
             $value->check_received = date('F j, Y', strtotime($value->check_received));
             $value->check_date = date('F j, Y', strtotime($value->check_date));
-            $value->check_amount = '₱' . number_format($value->check_amount, 2);
+            $value->check_amount = number_format($value->check_amount, 2);
+            $value->type = $type;
+
+
+
+            $columns = [
+                [
+                    'title' => 'Checkreceived',
+                    'dataIndex' => 'check_received',
+                    'key' => 'check_r',
+                    'ellipsis' => true,
+                    'width' => '10%',
+                ],
+                [
+                    'title' => 'Checkdate',
+                    'dataIndex' => 'check_date',
+                    'key' => 'check_d',
+                    'ellipsis' => true,
+                    'width' => '10%',
+
+                ],
+                [
+                    'title' => 'Customer',
+                    'dataIndex' => 'fullname',
+                    'key' => 'fullname',
+                    'ellipsis' => true,
+                    'width' => '30%',
+                ],
+                [
+                    'title' => 'Check No',
+                    'dataIndex' => 'check_no',
+                    'key' => 'check_no',
+                ],
+                [
+                    'title' => 'Amount',
+                    'dataIndex' => 'check_amount',
+                    'key' => 'check_amount',
+                ],
+                [
+                    'title' => 'Type',
+                    'key' => 'type',
+                    'dataIndex' => 'type',
+                ],
+                [
+                    'title' => 'Category',
+                    'dataIndex' => 'check_category',
+                    'key' => 'c_cat',
+
+                ],
+                [
+                    'title' => 'Select',
+                    'key' => 'select',
+                    'align' => 'center',
+                ],
+            ];
 
         }
-
         // dd($ds_checks_table);
-
-        $columns = [
-            [
-                'title' => 'Checkreceived',
-                'dataIndex' => 'check_received',
-                'key' => 'check_r',
-                'ellipsis' => true,
-                'width' => '10%',
-            ],
-            [
-                'title' => 'Checkdate',
-                'dataIndex' => 'check_date',
-                'key' => 'check_d',
-                'ellipsis' => true,
-                'width' => '10%',
-            ],
-            [
-                'title' => 'Customer',
-                'dataIndex' => 'fullname',
-                'key' => 'fullname',
-                'ellipsis' => true,
-                'width' => '30%',
-            ],
-            [
-                'title' => 'Check No',
-                'dataIndex' => 'check_no',
-                'key' => 'check_no',
-            ],
-            [
-                'title' => 'Amount',
-                'dataIndex' => 'check_amount',
-                'key' => 'check_amount',
-            ],
-            [
-                'title' => 'Type',
-                'dataIndex' => $type,
-                'key' => 'type',
-            ],
-            [
-                'title' => 'Category',
-                'dataIndex' => 'check_category',
-                'key' => 'c_cat',
-            ],
-            [
-                'title' => 'Select',
-                'key' => 'select',
-                'align' => 'center'
-            ],
-        ];
 
         return Inertia::render('Ds&BounceTagging/DsTagging', [
             'due_dates' => $due_dates,
+            // 'total1' => $total1,
             'ds_c_table' => $ds_checks_table,
             'columns' => $columns,
-               'pagination' => [
+            'type' => $type,
+            'pagination' => [
                 'current' => $ds_checks_table->currentPage(),
                 'total' => $ds_checks_table->total(),
                 'pageSize' => $ds_checks_table->perPage(),
-               ],
+            ],
         ]);
     }
 

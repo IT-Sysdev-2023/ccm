@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ImportUpdateController;
 use App\Http\Controllers\DsBounceTaggingController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -73,6 +74,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/ds_tagging', [DsBounceTaggingController::class, 'indexDsTagging'])->name('ds_tagging');
     Route::get('/get_bounce_tagging', [DsBounceTaggingController::class, 'get_bounce_tagging'])->name('get_bounce_tagging');
     Route::post('/tag_check_bounce', [DsBounceTaggingController::class, 'tag_check_bounce'])->name('tag_check_bounce');
-;});
+    Route::put('update-switch', [DsBounceTaggingController::class, 'updateSwitch'])->name('update.switch');
+    ;
+});
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
