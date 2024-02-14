@@ -24,14 +24,15 @@ class DsBounceTaggingController extends Controller
 
     public function updateSwitch(Request $request)
     {
+        // dd($request->isChecked);
         $r = SavedCheck::where('checks_id', $request->id)
             ->update([
-                'done' => 'check'
+                'done' => $request->isCheck ? "check" : ""
             ]);
 
         // dd($r);
         // // $id
-        return response()->json(['success' => 'Success MF']);
+        return response()->json(['success' => $r]);
     }
     public function indexDsTagging(Request $request)
     {

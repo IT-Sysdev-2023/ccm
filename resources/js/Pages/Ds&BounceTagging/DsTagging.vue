@@ -89,7 +89,8 @@ import { reactive } from 'vue';
 
                             <!-- <template v-if="record.
                              === ''"> -->
-                            <a-switch v-model:checked="switchValues[index]"  @change="handleSwitchChange(record)" size="small">
+                            <a-switch v-model:checked="switchValues[index]"
+                                @change="handleSwitchChange(record, switchValues[index])" size="small">
                                 <template #checkedChildren><check-outlined /></template>
                                 <template #unCheckedChildren><close-outlined /></template>
                             </a-switch>
@@ -154,10 +155,9 @@ export default {
                 console.error('Error fetching data:', error);
             }
         },
-        async handleSwitchChange(data) {
-           const res = await axios.put(route('update.switch'), {id: data.checks_id});
+        async handleSwitchChange(data, isChecked) {
+            const res = await axios.put(route('update.switch'), { id: data.checks_id, isCheck: isChecked });
 
-            console.log(res.data);
             // if (typeof data === 'object' && data.isChecked !== undefined) {
             //     if (data.isChecked) {
             //         this.countDs++;
