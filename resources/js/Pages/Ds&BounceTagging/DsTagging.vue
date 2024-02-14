@@ -170,7 +170,7 @@ export default {
             //     console.error("Invalid data format. Expected object with isChecked property and numeric amount.");
             // }
 
-        },
+        }, 
     },
     created() {
         this.switchValues = this.ds_c_table.data.map(value => value.done === '' ? false : true)
