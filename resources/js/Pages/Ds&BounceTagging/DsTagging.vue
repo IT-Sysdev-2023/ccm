@@ -33,7 +33,7 @@ import { reactive } from 'vue';
                                 <a-badge count="0" style="display: flex; justify-content: center;">
                                     <a-avatar shape="square" size="large" src="../icons/abacus.png" />
                                 </a-badge>
-                                <p class="ml-10 font-bold">{{ countDs }}</p>
+                                <p class="ml-10 font-bold">{{ defaultTotal.count }}</p>
                             </div>
                         </a-card>
                     </a-col>
@@ -43,7 +43,7 @@ import { reactive } from 'vue';
                                 <a-badge count="0" style="display: flex; justify-content: center;">
                                     <a-avatar shape="square" size="large" src="../icons/calculator.png" />
                                 </a-badge>
-                                <p class="ml-10 font-bold">₱ {{ totalAmount.toLocaleString() }}</p>
+                                <p class="ml-10 font-bold">₱ {{ defaultTotal.totalSum.toLocaleString() }}</p>
                             </div>
                         </a-card>
                     </a-col>
@@ -130,6 +130,7 @@ export default {
             countDs: 0,
             totalAmount: 0,
             dataAmount: [],
+            defaultTotal: this.total,
 
         };
     },
@@ -138,6 +139,7 @@ export default {
         columns: Array,
         ds_c_table: Array,
         type: Object,
+        total: Array,
         due_dates: Number,
 
     },
@@ -156,15 +158,20 @@ export default {
             }
         },
         async handleSwitchChange(data, isChecked) {
-            const res = await axios.put(route('update.switch'), { id: data.checks_id, isCheck: isChecked });
-
+            const res = await axios.put(route('update.switch'), { id: data.checks_id, isCheck: isChecked, checkAmount: data.check_amount, oldAmount: this.total.totalSum, oldCount: this.defaultTotal.count });
+            this.defaultTotal.totalSum = res.data.newAmount;
+            this.defaultTotal.count = res.data.newCount;
+            // console.log(res);
+            // if (isChecked) {
+            //     this.countDs++;
+            //     this.totalAmount += parseFloat(data.check_amount.replace(/,/g, ''));
+            // } else {
+            //     this.countDs--;
+            //     this.totalAmount -= parseFloat(data.check_amount.replace(/,/g, ''));
+            // }
             // if (typeof data === 'object' && data.isChecked !== undefined) {
             //     if (data.isChecked) {
-            //         this.countDs++;
-            //         this.totalAmount += parseFloat(data.check_amount.replace(/,/g, ''));
             //     } else {
-            //         this.countDs--;
-            //         this.totalAmount -= parseFloat(data.check_amount.replace(/,/g, ''));
             //     }
             // } else {
             //     console.error("Invalid data format. Expected object with isChecked property and numeric amount.");

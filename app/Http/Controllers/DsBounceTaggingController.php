@@ -30,9 +30,18 @@ class DsBounceTaggingController extends Controller
                 'done' => $request->isCheck ? "check" : ""
             ]);
 
-        // dd($r);
+        $amount = $request->oldAmount;
+        $count = $request->oldCount;
+        // $con = $request->isCheck 
+        if ($request->isCheck) {
+            $count++;
+            $amount += (float) str_replace(',', '', $request->checkAmount);
+        }else{
+            $count--;
+            $amount -= (float) str_replace(',', '', $request->checkAmount);
+        }
         // // $id
-        return response()->json(['success' => $r]);
+        return response()->json(['newAmount' => $amount, 'newCount' => $count]);
     }
     public function indexDsTagging(Request $request)
     {
@@ -138,11 +147,20 @@ class DsBounceTaggingController extends Controller
             ];
 
         }
-        // dd($ds_checks_table);
+
+        $totalAmount = $ds_checks_table->where('done', 'check');
+
+        // dd($totalAmount->count());
 
         return Inertia::render('Ds&BounceTagging/DsTagging', [
             'due_dates' => $due_dates,
-            // 'total1' => $total1,
+            'total' => [
+                'totalSum' => $totalAmount->sum(function ($item) {
+                    return (float) str_replace(',', '', $item->check_amount);
+                }),
+                'count' => $totalAmount->count()
+
+            ],
             'ds_c_table' => $ds_checks_table,
             'columns' => $columns,
             'type' => $type,
