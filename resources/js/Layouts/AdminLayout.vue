@@ -31,14 +31,14 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
                         </a>
                     </div>
                     <div class="hidden md:flex md:items-center md:justify-center md:gap-5">
-                        <a aria-current="page"
+                        <Link aria-current="page"
                             class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-black"
-                            href="admin/dashboard">Dashboard</a>
+                            :href="route('admin_dashboard')">Dashboard</Link>
                         <!-- <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-white"
                                 href="#">Reports</a> -->
                         <a-dropdown arrow :placement="placement">
                             <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white-100 hover:text-white-900"
-                                href="#">Reports</a> -->
+                                href="#">Reports</a>
                             <template #overlay>
                                 <a-menu class="hovering">
                                     <a-menu-item>
