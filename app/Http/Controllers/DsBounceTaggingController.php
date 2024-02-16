@@ -24,15 +24,15 @@ class DsBounceTaggingController extends Controller
 
     public function updateSwitch(Request $request)
     {
-        // dd($request->isChecked);
-        $r = SavedCheck::where('checks_id', $request->id)
+
+        SavedCheck::where('checks_id', $request->id)
             ->update([
                 'done' => $request->isCheck ? "check" : ""
             ]);
 
         $amount = $request->oldAmount;
         $count = $request->oldCount;
-        // $con = $request->isCheck 
+
         if ($request->isCheck) {
             $count++;
             $amount += (float) str_replace(',', '', $request->checkAmount);
@@ -40,7 +40,7 @@ class DsBounceTaggingController extends Controller
             $count--;
             $amount -= (float) str_replace(',', '', $request->checkAmount);
         }
-        // // $id
+
         return response()->json(['newAmount' => $amount, 'newCount' => $count]);
     }
     public function indexDsTagging(Request $request)
@@ -72,10 +72,6 @@ class DsBounceTaggingController extends Controller
             })->paginate(550);
 
 
-
-        // dump($ds_checks_table->pluck('check_date'));
-
-        // dd(today());
         foreach ($ds_checks_table as $value) {
 
             $type = '';
@@ -196,9 +192,6 @@ class DsBounceTaggingController extends Controller
         };
 
         $data = $q->paginate(20)->withQueryString();
-
-        // dd($data);
-
 
         return response()->json([
             'data' => $data->items(),
