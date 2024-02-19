@@ -85,7 +85,8 @@ import { reactive } from 'vue';
                     <template #bodyCell="{ column, record, index }">
 
                         <template v-if="column.key === 'select'">
-                            <a-switch v-model:checked="switchValues[index]"
+                            <span>{{ record.done }}</span>
+                            <a-switch v-model:checked="record.done"
                                 @change="handleSwitchChange(record, switchValues[index])" size="small">
                                 <template #checkedChildren><check-outlined /></template>
                                 <template #unCheckedChildren><close-outlined /></template>
@@ -173,7 +174,6 @@ export default {
                     //     this.defaultTotal.totalSum = 0;
                     // }
                 });
-                this.switchValues = this.ds_c_table.data.map(value => value.done === '' ? false : true);
 
 
         },

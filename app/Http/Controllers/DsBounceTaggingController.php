@@ -141,7 +141,15 @@ class DsBounceTaggingController extends Controller
 
         $totalAmount = $ds_checks_table->where('done', 'check');
 
-        // dd($totalAmount->count());
+        $ds_checks_table->map(function ($item) {
+            if ($item->done === "") {
+                $item->done = false;
+            } else {
+                $item->done = true;
+            }
+
+            return $item;
+        });
 
         return Inertia::render('Ds&BounceTagging/DsTagging', [
             'due_dates' => $due_dates,
@@ -247,7 +255,7 @@ class DsBounceTaggingController extends Controller
                 ]);
 
             });
-            
+
 
         }
         return redirect()->back();
