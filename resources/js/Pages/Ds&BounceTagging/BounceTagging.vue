@@ -49,10 +49,6 @@ const indicator = h(LoadingOutlined, {
                         <a-breadcrumb-item>Bounce Tagging</a-breadcrumb-item>
                         <a-breadcrumb-item>Deposited Checks</a-breadcrumb-item>
                     </a-breadcrumb>
-
-
-                    <!-- <a-input-search v-model:value="value" placeholder="input search loading deault" loading /> -->
-
                 </div>
                 <div style="display: flex; justify-content: space-between;" class="mb-3">
 
@@ -339,7 +335,14 @@ export default {
             this.returnDate = dateObj;
         },
         async getBounceTagging(page = 1) {
+
+            const key = 'updatable';
+
             this.loading = true;
+            message.loading({
+                content: 'Fetching data please wait...',
+                key,
+            });
             try {
                 const response = await axios.get(`get_bounce_tagging?page=${page}`, {
                     params: {
@@ -361,6 +364,11 @@ export default {
                 // console.log(error);
             } finally {
                 this.loading = false;
+                message.success({
+                    content: 'Retrieve Successfully!',
+                    key,
+                    duration: 2,
+                });
             }
         },
         formattedDate(event) {

@@ -61,7 +61,7 @@ import { reactive } from 'vue';
                         <a-card style="width: 100%;" class="mb-5;">
                             <a-row :gutter="[16, 16]" class="mt-2">
                                 <a-col :span="8">
-                                    <a-input placeholder="Ds Number">
+                                    <a-input placeholder="Ds Number" v-model:value="dsNo">
                                         <template #suffix>
                                             <a-tooltip title="Please Enter a Ds Number">
                                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -70,11 +70,10 @@ import { reactive } from 'vue';
                                     </a-input>
                                 </a-col>
                                 <a-col :span="8">
-                                    <a-date-picker />
+                                    <a-date-picker v-model:value="dateDeposit" />
                                 </a-col>
                                 <a-col :span="8">
-
-                                    <a-button>submit ds number</a-button>
+                                    <a-button @click="submitToConButton()">submit ds number</a-button>
                                 </a-col>
                             </a-row>
                         </a-card>
@@ -86,22 +85,11 @@ import { reactive } from 'vue';
                     <template #bodyCell="{ column, record, index }">
 
                         <template v-if="column.key === 'select'">
-
-                            <!-- <template v-if="record.
-                             === ''"> -->
                             <a-switch v-model:checked="switchValues[index]"
                                 @change="handleSwitchChange(record, switchValues[index])" size="small">
                                 <template #checkedChildren><check-outlined /></template>
                                 <template #unCheckedChildren><close-outlined /></template>
                             </a-switch>
-                            <!-- </template> -->
-                            <!-- <template v-else>
-                                <a-switch :checked="record.isChecked" size="small"
-                                    @change="handleSwitchChange(record)">
-                                    <template #checkedChildren><check-outlined /></template>
-                                    <template #unCheckedChildren><close-outlined /></template>
-                                </a-switch>
-                            </template> -->
 
                         </template>
 
@@ -123,7 +111,11 @@ import { reactive } from 'vue';
 
 <script>
 import { HomeOutlined, CheckOutlined, CloseOutlined, InfoCircleOutlined } from '@ant-design/icons-vue';
+import { message } from 'ant-design-vue';
+import dayjs from 'dayjs';
+
 export default {
+
     data() {
         return {
             switchValues: [],
@@ -131,6 +123,8 @@ export default {
             totalAmount: 0,
             dataAmount: [],
             defaultTotal: this.total,
+            dateDeposit: dayjs(),
+            dsNo: '',
 
         };
     },
@@ -139,7 +133,7 @@ export default {
         columns: Array,
         ds_c_table: Array,
         type: Object,
-        total: Array,
+        total: Number,
         due_dates: Number,
 
     },
@@ -147,6 +141,7 @@ export default {
 
     },
     methods: {
+
         handleTableChange(page) {
             try {
                 this.$inertia.get(route().current(), {
@@ -157,27 +152,54 @@ export default {
                 console.error('Error fetching data:', error);
             }
         },
+        async submitToConButton() {
+            // console.log(this.switchValues);
+            //    this.$inertia.post(route('submit.ds.tagging'), {});
+            const selected = this.switchValues
+                .filter(value => value)
+                .map((value, index) => this.ds_c_table.data[index].checks_id)
+
+            // console.log(selected);
+            this.$inertia.get(route('submit.ds.tagging'), { selected: selected });
+
+        },
         async handleSwitchChange(data, isChecked) {
             const res = await axios.put(route('update.switch'), { id: data.checks_id, isCheck: isChecked, checkAmount: data.check_amount, oldAmount: this.total.totalSum, oldCount: this.defaultTotal.count });
+
             this.defaultTotal.totalSum = res.data.newAmount;
             this.defaultTotal.count = res.data.newCount;
-            // console.log(res);
-            // if (isChecked) {
-            //     this.countDs++;
-            //     this.totalAmount += parseFloat(data.check_amount.replace(/,/g, ''));
-            // } else {
-            //     this.countDs--;
-            //     this.totalAmount -= parseFloat(data.check_amount.replace(/,/g, ''));
-            // }
-            // if (typeof data === 'object' && data.isChecked !== undefined) {
-            //     if (data.isChecked) {
-            //     } else {
-            //     }
-            // } else {
-            //     console.error("Invalid data format. Expected object with isChecked property and numeric amount.");
-            // }
 
-        }, 
+            const key = 'updatable';
+
+            if (isChecked) {
+                message.loading({
+                    content: 'Loading...',
+                    key,
+                });
+                setTimeout(() => {
+                    message.success({
+                        content: 'Checked Successfully!',
+                        key,
+                        duration: 2,
+                    });
+                }, 1000);
+
+            } else {
+                message.loading({
+                    content: 'Loading...',
+                    key,
+                });
+                setTimeout(() => {
+                    message.warning({
+                        content: 'Uncheck Successfully!',
+                        key,
+                        duration: 2,
+                    });
+                }, 1000);
+            }
+
+
+        },
     },
     created() {
         this.switchValues = this.ds_c_table.data.map(value => value.done === '' ? false : true)

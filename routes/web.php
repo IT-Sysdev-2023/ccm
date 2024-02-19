@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ds_tagging', [DsBounceTaggingController::class, 'indexDsTagging'])->name('ds_tagging');
     Route::get('/get_bounce_tagging', [DsBounceTaggingController::class, 'get_bounce_tagging'])->name('get_bounce_tagging');
     Route::post('/tag_check_bounce', [DsBounceTaggingController::class, 'tag_check_bounce'])->name('tag_check_bounce');
+    Route::get('/submit-ds-tagging', [DsBounceTaggingController::class, 'submiCheckDs'])->name('submit.ds.tagging');
     Route::put('update-switch', [DsBounceTaggingController::class, 'updateSwitch'])->name('update.switch');
     ;
 });

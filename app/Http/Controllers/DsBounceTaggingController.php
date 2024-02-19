@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BouncedCheck;
 use App\Models\CheckHistory;
 use App\Models\Checks;
+use App\Models\DsNumber;
 use App\Models\SavedCheck;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -21,10 +22,8 @@ class DsBounceTaggingController extends Controller
     {
         return Inertia::render('Ds&BounceTagging/BounceTagging');
     }
-
     public function updateSwitch(Request $request)
     {
-        // dd($request->isChecked);
         $r = SavedCheck::where('checks_id', $request->id)
             ->update([
                 'done' => $request->isCheck ? "check" : ""
@@ -32,11 +31,10 @@ class DsBounceTaggingController extends Controller
 
         $amount = $request->oldAmount;
         $count = $request->oldCount;
-        // $con = $request->isCheck 
         if ($request->isCheck) {
             $count++;
             $amount += (float) str_replace(',', '', $request->checkAmount);
-        }else{
+        } else {
             $count--;
             $amount -= (float) str_replace(',', '', $request->checkAmount);
         }
@@ -61,21 +59,13 @@ class DsBounceTaggingController extends Controller
             ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('new_saved_checks.status', '')
-            // ->whereBetween('check_received', [$request->dt_from, $request->dt_to])
             ->where('checks.businessunit_id', Auth::user()->businessunit_id)
-            // ->where('checks.check_date', '<=', date('Y-m-d'))
             ->orderBy('checks.check_received', 'DESC')
             ->whereNotExists(function ($query) {
                 $query->select(DB::raw(1))
                     ->from('new_ds_checks')
                     ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
             })->paginate(550);
-
-
-
-        // dump($ds_checks_table->pluck('check_date'));
-
-        // dd(today());
         foreach ($ds_checks_table as $value) {
 
             $type = '';
@@ -84,17 +74,10 @@ class DsBounceTaggingController extends Controller
             } else {
                 $type = 'POST-DATED';
             }
-
-
-
-
             $value->check_received = date('F j, Y', strtotime($value->check_received));
             $value->check_date = date('F j, Y', strtotime($value->check_date));
             $value->check_amount = number_format($value->check_amount, 2);
             $value->type = $type;
-
-
-
             $columns = [
                 [
                     'title' => 'Checkreceived',
@@ -242,6 +225,50 @@ class DsBounceTaggingController extends Controller
     public function dummy()
     {
         $dummy = Checks::with('checkreceived')->get();
+    }
+
+    public function submiCheckDs(Request $request)
+    {
+        // dd($request->selected);
+        // $checksId =  [];
+        // dd($checksId);
+        foreach ($request->selected as $check) {
+
+            $data = DB::transaction(function () use ($check) {
+                SavedCheck::where('checks_id', $check);
+            });
+
+            dd($data);
+
+        }
+        // $checks_count = count($request->check_count);
+
+        // $ds_no = $request->dsNo;
+
+        // $date_deposit = $request->dateDeposit;
+        // $checks
+
+
+        // for ($i = 0; $i < $checks_count; $i++) {
+
+        //     $checks_id = $request->check[$i];
+
+        //     DB::table('new_saved_checks')
+        //         ->where('checks_id', '=', $checks_id)
+        //         ->update(['ds_status' => 'remitted']);
+
+        //     $ds_insert = new DsNumber();
+
+        //     $ds_insert->checks_id = $checks_id;
+        //     $ds_insert->ds_no = $ds_no;
+        //     $ds_insert->date_deposit = $date_deposit;
+        //     $ds_insert->user = Auth::user()->id;
+        //     $ds_insert->date_time = date('Y-m-d H:i:s');
+        //     $ds_insert->save();
+        // }
+
+
+        return redirect()->back();
     }
 
 }
