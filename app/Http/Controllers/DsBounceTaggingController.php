@@ -234,45 +234,22 @@ class DsBounceTaggingController extends Controller
 
     public function submiCheckDs(Request $request)
     {
-        // dd($request->selected);
-        // $checksId =  [];
-        // dd($checksId);
         foreach ($request->selected as $check) {
+            DB::transaction(function () use ($check, $request) {
+                SavedCheck::where('checks_id', $check)->update(['ds_status' => 'remitted']);
+                DsNumber::create([
+                    'checks_id' => $check,
+                    'ds_no' => $request->dsNo,
+                    'date_deposit' => $request->dateDeposit,
+                    'user' => $request->user()->id,
+                    'status' => '',
+                    'date_time' => today()
+                ]);
 
-            $data = DB::transaction(function () use ($check) {
-                SavedCheck::where('checks_id', $check);
             });
-
-            dd($data);
+            
 
         }
-        // $checks_count = count($request->check_count);
-
-        // $ds_no = $request->dsNo;
-
-        // $date_deposit = $request->dateDeposit;
-        // $checks
-
-
-        // for ($i = 0; $i < $checks_count; $i++) {
-
-        //     $checks_id = $request->check[$i];
-
-        //     DB::table('new_saved_checks')
-        //         ->where('checks_id', '=', $checks_id)
-        //         ->update(['ds_status' => 'remitted']);
-
-        //     $ds_insert = new DsNumber();
-
-        //     $ds_insert->checks_id = $checks_id;
-        //     $ds_insert->ds_no = $ds_no;
-        //     $ds_insert->date_deposit = $date_deposit;
-        //     $ds_insert->user = Auth::user()->id;
-        //     $ds_insert->date_time = date('Y-m-d H:i:s');
-        //     $ds_insert->save();
-        // }
-
-
         return redirect()->back();
     }
 

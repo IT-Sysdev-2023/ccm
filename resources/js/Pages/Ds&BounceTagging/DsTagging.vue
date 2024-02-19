@@ -43,7 +43,7 @@ import { reactive } from 'vue';
                                 <a-badge count="0" style="display: flex; justify-content: center;">
                                     <a-avatar shape="square" size="large" src="../icons/calculator.png" />
                                 </a-badge>
-                                <p class="ml-10 font-bold">₱ {{ defaultTotal.totalSum.toLocaleString() }}</p>
+                                <p class="ml-10 font-bold">₱ {{ defaultTotal.totalSum.toFixed(2) }}</p>
                             </div>
                         </a-card>
                     </a-col>
@@ -142,6 +142,10 @@ export default {
     },
     methods: {
 
+        switchRecord() {
+            this.switchValues = this.ds_c_table.data.map(value => value.done === '' ? false : true);
+        },
+
         handleTableChange(page) {
             try {
                 this.$inertia.get(route().current(), {
@@ -160,7 +164,17 @@ export default {
                 .map((value, index) => this.ds_c_table.data[index].checks_id)
 
             // console.log(selected);
-            this.$inertia.get(route('submit.ds.tagging'), { selected: selected });
+            this.$inertia.post(route('submit.ds.tagging'),
+                { selected, dsNo: this.dsNo, dateDeposit: this.dateDeposit.format('YYYY-MM-DD') },
+                {
+                    // onFinish: () => {
+                    //     this.switchValues = this.ds_c_table.data.map(value => value.done === '' ? false : true);
+                    //     this.defaultTotal.count = 0;
+                    //     this.defaultTotal.totalSum = 0;
+                    // }
+                });
+                this.switchValues = this.ds_c_table.data.map(value => value.done === '' ? false : true);
+
 
         },
         async handleSwitchChange(data, isChecked) {
@@ -202,7 +216,7 @@ export default {
         },
     },
     created() {
-        this.switchValues = this.ds_c_table.data.map(value => value.done === '' ? false : true)
+        this.switchValues = this.ds_c_table.data.map(value => value.done === '' ? false : true);
     }
 };
 </script>
