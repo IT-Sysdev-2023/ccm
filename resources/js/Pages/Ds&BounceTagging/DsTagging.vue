@@ -85,9 +85,7 @@ import { reactive } from 'vue';
                     <template #bodyCell="{ column, record, index }">
 
                         <template v-if="column.key === 'select'">
-                            <span>{{ record.done }}</span>
-                            <a-switch v-model:checked="record.done"
-                                @change="handleSwitchChange(record, switchValues[index])" size="small">
+                            <a-switch v-model:checked="record.done" @change="handleSwitchChange(record)" size="small">
                                 <template #checkedChildren><check-outlined /></template>
                                 <template #unCheckedChildren><close-outlined /></template>
                             </a-switch>
@@ -158,34 +156,33 @@ export default {
             }
         },
         async submitToConButton() {
-            // console.log(this.switchValues);
-            //    this.$inertia.post(route('submit.ds.tagging'), {});
-            const selected = this.switchValues
-                .filter(value => value)
-                .map((value, index) => this.ds_c_table.data[index].checks_id)
 
+            // console.log(this.switchValues);
+            const selected = this.ds_c_table.data
+            .filter(value => value.done)
+            
             // console.log(selected);
+
             this.$inertia.post(route('submit.ds.tagging'),
                 { selected, dsNo: this.dsNo, dateDeposit: this.dateDeposit.format('YYYY-MM-DD') },
                 {
-                    // onFinish: () => {
-                    //     this.switchValues = this.ds_c_table.data.map(value => value.done === '' ? false : true);
-                    //     this.defaultTotal.count = 0;
-                    //     this.defaultTotal.totalSum = 0;
-                    // }
+                    onFinish: () => {
+                        this.defaultTotal.count = 0;
+                        this.defaultTotal.totalSum = 0;
+                    }
                 });
 
 
         },
-        async handleSwitchChange(data, isChecked) {
-            const res = await axios.put(route('update.switch'), { id: data.checks_id, isCheck: isChecked, checkAmount: data.check_amount, oldAmount: this.total.totalSum, oldCount: this.defaultTotal.count });
+        async handleSwitchChange(data) {
+            const res = await axios.put(route('update.switch'), { id: data.checks_id, isCheck: data.done, checkAmount: data.check_amount, oldAmount: this.total.totalSum, oldCount: this.defaultTotal.count });
 
             this.defaultTotal.totalSum = res.data.newAmount;
             this.defaultTotal.count = res.data.newCount;
 
             const key = 'updatable';
 
-            if (isChecked) {
+            if (data.done) {
                 message.loading({
                     content: 'Loading...',
                     key,

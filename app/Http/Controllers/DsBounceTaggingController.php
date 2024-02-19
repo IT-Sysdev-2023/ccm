@@ -244,9 +244,9 @@ class DsBounceTaggingController extends Controller
     {
         foreach ($request->selected as $check) {
             DB::transaction(function () use ($check, $request) {
-                SavedCheck::where('checks_id', $check)->update(['ds_status' => 'remitted']);
+                SavedCheck::where('checks_id', $check['checks_id'])->update(['ds_status' => 'remitted']);
                 DsNumber::create([
-                    'checks_id' => $check,
+                    'checks_id' => $check['checks_id'],
                     'ds_no' => $request->dsNo,
                     'date_deposit' => $request->dateDeposit,
                     'user' => $request->user()->id,
@@ -255,8 +255,6 @@ class DsBounceTaggingController extends Controller
                 ]);
 
             });
-
-
         }
         return redirect()->back();
     }
