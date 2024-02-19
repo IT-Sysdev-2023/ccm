@@ -86,6 +86,7 @@ class DsBounceTaggingController extends Controller
             $value->check_date = date('F j, Y', strtotime($value->check_date));
             $value->check_amount = number_format($value->check_amount, 2);
             $value->type = $type;
+            
             $columns = [
                 [
                     'title' => 'Checkreceived',
@@ -141,13 +142,8 @@ class DsBounceTaggingController extends Controller
 
         $totalAmount = $ds_checks_table->where('done', 'check');
 
-        $ds_checks_table->map(function ($item) {
-            if ($item->done === "") {
-                $item->done = false;
-            } else {
-                $item->done = true;
-            }
-
+        $ds_checks_table->transform(function ($item) {
+            $item->done = $item->done === "" ? false : true;
             return $item;
         });
 
