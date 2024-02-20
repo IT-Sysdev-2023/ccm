@@ -57,10 +57,7 @@ class DsBounceTaggingController extends Controller
         $ds_checks_table = SavedCheck::dsTaggingQuery(Auth::user()->businessunit_id)
             ->orderBy('checks.check_received', 'DESC')
             ->paginate(550);
-
-        // dd($ds_checks_table);
-        // $ds_checks_table->each(function())
-
+            
         foreach ($ds_checks_table as $value) {
 
             $type = '';
