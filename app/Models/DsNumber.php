@@ -16,7 +16,7 @@ class DsNumber extends Model
 
     public function check()
     {
-        return $this->belongsTo('App\Models\Check', 'checks_id', 'checks_id');
+        return $this->belongsTo(Checks::class, 'checks_id', 'checks_id');
     }
     public function user()
     {

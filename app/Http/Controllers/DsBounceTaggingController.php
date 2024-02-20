@@ -7,6 +7,7 @@ use App\Models\CheckHistory;
 use App\Models\Checks;
 use App\Models\DsNumber;
 use App\Models\SavedCheck;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -45,35 +46,22 @@ class DsBounceTaggingController extends Controller
     }
     public function indexDsTagging(Request $request)
     {
-        $due_dates = SavedCheck::join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->where('check_date', '=', date('Y-m-d'))
-            ->where('new_saved_checks.status', '')
-            ->where('checks.businessunit_id', Auth::user()->businessunit_id)
-            ->whereNotExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('new_ds_checks')
-                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
-            })
+        $due_dates = SavedCheck::dsTaggingQuery($request->user()->businessunit_id)
+            ->whereDate('checks.check_date', today())
             ->count();
 
-        $ds_checks_table = DB::table('new_saved_checks')
-            ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->where('new_saved_checks.status', '')
-            ->where('checks.businessunit_id', Auth::user()->businessunit_id)
+        $ds_checks_table = SavedCheck::dsTaggingQuery(Auth::user()->businessunit_id)
             ->orderBy('checks.check_received', 'DESC')
-            ->whereNotExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('new_ds_checks')
-                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
-            })->paginate(550);
+            ->paginate(550);
 
+        // $ds_checks_table = SavedCheck::dsTaggingQuery(Auth::user()->businessunit_id)
+        //     ->orderBy('checks.check_received', 'DESC')
+        //     ->whereNotExists(function ($query) {
+        //         $query->select(DB::raw(1))
+        //             ->from('new_ds_checks')
+        //             ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+        //     })->paginate(550);
 
-
-        // dump($ds_checks_table->pluck('check_date'));
-
-        // dd(today());
         foreach ($ds_checks_table as $value) {
 
             $type = '';
@@ -86,7 +74,7 @@ class DsBounceTaggingController extends Controller
             $value->check_date = date('F j, Y', strtotime($value->check_date));
             $value->check_amount = number_format($value->check_amount, 2);
             $value->type = $type;
-            
+
             $columns = [
                 [
                     'title' => 'Checkreceived',

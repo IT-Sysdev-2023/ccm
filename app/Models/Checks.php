@@ -54,8 +54,8 @@ class Checks extends Model
     {
         return $this->belongsTo('App\Models\Check_replacement', 'checks_id', 'checks_id');
     }
-    public function DS_checks()
+    public function ds_checks()
     {
-        return $this->belongsTo('App\Models\Ds_number', 'checks_id', 'checks_id');
+        return $this->belongsTo(DsNumber::class, 'checks_id', 'checks_id');
     }
 }
