@@ -19,7 +19,8 @@ use Inertia\Inertia;
 
 class DsBounceTaggingController extends Controller
 {
-    public function __construct(public Columns $columns){
+    public function __construct(public Columns $columns)
+    {
 
     }
     //
@@ -29,24 +30,24 @@ class DsBounceTaggingController extends Controller
     }
     public function updateSwitch(Request $request)
     {
+        dd($request->all());
+        // SavedCheck::where('checks_id', $request->id)
+        //     ->update([
+        //         'done' => $request->isCheck ? "check" : ""
+        //     ]);
 
-        SavedCheck::where('checks_id', $request->id)
-            ->update([
-                'done' => $request->isCheck ? "check" : ""
-            ]);
+        // $amount = $request->oldAmount;
+        // $count = $request->oldCount;
 
-        $amount = $request->oldAmount;
-        $count = $request->oldCount;
+        // if ($request->isCheck) {
+        //     $count++;
+        //     $amount += (float) str_replace(',', '', $request->checkAmount);
+        // } else {
+        //     $count--;
+        //     $amount -= (float) str_replace(',', '', $request->checkAmount);
+        // }
 
-        if ($request->isCheck) {
-            $count++;
-            $amount += (float) str_replace(',', '', $request->checkAmount);
-        } else {
-            $count--;
-            $amount -= (float) str_replace(',', '', $request->checkAmount);
-        }
-
-        return response()->json(['newAmount' => $amount, 'newCount' => $count]);
+        // return response()->json(['newAmount' => $amount, 'newCount' => $count]);
     }
     public function indexDsTagging(Request $request)
     {
@@ -56,44 +57,33 @@ class DsBounceTaggingController extends Controller
 
         $ds_checks_table = SavedCheck::dsTaggingQuery(Auth::user()->businessunit_id)
             ->orderBy('checks.check_received', 'DESC')
-            ->paginate(550);
-            
-        foreach ($ds_checks_table as $value) {
+            ->paginate(10);
+
+        $ds_checks_table->transform(function ($value) {
 
             $type = '';
+            Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? $type = 'DATED' : $type = 'POST-DATED';
+            $value->type = $type;
 
-            if (Date::parse($value->check_date)->lessThanOrEqualTo(today())) {
-                $type = 'DATED';
-            } else {
-                $type = 'POST-DATED';
-            }
-
+            $value->done = $value->done === "" ? false : true;
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             $value->check_amount = number_format($value->check_amount, 2);
-            $value->type = $type;
-        }
 
-    
-        $totalAmount = $ds_checks_table->where('done', 'check');
-
-        $ds_checks_table->transform(function ($item) {
-            $item->done = $item->done === "" ? false : true;
-            return $item;
+            return $value;
         });
+
+        $getAmount = $ds_checks_table->where('done', 'check');
+        $totalAmountActive = number_format($getAmount->sum(fn($item) => (float) str_replace(',', '', $item->check_amount)), 2);
 
         return Inertia::render('Ds&BounceTagging/DsTagging', [
             'due_dates' => $due_dates,
             'total' => [
-                'totalSum' => $totalAmount->sum(function ($item) {
-                    return (float) str_replace(',', '', $item->check_amount);
-                }),
-                'count' => $totalAmount->count()
-
+                'totalSum' => $totalAmountActive,
+                'count' => $getAmount->count()
             ],
             'ds_c_table' => $ds_checks_table,
             'columns' => $this->columns->columns_ds_tagging,
-            'type' => $type,
             'pagination' => [
                 'current' => $ds_checks_table->currentPage(),
                 'total' => $ds_checks_table->total(),
