@@ -25,6 +25,7 @@ const indicator = h(LoadingOutlined, {
     },
     spin: true,
 });
+const colors = 'red';
 </script>
 
 <template>
@@ -112,7 +113,8 @@ const indicator = h(LoadingOutlined, {
                     </div>
                 </div>
             </div>
-            <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details" @ok="handleOk">
+            <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details" @ok="handleOk"
+                :ok-button-props="{ hidden: true }" :cancel-button-props="{ hidden: true }" :footer="null">
                 <table class="min-w-full divide-y divide-gray-200">
 
                     <tbody>
@@ -205,12 +207,16 @@ const indicator = h(LoadingOutlined, {
                 </table>
             </a-modal>
 
-            <a-modal v-model:open="tagAsBounced" title="Tag as Bounce" :ok-button-props="{ hidden: true }"
-                :cancel-button-props="{ hidden: true }">
-                <a-date-picker @change="onDateChangeReturn" v-model:value="returnDate"
-                    style="width: 63%; margin-right: 5px;" class="mt-3" />
-                <a-button style="width: 35%; background: #b5fcb2d0;" v-on:click="continueToTagg">Continue
-                    tagging?</a-button>
+            <a-modal class="mb-5" v-model:open="tagAsBounced" title="Tag as Bounce" :ok-button-props="false"
+                :cancel-button-props="{ hidden: true }" :footer="null">
+                <div class="mb-4">
+                    <a-tooltip :color="colors" :open="showAtootltip" title="Return Date is required"> <a-date-picker
+                            @change="onDateChangeReturn" v-model:value="returnDate" style="width: 63%; margin-right: 5px;"
+                            class="mt-3" /></a-tooltip>
+                    <a-button :loading="isLoadingbutton" style="width: 35%; background: #b5fcb2d0;"
+                        v-on:click="continueToTagg">Continue
+                        tagging?</a-button>
+                </div>
             </a-modal>
         </div>
     </TreasuryLayout>
@@ -234,6 +240,8 @@ export default {
             tagAsBounced: false,
             returnDate: dayjs(),
             checksId: null,
+            isLoadingbutton: false,
+            showAtootltip: false,
             query: {
                 search: '',
             },
@@ -406,16 +414,26 @@ export default {
             this.tagAsBounced = true;
         },
         continueToTagg() {
-            axios.post(route('tag_check_bounce'), {
-                date: this.returnDate.format('YYYY-MM-DD'),
-                check_id: this.checksId
-            }).then(response => {
-                message.success('Successfully tag as bounce');
-                this.tagAsBounced = false;
-                this.returnDate = dayjs();
-            }).catch(error => {
-                // Handle error if needed
-            });
+            this.isLoadingbutton = true;
+            if (!this.returnDate) {
+                setTimeout(() => {
+                    this.isLoadingbutton = false;
+                    this.showAtootltip = true
+                }, 700);
+            } else {
+                this.$inertia.post(route('tag_check_bounce'), {
+                    date: this.returnDate.format('YYYY-MM-DD'),
+                    check_id: this.checksId
+                }, {
+                    onFinish: () => {
+                        setTimeout(() => {
+                            this.tagAsBounced = false;
+                            this.isLoadingbutton = false;
+                        }, 700);
+                    }
+                });
+            }
+
         }
 
 
@@ -423,6 +441,7 @@ export default {
 
     mounted() {
 
+        this.getBounceTagging();
     }
 };
 </script>

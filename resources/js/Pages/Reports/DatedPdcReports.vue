@@ -341,32 +341,28 @@ export default {
         },
 
         generateReport() {
+
             this.loadingGenerate = true;
             const params = {
-                dt_from: this.dateRange[0].toISOString(),
-                dt_to: this.dateRange[1].toISOString(),
+                dt_from: this.dateRange && this.dateRange[0] ? this.dateRange[0].toISOString() : '',
+                dt_to: this.dateRange && this.dateRange[1] ? this.dateRange[1].toISOString() : '',
                 bu: this.bunitCode,
                 ch_type: this.pdcdatedChecks,
                 repporttype: this.repportType,
             }
 
             const urlWithParams = '/generate_reps_to_excel?' + new URLSearchParams(params).toString();
-
-
             window.location.href = urlWithParams;
 
-            axios.get(urlWithParams)
-                .then(response => {
-                    message.success('Successfully Generating the excel file');
+            this.$inertia.get(urlWithParams, {
+                onFinish: () => {
+                    message.success('Successfully Generated excel file');
                     this.loadingGenerate = false;
-
-                })
-                .catch(error => {
-                    message.error('Oppss! Something went wrong');
-                });
-
+                }
+            })
 
         }
+
 
     },
 
@@ -374,42 +370,3 @@ export default {
 };
 </script>
 
-<!-- id": 28
-      +"checks_id": 15998
-      +"check_type": "POST DATED"
-      +"remarks": null
-      +"status": "REDEEM"
-      +"ds_status": ""
-      +"receive_status": ""
-      +"done": ""
-      +"user": "28"
-      +"date_time": "2019-06-11"
-      +"checksreceivingtransaction_id": 0
-      +"customer_id": 8745
-      +"businessunit_id": 2
-      +"department_from": 47
-      +"leasing_docno": null
-      +"check_bounced_id": 0
-      +"check_no": "0001791"
-      +"check_class": "PERSONAL"
-      +"check_category": "LOCAL"
-      +"check_expiry": null
-      +"check_date": "2019-07-13"
-      +"check_received": "2019-06-10"
-      +"account_no": "05801-000050-2"
-      +"account_name": "NO ACCOUNT NAME"
-      +"bank_id": 7880
-      +"check_amount": "120000.00"
-      +"cash": "120000.00"
-      +"currency_id": 1
-      +"approving_officer": "4A"
-      +"check_status": "CASH"
-      +"date_deposit": null
-      +"batch_date": null
-      +"is_exist": 0
-      +"is_manual_entry": 0
-      +"deleted_at": null
-      +"cus_code": 10008659 -->
-      <!-- +"fullname": "SALOME A. VITORILLO" hello world . com how are you today i will make you the best ion of the al little brown
-      fox jumps in the tree and he was so fast that the rabbit couldnt be the on who are to make the best out of it and he will be the best if the 
-      people is the best if the giant not and the coconut nut hi hello where and the she was where who was when  -->
