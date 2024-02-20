@@ -167,6 +167,7 @@ class UserController extends Controller
 
     public function exportExcel()
     {
+        // dd(1);
         $users = User::join('company', 'company.company_id', '=', 'users.company_id')
             ->join('department', 'department.department_id', '=', 'users.department_id')
             ->join('businessunit', 'businessunit.businessunit_id', '=', 'users.businessunit_id')

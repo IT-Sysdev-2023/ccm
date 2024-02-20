@@ -74,6 +74,8 @@ class DsBounceTaggingController extends Controller
         // dump($ds_checks_table->pluck('check_date'));
 
         // dd(today());
+        $columns = [];
+        $type = '';
         foreach ($ds_checks_table as $value) {
 
             $type = '';
@@ -86,6 +88,7 @@ class DsBounceTaggingController extends Controller
             $value->check_date = date('F j, Y', strtotime($value->check_date));
             $value->check_amount = number_format($value->check_amount, 2);
             $value->type = $type;
+
             $columns = [
                 [
                     'title' => 'Checkreceived',
@@ -242,6 +245,10 @@ class DsBounceTaggingController extends Controller
 
     public function submiCheckDs(Request $request)
     {
+        $request->validate([
+            'dsNo' => 'required',
+            'dateDeposit' => 'required',
+        ]);
         foreach ($request->selected as $check) {
             DB::transaction(function () use ($check, $request) {
                 SavedCheck::where('checks_id', $check['checks_id'])->update(['ds_status' => 'remitted']);

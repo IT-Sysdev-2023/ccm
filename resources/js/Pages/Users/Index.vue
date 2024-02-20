@@ -263,7 +263,7 @@ const handleOpen = val => {
                                         <SmileOutlined />
                                     </template>
                                     <template #extra>
-                                        <a-button v-on:click="generateButtonExcel">
+                                        <a-button type="primary" :loading="isloading" v-on:click="generateButtonExcel">
                                             click here to generate data in the table
                                         </a-button>
                                     </template>
@@ -271,23 +271,6 @@ const handleOpen = val => {
                             </div>
                         </a-tab-pane>
                     </a-tabs>
-                    <!-- <a-tooltip placement="top">
-                        <template #title>
-                            <span>Add Users?</span>
-                        </template>
-                        <a-button class="mx-1" shape="square" ref="ref2" v-on:click="createuserModal">
-                            Add
-                        </a-button>
-                    </a-tooltip>
-                    <a-tooltip placement="top">
-                        <template #title>
-                            <span>Generate an excel</span>
-                        </template>
-                        <a-button class="mx-1" shape="square" ref="ref3" v-on:click="generateButtonExcel">
-                            Generate
-                        </a-button>
-                    </a-tooltip>
- -->
 
                 </div>
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -305,7 +288,7 @@ const handleOpen = val => {
 
 
             <a-modal v-model:open="openModal" width="1000px" title="Edit User" :ok-button-props="{ hidden: true }"
-                :cancel-button-props="{ hidden: true }">
+                :cancel-button-props="{ hidden: true }" :footer="null">
                 <a-form @submit.prevent="editFormSubmit">
                     <div class="flex">
                         <p class="mt-3">
@@ -395,9 +378,8 @@ const handleOpen = val => {
                         }}</a-select-option>
                     </a-select>
 
-                    <div class="flex">
-                        <button class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded mb-0 mt-4 ml-auto"
-                            type="submit">
+                    <div class="flex mt-5" style="display: flex; justify-content: center;">
+                        <button class="btn-submit mt-5" type="submit" style="width: 400px;">
                             Submit
                         </button>
                     </div>
@@ -696,7 +678,17 @@ export default {
         },
 
         generateButtonExcel() {
-            window.location.href = '/export-excel/users';
+            this.isloading = true;
+            setTimeout(() => {
+                try {
+                    window.location.href = '/export-excel/users';
+                } catch {
+
+                } finally {
+                    this.isloading = false;
+                }
+            }, 2500);
+
         },
         resignReactive(data) {
             if (data.user_status === 'active') {

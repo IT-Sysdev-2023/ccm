@@ -104,10 +104,10 @@ class ReportController extends Controller
             '1' => $q->where('check_date', '>', DB::raw('check_received'))
         };
 
-        if ($request->dt_from !== null && $request->dt_to !== null) {
-            $q->whereBetween('check_received', [$request->dt_from, $request->dt_to]);
+        if (!$request->dt_from && !$request->dt_to) {
+            $data = $q;
         } else {
-            $data = $q->paginate(20)->withQueryString();
+            $q->whereBetween('check_received', [$request->dt_from, $request->dt_to]);
         }
 
         $q = match ($request->repporttype) {
@@ -194,25 +194,27 @@ class ReportController extends Controller
         } else if ($request->ch_type === '2' && $request->repporttype === '2') {
             $h_type = 'DEPOSITED DATED CHECKS';
             $title = 'DEPOSITEDDATEDCHECKS';
-        } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '1' && $request->repporttype === 0) {
+        } elseif (!$request->dt_from && !$request->dt_to && $request->ch_type === '1' && $request->repporttype === 0) {
             $h_type = 'ALL DATED CHECKS';
             $title = 'AllDATEDCHECKS';
-        } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '2' && $request->repporttype === 0) {
+        } else if (!$request->dt_from && !$request->dt_to && $request->ch_type === '2' && $request->repporttype === 0) {
             $h_type = 'ALL PENDING CHECKS';
             $title = 'ALLPDC';
-        } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '1' && $request->repporttype === '1') {
+        } else if (!$request->dt_from && !$request->dt_to && $request->ch_type === '1' && $request->repporttype === '1') {
             $h_type = 'PENDING PDC';
             $title = 'PENDINGPDC';
-        } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '1' && $request->repporttype === '2') {
+        } else if (!$request->dt_from && !$request->dt_to && $request->ch_type === '1' && $request->repporttype === '2') {
             $h_type = 'PENDING DATED CHECKS';
             $title = 'PENDINGDATEDCHECKS';
-        } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '2' && $request->repporttype === '1') {
+        } else if (!$request->dt_from && !$request->dt_to && $request->ch_type === '2' && $request->repporttype === '1') {
             $h_type = 'DEPOSITED DATED CHECKS';
             $title = 'DEPOSITEDDATEDCHECKS';
-        } else if ([$request->dt_from, $request->dt_to] === null && $request->ch_type === '2' && $request->repporttype === '2') {
+        } else if (!$request->dt_from && !$request->dt_to && $request->ch_type === '2' && $request->repporttype === '2') {
             $h_type = 'PENDING DATED CHECKS';
-            $title = 'DEPOSITEDDATEDCHECKS';
+            $title = 'PENDINGDATEDCHECKS';
         }
+
+
 
         if ($request->ch_type === '1') {
             $spreadsheet->getActiveSheet()->getStyle('A5:P5')->applyFromArray([
@@ -392,11 +394,19 @@ class ReportController extends Controller
             $row++;
         }
 
-        $dt_to = Carbon::parse($request->dt_to);
-        $dt_from = Carbon::parse($request->dt_from);
+        // dd($request->dt_from, $request->dt_to);
 
-        $dt_to_f = $dt_to->format('M d, Y');
-        $dt_from_f = $dt_from->format('M d, Y');
+        if (!$request->dt_from && !$request->dt_to) {
+            // dd(1);
+        } else {
+            $dt_to = Carbon::parse($request->dt_to);
+            $dt_from = Carbon::parse($request->dt_from);
+            $dt_to_f = $dt_to->format('M d, Y');
+            $dt_from_f = $dt_from->format('M d, Y');
+
+        }
+
+
 
 
 
@@ -404,14 +414,25 @@ class ReportController extends Controller
         $spreadsheet->getActiveSheet()->fromArray($headerRow, null, 'A5');
         $spreadsheet->getActiveSheet()->getCell('E3')->setValue('BUSINESS UNIT : ' . ' ' . $bname->bname);
         $spreadsheet->getActiveSheet()->getCell('E1')->setValue('REPORT TYPE : ' . ' ' . $h_type);
-        $spreadsheet->getActiveSheet()->getCell('E2')->setValue('FROM: ' . strtoupper(date('F-d-Y', strtotime($request->dt_from))) . '  TO: ' . strtoupper(date('F-d-Y', strtotime($request->dt_to))) . ' AS OF:  ' . strtoupper(date('F-d-Y')));
+        if (!$request->dt_from && !$request->dt_to) {
+            $spreadsheet->getActiveSheet()->getCell('E2')->setValue('AS OF:  ' . strtoupper(date('F-d-Y')));
+        } else {
+            $spreadsheet->getActiveSheet()->getCell('E2')->setValue('FROM: ' . strtoupper(date('F-d-Y', strtotime($request->dt_from))) . '  TO: ' . strtoupper(date('F-d-Y', strtotime($request->dt_to))) . ' AS OF:  ' . strtoupper(date('F-d-Y')));
+        }
+
 
 
         $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
         $writer = new Xlsx($spreadsheet);
         $writer->save($tempFilePath);
 
-        $filename = $bname->bname . $title . ' from ' . $dt_from_f . ' to ' . $dt_to_f . ' as of ' . now()->format('M, d Y') . '.xlsx';
+
+        if (!$request->dt_from && !$request->dt_to) {
+            $filename = $bname->bname . $title . '-All -' . $title . now()->format('M, d Y') . '.xlsx';
+        } else {
+            $filename = $bname->bname . $title . ' from ' . $dt_from_f . ' to ' . $dt_to_f . ' as of ' . now()->format('M, d Y') . '.xlsx';
+
+        }
 
         // Download the file
         return response()->download($tempFilePath, $filename)->deleteFileAfterSend(true);
