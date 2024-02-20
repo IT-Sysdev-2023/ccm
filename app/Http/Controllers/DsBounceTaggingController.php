@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\Columns;
 use App\Models\BouncedCheck;
 use App\Models\CheckHistory;
 use App\Models\Checks;
@@ -18,6 +19,9 @@ use Inertia\Inertia;
 
 class DsBounceTaggingController extends Controller
 {
+    public function __construct(public Columns $columns){
+
+    }
     //
     public function indexBounceTagging()
     {
@@ -54,80 +58,26 @@ class DsBounceTaggingController extends Controller
             ->orderBy('checks.check_received', 'DESC')
             ->paginate(550);
 
-        // $ds_checks_table = SavedCheck::dsTaggingQuery(Auth::user()->businessunit_id)
-        //     ->orderBy('checks.check_received', 'DESC')
-        //     ->whereNotExists(function ($query) {
-        //         $query->select(DB::raw(1))
-        //             ->from('new_ds_checks')
-        //             ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
-        //     })->paginate(550);
+        // dd($ds_checks_table);
+        // $ds_checks_table->each(function())
 
         foreach ($ds_checks_table as $value) {
 
             $type = '';
+
             if (Date::parse($value->check_date)->lessThanOrEqualTo(today())) {
                 $type = 'DATED';
             } else {
                 $type = 'POST-DATED';
             }
-            $value->check_received = date('F j, Y', strtotime($value->check_received));
-            $value->check_date = date('F j, Y', strtotime($value->check_date));
+
+            $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
+            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             $value->check_amount = number_format($value->check_amount, 2);
             $value->type = $type;
-
-            $columns = [
-                [
-                    'title' => 'Checkreceived',
-                    'dataIndex' => 'check_received',
-                    'key' => 'check_r',
-                    'ellipsis' => true,
-                    'width' => '10%',
-                ],
-                [
-                    'title' => 'Checkdate',
-                    'dataIndex' => 'check_date',
-                    'key' => 'check_d',
-                    'ellipsis' => true,
-                    'width' => '10%',
-
-                ],
-                [
-                    'title' => 'Customer',
-                    'dataIndex' => 'fullname',
-                    'key' => 'fullname',
-                    'ellipsis' => true,
-                    'width' => '30%',
-                ],
-                [
-                    'title' => 'Check No',
-                    'dataIndex' => 'check_no',
-                    'key' => 'check_no',
-                ],
-                [
-                    'title' => 'Amount',
-                    'dataIndex' => 'check_amount',
-                    'key' => 'check_amount',
-                ],
-                [
-                    'title' => 'Type',
-                    'key' => 'type',
-                    'dataIndex' => 'type',
-                ],
-                [
-                    'title' => 'Category',
-                    'dataIndex' => 'check_category',
-                    'key' => 'c_cat',
-
-                ],
-                [
-                    'title' => 'Select',
-                    'key' => 'select',
-                    'align' => 'center',
-                ],
-            ];
-
         }
 
+    
         $totalAmount = $ds_checks_table->where('done', 'check');
 
         $ds_checks_table->transform(function ($item) {
@@ -145,7 +95,7 @@ class DsBounceTaggingController extends Controller
 
             ],
             'ds_c_table' => $ds_checks_table,
-            'columns' => $columns,
+            'columns' => $this->columns->columns_ds_tagging,
             'type' => $type,
             'pagination' => [
                 'current' => $ds_checks_table->currentPage(),
