@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ImportUpdateController;
 use App\Http\Controllers\DsBounceTaggingController;
+use App\Http\Controllers\DatedPdcChecksController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,7 +77,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/tag_check_bounce', [DsBounceTaggingController::class, 'tag_check_bounce'])->name('tag_check_bounce');
     Route::post('/submit-ds-tagging', [DsBounceTaggingController::class, 'submiCheckDs'])->name('submit.ds.tagging');
     Route::put('update-switch', [DsBounceTaggingController::class, 'updateSwitch'])->name('update.switch');
-    ;
+
+    Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_pdc_index'])->name('dated.checks');
 });
 
 require __DIR__ . '/auth.php';

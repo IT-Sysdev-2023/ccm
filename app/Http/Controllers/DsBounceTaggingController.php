@@ -61,6 +61,15 @@ class DsBounceTaggingController extends Controller
         // dd($ds_checks_table);
         // $ds_checks_table->each(function())
 
+<<<<<<< HEAD
+=======
+
+        // dump($ds_checks_table->pluck('check_date'));
+
+        // dd(today());
+        $columns = [];
+        $type = '';
+>>>>>>> kenstilllearning
         foreach ($ds_checks_table as $value) {
 
             $type = '';
@@ -75,6 +84,61 @@ class DsBounceTaggingController extends Controller
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             $value->check_amount = number_format($value->check_amount, 2);
             $value->type = $type;
+<<<<<<< HEAD
+=======
+
+            $columns = [
+                [
+                    'title' => 'Checkreceived',
+                    'dataIndex' => 'check_received',
+                    'key' => 'check_r',
+                    'ellipsis' => true,
+                    'width' => '10%',
+                ],
+                [
+                    'title' => 'Checkdate',
+                    'dataIndex' => 'check_date',
+                    'key' => 'check_d',
+                    'ellipsis' => true,
+                    'width' => '10%',
+
+                ],
+                [
+                    'title' => 'Customer',
+                    'dataIndex' => 'fullname',
+                    'key' => 'fullname',
+                    'ellipsis' => true,
+                    'width' => '30%',
+                ],
+                [
+                    'title' => 'Check No',
+                    'dataIndex' => 'check_no',
+                    'key' => 'check_no',
+                ],
+                [
+                    'title' => 'Amount',
+                    'dataIndex' => 'check_amount',
+                    'key' => 'check_amount',
+                ],
+                [
+                    'title' => 'Type',
+                    'key' => 'type',
+                    'dataIndex' => 'type',
+                ],
+                [
+                    'title' => 'Category',
+                    'dataIndex' => 'check_category',
+                    'key' => 'c_cat',
+
+                ],
+                [
+                    'title' => 'Select',
+                    'key' => 'select',
+                    'align' => 'center',
+                ],
+            ];
+
+>>>>>>> kenstilllearning
         }
 
     
@@ -176,6 +240,10 @@ class DsBounceTaggingController extends Controller
 
     public function submiCheckDs(Request $request)
     {
+        $request->validate([
+            'dsNo' => 'required',
+            'dateDeposit' => 'required',
+        ]);
         foreach ($request->selected as $check) {
             DB::transaction(function () use ($check, $request) {
                 SavedCheck::where('checks_id', $check['checks_id'])->update(['ds_status' => 'remitted']);

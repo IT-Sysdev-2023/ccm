@@ -2,6 +2,7 @@
 import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { reactive } from 'vue';
+const colors = 'red';
 </script>
 
 <template>
@@ -61,19 +62,25 @@ import { reactive } from 'vue';
                         <a-card style="width: 100%;" class="mb-5;">
                             <a-row :gutter="[16, 16]" class="mt-2">
                                 <a-col :span="8">
-                                    <a-input placeholder="Ds Number" v-model:value="dsNo">
-                                        <template #suffix>
-                                            <a-tooltip title="Please Enter a Ds Number">
-                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                                            </a-tooltip>
-                                        </template>
-                                    </a-input>
+                                    <a-tooltip :color="colors" :open="isTooltipVisible" title="Ds Number is required">
+                                        <a-input placeholder="Ds Number" v-model:value="dsNo">
+                                            <template #suffix>
+                                                <a-tooltip title="Please Enter a Ds Number">
+                                                    <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                                </a-tooltip>
+                                            </template>
+                                        </a-input>
+                                    </a-tooltip>
                                 </a-col>
                                 <a-col :span="8">
-                                    <a-date-picker v-model:value="dateDeposit" />
+                                    <a-tooltip :color="colors" :open="isTooltipVisible" title="Return Date is required ">
+                                        <a-date-picker v-model:value="dateDeposit" />
+                                    </a-tooltip>
                                 </a-col>
                                 <a-col :span="8">
-                                    <a-button @click="submitToConButton()">submit ds number</a-button>
+                                    <a-button :loading="isLoadingbutton"
+                                        style="background-color: aquamarine; color: rgb(92, 92, 92);" ghost
+                                        @click="submitToConButton()">submit ds number</a-button>
                                 </a-col>
                             </a-row>
                         </a-card>
@@ -122,8 +129,10 @@ export default {
             totalAmount: 0,
             dataAmount: [],
             defaultTotal: this.total,
-            dateDeposit: dayjs(),
+            dateDeposit: '',
             dsNo: '',
+            isTooltipVisible: false,
+            isLoadingbutton: false
 
         };
     },
@@ -155,26 +164,44 @@ export default {
                 console.error('Error fetching data:', error);
             }
         },
+
+
         async submitToConButton() {
-
-            // console.log(this.switchValues);
+            this.isLoadingbutton = true;
             const selected = this.ds_c_table.data
-            .filter(value => value.done)
-            
-            // console.log(selected);
-
+                .filter(value => value.done)
             this.$inertia.post(route('submit.ds.tagging'),
-                { selected, dsNo: this.dsNo, dateDeposit: this.dateDeposit.format('YYYY-MM-DD') },
+                { selected, dsNo: this.dsNo, dateDeposit: dayjs(this.dateDeposit).format('YYYY-MM-DD') },
                 {
                     onFinish: () => {
+                        if (!this.ds_c_table.data.some(value => value.done === true)) {
+                            message.error({
+                                content: 'Oppss Select Checks First!',
+                                duration: 5,
+                            });
+                            this.isTooltipVisible = true;
+                            this.isLoadingbutton = false;
+                            // return false;
+                        } else if (this.dsNo && this.dateDeposit) {
+                            this.isTooltipVisible = true;
+                        } else {
+                            this.isLoadingbutton = false;
+                            this.isTooltipVisible = false;
+                        }
+
                         this.defaultTotal.count = 0;
                         this.defaultTotal.totalSum = 0;
+
+                        this.isLoadingbutton = false;
+                        this.dsNo = '';
+                        // this.dateDeposit = dayjs();
                     }
                 });
-
-
         },
+
+
         async handleSwitchChange(data) {
+
             const res = await axios.put(route('update.switch'), { id: data.checks_id, isCheck: data.done, checkAmount: data.check_amount, oldAmount: this.total.totalSum, oldCount: this.defaultTotal.count });
 
             this.defaultTotal.totalSum = res.data.newAmount;
@@ -183,30 +210,22 @@ export default {
             const key = 'updatable';
 
             if (data.done) {
-                message.loading({
-                    content: 'Loading...',
-                    key,
-                });
                 setTimeout(() => {
                     message.success({
                         content: 'Checked Successfully!',
                         key,
                         duration: 2,
                     });
-                }, 1000);
+                }, 100);
 
             } else {
-                message.loading({
-                    content: 'Loading...',
-                    key,
-                });
                 setTimeout(() => {
                     message.warning({
                         content: 'Uncheck Successfully!',
                         key,
                         duration: 2,
                     });
-                }, 1000);
+                }, 100);
             }
 
 
