@@ -3,17 +3,25 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Helper\Columns;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 
 class DatedPdcChecksController extends Controller
 {
-    public function dated_pdc_index(Request $request)
+
+    public function __construct(public Columns $columns)
+    {
+
+    }
+    public function pdc_index(Request $request)
     {
 
         $data = collect(DB::table('new_saved_checks')
             ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->join('department', 'checks.department_from', '=', 'department.department_id')
             ->where('check_date', '>', DB::raw('check_received'))
             ->where('new_saved_checks.status', '')
             ->whereNotExists(function ($query) {
@@ -24,55 +32,11 @@ class DatedPdcChecksController extends Controller
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->get());
 
-        $columns = [
-            [
-                'title' => 'Customer Name',
-                'dataIndex' => 'fullname',
-                'key' => 'check_r',
-                'ellipsis' => true,
-                'width' => '25%',
-            ],
-            [
-                'title' => 'Check Number',
-                'dataIndex' => 'check_no',
-                'key' => 'check_r',
-                'ellipsis' => true,
-                'width' => '15%',
-            ],
-            [
-                'title' => 'Check Date',
-                'dataIndex' => 'check_date',
-                'key' => 'check_r',
-                'ellipsis' => true,
-                'width' => '15%',
-            ],
-            [
-                'title' => 'Amount',
-                'dataIndex' => 'check_amount',
-                'key' => 'check_r',
-                'ellipsis' => true,
-                'width' => '15%',
-            ],
-            [
-                'title' => 'Amount',
-                'dataIndex' => 'check_amount',
-                'key' => 'check_r',
-                'ellipsis' => true,
-                'width' => '15%',
-            ],
-            [
-                'title' => 'Action',
-                'key' => 'action',
-                'ellipsis' => true,
-                'width' => '10%',
-                'align' => 'center',
-            ],
-        ];
+        // dd($data);
 
-
-        return Inertia::render('Dated&PdcChecks/DatedChecks', [
+        return Inertia::render('Dated&PdcChecks/PDCChecks', [
             'data' => $data,
-            'columns' => $columns,
+            'columns' => $this->columns->dated_check_columns,
         ]);
     }
 }

@@ -78,7 +78,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/submit-ds-tagging', [DsBounceTaggingController::class, 'submiCheckDs'])->name('submit.ds.tagging');
     Route::put('update-switch', [DsBounceTaggingController::class, 'updateSwitch'])->name('update.switch');
 
-    Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_pdc_index'])->name('dated.checks');
+    Route::get('pdc_checks', [DatedPdcChecksController::class, 'pdc_index'])->name('pdc.checks');
 });
 
 require __DIR__ . '/auth.php';

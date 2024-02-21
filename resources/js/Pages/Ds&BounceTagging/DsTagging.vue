@@ -62,7 +62,7 @@ const colors = 'red';
                         <a-card style="width: 100%;" class="mb-5;">
                             <a-row :gutter="[16, 16]" class="mt-2">
                                 <a-col :span="8">
-                                    <a-tooltip :color="colors" :open="isTooltipVisible" title="Ds Number is required">
+                                    <a-tooltip :color="colors" :open="isTooltipVisibleNo" title="Ds Number is required">
                                         <a-input placeholder="Ds Number" v-model:value="dsNo">
                                             <template #suffix>
                                                 <a-tooltip title="Please Enter a Ds Number">
@@ -73,7 +73,7 @@ const colors = 'red';
                                     </a-tooltip>
                                 </a-col>
                                 <a-col :span="8">
-                                    <a-tooltip :color="colors" :open="isTooltipVisible" title="Return Date is required ">
+                                    <a-tooltip :color="colors" :open="isTooltipVisibleDt" title="Return Date is required ">
                                         <a-date-picker v-model:value="dateDeposit" />
                                     </a-tooltip>
                                 </a-col>
@@ -129,9 +129,10 @@ export default {
             totalAmount: 0,
             dataAmount: [],
             defaultTotal: this.total,
-            dateDeposit: '',
+            dateDeposit: null,
             dsNo: '',
-            isTooltipVisible: false,
+            isTooltipVisibleDt: false,
+            isTooltipVisibleNo: false,
             isLoadingbutton: false
 
         };
@@ -168,35 +169,45 @@ export default {
 
         async submitToConButton() {
             this.isLoadingbutton = true;
-            const selected = this.ds_c_table.data
-                .filter(value => value.done)
-            this.$inertia.post(route('submit.ds.tagging'),
-                { selected, dsNo: this.dsNo, dateDeposit: dayjs(this.dateDeposit).format('YYYY-MM-DD') },
-                {
-                    onFinish: () => {
-                        if (!this.ds_c_table.data.some(value => value.done === true)) {
-                            message.error({
-                                content: 'Oppss Select Checks First!',
+            const selected = this.ds_c_table.data.filter(value => value.done);
+
+            if (!this.ds_c_table.data.some(value => value.done === true)) {
+                this.isLoadingbutton = false;
+                message.error({
+                    content: 'Oppss Select Checks First!',
+                    duration: 5,
+                });
+                this.isTooltipVisibleDt = true;
+                this.isTooltipVisibleNo = true;
+            } else if (this.ds_c_table.data.some(value => value.done === true) && !this.dsNo && this.dateDeposit == null) {
+                this.isLoadingbutton = false;
+                this.isTooltipVisibleDt = true;
+                this.isTooltipVisibleNo = true;
+            } else if (this.ds_c_table.data.some(value => value.done === true) && this.dsNo && this.dateDeposit == null) {
+                this.isTooltipVisibleDt = true;
+                this.isTooltipVisibleNo = false;
+                this.isLoadingbutton = false;
+            } else if (this.ds_c_table.data.some(value => value.done === true) && this.dsNo && this.dateDeposit !== null) {
+
+                this.isTooltipVisibleDt = false;
+                this.isTooltipVisibleNo = false;
+
+                this.$inertia.post(route('submit.ds.tagging'),
+                    { selected, dsNo: this.dsNo, dateDeposit: dayjs(this.dateDeposit).format('YYYY-MM-DD') },
+                    {
+                        onFinish: () => {
+                            this.isLoadingbutton = false;
+                            message.success({
+                                content: 'Successfully submitted',
                                 duration: 5,
                             });
-                            this.isTooltipVisible = true;
-                            this.isLoadingbutton = false;
-                            // return false;
-                        } else if (this.dsNo && this.dateDeposit) {
-                            this.isTooltipVisible = true;
-                        } else {
-                            this.isLoadingbutton = false;
-                            this.isTooltipVisible = false;
+                            this.dsNo = '';
+                            this.dateDeposit = null;
+
                         }
+                    });
+            }
 
-                        this.defaultTotal.count = 0;
-                        this.defaultTotal.totalSum = 0;
-
-                        this.isLoadingbutton = false;
-                        this.dsNo = '';
-                        // this.dateDeposit = dayjs();
-                    }
-                });
         },
 
 
