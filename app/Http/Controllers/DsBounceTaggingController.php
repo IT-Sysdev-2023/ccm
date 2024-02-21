@@ -46,7 +46,7 @@ class DsBounceTaggingController extends Controller
             $count--;
             $amount -= NumberHelper::float($request->checkAmount);
         }
-        
+
         return response()->json(['newAmount' => $amount, 'newCount' => $count]);
     }
     public function indexDsTagging(Request $request)
@@ -165,8 +165,9 @@ class DsBounceTaggingController extends Controller
     {
         $request->validate([
             'dsNo' => 'required',
-            'dateDeposit' => 'required',
+            'dateDeposit' => 'required|date',
         ]);
+        // dd($request->dateDeposit);
         foreach ($request->selected as $check) {
             DB::transaction(function () use ($check, $request) {
                 SavedCheck::where('checks_id', $check['checks_id'])->update(['ds_status' => 'remitted']);
