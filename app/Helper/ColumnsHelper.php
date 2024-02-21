@@ -54,13 +54,13 @@ class ColumnsHelper
             'align' => 'center',
         ],
     ];
-    public $dated_check_columns = [
+    public $pdc_check_columns = [
         [
             'title' => 'Customer Name',
             'dataIndex' => 'fullname',
             'key' => 'check_r',
             'ellipsis' => true,
-            'width' => '25%',
+            'width' => '30%',
         ],
         [
             'title' => 'Check Number',
@@ -79,6 +79,36 @@ class ColumnsHelper
         [
             'title' => 'Amount',
             'dataIndex' => 'check_amount',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
+            'ellipsis' => true,
+            'width' => '10%',
+            'align' => 'center',
+        ],
+    ];
+    public $dated_check_columns = [
+        [
+            'title' => 'Customer Name',
+            'dataIndex' => 'fullname',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '55%',
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_no',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
             'key' => 'check_r',
             'ellipsis' => true,
             'width' => '15%',
