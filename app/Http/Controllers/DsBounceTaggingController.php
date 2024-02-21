@@ -96,8 +96,7 @@ class DsBounceTaggingController extends Controller
     {
         ini_set('memory_limit', '-1');
 
-        $q = DB::table('new_ds_checks')
-            ->join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
+        $q = DsNumber::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('users', 'new_ds_checks.user', 'users.id')
             ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
@@ -115,7 +114,7 @@ class DsBounceTaggingController extends Controller
             default => $q
         };
 
-        $data = $q->paginate(20)->withQueryString();
+        $data = $q->paginate(20);
 
         return response()->json([
             'data' => $data->items(),
