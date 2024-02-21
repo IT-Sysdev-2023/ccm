@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\ColumnsHelper;
 use Illuminate\Http\Request;
-use App\Helper\Columns;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 
 class DatedPdcChecksController extends Controller
 {
 
-    public function __construct(public Columns $columns)
+    public function __construct(public ColumnsHelper $columns)
     {
 
     }
