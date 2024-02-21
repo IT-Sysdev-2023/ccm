@@ -171,15 +171,33 @@ export default {
             this.isLoadingbutton = true;
             const selected = this.ds_c_table.data.filter(value => value.done);
 
-            if (!this.ds_c_table.data.some(value => value.done === true)) {
+            if (!this.ds_c_table.data.some(value => value.done === true) && !this.dsNo && this.dateDeposit == null) {
                 this.isLoadingbutton = false;
+                this.isTooltipVisibleDt = true;
+                this.isTooltipVisibleNo = true;
                 message.error({
                     content: 'Oppss Select Checks First!',
                     duration: 5,
                 });
+            } else if (!this.ds_c_table.data.some(value => value.done === true) && this.dsNo && this.dateDeposit == null) {
+                this.isLoadingbutton = false;
                 this.isTooltipVisibleDt = true;
+                this.isTooltipVisibleNo = false;
+                message.error({
+                    content: 'Oppss Select Checks First!',
+                    duration: 5,
+                });
+            }
+            else if (!this.ds_c_table.data.some(value => value.done === true) && !this.dsNo && this.dateDeposit != null) {
+                this.isLoadingbutton = false;
+                this.isTooltipVisibleDt = false;
                 this.isTooltipVisibleNo = true;
-            } else if (this.ds_c_table.data.some(value => value.done === true) && !this.dsNo && this.dateDeposit == null) {
+                message.error({
+                    content: 'Oppss Select Checks First!',
+                    duration: 5,
+                });
+            }
+            else if (this.ds_c_table.data.some(value => value.done === true) && !this.dsNo && this.dateDeposit == null) {
                 this.isLoadingbutton = false;
                 this.isTooltipVisibleDt = true;
                 this.isTooltipVisibleNo = true;
@@ -187,6 +205,15 @@ export default {
                 this.isTooltipVisibleDt = true;
                 this.isTooltipVisibleNo = false;
                 this.isLoadingbutton = false;
+            }
+            else if (!this.ds_c_table.data.some(value => value.done === true) && this.dsNo && this.dateDeposit != null) {
+                this.isTooltipVisibleDt = false;
+                this.isTooltipVisibleNo = false;
+                this.isLoadingbutton = false;
+                message.error({
+                    content: 'Oppss Select Checks First!',
+                    duration: 5,
+                });
             } else if (this.ds_c_table.data.some(value => value.done === true) && this.dsNo && this.dateDeposit !== null) {
 
                 this.isTooltipVisibleDt = false;
