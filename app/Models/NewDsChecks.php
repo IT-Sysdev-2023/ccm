@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DsNumber extends Model
+class NewDsChecks extends Model
 {
-    use HasFactory;
+      use HasFactory;
 
     protected $table = 'new_ds_checks';
     public $timestamps = false;

@@ -7,8 +7,8 @@ use App\Helper\NumberHelper;
 use App\Models\BouncedCheck;
 use App\Models\CheckHistory;
 use App\Models\Checks;
-use App\Models\DsNumber;
-use App\Models\SavedCheck;
+use App\Models\NewDsChecks;
+use App\Models\NewSavedChecks;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -31,7 +31,7 @@ class DsBounceTaggingController extends Controller
     }
     public function updateSwitch(Request $request)
     {
-        SavedCheck::where('checks_id', $request->id)
+        NewSavedChecks::where('checks_id', $request->id)
             ->update([
                 'done' => $request->isCheck ? "check" : ""
             ]);
@@ -51,11 +51,11 @@ class DsBounceTaggingController extends Controller
     }
     public function indexDsTagging(Request $request)
     {
-        $due_dates = SavedCheck::dsTaggingQuery($request->user()->businessunit_id)
+        $due_dates = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
             ->whereDate('checks.check_date', today())
             ->count();
 
-        $ds_checks_table = SavedCheck::dsTaggingQuery(Auth::user()->businessunit_id)
+        $ds_checks_table = NewSavedChecks::dsTaggingQuery(Auth::user()->businessunit_id)
             ->orderBy('checks.check_received', 'DESC')
             ->paginate(550);
 
@@ -131,7 +131,7 @@ class DsBounceTaggingController extends Controller
     {
         Checks::where('checks_id', $request->check_id)->update(['check_status' => 'BOUNCE']);
 
-        SavedCheck::where('checks_id', $request->check_id)->update(['status' => 'BOUNCED']);
+        NewSavedChecks::where('checks_id', $request->check_id)->update(['status' => 'BOUNCED']);
 
         $checkRec = new CheckHistory();
         $bounce_checks = new BouncedCheck();
@@ -170,8 +170,8 @@ class DsBounceTaggingController extends Controller
         // dd($request->dateDeposit);
         foreach ($request->selected as $check) {
             DB::transaction(function () use ($check, $request) {
-                SavedCheck::where('checks_id', $check['checks_id'])->update(['ds_status' => 'remitted']);
-                DsNumber::create([
+                NewSavedChecks::where('checks_id', $check['checks_id'])->update(['ds_status' => 'remitted']);
+                NewDsChecks::create([
                     'checks_id' => $check['checks_id'],
                     'ds_no' => $request->dsNo,
                     'date_deposit' => $request->dateDeposit,

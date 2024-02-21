@@ -79,6 +79,7 @@ Route::middleware('auth')->group(function () {
     Route::put('update-switch', [DsBounceTaggingController::class, 'updateSwitch'])->name('update.switch');
 
     Route::get('pdc_checks', [DatedPdcChecksController::class, 'pdc_index'])->name('pdc.checks');
+    Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_index'])->name('dated.checks');
 });
 
 require __DIR__ . '/auth.php';

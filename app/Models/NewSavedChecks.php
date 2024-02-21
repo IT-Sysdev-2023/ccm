@@ -6,7 +6,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SavedCheck extends Model
+class NewSavedChecks extends Model
 {
     use HasFactory;
     protected $table = 'new_saved_checks';
@@ -22,13 +22,19 @@ class SavedCheck extends Model
             ->where('checks.businessunit_id', $id)
             ->doesntHave('dsCheck.check');
     }
+
+    public function scopeFindCheck(Builder $builder, int $id): Builder
+    {
+        return $builder->where('checks_id', $id);
+    }
+
     public function check()
     {
         return $this->hasOne(Checks::class, 'checks_id', 'checks_id');
     }
     public function dsCheck()
     {
-        return $this->hasOne(DsNumber::class, 'checks_id', 'checks_id');
+        return $this->hasOne(NewDsChecks::class, 'checks_id', 'checks_id');
     }
     public function employee()
     {

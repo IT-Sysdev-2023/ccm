@@ -56,6 +56,6 @@ class Checks extends Model
     }
     public function ds_checks()
     {
-        return $this->belongsTo(DsNumber::class, 'checks_id', 'checks_id');
+        return $this->belongsTo(NewDsChecks::class, 'checks_id', 'checks_id');
     }
 }
