@@ -57,9 +57,9 @@ class DsBounceTaggingController extends Controller
 
         $ds_checks_table = SavedCheck::dsTaggingQuery(Auth::user()->businessunit_id)
             ->orderBy('checks.check_received', 'DESC')
-            ->paginate(10);
+            ->paginate(550);
 
-        $ds_checks_table->map(function ($value) {
+        $ds_checks_table->transform(function ($value) {
 
             $type = '';
             Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? $type = 'DATED' : $type = 'POST-DATED';
