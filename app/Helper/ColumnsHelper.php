@@ -2,7 +2,8 @@
 
 namespace App\Helper;
 
-class Columns{
+class ColumnsHelper
+{
     public $columns_ds_tagging = [
         [
             'title' => 'Checkreceived',

@@ -44,7 +44,7 @@ const colors = 'red';
                                 <a-badge count="0" style="display: flex; justify-content: center;">
                                     <a-avatar shape="square" size="large" src="../icons/calculator.png" />
                                 </a-badge>
-                                <p class="ml-10 font-bold">₱ {{ defaultTotal.totalSum }}</p>
+                                <p class="ml-10 font-bold">₱ {{ defaultTotal.totalSum.toLocaleString() }}</p>
                             </div>
                         </a-card>
                     </a-col>
@@ -201,7 +201,7 @@ export default {
 
 
         async handleSwitchChange(data) {
-
+            // console.log(this.total.totalSum);
             const res = await axios.put(route('update.switch'), { id: data.checks_id, isCheck: data.done, checkAmount: data.check_amount, oldAmount: this.total.totalSum, oldCount: this.defaultTotal.count });
 
             this.defaultTotal.totalSum = res.data.newAmount;
