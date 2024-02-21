@@ -10,7 +10,6 @@ class NewSavedChecks extends Model
 {
     use HasFactory;
     protected $table = 'new_saved_checks';
-    protected $primaryKey = 'id';
     public $timestamps = false;
     protected $guarded = [];
 
