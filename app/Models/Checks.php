@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,6 +16,11 @@ class Checks extends Model
     public $timestamps = false;
 
     protected $dates = ['deleted_at'];
+
+    public function scopeFindChecks(Builder $builder, $id): Builder
+    {
+        return $builder->where('checks_id', $id);
+    }
 
     public function checkreceived()
     {
@@ -56,6 +62,6 @@ class Checks extends Model
     }
     public function dsChecks()
     {
-        return $this->belongsTo(NewDsChecks::class, 'checks_id', 'checks_id');
+        return $this->belongsTo(NewDsChecks::class, 'checks_id');
     }
 }

@@ -96,7 +96,7 @@ class DsBounceTaggingController extends Controller
     {
         ini_set('memory_limit', '-1');
 
-        $q = DsNumber::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
+        $q = NewDsChecks::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('users', 'new_ds_checks.user', 'users.id')
             ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
@@ -128,30 +128,28 @@ class DsBounceTaggingController extends Controller
 
     public function tag_check_bounce(Request $request)
     {
-        Checks::where('checks_id', $request->check_id)->update(['check_status' => 'BOUNCE']);
 
-        NewSavedChecks::where('checks_id', $request->check_id)->update(['status' => 'BOUNCED']);
+        DB::transaction(function () use ($request){
 
-        $checkRec = new CheckHistory();
-        $bounce_checks = new BouncedCheck();
+            Checks::findChecks($request->check_id)->update(['check_status' => 'BOUNCE']);
+            NewSavedChecks::findChecks($request->check_id)->update(['status' => 'BOUNCED']);
 
-        $checkhist = [
-            'checks_id' => $request->check_id,
-            'status' => 'bounce',
-            'date_time' => $request->date,
-            'user' => Auth::user()->id
-        ];
+            CheckHistory::create( [
+                'checks_id' => $request->check_id,
+                'status' => 'bounce',
+                'date_time' => $request->date,
+                'user' => Auth::user()->id
+            ]);
+    
+            BouncedCheck::create([
+                'checks_id' => $request->check_id,
+                'check_type' => 'bounce',
+                'status' => '',
+                'date_time' => $request->date,
+                'user' => Auth::user()->id
+            ]);
 
-        $checkhist1 = [
-            'checks_id' => $request->check_id,
-            'check_type' => 'bounce',
-            'status' => '',
-            'date_time' => $request->date,
-            'user' => Auth::user()->id
-        ];
-
-        $checkRec->create($checkhist);
-        $bounce_checks->create($checkhist1);
+        });
 
     }
 
@@ -166,21 +164,25 @@ class DsBounceTaggingController extends Controller
             'dsNo' => 'required',
             'dateDeposit' => 'required|date',
         ]);
-        // dd($request->dateDeposit);
-        foreach ($request->selected as $check) {
+
+        collect($request->selected)->each(function($check) use ($request) {
+
             DB::transaction(function () use ($check, $request) {
-                NewSavedChecks::where('checks_id', $check['checks_id'])->update(['ds_status' => 'remitted']);
+                
+                NewSavedChecks::findChecks($check['checks_id'])->update(['ds_status' => 'remitted']);
+                
                 NewDsChecks::create([
                     'checks_id' => $check['checks_id'],
                     'ds_no' => $request->dsNo,
                     'date_deposit' => $request->dateDeposit,
                     'user' => $request->user()->id,
                     'status' => '',
-                    'date_time' => today()
+                    'date_time' => now()
                 ]);
 
             });
-        }
+        });
+
         return redirect()->back();
     }
 

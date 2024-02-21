@@ -23,7 +23,7 @@ class NewSavedChecks extends Model
             ->doesntHave('dsCheck.check');
     }
 
-    public function scopeFindCheck(Builder $builder, int $id): Builder
+    public function scopeFindChecks(Builder $builder, int $id): Builder
     {
         return $builder->where('checks_id', $id);
     }
