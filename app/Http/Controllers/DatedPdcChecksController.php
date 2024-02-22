@@ -23,6 +23,7 @@ class DatedPdcChecksController extends Controller
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
             ->join('department', 'checks.department_from', '=', 'department.department_id')
             ->where('check_date', '>', DB::raw('check_received'))
+            ->where('new_saved_checks.status', "")
             ->doesntHave('dsCheck.check')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->get();
@@ -37,6 +38,7 @@ class DatedPdcChecksController extends Controller
 
         $data = NewSavedChecks::joinChecksCustomer()
             ->where('check_date', '<=', DB::raw('check_received'))
+            ->where('new_saved_checks.status', "")
             ->doesntHave('dsCheck.check')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->get();

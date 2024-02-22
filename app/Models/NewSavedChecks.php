@@ -29,8 +29,7 @@ class NewSavedChecks extends Model
 
     public function scopeJoinChecksCustomer(Builder $builder): Builder{
         return $builder->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
-                        ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-                        ->where('new_saved_checks.status', "");
+                        ->join('customers', 'checks.customer_id', '=', 'customers.customer_id');
     }
 
     public function check()
