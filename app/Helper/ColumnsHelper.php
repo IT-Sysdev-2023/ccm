@@ -128,5 +128,50 @@ class ColumnsHelper
             'align' => 'center',
         ],
     ];
+    public $check_for_clearing_columns = [
+
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'fullname',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '55%',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_no',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Payee / Endorser',
+            'dataIndex' => 'fullname',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_date',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Details',
+            'key' => 'details',
+            'ellipsis' => true,
+            'width' => '10%',
+            'align' => 'center',
+        ],
+    ];
 
 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ImportUpdateController;
 use App\Http\Controllers\DsBounceTaggingController;
 use App\Http\Controllers\DatedPdcChecksController;
+use App\Http\Controllers\CheckReceivingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +81,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('pdc_checks', [DatedPdcChecksController::class, 'pdc_index'])->name('pdc.checks');
     Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_index'])->name('dated.checks');
+
+    Route::get('check_for_clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
 });
 
 require __DIR__ . '/auth.php';
