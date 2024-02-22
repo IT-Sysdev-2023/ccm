@@ -30,6 +30,11 @@ class DatedPdcChecksController extends Controller
         return Inertia::render('Dated&PdcChecks/PDCChecks', [
             'data' => $data,
             'columns' => $this->columns->pdc_check_columns,
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
         ]);
     }
     public function dated_index(Request $request)
@@ -39,7 +44,7 @@ class DatedPdcChecksController extends Controller
             ->where('check_date', '<=', DB::raw('check_received'))
             ->doesntHave('dsCheck.check')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->get();
+            ->paginate(10);
 
         $data->transform(function ($value) {
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
@@ -50,6 +55,12 @@ class DatedPdcChecksController extends Controller
         return Inertia::render('Dated&PdcChecks/DatedChecks', [
             'data' => $data,
             'columns' => $this->columns->dated_check_columns,
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
+
         ]);
     }
 }

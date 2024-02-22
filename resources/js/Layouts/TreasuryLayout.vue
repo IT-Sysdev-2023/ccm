@@ -49,7 +49,7 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
                                 <template #overlay>
                                     <a-menu>
                                         <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Dated Cheques</a>
+                                            <a :href="route('check_for.clearing')">Dated Cheques</a>
                                         </a-menu-item>
                                         <a-menu-item>
                                             <a href="/datedpdcchecks-reports">Post Dated Cheques</a>
