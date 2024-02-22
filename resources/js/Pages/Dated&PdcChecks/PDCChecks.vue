@@ -1,7 +1,7 @@
 <script setup>
 import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { InfoCircleOutlined, UserOutlined, SearchOutlined, MenuFoldOutlined, FileSyncOutlined } from '@ant-design/icons-vue'
+import { InfoCircleOutlined, UserOutlined, SearchOutlined, MenuFoldOutlined, FileSyncOutlined, SettingOutlined } from '@ant-design/icons-vue'
 import { ref } from 'vue';
 
 const size = ref('large');
@@ -21,23 +21,35 @@ const size = ref('large');
                     <a-breadcrumb-item><a href="">Dated Checks/Pdc</a></a-breadcrumb-item>
                     <a-breadcrumb-item>Pending Dated Checks</a-breadcrumb-item>
                 </a-breadcrumb>
-                <a-table :dataSource="data" class="components-table-demo-nested" :columns="columns" size="middle" bordered>
-                    <template #bodyCell="{ column, record, index }">
-                        <template v-if="column.key === 'action'">
-                            <a-button size="small" @click="openModaldated(record)">
-                                <template #icon>
-                                    <!-- <FullscreenOutlined /> -->
-                                    <MenuFoldOutlined />
-                                </template>
-                            </a-button>
-                            <a-button type="primary" ghost class="mx-2" size="small" @click="showModalReplace(record)">
-                                <template #icon>
-                                    <FileSyncOutlined />
-                                </template>
-                            </a-button>
+                <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Post Dated Checks"
+                    sub-title="This is the table for Post dated checks" @back="() => null" />
+                <a-card>
+                    <a-table :loading="isLoadingTbl" :pagination="false" :dataSource="data.data"
+                        class="components-table-demo-nested" :columns="columns" size="small" bordered>
+                        <template #bodyCell="{ column, record, index }">
+                            <template v-if="column.key === 'action'">
+                                <a-button size="square" @click="openModaldated(record)">
+                                    <template #icon>
+                                        <!-- <FullscreenOutlined /> -->
+                                        <SettingOutlined />
+                                    </template>
+                                </a-button>
+                                <a-button type="primary" ghost class="mx-2" size="square" @click="showModalReplace(record)">
+                                    <template #icon>
+                                        <FileSyncOutlined />
+                                    </template>
+                                </a-button>
+                            </template>
                         </template>
-                    </template>
-                </a-table>
+                    </a-table>
+                    <div class="" style="display: flex; justify-content: right;">
+                        <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
+                            style="margin-top: 10px;  border: 1px solid rgb(219, 219, 219); border-radius: 10px; padding: 10px; "
+                            v-model:page-size="pagination.pageSize" :show-size-changer="false" :total="pagination.total"
+                            :show-total="(total, range) => `${range[0]}-${range[1]} of ${total} reports`"
+                            @change="handleTableChange" />
+                    </div>
+                </a-card>
             </div>
         </div>
 
@@ -382,11 +394,13 @@ export default {
             isModalOpen: false,
             openModalReplace: false,
             selectDataDetails: [],
+            isLoadingTbl: false
         }
     },
     props: {
         data: Array,
         columns: Array,
+        pagination: Object,
     },
     methods: {
         openModaldated(data) {
@@ -396,6 +410,17 @@ export default {
         },
         showModalReplace(data) {
             this.openModalReplace = true;
+        },
+        handleTableChange(page) {
+            this.isLoadingTbl = true;
+            try {
+
+                this.$inertia.get(route('pdc.checks'), {
+                    page: page,
+                })
+            } catch {
+
+            }
         }
     }
 };

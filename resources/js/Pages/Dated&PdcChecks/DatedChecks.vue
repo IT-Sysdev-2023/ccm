@@ -1,10 +1,11 @@
 <script setup>
 import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { InfoCircleOutlined, UserOutlined, SearchOutlined, MenuFoldOutlined, FileSyncOutlined } from '@ant-design/icons-vue'
+import { InfoCircleOutlined, UserOutlined, SearchOutlined, MenuFoldOutlined, FileSyncOutlined, SettingOutlined } from '@ant-design/icons-vue'
 import { ref } from 'vue';
 
 const size = ref('large');
+const color = ref('green');
 </script>
 
 <template>
@@ -21,12 +22,34 @@ const size = ref('large');
                     <a-breadcrumb-item><a href="">Dated Checks/Pdc</a></a-breadcrumb-item>
                     <a-breadcrumb-item>Dated Checks</a-breadcrumb-item>
                 </a-breadcrumb>
-                <a-table :data-source="data" class="components-table-demo-nested" :columns="columns" size="middle" bordered>
-                </a-table>
+                <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Dated Checks"
+                    sub-title="This is the table for all dated checks" @back="() => null" />
+                <a-card>
+                    <a-table :pagination="false" :data-source="data.data" :loading="isLoadingTbl"
+                        class="components-table-demo-nested" :columns="columns" size="small" bordered>
+                        <template #bodyCell="{ column, record }">
+                            <template v-if="column.key === 'action'">
+                                <a-button @click="detailedChecks(record)">
+                                    <template #icon>
+                                        <SettingOutlined />
+                                    </template>
+                                </a-button>
+                            </template>
+                        </template>
+                    </a-table>
+
+                    <div class="flex justify-end">
+                        <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
+                            style="margin-top: 10px;  border: 1px solid rgb(219, 219, 219); border-radius: 10px; padding: 10px; "
+                            v-model:page-size="pagination.pageSize" :show-size-changer="false" :total="pagination.total"
+                            :show-total="(total, range) => `${range[0]}-${range[1]} of ${total} reports`"
+                            @change="handleTableChange" />
+                    </div>
+                </a-card>
             </div>
         </div>
 
-        <a-modal v-model:open="isModalOpen" title="Details" style="top: 20px; width: 1000px;" @ok="setModal1Visible(false)"
+        <a-modal v-model:open="isOpenModal" title="Details" style="top: 20px; width: 1000px;" @ok="setModal1Visible(false)"
             :footer="null">
             <div class="product-container">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -126,23 +149,115 @@ const size = ref('large');
 </template>
 <script>
 export default {
+    data() {
+        return {
+            isOpenModal: false,
+            selectDataDetails: {},
+            isLoadingTbl: false,
+
+        }
+    },
     props: {
         data: Array,
-        columns: Array
+        columns: Array,
+        pagination: Object,
     },
+    methods: {
+        detailedChecks(selectData) {
+            this.isOpenModal = true;
+            this.selectDataDetails = selectData;
+        },
+        handleTableChange(page) {
+            this.isLoadingTbl = true;
+            try {
+                this.$inertia.get(route('dated.checks'), {
+                    page: page
+                });
 
-
-    mounted() {
-        // this.data;
-
-        console.log(this.data);
-
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
     }
+
 }
 </script>
 <style scoped>
 body {
     font-family: Arial, sans-serif;
+}
+
+.a-pagination-item {
+    border: 1px solid #e8e8e8;
+}
+
+
+
+.pagination {
+    margin: 25px 0 15px 0;
+}
+
+.pagination,
+.pagination li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pagination li {
+    background: rgb(0, 21, 41);
+    list-style: none;
+    border-radius: 5px;
+}
+
+.pagination li a {
+    text-decoration: none;
+    color: #fdfdfd;
+    height: 40px;
+    width: 50px;
+    font-size: 14px;
+    padding-top: 1px;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-right-width: 0px;
+    box-shadow: inset 0px 1px 0px 0px rgba(255, 255, 255, 0.35);
+}
+
+.pagination li:last-child a {
+    border-right-width: 1px;
+}
+
+.pagination li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-top-color: rgba(0, 0, 0, 0.35);
+    border-bottom-color: rgba(0, 0, 0, 0.5);
+}
+
+.pagination li a:focus,
+.pagination li a:active {
+    padding-top: 4px;
+    border-left-width: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0px 2px 1px 0px rgba(0, 0, 0, 0.25);
+}
+
+.pagination li.icon a {
+    min-width: 120px;
+}
+
+.pagination li:first-child span {
+    padding-right: 8px;
+}
+
+.pagination li:last-child span {
+    padding-left: 8px;
+}
+
+
+.ant-pagination-item {
+    border: 1px solid #e8e8e8;
+    padding: 8px;
+    /* Adjust padding as needed */
 }
 
 

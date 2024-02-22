@@ -18,7 +18,7 @@ class DatedPdcChecksController extends Controller
     public function pdc_index(Request $request)
     {
 
-        $data = collect(DB::table('new_saved_checks')
+        $data = DB::table('new_saved_checks')
             ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
@@ -31,11 +31,16 @@ class DatedPdcChecksController extends Controller
                     ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
             })
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->get());
+            ->paginate(10);
 
         return Inertia::render('Dated&PdcChecks/PDCChecks', [
             'data' => $data,
             'columns' => $this->columns->pdc_check_columns,
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
         ]);
     }
     public function dated_index(Request $request)
@@ -44,6 +49,9 @@ class DatedPdcChecksController extends Controller
         $data = DB::table('new_saved_checks')
             ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->join('department', 'checks.department_from', '=', 'department.department_id')
+
             ->where('check_date', '<=', DB::raw('check_received'))
             ->where('new_saved_checks.status', "")
             ->whereNotExists(function ($query) {
@@ -52,7 +60,7 @@ class DatedPdcChecksController extends Controller
                     ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
             })
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->get();
+            ->paginate(10);
 
         $data->transform(function ($value) {
 
@@ -64,6 +72,12 @@ class DatedPdcChecksController extends Controller
         return Inertia::render('Dated&PdcChecks/DatedChecks', [
             'data' => $data,
             'columns' => $this->columns->dated_check_columns,
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
+
         ]);
     }
 }
