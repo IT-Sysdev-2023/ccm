@@ -10,7 +10,6 @@ class NewSavedChecks extends Model
 {
     use HasFactory;
     protected $table = 'new_saved_checks';
-    protected $primaryKey = 'id';
     public $timestamps = false;
     protected $guarded = [];
 
@@ -23,7 +22,7 @@ class NewSavedChecks extends Model
             ->doesntHave('dsCheck.check');
     }
 
-    public function scopeFindCheck(Builder $builder, int $id): Builder
+    public function scopeFindChecks(Builder $builder, int $id): Builder
     {
         return $builder->where('checks_id', $id);
     }
