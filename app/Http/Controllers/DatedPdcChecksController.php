@@ -19,9 +19,7 @@ class DatedPdcChecksController extends Controller
     public function pdc_index(Request $request)
     {
 
-        $data = NewSavedChecks::joinChecksCustomer()
-            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
-            ->join('department', 'checks.department_from', '=', 'department.department_id')
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->where('check_date', '>', DB::raw('check_received'))
             ->where('new_saved_checks.status', "")
             ->doesntHave('dsCheck.check')
