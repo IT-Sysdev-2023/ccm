@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Checks;
 use Illuminate\Http\Request;
 use App\Helper\ColumnsHelper;
 use Inertia\Inertia;
@@ -18,12 +19,11 @@ class CheckReceivingController extends Controller
     public function getCheckForClearing(Request $request)
     {
 
-        $data = DB::table('checks')
-            ->join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
+        $data = Checks::join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
             ->where('check_date', '<=', DB::raw('check_received'))
-            ->where('checks.date_time', $request->generate_date)
+            ->whereDate('checks.date_time', $request->generate_date)
             ->where('date_time', '!=', '0000-00-00')
             ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
             ->orderBy('check_date', 'ASC')
