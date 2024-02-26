@@ -19,7 +19,7 @@ class CheckReceivingController extends Controller
     public function getCheckForClearing(Request $request)
     {
 
-        $data = Checks::join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
+        $q = Checks::join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('department', 'department.department_id', '=', 'checks.department_from')
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
