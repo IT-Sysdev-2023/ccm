@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NewSavedChecks;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -28,11 +29,7 @@ class ReportController extends Controller
     {
 
 
-        $q = DB::table('new_saved_checks')
-            ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
-            ->join('department', 'department.department_id', '=', 'checks.department_from')
+        $q = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->where('businessunit_id', $request->bu)
             ->where('checks.check_no', 'like', '%' . $request->search . '%');
 
@@ -91,11 +88,7 @@ class ReportController extends Controller
 
 
 
-        $q = DB::table('new_saved_checks')
-            ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
-            ->join('department', 'department.department_id', '=', 'checks.department_from')
+        $q = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->where('businessunit_id', $request->bu)
             ->where('checks.check_no', 'like', '%' . $request->search . '%');
 

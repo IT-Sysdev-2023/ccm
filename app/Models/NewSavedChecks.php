@@ -27,6 +27,19 @@ class NewSavedChecks extends Model
         return $builder->where('checks_id', $id);
     }
 
+    public function scopeJoinChecksCustomer(Builder $builder): Builder{
+        return $builder->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
+                        ->join('customers', 'checks.customer_id', '=', 'customers.customer_id');
+    }
+
+    public function scopeJoinChecksCustomerBanksDepartment(Builder $builder): Builder
+    {
+        return $builder->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
+        ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+        ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+        ->join('department', 'department.department_id', '=', 'checks.department_from');
+    }
+
     public function check()
     {
         return $this->hasOne(Checks::class, 'checks_id', 'checks_id');
