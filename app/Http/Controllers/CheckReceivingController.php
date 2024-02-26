@@ -29,7 +29,6 @@ class CheckReceivingController extends Controller
             ->orderBy('check_date', 'ASC')
             ->paginate(10);
 
-
         return Inertia::render('CheckReceiving/CheckForClearing', [
             'data' => $data,
             'columns' => $this->columns->check_for_clearing_columns,
@@ -38,6 +37,7 @@ class CheckReceivingController extends Controller
                 'total' => $data->total(),
                 'pageSize' => $data->perPage(),
             ],
+            'date' => $request->generate_date ?? today()
         ]);
     }
 }
