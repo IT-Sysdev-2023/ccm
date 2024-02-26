@@ -18,7 +18,7 @@ class CheckReceivingController extends Controller
     public function getCheckForClearing(Request $request)
     {
 
-        $checks = DB::table('checks')
+        $data = DB::table('checks')
             ->join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
@@ -31,8 +31,13 @@ class CheckReceivingController extends Controller
 
 
         return Inertia::render('CheckReceiving/CheckForClearing', [
-            'data' => $checks,
+            'data' => $data,
             'columns' => $this->columns->check_for_clearing_columns,
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
         ]);
     }
 }
