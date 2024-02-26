@@ -23,7 +23,7 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
         <div class="min-h-screen">
 
             <header v-if="$slots.header" style="width: 100%; background: #001529; margin-top: -7px;"
-                class="mt-1 bg-white mx-auto w-full w-full border border-gray-100  py-3 shadow backdrop-blur-lg md:top-6 md:rounded-xl">
+                class="mt-1 bg-white mx-auto w-full w-full border-gray-100  py-3 shadow backdrop-blur-lg md:top-6">
                 <div class="px-4">
                     <div class="flex items-center justify-between">
                         <div class="flex shrink-0">
@@ -103,7 +103,7 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
                                             <a href="/datedpdcchecks-reports">Merge Checks</a>
                                         </a-menu-item>
                                         <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Bounc Cheques</a>
+                                            <a href="/datedpdcchecks-reports">Bounce Cheques</a>
                                         </a-menu-item>
                                         <a-menu-item>
                                             <a href="/datedpdcchecks-reports">Check Replacements</a>

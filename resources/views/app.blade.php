@@ -18,6 +18,7 @@
 </head>
 
 <body class="antialiased">
+
     @inertia
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Oswald&family=Poppins&family=Roboto+Condensed:wght@300&display=swap');
@@ -26,6 +27,9 @@
 
             font-family: 'Fira Sans', sans-serif;
             text-decoration: none;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         .antialiased {

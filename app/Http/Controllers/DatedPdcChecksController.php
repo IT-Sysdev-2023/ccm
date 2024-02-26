@@ -24,7 +24,7 @@ class DatedPdcChecksController extends Controller
             ->where('new_saved_checks.status', "")
             ->doesntHave('dsCheck.check')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->get();
+            ->paginate(10);
 
         return Inertia::render('Dated&PdcChecks/PDCChecks', [
             'data' => $data,

@@ -131,15 +131,22 @@ class ColumnsHelper
     public $check_for_clearing_columns = [
 
         [
+            'title' => '',
+            'key' => 'check_box',
+            'ellipsis' => true,
+            'width' => '6%',
+            'align' => 'center'
+        ],
+        [
             'title' => 'Check Received',
             'dataIndex' => 'fullname',
             'key' => 'check_r',
             'ellipsis' => true,
-            'width' => '55%',
+            'width' => '30%',
         ],
         [
             'title' => 'Check Date',
-            'dataIndex' => 'check_no',
+            'dataIndex' => 'check_date',
             'key' => 'check_r',
             'ellipsis' => true,
             'width' => '15%',
@@ -149,11 +156,11 @@ class ColumnsHelper
             'dataIndex' => 'fullname',
             'key' => 'check_r',
             'ellipsis' => true,
-            'width' => '15%',
+            'width' => '30%',
         ],
         [
             'title' => 'Check Number',
-            'dataIndex' => 'check_date',
+            'dataIndex' => 'check_no',
             'key' => 'check_r',
             'ellipsis' => true,
             'width' => '15%',

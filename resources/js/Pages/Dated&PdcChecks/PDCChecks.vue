@@ -34,7 +34,7 @@ const size = ref('large');
                                         <SettingOutlined />
                                     </template>
                                 </a-button>
-                                <a-button type="primary" ghost class="mx-2" size="square" @click="showModalReplace(record)">
+                                <a-button type="primary" class="mx-2" size="square" @click="showModalReplace(record)">
                                     <template #icon>
                                         <FileSyncOutlined />
                                     </template>
@@ -214,10 +214,7 @@ const size = ref('large');
                 </a-col>
                 <a-col :span="18">
                     <a-card>
-                        <!-- <a-card class="text-center animate-pulse"
-                            style="border-color: rgb(0, 155, 0); background-color: rgba(197, 255, 197, 0.692); color: rgb(0, 0, 0)">
-                            CHECK REPLACEMENT DETAIL FIELDS ENABLED. PLEASE INPUT DETAILS.
-                        </a-card> -->
+
                         <a-row :gutter="[16, 16]">
                             <a-col :span="8">
                                 <a-breadcrumb class="mt-2 ml-3">
