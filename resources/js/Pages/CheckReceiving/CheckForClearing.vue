@@ -69,7 +69,7 @@ import { Head } from "@inertiajs/vue3";
                             </a-select>
                         </div>
                         <div>
-                            <a-button style="background: rgba(99, 255, 99, 0.459)">
+                            <a-button style="background: rgba(99, 255, 99, 0.459)" @click="savedDatedChecks">
                                 <template #icon>
                                     <SaveOutlined />
                                 </template>
@@ -221,7 +221,7 @@ import { Head } from "@inertiajs/vue3";
 <script>
 import dayjs from "dayjs";
 import { SaveOutlined, SettingOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
-
+import { message } from 'ant-design-vue';
 export default {
     props: {
         data: Object,
@@ -254,6 +254,8 @@ export default {
                 page: page,
                 generate_date: this.generateDate.format("YYYY-MM-DD"),
                 check_status: this.checkStatus
+            }, {
+                preserveScroll: true,
             });
         },
         handleChangeStatus(page = 1) {
@@ -269,7 +271,27 @@ export default {
             this.selectDataDetails = inData;
         },
         handleSwitchChange(dataRecord) {
-            console.log(dataRecord);
+            this.$inertia.get(route("checkUncheck.checks"), {
+                is_exist: dataRecord.is_exist,
+                checksId: dataRecord.checks_id
+            }, {
+                onSuccess: (e) => {
+                    const messageLabel = e.props.flash?.success;
+                    if (e.props.flash?.style === 'red') {
+                        message.error(messageLabel);
+                    } else {
+                        message.success(messageLabel);
+                    }
+
+                }
+            })
+        },
+        savedDatedChecks() {
+            const selected = this.data.data.filter((value) => value.is_exist);
+            // console.log(selected);
+            this.$inertia.post(route("saveDated.checks"), {
+                selected,
+            });
         }
     },
 };

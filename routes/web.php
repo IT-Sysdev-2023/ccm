@@ -83,6 +83,8 @@ Route::middleware('auth')->group(function () {
     Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_index'])->name('dated.checks');
 
     Route::get('check_for_clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
+    Route::get('check-uncheck', [CheckReceivingController::class, 'checkAndUncheck'])->name('checkUncheck.checks');
+    Route::post('check-save', [CheckReceivingController::class, 'saveDatedChecks'])->name('saveDated.checks');
 });
 
 require __DIR__ . '/auth.php';
