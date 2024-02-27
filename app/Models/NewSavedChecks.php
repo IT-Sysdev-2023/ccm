@@ -45,7 +45,7 @@ class NewSavedChecks extends Model
 
     public function scopeReportQuery(Builder $builder, $bu, $filter): Builder
     {
-        return $builder->joinChecksCustomerBanksDepartment()->where('businessunit_id', $bu)
+        return $builder->where('businessunit_id', $bu)
         ->where('checks.check_no', 'like', '%' . $filter . '%');
     }
 

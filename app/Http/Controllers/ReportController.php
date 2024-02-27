@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\NewSavedChecks;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -27,25 +28,24 @@ class ReportController extends Controller
     }
     public function get_dated_pdc_checks_rep(Request $request)
     {
-        $q = NewSavedChecks::reportQuery($request->bu, $request->search);
-
-        $q = match ($request->ch_type) {
-            '2' => $q->where('check_date', '<=', DB::raw('check_received')),
-            '1' => $q->where('check_date', '>', DB::raw('check_received'))
-        };
-
-        if ($request->dt_from !== null && $request->dt_to !== null) {
-            $q->whereBetween('check_received', [$request->dt_from, $request->dt_to]);
-        } else {
-            $data = $q->paginate(20)->withQueryString();
-        }
-
-        $q = match ($request->repporttype) {
-            '1' => $q->doesntHave('dsCheck.check'),
-            '2' => $q->has('dsCheck.check'),
-
-            default => $q,
-        };
+        $q = NewSavedChecks::joinChecksCustomerBanksDepartment()
+            ->reportQuery($request->bu, $request->search)
+            ->when($request->ch_type == '1', function (Builder $query) {
+                $query->whereColumn('check_date', '>', 'check_received');
+            })
+            ->when($request->ch_type == '2', function (Builder $query) {
+                $query->whereColumn('check_date', '<=', 'check_received');
+            })
+            ->when(!is_null($request->dt_from) && !is_null($request->dt_to), function (Builder $query) use ($request) {
+                $query->whereBetween('check_received', [$request->dt_from, $request->dt_to]);
+            })
+            ->when($request->repporttype == '1', function (Builder $query) {
+                $query->doesntHave('dsCheck.check');
+            })
+            ->when($request->repporttype == '2', function (Builder $query) {
+                $query->has('dsCheck.check');
+            })
+        ;
 
         $data = $q->paginate(20)->withQueryString();
 
@@ -68,7 +68,7 @@ class ReportController extends Controller
         set_time_limit(3600);
 
         $bname = BusinessUnit::where('businessunit_id', '=', $request->bu)->first();
-        $q = NewSavedChecks::reportQuery($request->bu, $request->search);
+        $q = NewSavedChecks::joinChecksCustomerBanksDepartment()->reportQuery($request->bu, $request->search);
 
         $q = match ($request->ch_type) {
             '2' => $q->where('check_date', '<=', DB::raw('check_received')),
