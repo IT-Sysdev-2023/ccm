@@ -55,7 +55,6 @@ class ReportController extends Controller
                     ->from('new_ds_checks')
                     ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
                 }),
-
             default => $q,
         };
 
