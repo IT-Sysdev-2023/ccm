@@ -14,8 +14,11 @@ class Checks extends Model
     protected $table = 'checks';
     protected $primaryKey = 'checks_id';
     public $timestamps = false;
-
     protected $dates = ['deleted_at'];
+
+    protected $casts = [
+        'is_exist' => 'boolean',
+    ];
 
     public function scopeFindChecks(Builder $builder, $id): Builder
     {

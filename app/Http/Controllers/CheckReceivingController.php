@@ -40,6 +40,7 @@ class CheckReceivingController extends Controller
         };
 
         $data = $q->paginate(10)->withQueryString();
+        // dd($data);
 
 
 
