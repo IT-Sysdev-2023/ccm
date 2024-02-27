@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Checks;
+use App\Models\NewSavedChecks;
 use Illuminate\Http\Request;
 use App\Helper\ColumnsHelper;
 use Inertia\Inertia;
@@ -55,5 +56,61 @@ class CheckReceivingController extends Controller
             'date' => $request->generate_date ?? today(),
             'value' => $request->check_status
         ]);
+    }
+    public function checkAndUncheck(Request $request)
+    {
+        if ($request->is_exist === 'true') {
+            $check_data = Checks::where('checks_id', $request->checksId)->first();
+
+            $exist = Checks::where('check_no', $check_data->check_no)
+                ->where('check_amount', $check_data->check_amount)
+                ->where('checks_id', '!=', $request->checksId)
+                ->where('checks.date_time', $check_data->date_time)
+                ->where('is_exist', 1)
+                ->exists();
+
+            if ($exist) {
+                return redirect()->back()->with([
+                    'success' => 'The verification process employs a double-entry system
+                    ',
+                    'style' => 'red'
+                ]);
+            } else {
+                Checks::where('checks_id', $request->checksId)->update(['is_exist' => 1]);
+                return redirect()->back()->with([
+                    'success' => 'Check Successfully',
+                    'style' => 'green'
+                ]);
+            }
+
+        } else {
+            Checks::where('checks_id', $request->checksId)->update(['is_exist' => 0]);
+            return redirect()->back()->with([
+                'success' => 'Uncheck Successfully',
+                'style' => 'green'
+            ]);
+        }
+    }
+    public function saveDatedChecks(Request $request)
+    {
+
+
+        collect($request->selected)->each(function ($check) use ($request) {
+            DB::transaction(function () use ($check, $request) {
+
+
+                Checks::findChecks($check['checks_id'])->update(['check_status' => 'CLEARED']);
+
+                NewSavedChecks::create([
+                    'checks_id' => $check['checks_id'],
+                    'remarks' => $request->remarks,
+                    'check_type' => $check['check_date'],
+                    'user' => $request->user()->id,
+                    'date_time' => now(),
+                ]);
+
+            });
+
+        });
     }
 }
