@@ -69,6 +69,8 @@ import { Head } from "@inertiajs/vue3";
                             </a-select>
                         </div>
                         <div>
+                            <a-input-search v-model:value="query.search" class="mx-2" placeholder="Input Check Number"
+                                style="width: 200px" />
                             <a-button style="background: rgba(99, 255, 99, 0.459)" @click="savedDatedChecks">
                                 <template #icon>
                                     <SaveOutlined />
@@ -219,9 +221,11 @@ import { Head } from "@inertiajs/vue3";
 </template>
 
 <script>
+import debounce from "lodash/debounce";
 import dayjs from "dayjs";
 import { SaveOutlined, SettingOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
 import { message } from 'ant-design-vue';
+
 export default {
     props: {
         data: Object,
@@ -239,8 +243,13 @@ export default {
             checkStatus: this.value,
             showModalDetails: false,
             selectDataDetails: {},
+            page: 1,
+            query: {
+                search: ''
+            }
         };
     },
+
 
     methods: {
         handleGenerateTable(obj, str) {
@@ -263,7 +272,7 @@ export default {
             this.$inertia.get(route("check_for.clearing"), {
                 page: page,
                 generate_date: this.generateDate.format("YYYY-MM-DD"),
-                check_status: this.checkStatus
+                check_status: this.checkStatus,
             });
         },
         datedDetails(inData) {
@@ -287,7 +296,6 @@ export default {
             })
         },
         savedDatedChecks() {
-
             const selected = this.data.data.filter((value) => value.is_exist);
             this.$inertia.post(route("datedleaspdc.checks"), {
                 selected,
@@ -297,8 +305,21 @@ export default {
                     message.success(messageLabel);
                 }
             });
-        }
+        },
     },
+    watch: {
+        query: {
+            deep: true,
+            handler: debounce(async function () {
+                this.$inertia.get(route("check_for.clearing"), {
+                    page: this.page,
+                    generate_date: this.generateDate.format("YYYY-MM-DD"),
+                    check_status: this.checkStatus,
+                    searchQuery: this.query.search,
+                }, { preserveState: true });
+            }, 600),
+        }
+    }
 };
 </script>
 <style>
