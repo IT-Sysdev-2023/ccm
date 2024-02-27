@@ -168,13 +168,13 @@ const colors = "red";
                     >
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'checks_r'">
-                                {{ formattedDate(record.check_received) }}
+                                {{ record.check_received }}
                             </template>
                             <template v-else-if="column.key === 'check_date'">
-                                {{ formattedDate(record.check_date) }}
+                                {{ record.check_date }}
                             </template>
                             <template v-else-if="column.key === 'check_a'">
-                                {{ formattedPrice(record.check_amount) }}
+                                {{ record.check_amount }}
                             </template>
                             <template v-else-if="column.key === 'details'">
                                 <a-button size="small">
@@ -224,11 +224,12 @@ import axios from "axios";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 import { message } from "ant-design-vue";
+import dayjs from "dayjs";
 
 export default {
     props: {
         bunit: Array,
-        columns: Array
+        columns: Array,
     },
     data() {
         return {
@@ -251,7 +252,7 @@ export default {
             query: {
                 search: "",
             },
-            
+
             pageCustom: 1,
         };
     },
@@ -343,8 +344,12 @@ export default {
                         `get_dated_pdc_checks_rep?page=${page}`,
                         {
                             params: {
-                                dt_from: this.dateRange[0].toISOString(),
-                                dt_to: this.dateRange[1].toISOString(),
+                                dt_from: dayjs(this.dateRange[0]).format(
+                                    "YYYY-MM-DD"
+                                ),
+                                dt_to: dayjs(this.dateRange[1]).format(
+                                    "YYYY-MM-DD"
+                                ),
                                 bu: this.bunitCode,
                                 ch_type: this.pdcdatedChecks,
                                 repporttype: this.repportType,
@@ -369,15 +374,15 @@ export default {
             }
         },
 
-        formattedDate(event) {
-            const date = new Date(event);
-            const options = {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-            };
-            return date.toLocaleDateString("en-US", options);
-        },
+        // formattedDate(event) {
+        //     const date = new Date(event);
+        //     const options = {
+        //         year: "numeric",
+        //         month: "long",
+        //         day: "numeric",
+        //     };
+        //     return date.toLocaleDateString("en-US", options);
+        // },
         formattedPrice(value) {
             // You can implement your own formatting logic here
             const formatted = new Intl.NumberFormat("en-PH", {

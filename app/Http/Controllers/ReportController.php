@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helper\ColumnsHelper;
+use App\Helper\NumberHelper;
 use App\Models\NewSavedChecks;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -10,16 +11,18 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use App\Models\BusinessUnit;
 use Carbon\Carbon;
-use Illuminate\Support\LazyCollection;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use Illuminate\Support\Facades\Date;
+
 
 class ReportController extends Controller
 {
 
-    public function __construct(public ColumnsHelper $columns){
+    public function __construct(public ColumnsHelper $columns)
+    {
 
     }
     public function datedpdcchecksreports()
@@ -52,9 +55,13 @@ class ReportController extends Controller
                 $query->has('dsCheck.check');
             })
         ;
-
         $data = $q->paginate(20)->withQueryString();
-
+        $data->transform(function ($item) {
+            $item->check_received = Date::parse($item->check_received)->toFormattedDateString();
+            $item->check_date = Date::parse($item->check_date)->toFormattedDateString();
+            $item->check_amount = NumberHelper::currency($item->check_amount);
+            return $item;
+        });
         return response()->json([
             'data' => $data->items(),
             'pagination' => [
@@ -76,19 +83,19 @@ class ReportController extends Controller
         $bname = BusinessUnit::where('businessunit_id', '=', $request->bu)->first();
 
         $q = NewSavedChecks::joinChecksCustomerBanksDepartment()->reportQuery($request->bu, $request->search)
-            ->when($request->ch_type == '1', function(Builder $query){
+            ->when($request->ch_type == '1', function (Builder $query) {
                 $query->whereColumn('check_date', '>', 'check_received');
             })
-            ->when($request->ch_type == '2', function(Builder $query){
+            ->when($request->ch_type == '2', function (Builder $query) {
                 $query->whereColumn('check_date', '<=', 'check_received');
             })
-            ->when(($request->dt_from && $request->dt_to), function(Builder $query) use ($request) {
+            ->when(($request->dt_from && $request->dt_to), function (Builder $query) use ($request) {
                 $query->whereBetween('check_received', [$request->dt_from, $request->dt_to]);
             })
-            ->when($request->repporttype == '1', function(Builder $query) {
+            ->when($request->repporttype == '1', function (Builder $query) {
                 $query->doesntHave('dsCheck.check');
             })
-            ->when($request->repporttype == '2', function(Builder $query) {
+            ->when($request->repporttype == '2', function (Builder $query) {
                 $query->has('dsCheck.check');
             });
 
