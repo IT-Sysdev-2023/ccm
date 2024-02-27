@@ -45,16 +45,8 @@ class ReportController extends Controller
         }
 
         $q = match ($request->repporttype) {
-            '1' => $q->whereNotExists(function ($query) {
-                    $query->select(DB::raw(1))
-                    ->from('new_ds_checks')
-                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
-                }),
-            '2' => $q->whereExists(function ($query) {
-                    $query->select(DB::raw(1))
-                    ->from('new_ds_checks')
-                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
-                }),
+            '1' => $q->doesntHave('dsCheck.check'),
+            '2' => $q->has('dsCheck.check'),
 
             default => $q,
         };
