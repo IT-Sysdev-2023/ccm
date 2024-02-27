@@ -181,4 +181,42 @@ class ColumnsHelper
         ],
     ];
 
+    public $datedPdcReportTableColumn = [
+                [
+                    'title'=> "Checkreceived",
+                    'dataIndex'=> "check_received",
+                    'key'=> "checks_r",
+                ],
+                [
+                    'title'=> "Checkdate",
+                    'dataIndex'=> "check_date",
+                    'key'=> "check_date",
+                ],
+                [
+                    'title'=> "Bankname",
+                    'dataIndex'=> "bankbranchname",
+                    'key'=> "b_name",
+                ],
+                [
+                    'title'=> "Payee/Indorser",
+                    'dataIndex'=> "fullname",
+                    'key'=> "address",
+                ],
+                [
+                    'title'=> "Checkno",
+                    'dataIndex'=> "check_no",
+                    'key'=> "check_no",
+                ],
+                [
+                    'title'=> "Amount",
+                    'dataIndex'=> "check_amount",
+                    'key'=> "check_a",
+                ],
+                [
+                    'title'=> "Details",
+                    'key'=> "details",
+                    'align'=> "center",
+                ],
+            ];
+
 }

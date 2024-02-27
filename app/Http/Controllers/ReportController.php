@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\ColumnsHelper;
 use App\Models\NewSavedChecks;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -17,13 +18,18 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class ReportController extends Controller
 {
+
+    public function __construct(public ColumnsHelper $columns){
+
+    }
     public function datedpdcchecksreports()
     {
 
         $bunit = BusinessUnit::whereNotNull('loc_code_atp')->get();
 
         return Inertia::render('Reports/DatedPdcReports', [
-            'bunit' => $bunit
+            'bunit' => $bunit,
+            'columns' => $this->columns->datedPdcReportTableColumn,
         ]);
     }
     public function get_dated_pdc_checks_rep(Request $request)
