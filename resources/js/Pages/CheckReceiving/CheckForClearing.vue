@@ -88,10 +88,13 @@ import { Head } from "@inertiajs/vue3";
                         " size="small" :pagination="false" bordered :dataSource="data.data" :columns="columns">
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'check_box'">
-                                <a-switch size="small" v-if="record.is_exist === 0">
-                                    <template #checkedChildren><check-outlined /></template>
-                                    <template #unCheckedChildren><close-outlined /></template>
-                                </a-switch>
+                                <template v-if="record.check_status === 'PENDING'">
+                                    <a-switch size="small" v-if="record.is_exist === 0" v-model:checked="checkedValue"
+                                        @click="checkedChecks(record)">
+                                        <template #checkedChildren><check-outlined /></template>
+                                        <template #unCheckedChildren><close-outlined /></template>
+                                    </a-switch>
+                                </template>
                             </template>
                             <template v-if="column.key === 'details'">
                                 <a-button size="square" @click="datedDetails(record)">
