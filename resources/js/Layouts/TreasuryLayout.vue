@@ -52,10 +52,10 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
                                             <a :href="route('check_for.clearing')">Dated Cheques</a>
                                         </a-menu-item>
                                         <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Post Dated Cheques</a>
+                                            <a :href="route('pdc_clearing.checks')">Post Dated Cheques</a>
                                         </a-menu-item>
                                         <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Leasing Cheques</a>
+                                            <a :href="route('leasing.checks')">Leasing Cheques</a>
                                         </a-menu-item>
                                     </a-menu>
                                 </template>

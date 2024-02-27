@@ -139,10 +139,10 @@ class ColumnsHelper
         ],
         [
             'title' => 'Check Received',
-            'dataIndex' => 'fullname',
+            'dataIndex' => 'check_received',
             'key' => 'check_r',
             'ellipsis' => true,
-            'width' => '30%',
+            'width' => '15%',
         ],
         [
             'title' => 'Check Date',
@@ -156,7 +156,59 @@ class ColumnsHelper
             'dataIndex' => 'fullname',
             'key' => 'check_r',
             'ellipsis' => true,
-            'width' => '30%',
+            'width' => '45%',
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_no',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Details',
+            'key' => 'details',
+            'ellipsis' => true,
+            'width' => '10%',
+            'align' => 'center',
+        ],
+    ];
+    public $leasing_checks_columns = [
+
+        [
+            'title' => '',
+            'key' => 'check_box',
+            'ellipsis' => true,
+            'width' => '6%',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'check_received',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Payee / Endorser',
+            'dataIndex' => 'fullname',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '45%',
         ],
         [
             'title' => 'Check Number',
@@ -181,42 +233,93 @@ class ColumnsHelper
         ],
     ];
 
+    public $pdc_check_clearing_column = [
+        [
+            'title' => '',
+            'key' => 'check_box',
+            'ellipsis' => true,
+            'width' => '6%',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'check_received',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Payee / Endorser',
+            'dataIndex' => 'fullname',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '45%',
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_no',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+            'key' => 'check_r',
+            'ellipsis' => true,
+            'width' => '15%',
+        ],
+        [
+            'title' => 'Details',
+            'key' => 'details',
+            'ellipsis' => true,
+            'width' => '10%',
+            'align' => 'center',
+        ],
+    ];
     public $datedPdcReportTableColumn = [
-                [
-                    'title'=> "Checkreceived",
-                    'dataIndex'=> "check_received",
-                    'key'=> "checks_r",
-                ],
-                [
-                    'title'=> "Checkdate",
-                    'dataIndex'=> "check_date",
-                    'key'=> "check_date",
-                ],
-                [
-                    'title'=> "Bankname",
-                    'dataIndex'=> "bankbranchname",
-                    'key'=> "b_name",
-                ],
-                [
-                    'title'=> "Payee/Indorser",
-                    'dataIndex'=> "fullname",
-                    'key'=> "address",
-                ],
-                [
-                    'title'=> "Checkno",
-                    'dataIndex'=> "check_no",
-                    'key'=> "check_no",
-                ],
-                [
-                    'title'=> "Amount",
-                    'dataIndex'=> "check_amount",
-                    'key'=> "check_a",
-                ],
-                [
-                    'title'=> "Details",
-                    'key'=> "details",
-                    'align'=> "center",
-                ],
-            ];
+        [
+            'title' => "Checkreceived",
+            'dataIndex' => "check_received",
+            'key' => "checks_r",
+        ],
+        [
+            'title' => "Checkdate",
+            'dataIndex' => "check_date",
+            'key' => "check_date",
+        ],
+        [
+            'title' => "Bankname",
+            'dataIndex' => "bankbranchname",
+            'key' => "b_name",
+        ],
+        [
+            'title' => "Payee/Indorser",
+            'dataIndex' => "fullname",
+            'key' => "address",
+        ],
+        [
+            'title' => "Checkno",
+            'dataIndex' => "check_no",
+            'key' => "check_no",
+        ],
+        [
+            'title' => "Amount",
+            'dataIndex' => "check_amount",
+            'key' => "check_a",
+        ],
+        [
+            'title' => "Details",
+            'key' => "details",
+            'align' => "center",
+        ],
+    ];
 
 }

@@ -1,15 +1,14 @@
 <script setup>
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-import { Head } from "@inertiajs/vue3";
+import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
+import { Head } from '@inertiajs/vue3';
 </script>
+
 <template>
     <Head title="Dashboard" />
 
     <TreasuryLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                This is treasury Dashboard
-            </h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">This is treasury Dashboard</h2>
         </template>
 
         <div class="py-2">
@@ -17,8 +16,9 @@ import { Head } from "@inertiajs/vue3";
                 <a-breadcrumb class="mt-1 mb-3">
                     <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
                     <a-breadcrumb-item><a href="">Check Receiving </a></a-breadcrumb-item>
-                    <a-breadcrumb-item>Dated Checks</a-breadcrumb-item>
+                    <a-breadcrumb-item> Post Dated Checks</a-breadcrumb-item>
                 </a-breadcrumb>
+
                 <a-card>
                     <div class="flex justify-between">
                         <div>
@@ -69,23 +69,24 @@ import { Head } from "@inertiajs/vue3";
                             </a-select>
                         </div>
                         <div>
-                            <a-button style="background: rgba(99, 255, 99, 0.459)" @click="savedDatedChecks">
+                            <a-button style="background: rgba(99, 255, 99, 0.459)" @click="savedPDcChecks">
                                 <template #icon>
                                     <SaveOutlined />
                                 </template>
-                                save dated checks
+                                save pdc checks
                             </a-button>
                         </div>
                     </div>
-                    <a-table :loading="isloadingTbl" :row-class-name="(_record, index) =>
-                        _record.check_status == 'PENDING'
-                            ? 'PENDING'
-                            : _record.check_status == 'CASH'
-                                ? 'CASH'
-                                : _record.check_status === 'BOUNCE'
-                                    ? 'BOUNCE'
-                                    : 'CLEARED'
-                        " size="small" :pagination="false" bordered :dataSource="data.data" :columns="columns">
+                    <a-table size="small" bordered :dataSource="data.data" :columns="columns" :pagination="false"
+                        :row-class-name="(_record, index) =>
+                            _record.check_status == 'PENDING'
+                                ? 'PENDING'
+                                : _record.check_status == 'CASH'
+                                    ? 'CASH'
+                                    : _record.check_status === 'BOUNCE'
+                                        ? 'BOUNCE'
+                                        : 'CLEARED'
+                            ">
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'check_box'">
                                 <template v-if="record.check_status === 'PENDING'">
@@ -219,38 +220,37 @@ import { Head } from "@inertiajs/vue3";
 </template>
 
 <script>
+import { SaveOutlined, SettingOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import dayjs from "dayjs";
-import { SaveOutlined, SettingOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
 import { message } from 'ant-design-vue';
+
+
 export default {
-    props: {
-        data: Object,
-        columns: Array,
-        pagination: Object,
-        date: Object,
-        value: Object,
-
-    },
-
     data() {
         return {
             generateDate: dayjs(this.date),
-            isloadingTbl: false,
             checkStatus: this.value,
+            isloadingTbl: false,
             showModalDetails: false,
             selectDataDetails: {},
         };
     },
-
+    props: {
+        data: Array,
+        columns: Array,
+        date: Object,
+        value: Object,
+        pagination: Object,
+    },
     methods: {
         handleGenerateTable(obj, str) {
-            this.$inertia.get(route("check_for.clearing"), {
+            this.$inertia.get(route("pdc_clearing.checks"), {
                 generate_date: str,
             });
         },
         handlePaginate(page = 1) {
             this.isloadingTbl = true;
-            this.$inertia.get(route("check_for.clearing"), {
+            this.$inertia.get(route("pdc_clearing.checks"), {
                 page: page,
                 generate_date: this.generateDate.format("YYYY-MM-DD"),
                 check_status: this.checkStatus
@@ -260,7 +260,7 @@ export default {
         },
         handleChangeStatus(page = 1) {
             this.isloadingTbl = true;
-            this.$inertia.get(route("check_for.clearing"), {
+            this.$inertia.get(route("pdc_clearing.checks"), {
                 page: page,
                 generate_date: this.generateDate.format("YYYY-MM-DD"),
                 check_status: this.checkStatus
@@ -270,6 +270,7 @@ export default {
             this.showModalDetails = true;
             this.selectDataDetails = inData;
         },
+
         handleSwitchChange(dataRecord) {
             this.$inertia.get(route("checkUncheck.checks"), {
                 is_exist: dataRecord.is_exist,
@@ -286,8 +287,7 @@ export default {
                 }
             })
         },
-        savedDatedChecks() {
-
+        savedPDcChecks() {
             const selected = this.data.data.filter((value) => value.is_exist);
             this.$inertia.post(route("datedleaspdc.checks"), {
                 selected,
@@ -298,7 +298,7 @@ export default {
                 }
             });
         }
-    },
+    }
 };
 </script>
 <style>

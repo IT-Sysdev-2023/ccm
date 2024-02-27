@@ -91,10 +91,8 @@ class CheckReceivingController extends Controller
             ]);
         }
     }
-    public function saveDatedChecks(Request $request)
+    public function savedDatedLeasingpPdcChecks(Request $request)
     {
-
-
         collect($request->selected)->each(function ($check) use ($request) {
             DB::transaction(function () use ($check, $request) {
 
@@ -114,5 +112,80 @@ class CheckReceivingController extends Controller
         });
 
         return redirect()->back()->with('success', 'Checks have been successfully saved.');
+    }
+
+    public function pdcChecksCLearing(Request $request)
+    {
+        $q = Checks::join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('department', 'department.department_id', '=', 'checks.department_from')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->whereColumn('check_date', '>', 'check_received')
+            ->whereDate('checks.date_time', $request->generate_date)
+            ->where('date_time', '!=', '0000-00-00')
+            ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
+            ->orderBy('check_date', 'ASC');
+
+
+
+        $q = match ($request->check_status) {
+            'CLEARED' => $q->where('check_status', 'CLEARED'),
+            'PENDING' => $q->where('check_status', 'PENDING'),
+            'CASH' => $q->where('check_status', 'CASH'),
+            'BOUNCE' => $q->where('check_status', 'BOUNCE'),
+            'ALL' => $q,
+            default => $q
+        };
+
+        $data = $q->paginate(10)->withQueryString();
+
+        return Inertia::render('CheckReceiving/PDCCheckCLearing', [
+            'data' => $data,
+            'columns' => $this->columns->pdc_check_clearing_column,
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
+            'date' => $request->generate_date ?? today(),
+            'value' => $request->check_status
+        ]);
+    }
+    public function getLeasingChecks(Request $request)
+    {
+        $q = Checks::join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('department', 'department.department_id', '=', 'checks.department_from')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->whereColumn('check_date', '>', 'check_received')
+            ->whereDate('checks.check_received', $request->generate_date)
+            // ->where('date_time', '!=', '0000-00-00')
+            ->where('leasing_docno', '!=', '')
+            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->orderBy('check_date', 'ASC');
+
+
+        $q = match ($request->check_status) {
+            'CLEARED' => $q->where('check_status', 'CLEARED'),
+            'PENDING' => $q->where('check_status', 'PENDING'),
+            'CASH' => $q->where('check_status', 'CASH'),
+            'BOUNCE' => $q->where('check_status', 'BOUNCE'),
+            'ALL' => $q,
+            default => $q
+        };
+
+        $data = $q->paginate(10)->withQueryString();
+
+        return Inertia::render('CheckReceiving/LeasingChecks', [
+            'data' => $data,
+            'columns' => $this->columns->leasing_checks_columns,
+            'date' => $request->generate_date ?? today(),
+            'value' => $request->check_status,
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
+        ]);
     }
 }
