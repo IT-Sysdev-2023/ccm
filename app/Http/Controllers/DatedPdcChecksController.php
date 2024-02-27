@@ -19,11 +19,8 @@ class DatedPdcChecksController extends Controller
     public function pdc_index(Request $request)
     {
 
-        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
-            ->where('check_date', '>', DB::raw('check_received'))
-            ->where('new_saved_checks.status', "")
-            ->doesntHave('dsCheck.check')
-            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()->datedPdcIndexQuery($request->user()->businessunit_id)
+            ->whereColumn('check_date', '>', 'check_received')
             ->paginate(10);
 
         return Inertia::render('Dated&PdcChecks/PDCChecks', [
@@ -39,11 +36,8 @@ class DatedPdcChecksController extends Controller
     public function dated_index(Request $request)
     {
 
-        $data = NewSavedChecks::joinChecksCustomer()
-            ->where('check_date', '<=', DB::raw('check_received'))
-            ->where('new_saved_checks.status', "")
-            ->doesntHave('dsCheck.check')
-            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+        $data = NewSavedChecks::joinChecksCustomer()->datedPdcIndexQuery($request->user()->businessunit_id)
+            ->whereColumn('check_date', '<=', 'check_received')
             ->paginate(10);
 
         $data->transform(function ($value) {

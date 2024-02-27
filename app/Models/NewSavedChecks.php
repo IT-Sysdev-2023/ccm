@@ -43,6 +43,13 @@ class NewSavedChecks extends Model
             ->join('department', 'department.department_id', '=', 'checks.department_from');
     }
 
+    public function scopeDatedPdcIndexQuery(Builder $builder, $id): Builder
+    {
+        return  $builder->where('new_saved_checks.status', "")
+        ->doesntHave('dsCheck.check')
+        ->where('checks.businessunit_id', $id);
+    }
+
     public function scopeReportQuery(Builder $builder, $bu, $filter): Builder
     {
         return $builder->where('businessunit_id', $bu)
