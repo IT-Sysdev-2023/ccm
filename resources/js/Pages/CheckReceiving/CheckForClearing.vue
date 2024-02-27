@@ -250,6 +250,7 @@ export default {
             this.$inertia.get(route("check_for.clearing"), {
                 page: page,
                 generate_date: this.generateDate.format("YYYY-MM-DD"),
+                check_status: this.checkStatus
             });
         },
         handleChangeStatus(page = 1) {
