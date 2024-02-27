@@ -23,7 +23,7 @@ class CheckReceivingController extends Controller
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('department', 'department.department_id', '=', 'checks.department_from')
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
-            ->where('check_date', '<=', DB::raw('check_received'))
+            ->whereColumn('check_date', '<=', 'check_received')
             ->whereDate('checks.date_time', $request->generate_date)
             ->where('date_time', '!=', '0000-00-00')
             ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)

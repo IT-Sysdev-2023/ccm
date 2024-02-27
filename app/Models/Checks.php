@@ -27,7 +27,7 @@ class Checks extends Model
 
     public function checkreceived()
     {
-        return $this->belongsTo('App\Models\CheckReceived', 'checksreceivingtransaction_id', 'checksreceivingtransaction_id');
+        return $this->belongsTo(CheckRecieved::class, 'checksreceivingtransaction_id', 'checksreceivingtransaction_id');
     }
 
     public function customer()

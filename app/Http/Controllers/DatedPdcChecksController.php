@@ -19,7 +19,8 @@ class DatedPdcChecksController extends Controller
     public function pdc_index(Request $request)
     {
 
-        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()->datedPdcIndexQuery($request->user()->businessunit_id)
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
+            ->datedPdcIndexQuery($request->user()->businessunit_id)
             ->whereColumn('check_date', '>', 'check_received')
             ->paginate(10);
 
