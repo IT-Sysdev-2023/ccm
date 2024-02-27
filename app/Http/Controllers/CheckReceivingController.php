@@ -112,5 +112,7 @@ class CheckReceivingController extends Controller
             });
 
         });
+
+        return redirect()->back()->with('success', 'Checks have been successfully saved.');
     }
 }

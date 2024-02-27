@@ -287,10 +287,15 @@ export default {
             })
         },
         savedDatedChecks() {
+
             const selected = this.data.data.filter((value) => value.is_exist);
-            // console.log(selected);
             this.$inertia.post(route("saveDated.checks"), {
                 selected,
+            }, {
+                onSuccess: (e) => {
+                    const messageLabel = e.props.flash?.success;
+                    message.success(messageLabel);
+                }
             });
         }
     },
