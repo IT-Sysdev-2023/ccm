@@ -47,7 +47,6 @@ class ReportController extends Controller
         $q = match ($request->repporttype) {
             '1' => $q->doesntHave('dsCheck.check'),
             '2' => $q->has('dsCheck.check'),
-
             default => $q,
         };
 
