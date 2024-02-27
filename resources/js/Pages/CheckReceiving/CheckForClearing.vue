@@ -89,8 +89,8 @@ import { Head } from "@inertiajs/vue3";
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'check_box'">
                                 <template v-if="record.check_status === 'PENDING'">
-                                    <a-switch size="small" v-if="record.is_exist === 0" v-model:checked="checkedValue"
-                                        @click="checkedChecks(record)">
+                                    <a-switch v-model:checked="record.is_exist" @change="handleSwitchChange(record)"
+                                        size="small">
                                         <template #checkedChildren><check-outlined /></template>
                                         <template #unCheckedChildren><close-outlined /></template>
                                     </a-switch>
@@ -267,6 +267,9 @@ export default {
         datedDetails(inData) {
             this.showModalDetails = true;
             this.selectDataDetails = inData;
+        },
+        handleSwitchChange(dataRecord) {
+            console.log(dataRecord);
         }
     },
 };
