@@ -43,6 +43,12 @@ class NewSavedChecks extends Model
             ->join('department', 'department.department_id', '=', 'checks.department_from');
     }
 
+    public function scopeReportQuery(Builder $builder, $bu, $filter): Builder
+    {
+        return $builder->joinChecksCustomerBanksDepartment()->where('businessunit_id', $bu)
+        ->where('checks.check_no', 'like', '%' . $filter . '%');
+    }
+
     public function check()
     {
         return $this->hasOne(Checks::class, 'checks_id', 'checks_id');

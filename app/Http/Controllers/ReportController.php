@@ -27,11 +27,7 @@ class ReportController extends Controller
     }
     public function get_dated_pdc_checks_rep(Request $request)
     {
-
-
-        $q = NewSavedChecks::joinChecksCustomerBanksDepartment()
-            ->where('businessunit_id', $request->bu)
-            ->where('checks.check_no', 'like', '%' . $request->search . '%');
+        $q = NewSavedChecks::reportQuery($request->bu, $request->search);
 
         $q = match ($request->ch_type) {
             '2' => $q->where('check_date', '<=', DB::raw('check_received')),
@@ -51,10 +47,7 @@ class ReportController extends Controller
             default => $q,
         };
 
-
-
         $data = $q->paginate(20)->withQueryString();
-
 
         return response()->json([
             'data' => $data->items(),
@@ -74,15 +67,8 @@ class ReportController extends Controller
         ini_set('memory_limit', '-1');
         set_time_limit(3600);
 
-        $bname = DB::table('businessunit')
-            ->where('businessunit_id', '=', $request->bu)
-            ->first();
-
-
-
-        $q = NewSavedChecks::joinChecksCustomerBanksDepartment()
-            ->where('businessunit_id', $request->bu)
-            ->where('checks.check_no', 'like', '%' . $request->search . '%');
+        $bname = BusinessUnit::where('businessunit_id', '=', $request->bu)->first();
+        $q = NewSavedChecks::reportQuery($request->bu, $request->search);
 
         $q = match ($request->ch_type) {
             '2' => $q->where('check_date', '<=', DB::raw('check_received')),
@@ -96,23 +82,12 @@ class ReportController extends Controller
         }
 
         $q = match ($request->repporttype) {
-            '1' => $q->whereNotExists(function ($query) {
-                    $query->select(DB::raw(1))
-                    ->from('new_ds_checks')
-                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
-                }),
-            '2' => $q->whereExists(function ($query) {
-                    $query->select(DB::raw(1))
-                    ->from('new_ds_checks')
-                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
-                }),
+            '1' => $q->doesntHave('dsCheck.check'),
+            '2' => $q->has('dsCheck.check'),
             '0' => $q,
         };
 
-
-
         $data = $q->get();
-
 
         $spreadsheet = new Spreadsheet();
 
