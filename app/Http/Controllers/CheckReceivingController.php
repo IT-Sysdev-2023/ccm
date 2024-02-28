@@ -22,14 +22,11 @@ class CheckReceivingController extends Controller
     public function getCheckForClearing(Request $request)
     {
 
-        $q = Checks::join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->join('department', 'department.department_id', '=', 'checks.department_from')
-            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+        $q = Checks::joinCheckRecCustomerDepartmentBanks()
+            ->whereDateChecks($request->generate_date)
+            ->whereCheckNo($request->searchQuery)
+            ->whereDateTimeNotZero()
             ->whereColumn('check_date', '<=', 'check_received')
-            ->whereDate('checks.date_time', $request->generate_date)
-            ->where('check_no', 'like', '%' . $request->searchQuery . '%')
-            ->where('date_time', '!=', '0000-00-00')
             ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
             ->orderBy('check_date', 'ASC');
 
@@ -71,7 +68,7 @@ class CheckReceivingController extends Controller
     public function checkAndUncheck(Request $request)
     {
         if ($request->is_exist === 'true') {
-            $check_data = Checks::where('checks_id', $request->checksId)->first();
+            $check_data = Checks::findChecks($request->checksId)->first();
 
             $exist = Checks::where('check_no', $check_data->check_no)
                 ->where('check_amount', $check_data->check_amount)
@@ -81,6 +78,7 @@ class CheckReceivingController extends Controller
                 ->exists();
 
             if ($exist) {
+
                 return redirect()->back()->with([
                     'success' => 'The verification process employs a double-entry system
                     ',
@@ -88,6 +86,7 @@ class CheckReceivingController extends Controller
                 ]);
             } else {
                 Checks::where('checks_id', $request->checksId)->update(['is_exist' => 1]);
+                
                 return redirect()->back()->with([
                     'success' => 'Check Successfully',
                     'style' => 'green'
@@ -106,7 +105,6 @@ class CheckReceivingController extends Controller
     {
         collect($request->selected)->each(function ($check) use ($request) {
             DB::transaction(function () use ($check, $request) {
-
 
                 Checks::findChecks($check['checks_id'])->update(['check_status' => 'CLEARED']);
 
@@ -127,18 +125,14 @@ class CheckReceivingController extends Controller
 
     public function pdcChecksCLearing(Request $request)
     {
-        $q = Checks::join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->join('department', 'department.department_id', '=', 'checks.department_from')
-            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+        $q = Checks::joinCheckRecCustomerDepartmentBanks()
+            ->whereDateChecks($request->generate_date)
+            ->whereCheckNo($request->searchQuery)
+            ->whereDateTimeNotZero()
             ->whereColumn('check_date', '>', 'check_received')
-            ->whereDate('checks.date_time', $request->generate_date)
-            ->where('check_no', 'like', '%' . $request->searchQuery . '%')
-            ->where('date_time', '!=', '0000-00-00')
             ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
             ->orderBy('check_date', 'ASC');
-
-
+            
 
         $q = match ($request->check_status) {
             'CLEARED' => $q->where('check_status', 'CLEARED'),
@@ -174,13 +168,10 @@ class CheckReceivingController extends Controller
     }
     public function getLeasingChecks(Request $request)
     {
-        $q = Checks::join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->join('department', 'department.department_id', '=', 'checks.department_from')
-            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+        $q = Checks::joinCheckRecCustomerDepartmentBanks()
+            ->whereDateChecks($request->generate_date)
+            ->whereCheckNo($request->searchQuery)
             ->whereColumn('check_date', '>', 'check_received')
-            ->whereDate('checks.check_received', $request->generate_date)
-            ->where('check_no', 'like', '%' . $request->searchQuery . '%')
             ->where('leasing_docno', '!=', '')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->orderBy('check_date', 'ASC');
