@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,15 +46,15 @@ class NewSavedChecks extends Model
 
     public function scopeDatedPdcIndexQuery(Builder $builder, $id): Builder
     {
-        return  $builder->where('new_saved_checks.status', "")
-        ->doesntHave('dsCheck.check')
-        ->where('checks.businessunit_id', $id);
+        return $builder->where('new_saved_checks.status', "")
+            ->doesntHave('dsCheck.check')
+            ->where('checks.businessunit_id', $id);
     }
 
     public function scopeReportQuery(Builder $builder, $bu, $filter): Builder
     {
         return $builder->where('businessunit_id', $bu)
-        ->where('checks.check_no', 'like', '%' . $filter . '%');
+            ->where('checks.check_no', 'like', '%' . $filter . '%');
     }
 
     public function check()

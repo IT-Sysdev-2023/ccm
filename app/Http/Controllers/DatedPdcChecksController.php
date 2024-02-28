@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helper\ColumnsHelper;
+use App\Helper\NumberHelper;
+use App\Models\Checks;
 use App\Models\NewSavedChecks;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -50,10 +52,9 @@ class DatedPdcChecksController extends Controller
 
         $data->transform(function ($value) {
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
-            $value->check_amount = '₱' . number_format($value->check_amount, 2);
+            $value->check_amount = NumberHelper::currency($value->check_amount);
             return $value;
         });
-
 
         return Inertia::render('Dated&PdcChecks/DatedChecks', [
             'data' => $data,
