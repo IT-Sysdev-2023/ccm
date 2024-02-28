@@ -25,10 +25,9 @@ class AllTransactionController extends Controller
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('checks.is_manual_entry', '=', 1)
             ->where('new_saved_checks.status', '')
+            ->where('checks.check_no', 'LIKE', '%' . $request->searchQuery . '%')
             ->orderBy('checks.check_received')
             ->paginate(20);
-
-        // dd($data->toArray());
 
 
         $data->transform(function ($value) {
@@ -36,7 +35,7 @@ class AllTransactionController extends Controller
             Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? $type = 'DATED' : $type = 'POST DATED';
             $value->type = $type;
 
-            // dd($value);
+
 
             return $value;
         });

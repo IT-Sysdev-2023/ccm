@@ -32,8 +32,7 @@ import { Head } from '@inertiajs/vue3';
                             </template>
                             Add checks manual
                         </a-button>
-                        <a-input-search v-model:value="value" placeholder="input search text" style="width: 400px"
-                            @search="onSearch" />
+                        <a-input-search v-model:value="query.search" placeholder="input search text" style="width: 400px" />
                     </div>
                     <a-table :loading="isloadingtable" bordered size="small" :dataSource="data.data" :columns="columns"
                         :pagination="false">
@@ -72,11 +71,15 @@ import { Head } from '@inertiajs/vue3';
 </template>
 
 <script>
+import debounce from "lodash/debounce";
 import { SettingOutlined, TagOutlined, FolderAddOutlined, HomeOutlined } from '@ant-design/icons-vue';
 export default {
     data() {
         return {
             isloadingtable: false,
+            query: {
+                search: ''
+            }
         }
     },
     props: {
@@ -93,6 +96,18 @@ export default {
             }, {
                 preserveScroll: true,
             })
+        }
+    },
+    watch: {
+        query: {
+            deep: true,
+            handler: debounce(async function () {
+                this.$inertia.get(route("manual_entry.checks"), {
+                    searchQuery: this.query.search,
+                }, { preserveState: true }, {
+                });
+
+            }, 600),
         }
     }
 }
