@@ -18,7 +18,6 @@ import { Head } from '@inertiajs/vue3';
                         <HomeOutlined />
                     </a-breadcrumb-item>
                     <a-breadcrumb-item href="">
-                        <user-outlined />
                         <span>Dashboard</span>
                     </a-breadcrumb-item>
                     <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
@@ -72,13 +71,13 @@ import { Head } from '@inertiajs/vue3';
                 <a-col :span="8">
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <AccountBookOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Account Number</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -88,13 +87,13 @@ import { Head } from '@inertiajs/vue3';
                     </a-input>
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <CalendarOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Date</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -104,13 +103,13 @@ import { Head } from '@inertiajs/vue3';
                     </a-input>
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <MoneyCollectOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Currency</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -120,13 +119,14 @@ import { Head } from '@inertiajs/vue3';
                     </a-input>
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+
+                            <BankOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check From</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -136,13 +136,13 @@ import { Head } from '@inertiajs/vue3';
                     </a-input>
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <UsergroupAddOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Account Name</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -154,13 +154,13 @@ import { Head } from '@inertiajs/vue3';
                 <a-col :span="8">
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <UserOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -170,13 +170,13 @@ import { Head } from '@inertiajs/vue3';
                     </a-input>
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <MoneyCollectOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -186,13 +186,13 @@ import { Head } from '@inertiajs/vue3';
                     </a-input>
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <BankOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Class</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -202,13 +202,13 @@ import { Head } from '@inertiajs/vue3';
                     </a-input>
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <MoneyCollectOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Number</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -218,13 +218,13 @@ import { Head } from '@inertiajs/vue3';
                     </a-input>
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <BankOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -236,13 +236,13 @@ import { Head } from '@inertiajs/vue3';
                 <a-col :span="8">
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <CalendarOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Received</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -258,7 +258,7 @@ import { Head } from '@inertiajs/vue3';
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -268,13 +268,13 @@ import { Head } from '@inertiajs/vue3';
                     </a-input>
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
-                            <HomeOutlined />
+                            <UsergroupAddOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
                         <template #prefix>
-                            <user-outlined />
+
                         </template>
                         <template #suffix>
                             <a-tooltip title="Extra information">
@@ -296,7 +296,21 @@ import { Head } from '@inertiajs/vue3';
 
 <script>
 import debounce from "lodash/debounce";
-import { SettingOutlined, TagOutlined, FolderAddOutlined, HomeOutlined, SaveOutlined } from '@ant-design/icons-vue';
+import {
+    SettingOutlined,
+    TagOutlined,
+    FolderAddOutlined,
+    HomeOutlined,
+    SaveOutlined,
+    AccountBookOutlined,
+    CalendarOutlined,
+    MoneyCollectOutlined,
+    UsergroupAddOutlined,
+    BankOutlined,
+    UserOutlined,
+    InfoCircleOutlined
+
+} from '@ant-design/icons-vue';
 export default {
     data() {
         return {
