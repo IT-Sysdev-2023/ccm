@@ -75,7 +75,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Account Number</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -91,7 +91,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Date</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -107,7 +107,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Currency</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -124,7 +124,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check From</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -140,7 +140,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Account Name</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -158,7 +158,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -174,7 +174,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -190,7 +190,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Class</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -206,7 +206,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Number</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -222,7 +222,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -240,7 +240,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Received</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -256,7 +256,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Category</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
@@ -272,7 +272,7 @@ import { Head } from '@inertiajs/vue3';
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
                         <template #prefix>
 
                         </template>
