@@ -36,9 +36,9 @@ const tabPosition = 'right';
 
                             <div v-if="showImport">
                                 <a-row :gutter="[16, 16]">
-                                    <a-col :span="6" class="flex justify-center">
+                                    <a-col :span="6" class="flex justify-end">
                                         <img src="../../../../public/video/rmbg.gif" alt=""
-                                            style="height: 100px; display: flex; justify-content: center;">
+                                            style="height: 130px; display: flex; justify-content: center;">
                                     </a-col>
                                     <a-col :span="18">
                                         <a-card>
@@ -95,9 +95,9 @@ const tabPosition = 'right';
                             </div>
                             <div v-else-if="showUpdate">
                                 <a-row :gutter="[16, 16]">
-                                    <a-col :span="6" class="flex justify-center">
+                                    <a-col :span="6" class="flex justify-end">
                                         <img src="../../../../public/video/rmbg.gif" alt=""
-                                            style="height: 100px; display: flex; justify-content: center;">
+                                            style="height: 130px; display: flex; justify-content: center;">
                                     </a-col>
                                     <a-col :span="18">
                                         <a-card>
