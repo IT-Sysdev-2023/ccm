@@ -197,6 +197,13 @@ class CheckReceivingController extends Controller
 
         $data = $q->paginate(10)->withQueryString();
 
+        $data->transform(function ($value) {
+            $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
+            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            $value->check_amount = '₱' . number_format($value->check_amount, 2);
+            return $value;
+        });
+
         return Inertia::render('CheckReceiving/LeasingChecks', [
             'data' => $data,
             'columns' => $this->columns->leasing_checks_columns,
