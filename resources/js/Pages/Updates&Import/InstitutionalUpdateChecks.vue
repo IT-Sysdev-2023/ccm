@@ -161,7 +161,7 @@ const tabPosition = 'right';
                                             <a-upload v-model:file-list="fileList" name="file"
                                                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers"
                                                 @change="handleChange">
-                                                <a-button style="background: #4791d6; color: white !important ; ">
+                                                <a-button style="background: #4791d6; color: white !important;">
                                                     <UploadOutlined />
                                                     Start Updating
                                                 </a-button>
@@ -349,28 +349,16 @@ export default {
 }
 
 .gearbox {
-    background: #111;
+
     height: 170px;
     width: 280px;
     position: relative;
-    border: none;
-    overflow: hidden;
+
     border-radius: 6px;
-    box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.1);
+
 }
 
-.gearbox .overlay {
-    border-radius: 6px;
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    box-shadow: inset 0px 0px 20px black;
-    transition: background 0.2s;
-}
+
 
 .gearbox .overlay {
     background: transparent;
@@ -380,7 +368,7 @@ export default {
     position: absolute;
     height: 60px;
     width: 60px;
-    box-shadow: 0px -1px 0px 0px #888888, 0px 1px 0px 0px black;
+    box-shadow: 0px -1px 0px 0px #000000, 0px 1px 0px 0px black;
     border-radius: 30px;
 }
 
