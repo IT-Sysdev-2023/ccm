@@ -26,7 +26,7 @@ import { Head } from '@inertiajs/vue3';
                 </a-breadcrumb>
                 <a-card>
                     <div class="flex justify-between">
-                        <a-button class="mb-3">
+                        <a-button class="mb-3" @click="modalAddChecksManual">
                             <template #icon>
                                 <FolderAddOutlined />
                             </template>
@@ -67,19 +67,244 @@ import { Head } from '@inertiajs/vue3';
                 </a-card>
             </div>
         </div>
+        <a-modal v-model:open="openModal" title="Basic Modal" width="80%" wrap-class-name="full-modal" @ok="handleOk">
+            <a-row :gutter="[16, 16]">
+                <a-col :span="8">
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                </a-col>
+                <a-col :span="8">
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                </a-col>
+                <a-col :span="8">
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Basic usage">
+                        <template #prefix>
+                            <user-outlined />
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Extra information">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-button class="mt-10" style="width: 100%; background: #15cc04; color: white;">
+                        <template #icon>
+                            <SaveOutlined />
+                        </template>
+                        continue adding checks
+                    </a-button>
+                </a-col>
+            </a-row>
+        </a-modal>
     </TreasuryLayout>
 </template>
 
 <script>
 import debounce from "lodash/debounce";
-import { SettingOutlined, TagOutlined, FolderAddOutlined, HomeOutlined } from '@ant-design/icons-vue';
+import { SettingOutlined, TagOutlined, FolderAddOutlined, HomeOutlined, SaveOutlined } from '@ant-design/icons-vue';
 export default {
     data() {
         return {
             isloadingtable: false,
             query: {
                 search: ''
-            }
+            },
+            openModal: false,
         }
     },
     props: {
@@ -96,6 +321,9 @@ export default {
             }, {
                 preserveScroll: true,
             })
+        },
+        modalAddChecksManual() {
+            this.openModal = true;
         }
     },
     watch: {
