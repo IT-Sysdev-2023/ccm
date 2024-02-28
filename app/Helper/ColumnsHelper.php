@@ -364,5 +364,39 @@ class ColumnsHelper
             'align' => "center",
         ],
     ];
+    public $merge_checks_column = [
+        [
+            'title' => "Checkreceived",
+            'dataIndex' => "check_received",
+            'key' => "checks_r",
+        ],
+        [
+            'title' => "Checkdate",
+            'dataIndex' => "check_date",
+            'key' => "check_date",
+        ],
+
+        [
+            'title' => "Customer Name",
+            'dataIndex' => "fullname",
+            'key' => "address",
+        ],
+        [
+            'title' => "Check Number",
+            'dataIndex' => "check_no",
+            'key' => "check_no",
+        ],
+        [
+            'title' => "Amount",
+            'dataIndex' => "check_amount",
+            'key' => "check_a",
+        ],
+
+        [
+            'title' => "Actions",
+            'key' => "action",
+            'align' => "center",
+        ],
+    ];
 
 }

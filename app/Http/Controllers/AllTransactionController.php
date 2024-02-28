@@ -52,4 +52,25 @@ class AllTransactionController extends Controller
             ],
         ]);
     }
+    public function getMergeChecks(Request $request)
+    {
+        $data = DB::table('new_saved_checks')
+            ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->where('check_date', '>', DB::raw('check_received'))
+            ->where('new_saved_checks.status', "")
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('new_ds_checks')
+                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+            })
+            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->get();
+
+        // dd($data);
+        return Inertia::render('Transaction/MergeChecks', [
+            'data' => $data,
+            'columns' => $this->columns->merge_checks_column,
+        ]);
+    }
 }
