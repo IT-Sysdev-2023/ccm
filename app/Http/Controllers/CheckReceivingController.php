@@ -49,7 +49,6 @@ class CheckReceivingController extends Controller
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             $value->check_amount = '₱' . number_format($value->check_amount, 2);
-
             return $value;
         });
 
@@ -68,32 +67,6 @@ class CheckReceivingController extends Controller
             'value' => $request->check_status,
             'search' => $request->searchQuery,
         ]);
-    }
-    public function searchDatedChecks(Request $request)
-    {
-        $q = Checks::join('checksreceivingtransaction', 'checksreceivingtransaction.checksreceivingtransaction_id', '=', 'checks.checksreceivingtransaction_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->join('department', 'department.department_id', '=', 'checks.department_from')
-            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
-            ->whereColumn('check_date', '<=', 'check_received')
-            ->whereDate('checks.date_time', $request->generate_date)
-            ->where('check_no', 'like', '%' . $request->searchQuery . '%')
-            ->where('date_time', '!=', '0000-00-00')
-            ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
-            ->orderBy('check_date', 'ASC');
-
-
-        $q = match ($request->check_status) {
-            'CLEARED' => $q->where('check_status', 'CLEARED'),
-            'PENDING' => $q->where('check_status', 'PENDING'),
-            'CASH' => $q->where('check_status', 'CASH'),
-            'BOUNCE' => $q->where('check_status', 'BOUNCE'),
-            'ALL' => $q,
-            default => $q
-        };
-
-        $data = $q->paginate(10)->withQueryString();
-        return response()->json($data);
     }
     public function checkAndUncheck(Request $request)
     {
@@ -176,7 +149,16 @@ class CheckReceivingController extends Controller
             default => $q
         };
 
+
+
         $data = $q->paginate(10)->withQueryString();
+
+        $data->transform(function ($value) {
+            $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
+            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            $value->check_amount = '₱' . number_format($value->check_amount, 2);
+            return $value;
+        });
 
         return Inertia::render('CheckReceiving/PDCCheckCLearing', [
             'data' => $data,
