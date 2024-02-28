@@ -97,7 +97,7 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
                                 <template #overlay>
                                     <a-menu>
                                         <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Chec Manual Entry</a>
+                                            <a :href="route('manual_entry.checks')">Check Manual Entry</a>
                                         </a-menu-item>
                                         <a-menu-item>
                                             <a href="/datedpdcchecks-reports">Merge Checks</a>

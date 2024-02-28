@@ -161,7 +161,7 @@ const tabPosition = 'right';
                                             <a-upload v-model:file-list="fileList" name="file"
                                                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers"
                                                 @change="handleChange">
-                                                <a-button style="background: #4791d6; color: white !important;">
+                                                <a-button style="background: #4791d6; color: white !important ; ">
                                                     <UploadOutlined />
                                                     Start Updating
                                                 </a-button>

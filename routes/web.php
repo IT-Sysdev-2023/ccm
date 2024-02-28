@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AllTransactionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -88,6 +89,9 @@ Route::middleware('auth')->group(function () {
     Route::post('save_dated_leasing_pdc_checks', [CheckReceivingController::class, 'savedDatedLeasingpPdcChecks'])->name('datedleaspdc.checks');
     Route::get('pdc_check_clearing', [CheckReceivingController::class, 'pdcChecksCLearing'])->name('pdc_clearing.checks');
     Route::get('leasing_checks', [CheckReceivingController::class, 'getLeasingChecks'])->name('leasing.checks');
+
+
+    Route::get('check_manual_entry', [AllTransactionController::class, 'getCheckManualEntry'])->name('manual_entry.checks');
 });
 
 require __DIR__ . '/auth.php';
