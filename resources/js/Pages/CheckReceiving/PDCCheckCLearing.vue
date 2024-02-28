@@ -69,6 +69,8 @@ import { Head } from '@inertiajs/vue3';
                             </a-select>
                         </div>
                         <div>
+                            <a-input-search v-model:value="query.search" class="mx-2" placeholder="Input Check Number"
+                                style="width: 200px" />
                             <a-button style="background: rgba(99, 255, 99, 0.459)" @click="savedPDcChecks">
                                 <template #icon>
                                     <SaveOutlined />
@@ -220,6 +222,7 @@ import { Head } from '@inertiajs/vue3';
 </template>
 
 <script>
+import debounce from "lodash/debounce";
 import { SaveOutlined, SettingOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import dayjs from "dayjs";
 import { message } from 'ant-design-vue';
@@ -233,6 +236,9 @@ export default {
             isloadingTbl: false,
             showModalDetails: false,
             selectDataDetails: {},
+            query: {
+                search: ''
+            }
         };
     },
     props: {
@@ -297,6 +303,26 @@ export default {
                     message.success(messageLabel);
                 }
             });
+        }
+    },
+    watch: {
+        query: {
+            deep: true,
+            handler: debounce(async function () {
+                try {
+                    this.isloadingTbl = true;
+                    this.$inertia.get(route("pdc_clearing.checks"), {
+                        page: this.page,
+                        generate_date: this.generateDate.format("YYYY-MM-DD"),
+                        check_status: this.checkStatus,
+                        searchQuery: this.query.search,
+                    }, { preserveState: true });
+                } catch (error) {
+
+                } finally {
+                    this.isloadingTbl = false;
+                }
+            }, 600),
         }
     }
 };

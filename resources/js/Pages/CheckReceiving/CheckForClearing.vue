@@ -311,12 +311,19 @@ export default {
         query: {
             deep: true,
             handler: debounce(async function () {
-                this.$inertia.get(route("check_for.clearing"), {
-                    page: this.page,
-                    generate_date: this.generateDate.format("YYYY-MM-DD"),
-                    check_status: this.checkStatus,
-                    searchQuery: this.query.search,
-                }, { preserveState: true });
+                try {
+                    this.isloadingTbl = true;
+                    this.$inertia.get(route("check_for.clearing"), {
+                        page: this.page,
+                        generate_date: this.generateDate.format("YYYY-MM-DD"),
+                        check_status: this.checkStatus,
+                        searchQuery: this.query.search,
+                    }, { preserveState: true });
+                } catch (error) {
+
+                } finally {
+                    this.isloadingTbl = false;
+                }
             }, 600),
         }
     }
