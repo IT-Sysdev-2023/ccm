@@ -22,7 +22,14 @@ class DatedPdcChecksController extends Controller
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->datedPdcIndexQuery($request->user()->businessunit_id)
             ->whereColumn('check_date', '>', 'check_received')
-            ->paginate(10);
+            ->paginate(20);
+
+        $data->transform(function ($value) {
+            $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
+            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            $value->check_amount = '₱' . number_format($value->check_amount, 2);
+            return $value;
+        });
 
         return Inertia::render('Dated&PdcChecks/PDCChecks', [
             'data' => $data,
@@ -39,10 +46,11 @@ class DatedPdcChecksController extends Controller
 
         $data = NewSavedChecks::joinChecksCustomer()->datedPdcIndexQuery($request->user()->businessunit_id)
             ->whereColumn('check_date', '<=', 'check_received')
-            ->paginate(10);
+            ->paginate(20);
 
         $data->transform(function ($value) {
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            $value->check_amount = '₱' . number_format($value->check_amount, 2);
             return $value;
         });
 

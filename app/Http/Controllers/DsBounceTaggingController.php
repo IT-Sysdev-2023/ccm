@@ -68,7 +68,7 @@ class DsBounceTaggingController extends Controller
             $value->done = $value->done === "" ? false : true;
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
-            $value->check_amount = (float) $value->check_amount;
+            $value->check_amount = '₱' . number_format($value->check_amount, 2);
 
             return $value;
         });
@@ -116,6 +116,13 @@ class DsBounceTaggingController extends Controller
 
         $data = $q->paginate(20);
 
+        $data->transform(function ($value) {
+            $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
+            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            $value->check_amount = '₱' . number_format($value->check_amount, 2);
+            return $value;
+        });
+
         return response()->json([
             'data' => $data->items(),
             'pagination' => [
@@ -129,18 +136,18 @@ class DsBounceTaggingController extends Controller
     public function tag_check_bounce(Request $request)
     {
 
-        DB::transaction(function () use ($request){
+        DB::transaction(function () use ($request) {
 
             Checks::findChecks($request->check_id)->update(['check_status' => 'BOUNCE']);
             NewSavedChecks::findChecks($request->check_id)->update(['status' => 'BOUNCED']);
 
-            CheckHistory::create( [
+            CheckHistory::create([
                 'checks_id' => $request->check_id,
                 'status' => 'bounce',
                 'date_time' => $request->date,
                 'user' => Auth::user()->id
             ]);
-    
+
             BouncedCheck::create([
                 'checks_id' => $request->check_id,
                 'check_type' => 'bounce',
@@ -165,12 +172,12 @@ class DsBounceTaggingController extends Controller
             'dateDeposit' => 'required|date',
         ]);
 
-        collect($request->selected)->each(function($check) use ($request) {
+        collect($request->selected)->each(function ($check) use ($request) {
 
             DB::transaction(function () use ($check, $request) {
-                
+
                 NewSavedChecks::findChecks($check['checks_id'])->update(['ds_status' => 'remitted']);
-                
+
                 NewDsChecks::create([
                     'checks_id' => $check['checks_id'],
                     'ds_no' => $request->dsNo,

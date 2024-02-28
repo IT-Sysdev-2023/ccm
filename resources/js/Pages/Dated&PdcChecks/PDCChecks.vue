@@ -414,7 +414,10 @@ export default {
 
                 this.$inertia.get(route('pdc.checks'), {
                     page: page,
-                })
+                },
+                    {
+                        preserveScroll: true,
+                    })
             } catch {
 
             }

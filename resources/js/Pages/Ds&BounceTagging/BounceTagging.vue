@@ -67,22 +67,7 @@ const colors = 'red';
                 <a-table :dataSource="dataSource" :columns="columns" :pagination="false" :loading="loading"
                     class="components-table-demo-nested" bordered>
                     <template #bodyCell="{ column, record }">
-
-                        <template v-if="column.key === 'check_am'">
-                            {{ formattedPrice(record.check_amount) }}
-                        </template>
-                        <template v-else-if="column.key === 'checks_r'">
-                            {{ formattedDate(record.check_received) }}
-                        </template>
-                        <template v-else-if="column.key === 'check_dep'">
-                            {{ formattedDate(record.check_date) }}
-                        </template>
-                        <template v-else-if="column.key === 'check_d'">
-                            {{ formattedDate(record.date_deposit) }}
-                        </template>
-                        <template v-else-if="column.key === 'action'">
-
-
+                        <template v-if="column.key === 'action'">
                             <a-button class="mx-1" shape="square" ref="ref4"
                                 style="background-color: rgba(115, 236, 91, 0.685);"
                                 v-on:click="confirmBounceTagg(record.checks_id)">
@@ -91,7 +76,6 @@ const colors = 'red';
                                     <TagsOutlined />
                                 </template>
                             </a-button>
-
 
                             <a-button shape="square" v-on:click="openModalDetails(record)">
                                 <template #icon>
@@ -395,25 +379,6 @@ export default {
                     duration: 2,
                 });
             }
-        },
-        formattedDate(event) {
-            const date = new Date(event);
-            const options = {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-            };
-            return date.toLocaleDateString('en-US', options);
-        },
-        formattedPrice(value) {
-            // You can implement your own formatting logic here
-            const formatted = new Intl.NumberFormat('en-PH', {
-                style: 'currency',
-                currency: 'PHP',
-            }).format(value);
-
-            return formatted;
-
         },
         handleTableChange(pagination) {
             this.getBounceTagging(pagination);
