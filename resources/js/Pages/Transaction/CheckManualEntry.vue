@@ -35,7 +35,8 @@ import { Head } from '@inertiajs/vue3';
                         <a-input-search v-model:value="value" placeholder="input search text" style="width: 400px"
                             @search="onSearch" />
                     </div>
-                    <a-table bordered size="small" :dataSource="data.data" :columns="columns" :pagination="false">
+                    <a-table :loading="isloadingtable" bordered size="small" :dataSource="data.data" :columns="columns"
+                        :pagination="false">
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
                                 <a-button size="square" class="mx-2">
@@ -73,13 +74,20 @@ import { Head } from '@inertiajs/vue3';
 <script>
 import { SettingOutlined, TagOutlined, FolderAddOutlined, HomeOutlined } from '@ant-design/icons-vue';
 export default {
+    data() {
+        return {
+            isloadingtable: false,
+        }
+    },
     props: {
         data: Array,
         columns: Array,
         pagination: Array,
+
     },
     methods: {
         handleTableChange(page = 1) {
+            this.isloadingtable = true;
             this.$inertia.get(route("manual_entry.checks"), {
                 page: page,
             }, {
