@@ -22,6 +22,7 @@ class AllTransactionController extends Controller
             ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('department', 'checks.department_from', '=', 'department.department_id')
+            ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('checks.is_manual_entry', '=', 1)
             ->where('new_saved_checks.status', '')
