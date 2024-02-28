@@ -28,27 +28,14 @@ const color = ref("green");
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mt-3 mb-3">
                     <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-                    <a-breadcrumb-item
-                        ><a href="">Dated Checks/Pdc</a></a-breadcrumb-item
-                    >
+                    <a-breadcrumb-item><a href="">Dated Checks/Pdc</a></a-breadcrumb-item>
                     <a-breadcrumb-item>Dated Checks</a-breadcrumb-item>
                 </a-breadcrumb>
-                <a-page-header
-                    style="border: 1px solid rgb(235, 237, 240)"
-                    title="Dated Checks"
-                    sub-title="This is the table for all dated checks"
-                    @back="() => null"
-                />
+                <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Dated Checks"
+                    sub-title="This is the table for all dated checks" @back="() => null" />
                 <a-card>
-                    <a-table
-                        :pagination="false"
-                        :data-source="data.data"
-                        :loading="isLoadingTbl"
-                        class="components-table-demo-nested"
-                        :columns="columns"
-                        size="small"
-                        bordered
-                    >
+                    <a-table :pagination="false" :data-source="data.data" :loading="isLoadingTbl"
+                        class="components-table-demo-nested" :columns="columns" size="small" bordered>
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
                                 <a-button @click="detailedChecks(record)">
@@ -61,204 +48,135 @@ const color = ref("green");
                     </a-table>
 
                     <div class="flex justify-end">
-                        <a-pagination
-                            class="mt-0 mb-0"
-                            v-model:current="pagination.current"
-                            style="
+                        <a-pagination class="mt-0 mb-0" v-model:current="pagination.current" style="
                                 margin-top: 10px;
                                 border: 1px solid rgb(219, 219, 219);
                                 border-radius: 10px;
                                 padding: 10px;
-                            "
-                            v-model:page-size="pagination.pageSize"
-                            :show-size-changer="false"
-                            :total="pagination.total"
-                            :show-total="
-                                (total, range) =>
-                                    `${range[0]}-${range[1]} of ${total} reports`
-                            "
-                            @change="handleTableChange"
-                        />
+                            " v-model:page-size="pagination.pageSize" :show-size-changer="false"
+                            :total="pagination.total" :show-total="(total, range) =>
+                                `${range[0]}-${range[1]} of ${total} reports`
+                                " @change="handleTableChange" />
                     </div>
                 </a-card>
             </div>
         </div>
 
-        <a-modal
-            v-model:open="isOpenModal"
-            title="Details"
-            style="top: 20px; width: 1000px"
-            @ok="setModal1Visible(false)"
-            :footer="null"
-        >
+        <a-modal v-model:open="isOpenModal" title="Details" style="top: 20px; width: 1000px" @ok="setModal1Visible(false)"
+            :footer="null">
             <div class="product-container">
                 <table class="min-w-full divide-y divide-gray-200">
                     <tbody>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-t border-gray-200"
-                            >
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-t border-gray-200">
                                 Customer Name
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
                                 {{ selectDataDetails.fullname }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check From
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.department }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Number
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.check_no }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Approving Officer
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.approving_officer }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Class
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.check_class }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Status
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.check_status }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Date
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.check_date }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account No
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.account_no }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Received
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.check_received }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account Name
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.account_name }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Received As
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.check_type }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Bank Name
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.bankbranchname }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Category
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.check_category }}
                             </td>
                         </tr>
                         <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Amount
                             </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                            >
+                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                                 {{ selectDataDetails.check_amount }}
                             </td>
                         </tr>
@@ -292,7 +210,10 @@ export default {
             try {
                 this.$inertia.get(route("dated.checks"), {
                     page: page,
-                });
+                },
+                    {
+                        preserveScroll: true,
+                    });
             } catch (error) {
                 console.error("Error fetching data:", error);
             }

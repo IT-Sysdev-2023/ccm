@@ -22,7 +22,7 @@ class DatedPdcChecksController extends Controller
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->datedPdcIndexQuery($request->user()->businessunit_id)
             ->whereColumn('check_date', '>', 'check_received')
-            ->paginate(10);
+            ->paginate(20);
 
         $data->transform(function ($value) {
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
@@ -46,7 +46,7 @@ class DatedPdcChecksController extends Controller
 
         $data = NewSavedChecks::joinChecksCustomer()->datedPdcIndexQuery($request->user()->businessunit_id)
             ->whereColumn('check_date', '<=', 'check_received')
-            ->paginate(10);
+            ->paginate(20);
 
         $data->transform(function ($value) {
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
