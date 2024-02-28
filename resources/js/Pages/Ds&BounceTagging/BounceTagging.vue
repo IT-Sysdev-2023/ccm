@@ -65,7 +65,7 @@ const colors = 'red';
                 </div>
 
                 <a-table :dataSource="dataSource" :columns="columns" :pagination="false" :loading="loading"
-                    class="components-table-demo-nested" bordered>
+                    class="components-table-demo-nested" bordered size="small">
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.key === 'action'">
                             <a-button class="mx-1" shape="square" ref="ref4"
@@ -297,6 +297,7 @@ export default {
                     title: 'Actions',
                     dataIndex: 'action',
                     key: 'action',
+                    align: 'center',
                     width: '12%'
                 },
             ],
