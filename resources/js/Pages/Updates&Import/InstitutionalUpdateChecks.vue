@@ -21,11 +21,13 @@ const tabPosition = 'right';
                 <a-row :gutter="[16, 16]">
                     <a-col :span="6">
                         <a-card style="height: 100%;">
-                            <a-button style="width: 100%;" class="mb-5" @click="showImportInstutional">
+                            <a-button style="width: 100%;" class="mb-5" @click="showImportInstutional"
+                                :class="{ 'active': isActive === 'import' }">
                                 <ImportOutlined />
                                 Import Institutional Checks
                             </a-button>
-                            <a-button style="width: 100%;" @click="showUpdateddatabase">
+                            <a-button style="width: 100%;" @click="showUpdateddatabase"
+                                :class="{ 'active': isActive === 'update' }">
                                 <UpSquareOutlined />
                                 Update Atp Database
                             </a-button>
@@ -189,70 +191,6 @@ const tabPosition = 'right';
                         </a-card>
                     </a-col>
                 </a-row>
-                <!-- <a-tabs v-model:activeKey="activeKey" :tab-position="tabPosition" animated>
-                    <a-tab-pane key="1" tab="Import Institutional Checks">
-                        <div class="text-xl">
-                            <SmileOutlined /> Import Institutional Check
-                        </div>
-                        <div class="mt-10">
-                            <div class="book-wrapper">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 126 75" class="book">
-                                    <rect stroke-width="5" stroke="#e05452" rx="7.5" height="70" width="121" y="2.5"
-                                        x="2.5"></rect>
-                                    <line stroke-width="5" stroke="#e05452" y2="75" x2="63.5" x1="63.5"></line>
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M25 20H50"></path>
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M101 20H76"></path>
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M16 30L50 30"></path>
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M110 30L76 30"></path>
-                                </svg>
-
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff74" viewBox="0 0 65 75"
-                                    class="book-page">
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M40 20H15"></path>
-                                    <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M49 30L15 30"></path>
-                                    <path stroke-width="5" stroke="#e05452"
-                                        d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z">
-                                    </path>
-                                </svg>
-                            </div>
-                        </div>
-                        <a-result status="" title="Hi There!"
-                            sub-title="Click  the start button, to import the institutional text-file.">
-                            <template #extra>
-                                <a-upload v-model:file-list="fileList" name="file"
-                                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers"
-                                    @change="handleChange">
-                                    <a-button style="background: #4791d6; color: white !important;">
-                                        <UploadOutlined />
-                                        Start importing
-                                    </a-button>
-                                </a-upload>
-                            </template>
-                        </a-result>
-
-                    </a-tab-pane>
-                    <a-tab-pane key="2" tab="Update ATP Database">
-                        <div class="text-xl">
-                            <SmileOutlined /> Update ATP Database
-                        </div>
-                        <a-result title="Hi there do you having a great day?" sub-title="Click  the start button, to update database." class="mt-10">
-                            <template #icon>
-                                <SmileOutlined />
-                            </template>
-                            <template #extra>
-                                <a-upload v-model:file-list="fileList" name="file"
-                                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers"
-                                    @change="handleChange">
-                                    <a-button style="background: #4791d6; color: white !important;">
-                                        <UploadOutlined />
-                                        Start Updating
-                                    </a-button>
-                                </a-upload>
-                            </template>
-                        </a-result>
-                    </a-tab-pane>
-                </a-tabs> -->
-
             </div>
         </div>
         <div class="" style="display: flex; justify-content: start;" @click="getRandomJoke()">
@@ -304,6 +242,7 @@ export default {
             jokes: '',
             showUpdate: false,
             showImport: false,
+            isActive: null,
         }
     },
     methods: {
@@ -320,10 +259,12 @@ export default {
         showImportInstutional() {
             this.showImport = true;
             this.showUpdate = false;
+            this.isActive = 'import';
         },
         showUpdateddatabase() {
             this.showImport = false;
             this.showUpdate = true;
+            this.isActive = 'update';
         }
     },
     mounted() {
@@ -337,6 +278,13 @@ export default {
 </script>
 
 <style scoped>
+.active {
+
+    background-color: rgb(0, 21, 41);
+    color: white;
+
+}
+
 .loader {
     display: flex;
     align-items: center;
