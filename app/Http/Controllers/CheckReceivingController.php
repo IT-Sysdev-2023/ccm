@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Helper\ColumnsHelper;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Date;
+use App\Helper\NumberHelper;
 
 class CheckReceivingController extends Controller
 {
@@ -42,7 +44,15 @@ class CheckReceivingController extends Controller
         };
 
         $data = $q->paginate(10)->withQueryString();
-        // dd($data);
+
+        $data->transform(function ($value) {
+            $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
+            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            $value->check_amount = '₱' . number_format($value->check_amount, 2);
+
+            return $value;
+        });
+
 
 
 
