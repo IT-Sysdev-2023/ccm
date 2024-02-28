@@ -328,7 +328,7 @@ class ReportController extends Controller
                 $report->check_category,
                 $report->department,
                 $report->check_no,
-                '₱' . number_format($report->check_amount, 2),
+                NumberHelper::currency($report->check_amount),
                 $deposited_status,
                 $ds_number,
                 date('F-d-Y', strtotime($deposit_date)),

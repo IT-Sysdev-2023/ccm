@@ -29,7 +29,7 @@ class DatedPdcChecksController extends Controller
         $data->transform(function ($value) {
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
-            $value->check_amount = '₱' . number_format($value->check_amount, 2);
+            $value->check_amount = NumberHelper::currency($value->check_amount);
             return $value;
         });
 
