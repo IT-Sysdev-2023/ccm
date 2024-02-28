@@ -80,7 +80,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter account number here">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -96,7 +96,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter check date here..">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -112,7 +112,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter currency here..">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -129,7 +129,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter Check From here..">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -145,7 +145,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter account name here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -163,7 +163,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Entere customer name here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -179,7 +179,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter check amount here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -195,7 +195,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter check class here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -211,7 +211,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter check number here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -227,7 +227,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter bank name here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -245,7 +245,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter check date here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -261,7 +261,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter Check categoty here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
@@ -277,7 +277,7 @@ import { Head } from '@inertiajs/vue3';
 
                         </template>
                         <template #suffix>
-                            <a-tooltip title="Extra information">
+                            <a-tooltip title="Enter Approving officer here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
                             </a-tooltip>
                         </template>
