@@ -321,5 +321,88 @@ class ColumnsHelper
             'align' => "center",
         ],
     ];
+    public $check_manual_column = [
+        [
+            'title' => "Checkreceived",
+            'dataIndex' => "check_received",
+            'key' => "checks_r",
+        ],
+        [
+            'title' => "Checkdate",
+            'dataIndex' => "check_date",
+            'key' => "check_date",
+        ],
+        [
+            'title' => "Check From",
+            'dataIndex' => "department",
+            'key' => "b_name",
+        ],
+        [
+            'title' => "Customer Name",
+            'dataIndex' => "fullname",
+            'key' => "address",
+        ],
+        [
+            'title' => "Check Number",
+            'dataIndex' => "check_no",
+            'key' => "check_no",
+        ],
+        [
+            'title' => "Amount",
+            'dataIndex' => "check_amount",
+            'key' => "check_a",
+        ],
+        [
+            'title' => "Type",
+            'dataIndex' => "type",
+            'key' => "type",
+            'align' => "center",
+        ],
+        [
+            'title' => "Actions",
+            'key' => "action",
+            'align' => "center",
+        ],
+    ];
+    public $merge_checks_column = [
+        [
+            'title' => "",
+            'key' => "check_box",
+            'align' => "center",
+            'width' => '5%'
+        ],
+        [
+            'title' => "Checkreceived",
+            'dataIndex' => "check_received",
+            'key' => "checks_r",
+        ],
+        [
+            'title' => "Checkdate",
+            'dataIndex' => "check_date",
+            'key' => "check_date",
+        ],
+
+        [
+            'title' => "Customer Name",
+            'dataIndex' => "fullname",
+            'key' => "address",
+        ],
+        [
+            'title' => "Check Number",
+            'dataIndex' => "check_no",
+            'key' => "check_no",
+        ],
+        [
+            'title' => "Amount",
+            'dataIndex' => "check_amount",
+            'key' => "check_a",
+        ],
+
+        [
+            'title' => "Actions",
+            'key' => "action",
+            'align' => "center",
+        ],
+    ];
 
 }
