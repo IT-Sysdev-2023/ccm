@@ -13,12 +13,6 @@ use App\Helper\NumberHelper;
 
 class CheckReceivingController extends Controller
 {
-    //
-
-    public function __construct(public ColumnsHelper $columns)
-    {
-
-    }
     public function getCheckForClearing(Request $request)
     {
 
@@ -44,7 +38,7 @@ class CheckReceivingController extends Controller
 
         return Inertia::render('CheckReceiving/CheckForClearing', [
             'data' => $data,
-            'columns' => $this->columns->check_for_clearing_columns,
+            'columns' => ColumnsHelper::$check_for_clearing_columns,
             'pagination' => [
                 'current' => $data->currentPage(),
                 'total' => $data->total(),
@@ -137,7 +131,7 @@ class CheckReceivingController extends Controller
 
         return Inertia::render('CheckReceiving/PDCCheckCLearing', [
             'data' => $data,
-            'columns' => $this->columns->pdc_check_clearing_column,
+            'columns' => ColumnsHelper::$pdc_check_clearing_column,
             'pagination' => [
                 'current' => $data->currentPage(),
                 'total' => $data->total(),
@@ -171,7 +165,7 @@ class CheckReceivingController extends Controller
 
         return Inertia::render('CheckReceiving/LeasingChecks', [
             'data' => $data,
-            'columns' => $this->columns->leasing_checks_columns,
+            'columns' => ColumnsHelper::$leasing_checks_columns,
             'date' => $request->generate_date ?? today(),
             'value' => $request->check_status,
             'pagination' => [

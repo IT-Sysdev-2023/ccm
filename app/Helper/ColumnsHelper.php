@@ -4,7 +4,7 @@ namespace App\Helper;
 
 class ColumnsHelper
 {
-    public $columns_ds_tagging = [
+    public static $columns_ds_tagging = [
         [
             'title' => 'Checkreceived',
             'dataIndex' => 'check_received',
@@ -54,7 +54,7 @@ class ColumnsHelper
             'align' => 'center',
         ],
     ];
-    public $pdc_check_columns = [
+    public static $pdc_check_columns = [
         [
             'title' => 'Customer Name',
             'dataIndex' => 'fullname',
@@ -91,7 +91,7 @@ class ColumnsHelper
             'align' => 'center',
         ],
     ];
-    public $dated_check_columns = [
+    public static $dated_check_columns = [
         [
             'title' => 'Customer Name',
             'dataIndex' => 'fullname',
@@ -128,7 +128,7 @@ class ColumnsHelper
             'align' => 'center',
         ],
     ];
-    public $check_for_clearing_columns = [
+    public static $check_for_clearing_columns = [
 
         [
             'title' => '',
@@ -180,7 +180,7 @@ class ColumnsHelper
             'align' => 'center',
         ],
     ];
-    public $leasing_checks_columns = [
+    public static $leasing_checks_columns = [
 
         [
             'title' => '',
@@ -233,7 +233,7 @@ class ColumnsHelper
         ],
     ];
 
-    public $pdc_check_clearing_column = [
+    public static $pdc_check_clearing_column = [
         [
             'title' => '',
             'key' => 'check_box',
@@ -284,7 +284,7 @@ class ColumnsHelper
             'align' => 'center',
         ],
     ];
-    public $datedPdcReportTableColumn = [
+    public static $datedPdcReportTableColumn = [
         [
             'title' => "Checkreceived",
             'dataIndex' => "check_received",

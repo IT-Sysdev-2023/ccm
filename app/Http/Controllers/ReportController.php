@@ -20,11 +20,6 @@ use Illuminate\Support\Facades\Date;
 
 class ReportController extends Controller
 {
-
-    public function __construct(public ColumnsHelper $columns)
-    {
-
-    }
     public function datedpdcchecksreports()
     {
 
@@ -32,12 +27,12 @@ class ReportController extends Controller
 
         return Inertia::render('Reports/DatedPdcReports', [
             'bunit' => $bunit,
-            'columns' => $this->columns->datedPdcReportTableColumn,
+            'columns' => ColumnsHelper::$datedPdcReportTableColumn,
         ]);
     }
     public function get_dated_pdc_checks_rep(Request $request)
     {
-        $q = NewSavedChecks::joinChecksCustomerBanksDepartment()
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->reportQuery($request->bu, $request->search)
             ->when($request->ch_type == '1', function (Builder $query) {
                 $query->whereColumn('check_date', '>', 'check_received');
@@ -53,9 +48,8 @@ class ReportController extends Controller
             })
             ->when($request->repporttype == '2', function (Builder $query) {
                 $query->has('dsCheck.check');
-            })
-        ;
-        $data = $q->paginate(20)->withQueryString();
+            })->paginate(20)->withQueryString();
+            
         $data->transform(function ($item) {
             $item->check_received = Date::parse($item->check_received)->toFormattedDateString();
             $item->check_date = Date::parse($item->check_date)->toFormattedDateString();

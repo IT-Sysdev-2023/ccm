@@ -13,11 +13,6 @@ use Illuminate\Support\Facades\Date;
 
 class DatedPdcChecksController extends Controller
 {
-
-    public function __construct(public ColumnsHelper $columns)
-    {
-
-    }
     public function pdc_index(Request $request)
     {
 
@@ -35,7 +30,7 @@ class DatedPdcChecksController extends Controller
 
         return Inertia::render('Dated&PdcChecks/PDCChecks', [
             'data' => $data,
-            'columns' => $this->columns->pdc_check_columns,
+            'columns' => ColumnsHelper::$pdc_check_columns,
             'pagination' => [
                 'current' => $data->currentPage(),
                 'total' => $data->total(),
@@ -58,7 +53,7 @@ class DatedPdcChecksController extends Controller
 
         return Inertia::render('Dated&PdcChecks/DatedChecks', [
             'data' => $data,
-            'columns' => $this->columns->dated_check_columns,
+            'columns' => ColumnsHelper::$dated_check_columns,
             'pagination' => [
                 'current' => $data->currentPage(),
                 'total' => $data->total(),

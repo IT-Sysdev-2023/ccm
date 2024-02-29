@@ -20,11 +20,6 @@ use Inertia\Inertia;
 
 class DsBounceTaggingController extends Controller
 {
-    public function __construct(public ColumnsHelper $columns)
-    {
-
-    }
-    //
     public function indexBounceTagging()
     {
         return Inertia::render('Ds&BounceTagging/BounceTagging');
@@ -51,7 +46,7 @@ class DsBounceTaggingController extends Controller
     }
     public function indexDsTagging(Request $request)
     {
-        $due_dates = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
+        $due_dates = NewSavedChecks::dsTaggingQuery(Auth::user()->businessunit_id)
             ->whereDate('checks.check_date', today())
             ->count();
 
@@ -61,11 +56,8 @@ class DsBounceTaggingController extends Controller
 
         $ds_checks_table->transform(function ($value) {
 
-            $type = '';
-            Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? $type = 'DATED' : $type = 'POST-DATED';
-            $value->type = $type;
-
-            $value->done = $value->done === "" ? false : true;
+            $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST-DATED';
+            $value->done = empty($value->done) ? false : true;
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             $value->check_amount = NumberHelper::currency($value->check_amount);
@@ -83,7 +75,7 @@ class DsBounceTaggingController extends Controller
                 'count' => $getAmount->count()
             ],
             'ds_c_table' => $ds_checks_table,
-            'columns' => $this->columns->columns_ds_tagging,
+            'columns' => ColumnsHelper::$columns_ds_tagging,
             'pagination' => [
                 'current' => $ds_checks_table->currentPage(),
                 'total' => $ds_checks_table->total(),
@@ -105,14 +97,9 @@ class DsBounceTaggingController extends Controller
             ->where('new_ds_checks.status', '=', '')
             ->select('checks.*', 'customers.*', 'users.*', 'new_ds_checks.ds_no', 'new_ds_checks.user', 'new_ds_checks.date_time', 'new_ds_checks.date_deposit', 'department.department', 'banks.*')
             ->where('checks.check_no', 'like', '%' . $request->search . '%')
+            ->whereYear('checks.check_received', $request->dt_year)
             ->orderBy('new_ds_checks.date_time', 'desc')
             ->orderBy('checks.check_received', 'desc');
-
-
-        $q = match ($request->dt_year) {
-            $request->dt_year => $q->whereYear('checks.check_received', $request->dt_year),
-            default => $q
-        };
 
         $data = $q->paginate(20);
 
