@@ -76,17 +76,26 @@ class AllTransactionController extends Controller
     }
     public function getCheckReplace(Request $request)
     {
-        $data = DB::table('new_check_replacement')
+        $q = DB::table('new_check_replacement')
             ->join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
             ->join('users', 'users.id', '=', 'new_check_replacement.user')
             ->where('new_check_replacement.status', '!=', '')
-            // ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->where('checks.businessunit_id', $request->user()->businessunit_id)
             // ->where('mode', 'PARTIAL')
             ->orderBy('new_check_replacement.id', 'desc')
-            ->select('*', 'new_check_replacement.date_time')
-            ->paginate(15);
+            ->select('*', 'new_check_replacement.date_time');
+        // dd($request->getMode);
+        $q = match ($request->getMode) {
+            '1' => $q->where('mode', 'CHECK'),
+            '2' => $q->where('mode', 'CHECK & CASH'),
+            '3' => $q->where('mode', 'CASH'),
+            '5' => $q->where('mode', 'PARTIAL'),
+            '4' => $q->where('mode', 'RE-DEPOSIT'),
+            default => $q
+        };
+        $data = $q->paginate(15);
 
         return Inertia::render('Transaction/CheckReplace', [
             'data' => $data,
@@ -96,6 +105,7 @@ class AllTransactionController extends Controller
                 'total' => $data->total(),
                 'pageSize' => $data->perPage(),
             ],
+            'getModeProps' => $request->getMode
         ]);
     }
 }

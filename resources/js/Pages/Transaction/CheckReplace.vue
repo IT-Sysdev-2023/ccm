@@ -25,6 +25,14 @@ import { Head } from '@inertiajs/vue3';
                     <a-breadcrumb-item>Replace Checks</a-breadcrumb-item>
                 </a-breadcrumb>
                 <a-card>
+                    <a-select class="mb-3" ref="select" placeholder="Filter table" v-model:value="getMode"
+                        style="width: 300px" @focus="focus" @change="handleChangeNode">
+                        <a-select-option value="1">CHECK</a-select-option>
+                        <a-select-option value="2">CHECK & CASH</a-select-option>
+                        <a-select-option value="3">CASH</a-select-option>
+                        <a-select-option value="4">RE DEPOSIT</a-select-option>
+                        <a-select-option value="5">PARTIALS</a-select-option>
+                    </a-select>
                     <a-table bordered :pagination="false" :loading="isloadingtable" :data-source="data.data"
                         :columns="columns" size="small">
                         <template #bodyCell="{ column, record }">
@@ -99,19 +107,30 @@ import {
 export default {
     data() {
         return {
-            isloadingtable: false
+            isloadingtable: false,
+            getMode: this.getModeProps
         }
     },
     props: {
         data: Array,
         columns: Array,
         pagination: Array,
+        getModeProps: Object
     },
     methods: {
         handlePaginate(page = 1) {
             this.isloadingtable = true;
             this.$inertia.get(route("replace.checks"), {
-                page: page
+                page: page,
+                getMode: this.getMode
+            }, {
+                preserveScroll: true
+            });
+        },
+        handleChangeNode(page = 1) {
+            this.$inertia.get(route("replace.checks"), {
+                page: page,
+                getMode: this.getMode
             }, {
                 preserveScroll: true
             });
