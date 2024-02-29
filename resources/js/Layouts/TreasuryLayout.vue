@@ -22,7 +22,7 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
     <div>
         <div class="min-h-screen">
 
-            <header v-if="$slots.header" style="width: 100%; background: #001529; margin-top: -7px;"
+            <header v-if="$slots.header" style="width: 100%; background: #092635; margin-top: -7px;"
                 class="mt-1 bg-white mx-auto w-full w-full border-gray-100  py-3 shadow backdrop-blur-lg md:top-6">
                 <div class="px-4">
                     <div class="flex items-center justify-between">
@@ -106,8 +106,9 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
                                             <Link :href="route('bounce.checks')">Bounced Checks</Link>
                                         </a-menu-item>
                                         <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Check Replacements</a>
+                                            <Link :href="route('replace.checks')">Replacement Checks</Link>
                                         </a-menu-item>
+
                                         <a-menu-item>
                                             <a href="/datedpdcchecks-reports">Partial Payment</a>
                                         </a-menu-item>

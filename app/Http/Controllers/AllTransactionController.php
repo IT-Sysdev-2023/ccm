@@ -74,4 +74,27 @@ class AllTransactionController extends Controller
             ],
         ]);
     }
+    public function getCheckReplace(Request $request)
+    {
+        $data = DB::table('new_check_replacement')
+            ->join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->join('users', 'users.id', '=', 'new_check_replacement.user')
+            ->where('new_check_replacement.status', '!=', '')
+            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->orderBy('new_check_replacement.id', 'desc')
+            ->select('*', 'new_check_replacement.date_time')
+            ->paginate(15);
+
+        return Inertia::render('Transaction/CheckReplace', [
+            'data' => $data,
+            'columns' => ColumnsHelper::$check_replace_columns,
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
+        ]);
+    }
 }

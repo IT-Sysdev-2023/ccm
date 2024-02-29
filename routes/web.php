@@ -94,6 +94,7 @@ Route::middleware('auth')->group(function () {
     Route::get('check_manual_entry', [AllTransactionController::class, 'getCheckManualEntry'])->name('manual_entry.checks');
     Route::get('merge_checks', [AllTransactionController::class, 'getMergeChecks'])->name('mergechecks.checks');
     Route::get('bounce_checks', [AllTransactionController::class, 'getBounceChecks'])->name('bounce.checks');
+    Route::get('replace_checks', [AllTransactionController::class, 'getCheckReplace'])->name('replace.checks');
 });
 
 require __DIR__ . '/auth.php';

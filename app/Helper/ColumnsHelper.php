@@ -454,5 +454,65 @@ class ColumnsHelper
             'width' => "9%"
         ],
     ];
+    public static $check_replace_columns = [
+        [
+            'title' => "Replacement date",
+            'dataIndex' => "check_received",
+            'key' => "checks_r",
+            'width' => "10%"
+        ],
+        [
+            'title' => "Checkreceived",
+            'dataIndex' => "check_received",
+            'key' => "checks_r",
+            'width' => "10%"
+        ],
+        [
+            'title' => "Checkdate",
+            'dataIndex' => "check_date",
+            'key' => "check_date",
+            'width' => "10%"
+        ],
+
+        [
+            'title' => "Customer Name",
+            'dataIndex' => "fullname",
+            'key' => "address",
+            'width' => "20%"
+        ],
+
+        [
+            'title' => "Check Number",
+            'dataIndex' => "check_no",
+            'key' => "check_no",
+            'width' => "10%"
+        ],
+        [
+            'title' => "Amount",
+            'dataIndex' => "check_amount",
+            'key' => "check_a",
+            'width' => "8%"
+        ],
+        [
+            'title' => "Mode",
+            'dataIndex' => "",
+            'key' => "check_a",
+            'width' => "6%"
+        ],
+        [
+            'title' => "User",
+            'dataIndex' => "",
+            'key' => "check_a",
+            'width' => "20%"
+        ],
+
+
+        [
+            'title' => "Actions",
+            'key' => "action",
+            'align' => "center",
+            'width' => "9%"
+        ],
+    ];
 
 }

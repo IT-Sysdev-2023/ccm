@@ -174,7 +174,8 @@ const tabPosition = 'right';
                                 <img src="../../../../public/video/rmbg.gif" alt=""
                                     style="height: 350px; display: flex; justify-content: center;">
                                 <a-card>
-                                    Hi There! <strong>{{ $page.props.auth.user.name }} </strong> We're thrilled to have you
+                                    Hi There! <strong>{{ $page.props.auth.user.name }} </strong> I'm <strong>Ccmbot</strong>
+                                    We're thrilled to have you
                                     here. Explore our platform to discover a world of
                                     information, services, and resources tailored just for you. Whether you're seeking
                                     solutions, entertainment, or simply looking to learn something new, we've got you
