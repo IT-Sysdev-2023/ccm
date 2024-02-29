@@ -16,7 +16,7 @@ class AllTransactionController extends Controller
     {
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->where('checks.is_manual_entry', '=', 1)
+            ->where('checks.is_manual_entry', true)
             ->where('new_saved_checks.status', '')
             ->where('checks.check_no', 'LIKE', '%' . $request->searchQuery . '%')
             ->orderBy('checks.check_received')

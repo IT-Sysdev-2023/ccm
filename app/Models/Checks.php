@@ -24,6 +24,7 @@ class Checks extends Model
         'is_exist' => 'boolean',
         'check_date' => 'date',
         'check_received' => 'date',
+        'is_manual_entry' => 'boolean'
 
     ];
 
