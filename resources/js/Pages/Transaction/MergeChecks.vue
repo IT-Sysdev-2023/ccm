@@ -25,9 +25,9 @@ import { Head } from '@inertiajs/vue3';
                 </a-breadcrumb>
                 <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
                     :pagination="false">
-                    <template #bodyCell="{ column, record }">
+                    <template #bodyCell="{ column, record, index }">
                         <template v-if="column.key === 'check_box'">
-                            <a-switch size="small">
+                            <a-switch size="small" v-model:checked="record.isChecked" @change="computedAmount(record)">
                                 <template #checkedChildren><check-outlined /></template>
                                 <template #unCheckedChildren><close-outlined /></template>
                             </a-switch>
@@ -197,8 +197,14 @@ export default {
         openUpDetails(dataIn) {
             this.openDetails = true;
             this.selectDataDetails = dataIn;
+        },
+        computedAmount() {
+            const checkedRecords = this.data.data.filter(record => record.isChecked);
+            console.log(checkedRecords);
+            return checkedRecords.length;
         }
     },
+
 }
 </script>
 <style>
