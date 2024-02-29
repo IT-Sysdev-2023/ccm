@@ -177,6 +177,7 @@ export default {
         return {
             isLoadingTable: false,
             selectDataDetails: {},
+            openDetails: false,
         }
     },
     props: {
@@ -200,3 +201,19 @@ export default {
     },
 }
 </script>
+<style>
+.product-table {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.product-table tr {
+    border: 1px solid #ddd;
+}
+
+.product-table td {
+    border: 1px solid #ddd;
+}
+</style>
