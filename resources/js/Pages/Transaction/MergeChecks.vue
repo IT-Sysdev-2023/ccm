@@ -24,6 +24,21 @@ import { Head } from '@inertiajs/vue3';
                     <a-breadcrumb-item>Merge Checks</a-breadcrumb-item>
                 </a-breadcrumb>
                 <a-table :dataSource="data.data" :columns="columns" size="small" bordered :pagination="false">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'check_box'">
+                            <a-switch size="small">
+                                <template #checkedChildren><check-outlined /></template>
+                                <template #unCheckedChildren><close-outlined /></template>
+                            </a-switch>
+                        </template>
+                        <template v-if="column.key === 'action'">
+                            <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                <template #icon>
+                                    <SettingOutlined />
+                                </template>
+                            </a-button>
+                        </template>
+                    </template>
                 </a-table>
             </div>
         </div>
@@ -42,7 +57,9 @@ import {
     UsergroupAddOutlined,
     BankOutlined,
     UserOutlined,
-    InfoCircleOutlined
+    InfoCircleOutlined,
+    CheckOutlined,
+    CloseOutlined
 
 } from '@ant-design/icons-vue';
 export default {

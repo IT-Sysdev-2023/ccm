@@ -366,6 +366,12 @@ class ColumnsHelper
     ];
     public $merge_checks_column = [
         [
+            'title' => "",
+            'key' => "check_box",
+            'align' => "center",
+            'width' => '5%'
+        ],
+        [
             'title' => "Checkreceived",
             'dataIndex' => "check_received",
             'key' => "checks_r",
