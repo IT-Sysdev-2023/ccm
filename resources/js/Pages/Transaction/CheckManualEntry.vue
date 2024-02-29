@@ -66,7 +66,8 @@ import { Head } from '@inertiajs/vue3';
                 </a-card>
             </div>
         </div>
-        <a-modal v-model:open="openModal" title="Basic Modal" width="80%" wrap-class-name="full-modal" @ok="handleOk">
+        <a-modal v-model:open="openModal" title="Basic Modal" :footer="null" width="80%" wrap-class-name="full-modal"
+            @ok="handleOk">
             <a-row :gutter="[16, 16]">
                 <a-col :span="8">
                     <a-breadcrumb>

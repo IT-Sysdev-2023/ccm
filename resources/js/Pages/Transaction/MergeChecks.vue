@@ -23,39 +23,299 @@ import { Head } from '@inertiajs/vue3';
                     <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
                     <a-breadcrumb-item>Merge Checks</a-breadcrumb-item>
                 </a-breadcrumb>
-                <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
-                    :pagination="false">
-                    <template #bodyCell="{ column, record, index }">
-                        <template v-if="column.key === 'check_box'">
-                            <a-switch size="small" v-model:checked="record.isChecked" @change="computedAmount(record)">
-                                <template #checkedChildren><check-outlined /></template>
-                                <template #unCheckedChildren><close-outlined /></template>
-                            </a-switch>
+                <a-card>
+                    <div class="flex justify-between">
+                        <a-button class="mb-3" @click="modalMergeChecks">
+                            <template #icon>
+                                <FolderAddOutlined />
+                            </template>
+                            Merge a checks
+                        </a-button>
+                        <a-input-search placeholder="input search text" style="width: 400px" />
+                    </div>
+                    <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
+                        :pagination="false">
+                        <template #bodyCell="{ column, record, index }">
+                            <template v-if="column.key === 'check_box'">
+                                <a-switch size="small" v-model:checked="record.isChecked" @change="computedAmount(record)">
+                                    <template #checkedChildren><check-outlined /></template>
+                                    <template #unCheckedChildren><close-outlined /></template>
+                                </a-switch>
+                            </template>
+                            <template v-if="column.key === 'action'">
+                                <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                    <template #icon>
+                                        <SettingOutlined />
+                                    </template>
+                                </a-button>
+                            </template>
                         </template>
-                        <template v-if="column.key === 'action'">
-                            <a-button size="square" class="mx-2" @click="openUpDetails(record)">
-                                <template #icon>
-                                    <SettingOutlined />
-                                </template>
-                            </a-button>
-                        </template>
-                    </template>
-                </a-table>
-                <div class="mt-3 mb-5" style="
+                    </a-table>
+                    <div class="mt-3 mb-5" style="
                         border: 1px solid rgb(224, 224, 224);
                         border-radius: 10px;
                         padding: 10px;
                     ">
-                    <div class="flex justify-end">
-                        <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
-                            v-model:page-size="pagination.pageSize" :show-size-changer="false" :total="pagination.total"
-                            :show-total="(total, range) =>
-                                `${range[0]}-${range[1]} of ${total} reports`
-                                " @change="handleTableChange" />
+                        <div class="flex justify-end">
+                            <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
+                                v-model:page-size="pagination.pageSize" :show-size-changer="false" :total="pagination.total"
+                                :show-total="(total, range) =>
+                                    `${range[0]}-${range[1]} of ${total} reports`
+                                    " @change="handleTableChange" />
+                        </div>
                     </div>
-                </div>
+                </a-card>
             </div>
         </div>
+        <a-modal v-model:open="openModal" title="Basic Modal" width="80%" wrap-class-name="full-modal" @ok="handleOk"
+            :footer="null">
+            <a-row :gutter="[16, 16]">
+                <a-col :span="8">
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <AccountBookOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Account Number</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter account number here">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <CalendarOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Check Date</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter check date here..">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <MoneyCollectOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Currency</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter currency here..">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+
+                            <BankOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Check From</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter Check From here..">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <UsergroupAddOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Account Name</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter account name here...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                </a-col>
+                <a-col :span="8">
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <UserOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Entere customer name here...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <MoneyCollectOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter check amount here...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <BankOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Check Class</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter check class here...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <MoneyCollectOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Check Number</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter check number here...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <BankOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter bank name here...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                </a-col>
+                <a-col :span="8">
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <CalendarOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Check Received</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter check date here...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <HomeOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Check Category</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter Check categoty here...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <UsergroupAddOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter Approving officer here...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <UsergroupAddOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Penalty</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-input v-model:value="amount" class="mb-3" placeholder="Enter here...">
+                        <template #prefix>
+
+                        </template>
+                        <template #suffix>
+                            <a-tooltip title="Enter Approving officer here...">
+                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                            </a-tooltip>
+                        </template>
+                    </a-input>
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <UsergroupAddOutlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Reason for return</a-breadcrumb-item>
+                    </a-breadcrumb>
+                    <a-textarea v-model:value="value" placeholder="Basic usage" :rows="4" />
+                    <a-button class="mt-2" style="width: 100%; background: #15cc04; color: white;">
+                        <template #icon>
+                            <SaveOutlined />
+                        </template>
+                        continue merging?
+                    </a-button>
+                </a-col>
+            </a-row>
+        </a-modal>
         <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details" @ok="handleOk"
             :ok-button-props="{ hidden: true }" :cancel-button-props="{ hidden: true }" :footer="null">
             <div class="product-table">
@@ -178,6 +438,8 @@ export default {
             isLoadingTable: false,
             selectDataDetails: {},
             openDetails: false,
+            checkedRecords: [],
+            openModal: false,
         }
     },
     props: {
@@ -199,9 +461,11 @@ export default {
             this.selectDataDetails = dataIn;
         },
         computedAmount() {
-            const checkedRecords = this.data.data.filter(record => record.isChecked);
-            console.log(checkedRecords);
-            return checkedRecords.length;
+            this.checkedRecords = this.data.data.filter(record => record.isChecked);
+            return this.checkedRecords.length;
+        },
+        modalMergeChecks() {
+            this.openModal = true;
         }
     },
 
