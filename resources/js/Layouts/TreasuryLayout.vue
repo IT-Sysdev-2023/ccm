@@ -103,10 +103,7 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
                                             <Link :href="route('mergechecks.checks')">Merge Checks</Link>
                                         </a-menu-item>
                                         <a-menu-item>
-                                            <Link :href="route('bounce.checks')">Bounce Checks</Link>
-                                        </a-menu-item>
-                                        <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Bounce Cheques</a>
+                                            <Link :href="route('bounce.checks')">Bounced Checks</Link>
                                         </a-menu-item>
                                         <a-menu-item>
                                             <a href="/datedpdcchecks-reports">Check Replacements</a>

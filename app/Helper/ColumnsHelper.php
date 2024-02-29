@@ -451,6 +451,7 @@ class ColumnsHelper
             'title' => "Actions",
             'key' => "action",
             'align' => "center",
+            'width' => "9%"
         ],
     ];
 
