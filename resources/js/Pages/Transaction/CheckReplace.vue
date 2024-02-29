@@ -22,7 +22,7 @@ import { Head } from '@inertiajs/vue3';
                         <span>Dashboard</span>
                     </a-breadcrumb-item>
                     <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
-                    <a-breadcrumb-item>Merge Checks</a-breadcrumb-item>
+                    <a-breadcrumb-item>Replace Checks</a-breadcrumb-item>
                 </a-breadcrumb>
                 <a-card>
                     <a-table bordered :pagination="false" :data-source="data.data" :columns="columns" size="small">

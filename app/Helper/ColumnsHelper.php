@@ -495,15 +495,15 @@ class ColumnsHelper
         ],
         [
             'title' => "Mode",
-            'dataIndex' => "",
-            'key' => "check_a",
-            'width' => "6%"
+            'dataIndex' => "mode",
+            'key' => "mode",
+            'width' => "7%"
         ],
         [
             'title' => "User",
-            'dataIndex' => "",
+            'dataIndex' => "name",
             'key' => "check_a",
-            'width' => "20%"
+            'width' => "15%"
         ],
 
 

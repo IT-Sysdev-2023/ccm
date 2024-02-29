@@ -39,7 +39,7 @@ const tabPosition = 'right';
                             <div v-if="showImport">
                                 <a-row :gutter="[16, 16]">
                                     <a-col :span="6" class="flex justify-end">
-                                        <img src="../../../../public/video/rmbg.gif" alt=""
+                                        <img src="../../../../public/Logo/ccmpbng.png" alt=""
                                             style="height: 130px; display: flex; justify-content: center;">
                                     </a-col>
                                     <a-col :span="18">
@@ -98,7 +98,7 @@ const tabPosition = 'right';
                             <div v-else-if="showUpdate">
                                 <a-row :gutter="[16, 16]">
                                     <a-col :span="6" class="flex justify-end">
-                                        <img src="../../../../public/video/rmbg.gif" alt=""
+                                        <img src="../../../../public/Logo/ccmpbng.png" alt=""
                                             style="height: 130px; display: flex; justify-content: center;">
                                     </a-col>
                                     <a-col :span="18">
@@ -171,7 +171,7 @@ const tabPosition = 'right';
                                 </div>
                             </div>
                             <div class="mt-0 loader" v-else>
-                                <img src="../../../../public/video/rmbg.gif" alt=""
+                                <img src="../../../../public/Logo/ccmpbng.png" alt=""
                                     style="height: 350px; display: flex; justify-content: center;">
                                 <a-card>
                                     Hi There! <strong>{{ $page.props.auth.user.name }} </strong> I'm <strong>Ccmbot</strong>

@@ -82,7 +82,8 @@ class AllTransactionController extends Controller
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
             ->join('users', 'users.id', '=', 'new_check_replacement.user')
             ->where('new_check_replacement.status', '!=', '')
-            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            // ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->where('mode', 'PARTIAL')
             ->orderBy('new_check_replacement.id', 'desc')
             ->select('*', 'new_check_replacement.date_time')
             ->paginate(15);
