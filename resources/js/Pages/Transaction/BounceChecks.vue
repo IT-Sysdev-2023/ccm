@@ -43,7 +43,7 @@ import { Head } from '@inertiajs/vue3';
                                 </a-button>
                                 <a-button size="square" class="mx-1" @click="openUpDetailsFolder(record)">
                                     <template #icon>
-                                        <FolderViewOutlined />
+                                        <FolderOutlined />
                                     </template>
                                 </a-button>
                             </template>
@@ -398,7 +398,8 @@ import {
     BankOutlined,
     UserOutlined,
     InfoCircleOutlined,
-    FolderViewOutlined
+    FolderViewOutlined,
+    FolderOutlined
 
 } from '@ant-design/icons-vue';
 export default {

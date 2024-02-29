@@ -25,9 +25,59 @@ import { Head } from '@inertiajs/vue3';
                     <a-breadcrumb-item>Replace Checks</a-breadcrumb-item>
                 </a-breadcrumb>
                 <a-card>
-                    <a-table bordered :pagination="false" :data-source="data.data" :columns="columns" size="small">
-
+                    <a-table bordered :pagination="false" :loading="isloadingtable" :data-source="data.data"
+                        :columns="columns" size="small">
+                        <template #bodyCell="{ column, record }">
+                            <template v-if="column.key === 'action'">
+                                <template v-if="record.mode === 'CASH'">
+                                    <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                        <template #icon>
+                                            <RedEnvelopeOutlined />
+                                        </template>
+                                    </a-button>
+                                </template>
+                                <template v-else-if="record.mode === 'RE-DEPOSIT'">
+                                    <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                        <template #icon>
+                                            <DeliveredProcedureOutlined />
+                                        </template>
+                                    </a-button>
+                                </template>
+                                <template v-else-if="record.mode === 'PARTIAL'">
+                                    <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                        <template #icon>
+                                            <BarChartOutlined />
+                                        </template>
+                                    </a-button>
+                                </template>
+                                <template v-else-if="record.mode === 'CHECK'">
+                                    <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                        <template #icon>
+                                            <AuditOutlined />
+                                        </template>
+                                    </a-button>
+                                </template>
+                                <template v-else>
+                                    <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                        <template #icon>
+                                            <CreditCardOutlined />
+                                        </template>
+                                    </a-button>
+                                </template>
+                            </template>
+                        </template>
                     </a-table>
+                    <div class="flex justify-end">
+                        <a-pagination class="mt-0 mb-0" v-model:current="pagination.current" style="
+                                margin-top: 10px;
+                                border: 1px solid rgb(219, 219, 219);
+                                border-radius: 10px;
+                                padding: 10px;
+                            " v-model:page-size="pagination.pageSize" :show-size-changer="false"
+                            :total="pagination.total" :show-total="(total, range) =>
+                                `${range[0]}-${range[1]} of ${total} reports`
+                                " @change="handlePaginate" />
+                    </div>
                 </a-card>
             </div>
         </div>
@@ -39,23 +89,33 @@ import {
     TagOutlined,
     FolderAddOutlined,
     HomeOutlined,
-    SaveOutlined,
-    AccountBookOutlined,
-    CalendarOutlined,
-    MoneyCollectOutlined,
-    UsergroupAddOutlined,
-    BankOutlined,
-    UserOutlined,
-    InfoCircleOutlined,
-    CheckOutlined,
-    CloseOutlined
+    BarChartOutlined,
+    DeliveredProcedureOutlined,
+    RedEnvelopeOutlined,
+    CreditCardOutlined,
+    AuditOutlined
 
 } from '@ant-design/icons-vue';
 export default {
+    data() {
+        return {
+            isloadingtable: false
+        }
+    },
     props: {
         data: Array,
         columns: Array,
         pagination: Array,
+    },
+    methods: {
+        handlePaginate(page = 1) {
+            this.isloadingtable = true;
+            this.$inertia.get(route("replace.checks"), {
+                page: page
+            }, {
+                preserveScroll: true
+            });
+        }
     }
 }
 </script>
