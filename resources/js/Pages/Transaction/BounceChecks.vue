@@ -13,10 +13,36 @@ import { Head } from '@inertiajs/vue3';
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">You're logged in!</div>
-                </div>
+                <a-card>
+                    <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
+                        :pagination="false">
+                        <template #bodyCell="{ column, record, index }">
+                            <template v-if="column.key === 'check_box'">
+                                <a-switch size="small" v-model:checked="record.isChecked" @change="computedAmount(record)">
+                                    <template #checkedChildren><check-outlined /></template>
+                                    <template #unCheckedChildren><close-outlined /></template>
+                                </a-switch>
+                            </template>
+                            <template v-if="column.key === 'action'">
+                                <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                    <template #icon>
+                                        <SettingOutlined />
+                                    </template>
+                                </a-button>
+                            </template>
+                        </template>
+                    </a-table>
+                </a-card>
             </div>
         </div>
     </TreasuryLayout>
 </template>
+<script>
+export default {
+    props: {
+        data: Array,
+        columns: Array,
+        pagination: Array,
+    }
+}
+</script>

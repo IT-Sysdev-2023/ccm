@@ -404,5 +404,54 @@ class ColumnsHelper
             'align' => "center",
         ],
     ];
+    public static $bounced_checks_columns = [
+        [
+            'title' => "Checkreceived",
+            'dataIndex' => "check_received",
+            'key' => "checks_r",
+        ],
+        [
+            'title' => "Checkdate",
+            'dataIndex' => "check_date",
+            'key' => "check_date",
+        ],
+        [
+            'title' => "Bounce Date",
+            'dataIndex' => "check_received",
+            'key' => "checks_r",
+        ],
+
+        [
+            'title' => "Customer Name",
+            'dataIndex' => "fullname",
+            'key' => "address",
+        ],
+        [
+            'title' => "Account Name",
+            'dataIndex' => "fullname",
+            'key' => "address",
+        ],
+        [
+            'title' => "Account Number",
+            'dataIndex' => "fullname",
+            'key' => "address",
+        ],
+        [
+            'title' => "Check Number",
+            'dataIndex' => "check_no",
+            'key' => "check_no",
+        ],
+        [
+            'title' => "Amount",
+            'dataIndex' => "check_amount",
+            'key' => "check_a",
+        ],
+
+        [
+            'title' => "Actions",
+            'key' => "action",
+            'align' => "center",
+        ],
+    ];
 
 }

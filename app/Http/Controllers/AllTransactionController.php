@@ -54,8 +54,24 @@ class AllTransactionController extends Controller
             ],
         ]);
     }
-    public function getBounceChecks()
+    public function getBounceChecks(Request $request)
     {
-        return Inertia::render('Transaction/BounceChecks');
+        $data = DB::table('new_bounce_check')
+            ->join('checks', 'checks.checks_id', '=', 'new_bounce_check.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->where('new_bounce_check.status', '=', '')
+            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->paginate(15);
+
+        // dd($data);
+        return Inertia::render('Transaction/BounceChecks', [
+            'data' => $data,
+            'columns' => ColumnsHelper::$bounced_checks_columns,
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
+        ]);
     }
 }
