@@ -54,4 +54,8 @@ class AllTransactionController extends Controller
             ],
         ]);
     }
+    public function getBounceChecks()
+    {
+        return Inertia::render('Transaction/BounceChecks');
+    }
 }
