@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NewSavedChecks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -11,18 +12,9 @@ use Illuminate\Support\Facades\Date;
 
 class AllTransactionController extends Controller
 {
-    public function __construct(public ColumnsHelper $columns)
-    {
-
-    }
-    //
     public function getCheckManualEntry(Request $request)
     {
-        $data = DB::table('new_saved_checks')
-            ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->join('department', 'checks.department_from', '=', 'department.department_id')
-            ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('checks.is_manual_entry', '=', 1)
             ->where('new_saved_checks.status', '')
@@ -30,21 +22,15 @@ class AllTransactionController extends Controller
             ->orderBy('checks.check_received')
             ->paginate(20);
 
-
         $data->transform(function ($value) {
-            $type = '';
-            Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? $type = 'DATED' : $type = 'POST DATED';
-            $value->type = $type;
-
-
-
+            $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST DATED';
             return $value;
         });
 
 
         return Inertia::render('Transaction/CheckManualEntry', [
             'data' => $data,
-            'columns' => $this->columns->check_manual_column,
+            'columns' => ColumnsHelper::$check_manual_column,
             'pagination' => [
                 'current' => $data->currentPage(),
                 'total' => $data->total(),
@@ -54,23 +40,13 @@ class AllTransactionController extends Controller
     }
     public function getMergeChecks(Request $request)
     {
-        $data = DB::table('new_saved_checks')
-            ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->where('check_date', '>', DB::raw('check_received'))
-            ->where('new_saved_checks.status', "")
-            ->whereNotExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('new_ds_checks')
-                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
-            })
-            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+        $data = NewSavedChecks::joinChecksCustomer()->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
+            ->whereColumn('check_date', '>', 'check_received')
             ->paginate(15);
 
-        // dd($data);
         return Inertia::render('Transaction/MergeChecks', [
             'data' => $data,
-            'columns' => $this->columns->merge_checks_column,
+            'columns' => ColumnsHelper::$merge_checks_column,
             'pagination' => [
                 'current' => $data->currentPage(),
                 'total' => $data->total(),

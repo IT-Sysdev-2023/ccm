@@ -31,9 +31,7 @@ class NewSavedChecks extends Model
     public function scopeJoinChecksCustomer(Builder $builder): Builder
     {
         return $builder->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
-            ->join('department', 'department.department_id', '=', 'checks.department_from');
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id');
     }
 
     public function scopeJoinChecksCustomerBanksDepartment(Builder $builder): Builder
@@ -44,7 +42,7 @@ class NewSavedChecks extends Model
             ->join('department', 'department.department_id', '=', 'checks.department_from');
     }
 
-    public function scopeDatedPdcIndexQuery(Builder $builder, $id): Builder
+    public function scopeEmptyStatusNoCheckWhereBu(Builder $builder, $id): Builder
     {
         return $builder->where('new_saved_checks.status', "")
             ->doesntHave('dsCheck.check')

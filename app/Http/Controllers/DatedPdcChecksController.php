@@ -17,13 +17,13 @@ class DatedPdcChecksController extends Controller
     {
 
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
-            ->datedPdcIndexQuery($request->user()->businessunit_id)
+            ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
             ->whereColumn('check_date', '>', 'check_received')
             ->paginate(20);
 
         $data->transform(function ($value) {
-            $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
-            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            $value->check_received = $value->check_received->toFormattedDateString();
+            $value->check_date = $value->check_date->toFormattedDateString();
             $value->check_amount = NumberHelper::currency($value->check_amount);
             return $value;
         });
@@ -41,12 +41,13 @@ class DatedPdcChecksController extends Controller
     public function dated_index(Request $request)
     {
 
-        $data = NewSavedChecks::joinChecksCustomer()->datedPdcIndexQuery($request->user()->businessunit_id)
+        $data = NewSavedChecks::joinChecksCustomer()
+            ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
             ->whereColumn('check_date', '<=', 'check_received')
             ->paginate(20);
 
         $data->transform(function ($value) {
-            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            $value->check_date = $value->check_date->toFormattedDateString();
             $value->check_amount = NumberHelper::currency($value->check_amount);
             return $value;
         });

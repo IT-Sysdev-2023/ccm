@@ -321,7 +321,7 @@ class ColumnsHelper
             'align' => "center",
         ],
     ];
-    public $check_manual_column = [
+    public static $check_manual_column = [
         [
             'title' => "Checkreceived",
             'dataIndex' => "check_received",
@@ -364,7 +364,7 @@ class ColumnsHelper
             'align' => "center",
         ],
     ];
-    public $merge_checks_column = [
+    public static $merge_checks_column = [
         [
             'title' => "",
             'key' => "check_box",
