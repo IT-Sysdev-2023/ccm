@@ -16,7 +16,7 @@ const tabPosition = 'right';
 
         <div class="py-5">
 
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
 
                 <a-row :gutter="[16, 16]">
                     <a-col :span="6">

@@ -16,7 +16,7 @@ const colors = "red";
         </template>
 
         <div class="py-4">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mb-5">
                     <a-breadcrumb-item href="">
                         <HomeOutlined />
@@ -32,18 +32,11 @@ const colors = "red";
                     <a-col :span="4">
                         <a-card style="width: 200px; height: 90px" class="mb-5">
                             <div style="display: flex">
-                                <a-badge
-                                    count="0"
-                                    style="
+                                <a-badge count="0" style="
                                         display: flex;
                                         justify-content: center;
-                                    "
-                                >
-                                    <a-avatar
-                                        shape="square"
-                                        size="large"
-                                        src="../icons/abacus.png"
-                                    />
+                                    ">
+                                    <a-avatar shape="square" size="large" src="../icons/abacus.png" />
                                 </a-badge>
                                 <p class="ml-10 font-bold">
                                     {{ defaultTotal.count }}
@@ -54,18 +47,11 @@ const colors = "red";
                     <a-col :span="5">
                         <a-card style="width: 250px; height: 90px" class="mb-5">
                             <div style="display: flex">
-                                <a-badge
-                                    count="0"
-                                    style="
+                                <a-badge count="0" style="
                                         display: flex;
                                         justify-content: center;
-                                    "
-                                >
-                                    <a-avatar
-                                        shape="square"
-                                        size="large"
-                                        src="../icons/calculator.png"
-                                    />
+                                    ">
+                                    <a-avatar shape="square" size="large" src="../icons/calculator.png" />
                                 </a-badge>
                                 <p class="ml-10 font-bold">
                                     ₱
@@ -77,18 +63,11 @@ const colors = "red";
                     <a-col :span="4">
                         <a-card style="width: 180px; height: 90px" class="mb-5">
                             <div style="display: flex">
-                                <a-badge
-                                    count="0"
-                                    style="
+                                <a-badge count="0" style="
                                         display: flex;
                                         justify-content: center;
-                                    "
-                                >
-                                    <a-avatar
-                                        shape="square"
-                                        size="large"
-                                        src="../icons/due-date(1).png"
-                                    />
+                                    ">
+                                    <a-avatar shape="square" size="large" src="../icons/due-date(1).png" />
                                 </a-badge>
                                 <p class="ml-10 font-bold">{{ due_dates }}</p>
                             </div>
@@ -98,114 +77,64 @@ const colors = "red";
                         <a-card style="width: 100%" class="mb-5;">
                             <a-row :gutter="[16, 16]" class="mt-2">
                                 <a-col :span="8">
-                                    <a-tooltip
-                                        :color="colors"
-                                        :open="isTooltipVisibleNo"
-                                        title="Ds Number is required"
-                                    >
-                                        <a-input
-                                            placeholder="Ds Number"
-                                            v-model:value="dsNo"
-                                        >
+                                    <a-tooltip :color="colors" :open="isTooltipVisibleNo" title="Ds Number is required">
+                                        <a-input placeholder="Ds Number" v-model:value="dsNo">
                                             <template #suffix>
-                                                <a-tooltip
-                                                    title="Please Enter a Ds Number"
-                                                >
-                                                    <info-circle-outlined
-                                                        style="
+                                                <a-tooltip title="Please Enter a Ds Number">
+                                                    <info-circle-outlined style="
                                                             color: rgba(
                                                                 0,
                                                                 0,
                                                                 0,
                                                                 0.45
                                                             );
-                                                        "
-                                                    />
+                                                        " />
                                                 </a-tooltip>
                                             </template>
                                         </a-input>
                                     </a-tooltip>
                                 </a-col>
                                 <a-col :span="8">
-                                    <a-tooltip
-                                        :color="colors"
-                                        :open="isTooltipVisibleDt"
-                                        title="Return Date is required "
-                                    >
-                                        <a-date-picker
-                                            v-model:value="dateDeposit"
-                                        />
+                                    <a-tooltip :color="colors" :open="isTooltipVisibleDt" title="Return Date is required ">
+                                        <a-date-picker v-model:value="dateDeposit" />
                                     </a-tooltip>
                                 </a-col>
                                 <a-col :span="8">
-                                    <a-button
-                                        :loading="isLoadingbutton"
-                                        style="
+                                    <a-button :loading="isLoadingbutton" style="
                                             background-color: aquamarine;
                                             color: rgb(92, 92, 92);
-                                        "
-                                        ghost
-                                        @click="submitToConButton()"
-                                        >submit ds number</a-button
-                                    >
+                                        " ghost @click="submitToConButton()">submit ds number</a-button>
                                 </a-col>
                             </a-row>
                         </a-card>
                     </a-col>
                 </a-row>
-                <a-table
-                    :data-source="ds_c_table.data"
-                    :pagination="false"
-                    :columns="columns"
-                    size="small"
-                    :scroll="{ x: 100, y: 470 }"
-                    class="components-table-demo-nested"
-                    bordered
-                    :row-class-name="
-                        (_record, index) =>
+                <a-table :data-source="ds_c_table.data" :pagination="false" :columns="columns" size="small"
+                    :scroll="{ x: 100, y: 470 }" class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
                             _record.type === 'POST-DATED'
                                 ? 'POST-DATED'
                                 : 'DATED'
-                    "
-                >
+                        ">
                     <template #bodyCell="{ column, record, index }">
                         <template v-if="column.key === 'select'">
-                            <a-switch
-                                v-model:checked="record.done"
-                                @change="handleSwitchChange(record)"
-                                size="small"
-                            >
-                                <template #checkedChildren
-                                    ><check-outlined
-                                /></template>
-                                <template #unCheckedChildren
-                                    ><close-outlined
-                                /></template>
+                            <a-switch v-model:checked="record.done" @change="handleSwitchChange(record)" size="small">
+                                <template #checkedChildren><check-outlined /></template>
+                                <template #unCheckedChildren><close-outlined /></template>
                             </a-switch>
                         </template>
                     </template>
                 </a-table>
-                <div
-                    class="mt-3 mb-5"
-                    style="
+                <div class="mt-3 mb-5" style="
                         border: 1px solid rgb(224, 224, 224);
                         border-radius: 10px;
                         padding: 10px;
-                    "
-                >
+                    ">
                     <div class="flex justify-end">
-                        <a-pagination
-                            class="mt-0 mb-0"
-                            v-model:current="pagination.current"
-                            v-model:page-size="pagination.pageSize"
-                            :show-size-changer="false"
-                            :total="pagination.total"
-                            :show-total="
-                                (total, range) =>
+                        <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
+                            v-model:page-size="pagination.pageSize" :show-size-changer="false" :total="pagination.total"
+                            :show-total="(total, range) =>
                                     `${range[0]}-${range[1]} of ${total} reports`
-                            "
-                            @change="handleTableChange"
-                        />
+                                " @change="handleTableChange" />
                     </div>
                 </div>
             </div>

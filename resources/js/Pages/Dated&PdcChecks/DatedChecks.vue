@@ -25,7 +25,7 @@ const color = ref("green");
             </h2>
         </template>
         <div class="py-0">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mt-3 mb-3">
                     <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
                     <a-breadcrumb-item><a href="">Dated Checks/Pdc</a></a-breadcrumb-item>

@@ -13,7 +13,7 @@ import { Head } from "@inertiajs/vue3";
         </template>
 
         <div class="py-2">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mt-1 mb-3">
                     <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
                     <a-breadcrumb-item><a href="">Check Receiving </a></a-breadcrumb-item>

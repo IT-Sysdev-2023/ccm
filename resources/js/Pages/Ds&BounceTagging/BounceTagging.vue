@@ -37,7 +37,7 @@ const colors = 'red';
 
         <div class="py-5">
 
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-full mx-auto sm:px-6 lg:px-8">
                 <div class="text-xl mb-5 text-center" style="display: flex; justify-content: space-between;">
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
@@ -64,38 +64,40 @@ const colors = 'red';
 
                 </div>
 
-                <a-table :dataSource="dataSource" :columns="columns" :pagination="false" :loading="loading"
-                    class="components-table-demo-nested" bordered size="small">
-                    <template #bodyCell="{ column, record }">
-                        <template v-if="column.key === 'action'">
-                            <a-button class="mx-1" shape="square" ref="ref4"
-                                style="background-color: rgba(115, 236, 91, 0.685);"
-                                v-on:click="confirmBounceTagg(record.checks_id)">
+                <a-card>
+                    <a-table :dataSource="dataSource" :columns="columns" :pagination="false" :loading="loading"
+                        class="components-table-demo-nested" bordered size="small">
+                        <template #bodyCell="{ column, record }">
+                            <template v-if="column.key === 'action'">
+                                <a-button class="mx-1" shape="square" ref="ref4"
+                                    style="background-color: rgba(115, 236, 91, 0.685);"
+                                    v-on:click="confirmBounceTagg(record.checks_id)">
 
-                                <template #icon>
-                                    <TagsOutlined />
-                                </template>
-                            </a-button>
+                                    <template #icon>
+                                        <TagsOutlined />
+                                    </template>
+                                </a-button>
 
-                            <a-button shape="square" v-on:click="openModalDetails(record)">
-                                <template #icon>
-                                    <SettingOutlined />
-                                </template>
-                            </a-button>
+                                <a-button shape="square" v-on:click="openModalDetails(record)">
+                                    <template #icon>
+                                        <SettingOutlined />
+                                    </template>
+                                </a-button>
+                            </template>
+
                         </template>
 
-                    </template>
-
-                </a-table>
-                <div v-if="showPag" class="mt-3 mb-5"
-                    style="border: 1px solid rgb(224, 224, 224); border-radius: 10px; padding: 10px">
-                    <div class="flex justify-end">
-                        <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
-                            v-model:page-size="pagination.pageSize" :show-size-changer="false" :total="pagination.total"
-                            :show-total="(total, range) => `${range[0]}-${range[1]} of ${total} reports`"
-                            @change="handleTableChange" />
+                    </a-table>
+                    <div v-if="showPag" class="mt-3 mb-5"
+                        style="border: 1px solid rgb(224, 224, 224); border-radius: 10px; padding: 10px">
+                        <div class="flex justify-end">
+                            <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
+                                v-model:page-size="pagination.pageSize" :show-size-changer="false" :total="pagination.total"
+                                :show-total="(total, range) => `${range[0]}-${range[1]} of ${total} reports`"
+                                @change="handleTableChange" />
+                        </div>
                     </div>
-                </div>
+                </a-card>
             </div>
             <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details" @ok="handleOk"
                 :ok-button-props="{ hidden: true }" :cancel-button-props="{ hidden: true }" :footer="null">
