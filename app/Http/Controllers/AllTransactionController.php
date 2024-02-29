@@ -65,12 +65,17 @@ class AllTransactionController extends Controller
                     ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
             })
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->get();
+            ->paginate(15);
 
         // dd($data);
         return Inertia::render('Transaction/MergeChecks', [
             'data' => $data,
             'columns' => $this->columns->merge_checks_column,
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
         ]);
     }
 }

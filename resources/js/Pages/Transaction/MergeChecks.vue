@@ -23,8 +23,7 @@ import { Head } from '@inertiajs/vue3';
                     <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
                     <a-breadcrumb-item>Merge Checks</a-breadcrumb-item>
                 </a-breadcrumb>
-                <a-table :dataSource="data" :columns="columns" size="small" bordered>
-
+                <a-table :dataSource="data.data" :columns="columns" size="small" bordered :pagination="false">
                 </a-table>
             </div>
         </div>
