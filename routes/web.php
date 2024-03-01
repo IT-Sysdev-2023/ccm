@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
     Route::get('bounce_checks', [AllTransactionController::class, 'getBounceChecks'])->name('bounce.checks');
     Route::get('replace_checks', [AllTransactionController::class, 'getCheckReplace'])->name('replace.checks');
     Route::get('partial_payments_checks', [AllTransactionController::class, 'getPartialPayment'])->name('partial_payments.checks');
+    Route::get('dated_check_pdc_reports', [AllTransactionController::class, 'getDatedPdcReports'])->name('dcpdc.checks');
 });
 
 require __DIR__ . '/auth.php';
