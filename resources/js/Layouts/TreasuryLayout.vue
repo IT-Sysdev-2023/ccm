@@ -112,7 +112,7 @@ import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
                                             <Link :href="route('partial_payments.checks')">Partial Payment</Link>
                                         </a-menu-item>
                                         <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Dated/Pdc Reports</a>
+                                            <Link :href="route('dcpdc.checks')">Dated/Pdc Reports</Link>
                                         </a-menu-item>
                                         <a-menu-item>
                                             <a href="/datedpdcchecks-reports">Due Pdc Reports</a>
