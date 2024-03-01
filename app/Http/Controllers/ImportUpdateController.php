@@ -15,7 +15,7 @@ class ImportUpdateController extends Controller
 {
     public function indeximportupdates()
     {
-        $quoteApi = config('app.qoute_api'); 
+        $quoteApi = config('app.qoute_api');
 
         // dd($quoteApi);
 
@@ -82,22 +82,21 @@ class ImportUpdateController extends Controller
 
         $recid = $checkRec->checksreceivingtransaction_id;
 
-        $cntasc = 1; 
+        $cntasc = 1;
 
-           foreach($files as $file){
-            $arr_f =[];
+        foreach ($files as $file) {
+            $arr_f = [];
             if (strpos($file, '.txt') !== false || strpos($file, '.TXT') !== false) {
-                $r_f = fopen($txtfile_ip_new.$file.'','r');
+                $r_f = fopen($txtfile_ip_new . $file . '', 'r');
 
-                while(!feof($r_f)) 
-                {
-                        //usleep(80000);
+                while (!feof($r_f)) {
+                    //usleep(80000);
                     $arr_f[] = trim(fgets($r_f));
                 }
                 fclose($r_f);
                 $customer = "";
                 $checkno = "";
-                $class ="";
+                $class = "";
                 $category = "";
                 $expire = "";
                 $checkdate = "";
@@ -105,94 +104,85 @@ class ImportUpdateController extends Controller
                 $checktype = "";
                 $accountname = "";
                 $accountnumber = "";
-                $bank ="";
+                $bank = "";
                 $checkamount = "";
-                $daterec = ""; 
+                $daterec = "";
                 $approving_officer = "";
 
-////////////////////////////////////////////////////////////// TRACE START HERE //////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////// TRACE START HERE //////////////////////////////////////////////////////////////////////////
 
-                $arr_f = array_filter($arr_f); 
+                $arr_f = array_filter($arr_f);
                 $arr_f = array_values($arr_f);
 
-                for ($i=0; $i < count($arr_f); $i++) 
-                {                   
-                    if($i==0)
-                    {
-                        $arr = explode(",",$arr_f[$i]);
+                for ($i = 0; $i < count($arr_f); $i++) {
+                    if ($i == 0) {
+                        $arr = explode(",", $arr_f[$i]);
                         $customer = $arr[1];
-                    }	
-                    if($i==1)
-                    {
-                        $arr = explode(",",$arr_f[$i]);
+                    }
+                    if ($i == 1) {
+                        $arr = explode(",", $arr_f[$i]);
                         $checkno = $arr[1];
-                    }	
-                    if($i==2){
-                        $arr = explode(",",$arr_f[$i]);
+                    }
+                    if ($i == 2) {
+                        $arr = explode(",", $arr_f[$i]);
                         $class = $arr[1];
                     }
-                    if($i==3){
-                        $arr = explode(",",$arr_f[$i]);
+                    if ($i == 3) {
+                        $arr = explode(",", $arr_f[$i]);
                         $checkdate = $arr[1];
                     }
-                    if($i==5){
-                        $arr = explode(",",$arr_f[$i]);
+                    if ($i == 5) {
+                        $arr = explode(",", $arr_f[$i]);
                         $category = strtoupper($arr[1]);
                     }
-                    if($i==4){
-                        $arr = explode(",",$arr_f[$i]);
+                    if ($i == 4) {
+                        $arr = explode(",", $arr_f[$i]);
                         $checktype = $arr[1];
                     }
-                    if($i==6){
-                        $arr = explode(",",$arr_f[$i]);
+                    if ($i == 6) {
+                        $arr = explode(",", $arr_f[$i]);
                         $expire = $arr[1];
                     }
-                    if($i==7){
-                        $arr = explode(",",$arr_f[$i]);
+                    if ($i == 7) {
+                        $arr = explode(",", $arr_f[$i]);
                         $accountnumber = $arr[1];
                     }
-                    if($i==8){
-                        $arr = explode(",",$arr_f[$i]);
+                    if ($i == 8) {
+                        $arr = explode(",", $arr_f[$i]);
                         $accountname = $arr[1];
                     }
-                    if($i==9){
-                        $arr = explode(",",$arr_f[$i]);
+                    if ($i == 9) {
+                        $arr = explode(",", $arr_f[$i]);
                         $bank = $arr[1];
                     }
-                    if($i==10){
-                        $arr = explode(",",$arr_f[$i]);
+                    if ($i == 10) {
+                        $arr = explode(",", $arr_f[$i]);
                         $checkamount = $arr[1];
                     }
-                    if($i==11){
-                        $arr = explode(",",$arr_f[$i]);
+                    if ($i == 11) {
+                        $arr = explode(",", $arr_f[$i]);
                         $daterec = $arr[1];
                     }
-                    if($i==12){
-                        $arr = explode(",",$arr_f[$i]);
+                    if ($i == 12) {
+                        $arr = explode(",", $arr_f[$i]);
                         // dd($arr);
                         $approving_officer = $arr[1];
                     }
 
                 }
 
-                if(trim(str_replace('/','',$expire))=='' || trim($expire)=='')
-                {
+                if (trim(str_replace('/', '', $expire)) == '' || trim($expire) == '') {
                     $expire = NULL;
-                }
-                else 
-                {
+                } else {
                     $cdarr = explode("/", $expire);
-                    $expire = trim($cdarr[2]).'-'.trim($cdarr[0]).'-'.trim($cdarr[1]);
+                    $expire = trim($cdarr[2]) . '-' . trim($cdarr[0]) . '-' . trim($cdarr[1]);
                 }
 
-                if(str_replace('/','',$daterec)=='' || trim($daterec)=='')
-                {
+                if (str_replace('/', '', $daterec) == '' || trim($daterec) == '') {
                     $daterec = NULL;
-                }
-                else
-                {
+                } else {
                     $cdarr = explode("/", $daterec);
-                    $daterec = trim($cdarr[2]).'-'.trim($cdarr[0]).'-'.trim($cdarr[1]);
+                    $daterec = trim($cdarr[2]) . '-' . trim($cdarr[0]) . '-' . trim($cdarr[1]);
                 }
 
                 // if (empty($daterec) || strpos($daterec, '/') === false) {
@@ -211,116 +201,106 @@ class ImportUpdateController extends Controller
 
 
                 $cdarr = explode("/", $checkdate);
-                    //Y-M-D
-                    //03/25/2019
-                $checkdate = trim($cdarr[2]).'-'.trim($cdarr[0]).'-'.trim($cdarr[1]);
+                //Y-M-D
+                //03/25/2019
+                $checkdate = trim($cdarr[2]) . '-' . trim($cdarr[0]) . '-' . trim($cdarr[1]);
                 $customerid = "";
 
-                    //check if customer exist / create customer
-                if($id = $this->isCustomerNameExist($customer))
-                {
+                //check if customer exist / create customer
+                if ($id = $this->isCustomerNameExist($customer)) {
                     $customerid = $id;
-                }
-                else 
-                {
+                } else {
                     $customerid = $this->autoCreateCustomer($customer);
                 }
 
-                    //check if bank exist / create bank
+                //check if bank exist / create bank
                 $bankid = "";
                 $bankname = trim($bank);
-                if($bid = $this->isBankExist($bankname))
-                {
+                if ($bid = $this->isBankExist($bankname)) {
                     $bankid = $bid;
-                }
-                else 
-                {
+                } else {
                     $bankid = $this->autoCreateNewBank($bankname);
-                }       
+                }
 
 
                 $ch->push([
-                    'customer'              =>      $customer,
-                    'checkno'               =>      $checkno,
-                    'class'                 =>      $class,
-                    'category'              =>      $category,
-                    'expire'                =>      $expire,
-                    'checkreceived'         =>      $daterec,
-                    'checktype'             =>      $checktype,
-                    'accountname'           =>      $accountname,
-                    'accountnumber'         =>      $accountnumber,
-                    'bank'                  =>      $bank,
-                    'checkamount'           =>      $checkamount,
-                    'checkdate'             =>      $checkdate,
-                    'approving_officer'     =>      $approving_officer,
-                ]);   
+                    'customer' => $customer,
+                    'checkno' => $checkno,
+                    'class' => $class,
+                    'category' => $category,
+                    'expire' => $expire,
+                    'checkreceived' => $daterec,
+                    'checktype' => $checktype,
+                    'accountname' => $accountname,
+                    'accountnumber' => $accountnumber,
+                    'bank' => $bank,
+                    'checkamount' => $checkamount,
+                    'checkdate' => $checkdate,
+                    'approving_officer' => $approving_officer,
+                ]);
 
 
 
                 $check = new Checks();
 
-                $check->checksreceivingtransaction_id   = $recid;
-                $check->customer_id                     = $customerid;
-                $check->check_no                        = trim($checkno);         
-                $check->check_class                     = trim($class);   
-                $check->check_date                      = trim($checkdate);
-                $check->check_received                  = $daterec;
-                $check->check_type                      = trim(strtoupper($checktype));   
-                $check->account_no                      = trim($accountnumber);  
-                $check->account_name                    = trim($accountname);  
-                $check->bank_id                         = $bankid;
-                $check->businessunit_id                 = Auth::user()->businessunit_id;
-                $check->check_amount                    = trim(str_replace(',','',$checkamount));
-                $check->check_expiry                    = $expire;
-                $check->check_category                  = trim($category);
-                $check->check_status                    = 'PENDING';
-                $check->department_from                 = 14;
-                $check->currency_id                     = 1;
-                $check->user                            = Auth::user()->id;
-                $check->date_time                       = date('Y-m-d');
-                $check->approving_officer               = $approving_officer;
+                $check->checksreceivingtransaction_id = $recid;
+                $check->customer_id = $customerid;
+                $check->check_no = trim($checkno);
+                $check->check_class = trim($class);
+                $check->check_date = trim($checkdate);
+                $check->check_received = $daterec;
+                $check->check_type = trim(strtoupper($checktype));
+                $check->account_no = trim($accountnumber);
+                $check->account_name = trim($accountname);
+                $check->bank_id = $bankid;
+                $check->businessunit_id = Auth::user()->businessunit_id;
+                $check->check_amount = trim(str_replace(',', '', $checkamount));
+                $check->check_expiry = $expire;
+                $check->check_category = trim($category);
+                $check->check_status = 'PENDING';
+                $check->department_from = 14;
+                $check->currency_id = 1;
+                $check->user = Auth::user()->id;
+                $check->date_time = date('Y-m-d');
+                $check->approving_officer = $approving_officer;
 
 
-                if(!$check->save())
-                {
+                if (!$check->save()) {
                     $hasError = true;
                     break;
-                }   
+                }
 
                 echo json_encode([
-                    'status'	=> 'saving',
-                    'message'	=> 'Importing '.$cntasc.' of '.$cnt,
-                    'count'     => $cntasc,
-                    'max'       => $cnt,
+                    'status' => 'saving',
+                    'message' => 'Importing ' . $cntasc . ' of ' . $cnt,
+                    'count' => $cntasc,
+                    'max' => $cnt,
 
                 ]);
                 usleep(80000);
-                $cntasc++;                
-            }                
+                $cntasc++;
+            }
         }
 
-        if($hasError)
-        {
+        if ($hasError) {
             DB::rollback();
             echo json_encode([
-                'status'	=> 'error',
-                'message'	=> 'Something Went Wrong.'
+                'status' => 'error',
+                'message' => 'Something Went Wrong.'
             ]);
 
             exit();
-        }  
-        else
-        {
-            foreach($ch as $c){
-                    // echo $txtfile_ip_new.trim($c['checkno']).'.TXT';
-                    // if(file_exists($txtfile_ip_new.trim($c['checkno']).'.TXT')){
-                    //     echo 'yeah';
-                    // }
-                    // else{
-                    //     echo 'nah';
-                    // }
-                    // die();
-                $move = File::move($txtfile_ip_new.trim($c['checkno']).'.TXT', $txtfile_ip_uploaded.trim($c['checkno']).'.TXT');
+        } else {
+            foreach ($ch as $c) {
+                // echo $txtfile_ip_new.trim($c['checkno']).'.TXT';
+                // if(file_exists($txtfile_ip_new.trim($c['checkno']).'.TXT')){
+                //     echo 'yeah';
+                // }
+                // else{
+                //     echo 'nah';
+                // }
+                // die();
+                $move = File::move($txtfile_ip_new . trim($c['checkno']) . '.TXT', $txtfile_ip_uploaded . trim($c['checkno']) . '.TXT');
             }
 
             DB::commit();
@@ -328,12 +308,12 @@ class ImportUpdateController extends Controller
             usleep(80000);
 
             echo json_encode([
-                'status'	=> 'complete',
-                'message'	=> 'Database Successfully Updated.'
+                'status' => 'complete',
+                'message' => 'Database Successfully Updated.'
             ]);
         }
-        
-    
+
+
 
         // dd($data);
 
