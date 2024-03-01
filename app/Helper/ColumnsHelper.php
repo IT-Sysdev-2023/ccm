@@ -514,5 +514,65 @@ class ColumnsHelper
             'width' => "9%"
         ],
     ];
+    public static $partial_payment_columns = [
+        [
+            'title' => "Bounced date",
+            'dataIndex' => "bounce_date",
+            'key' => "checks_r",
+            'width' => "10%"
+        ],
+        [
+            'title' => "Checkdate",
+            'dataIndex' => "check_date",
+            'key' => "check_date",
+            'width' => "10%"
+        ],
+
+        [
+            'title' => "Customer Name",
+            'dataIndex' => "fullname",
+            'key' => "address",
+            'width' => "20%"
+        ],
+
+        [
+            'title' => "Check Number",
+            'dataIndex' => "check_no",
+            'key' => "check_no",
+            'width' => "10%"
+        ],
+        [
+            'title' => "Amount",
+            'dataIndex' => "check_amount",
+            'key' => "check_a",
+            'width' => "8%"
+        ],
+        [
+            'title' => "Cash Paid",
+            'dataIndex' => "paid_cash",
+            'key' => "mode",
+            'width' => "7%"
+        ],
+        [
+            'title' => "Check Paid",
+            'dataIndex' => "paid_check",
+            'key' => "check_a",
+            'width' => "15%"
+        ],
+        [
+            'title' => 'Amount balance',
+            'dataIndex' => "amount_balance",
+            'key' => "check_a",
+            'width' => "15%"
+        ],
+
+
+        [
+            'title' => "Actions",
+            'key' => "action",
+            'align' => "center",
+            'width' => "9%"
+        ],
+    ];
 
 }

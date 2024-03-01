@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NewCheckReplacement;
 use App\Models\NewSavedChecks;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -9,6 +10,7 @@ use Inertia\Inertia;
 use App\Helper\ColumnsHelper;
 use App\Helper\NumberHelper;
 use Illuminate\Support\Facades\Date;
+use App\Models\NewBounceCheck;
 
 class AllTransactionController extends Controller
 {
@@ -86,6 +88,61 @@ class AllTransactionController extends Controller
             'data' => $data,
             'columns' => ColumnsHelper::$check_replace_columns,
             'getModeProps' => $request->getMode
+        ]);
+    }
+    public function getPartialPayment(Request $request)
+    {
+        $data = DB::table('new_check_replacement')
+            ->join('checks', 'new_check_replacement.checks_id', '=', 'checks.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            // ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->where('checks.check_status', 'PARTIAL')
+            ->where('new_check_replacement.mode', 'PARTIAL')
+            ->select('checks.*', 'customers.*', 'new_check_replacement.status', 'new_check_replacement.*')
+            // ->groupBy('new_check_replacement.checks_id')
+            ->paginate(100);
+
+
+
+        $data->transform(function ($value) {
+
+            $bounceDate = '';
+
+            $paid_cash = NewCheckReplacement::where('checks_id', $value->checks_id)
+                ->where('mode', 'PARTIAL')
+                ->sum('new_check_replacement.cash');
+            $paid_check = NewCheckReplacement::where('checks_id', $value->checks_id)
+                ->where('mode', 'PARTIAL')
+                ->sum('new_check_replacement.check_amount_paid');
+
+
+            if ($value->bounce_id !== null) {
+                $bounceDate = NewBounceCheck::where('id', $value->bounce_id)->first();
+                $bounceDate = Date::parse($bounceDate->date_time)->toFormattedDateString();
+            } else {
+                $bounceDate = 'REDEEMED ' . Date::parse($value->date_time)->toFormattedDateString();
+            }
+
+            $sub_total = $paid_cash + $paid_check;
+            $amount_balance = $value->check_amount - $sub_total;
+
+            // dd($amount_balance);
+
+
+
+            $value->bounce_date = $bounceDate;
+            $value->paid_cash = NumberHelper::currency($paid_cash);
+            $value->paid_check = NumberHelper::currency($paid_check);
+            $value->amount_balance = NumberHelper::currency($amount_balance);
+            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            return $value;
+        });
+
+
+
+        return Inertia::render('Transaction/PartialPayments', [
+            'data' => $data,
+            'columns' => ColumnsHelper::$partial_payment_columns,
         ]);
     }
 }
