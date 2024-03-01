@@ -39,11 +39,6 @@ class CheckReceivingController extends Controller
         return Inertia::render('CheckReceiving/CheckForClearing', [
             'data' => $data,
             'columns' => ColumnsHelper::$check_for_clearing_columns,
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
             'date' => $request->generate_date ?? today(),
             'value' => $request->check_status,
             'search' => $request->searchQuery,
@@ -132,11 +127,6 @@ class CheckReceivingController extends Controller
         return Inertia::render('CheckReceiving/PDCCheckCLearing', [
             'data' => $data,
             'columns' => ColumnsHelper::$pdc_check_clearing_column,
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
             'date' => $request->generate_date ?? today(),
             'value' => $request->check_status
         ]);
@@ -168,11 +158,6 @@ class CheckReceivingController extends Controller
             'columns' => ColumnsHelper::$leasing_checks_columns,
             'date' => $request->generate_date ?? today(),
             'value' => $request->check_status,
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
         ]);
 
     }

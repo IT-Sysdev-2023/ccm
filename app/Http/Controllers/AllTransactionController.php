@@ -31,11 +31,6 @@ class AllTransactionController extends Controller
         return Inertia::render('Transaction/CheckManualEntry', [
             'data' => $data,
             'columns' => ColumnsHelper::$check_manual_column,
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
         ]);
     }
     public function getMergeChecks(Request $request)
@@ -47,11 +42,6 @@ class AllTransactionController extends Controller
         return Inertia::render('Transaction/MergeChecks', [
             'data' => $data,
             'columns' => ColumnsHelper::$merge_checks_column,
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
         ]);
     }
     public function getBounceChecks(Request $request)
@@ -67,11 +57,6 @@ class AllTransactionController extends Controller
         return Inertia::render('Transaction/BounceChecks', [
             'data' => $data,
             'columns' => ColumnsHelper::$bounced_checks_columns,
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
         ]);
     }
     public function getCheckReplace(Request $request)
@@ -100,11 +85,6 @@ class AllTransactionController extends Controller
         return Inertia::render('Transaction/CheckReplace', [
             'data' => $data,
             'columns' => ColumnsHelper::$check_replace_columns,
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
             'getModeProps' => $request->getMode
         ]);
     }

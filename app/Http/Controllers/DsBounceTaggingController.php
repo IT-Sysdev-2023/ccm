@@ -76,11 +76,6 @@ class DsBounceTaggingController extends Controller
             ],
             'ds_c_table' => $ds_checks_table,
             'columns' => ColumnsHelper::$columns_ds_tagging,
-            'pagination' => [
-                'current' => $ds_checks_table->currentPage(),
-                'total' => $ds_checks_table->total(),
-                'pageSize' => $ds_checks_table->perPage(),
-            ],
         ]);
     }
 
@@ -112,11 +107,6 @@ class DsBounceTaggingController extends Controller
 
         return response()->json([
             'data' => $data->items(),
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
         ]);
     }
 

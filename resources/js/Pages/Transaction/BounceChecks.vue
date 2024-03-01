@@ -49,6 +49,7 @@ import { Head } from '@inertiajs/vue3';
                             </template>
                         </template>
                     </a-table>
+                    <pagination class="mt-6" :datarecords="data" />
                 </a-card>
             </div>
         </div>
@@ -385,6 +386,7 @@ import { Head } from '@inertiajs/vue3';
     </TreasuryLayout>
 </template>
 <script>
+import Pagination from "@/Components/Pagination.vue"
 import {
     SettingOutlined,
     TagOutlined,
