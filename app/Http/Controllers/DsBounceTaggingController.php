@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helper\ColumnsHelper;
 use App\Helper\NumberHelper;
-use App\Models\BouncedCheck;
+use App\Models\NewBounceCheck;
 use App\Models\CheckHistory;
 use App\Models\Checks;
 use App\Models\NewDsChecks;
@@ -130,7 +130,7 @@ class DsBounceTaggingController extends Controller
                 'user' => Auth::user()->id
             ]);
 
-            BouncedCheck::create([
+            NewBounceCheck::create([
                 'checks_id' => $request->check_id,
                 'check_type' => 'bounce',
                 'status' => '',
