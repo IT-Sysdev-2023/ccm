@@ -31,11 +31,6 @@ class DatedPdcChecksController extends Controller
         return Inertia::render('Dated&PdcChecks/PDCChecks', [
             'data' => $data,
             'columns' => ColumnsHelper::$pdc_check_columns,
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
         ]);
     }
     public function dated_index(Request $request)
@@ -54,12 +49,7 @@ class DatedPdcChecksController extends Controller
 
         return Inertia::render('Dated&PdcChecks/DatedChecks', [
             'data' => $data,
-            'columns' => ColumnsHelper::$dated_check_columns,
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
+            'columns' => ColumnsHelper::$dated_check_columns
 
         ]);
     }

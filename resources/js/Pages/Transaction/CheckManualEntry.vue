@@ -50,19 +50,7 @@ import { Head } from '@inertiajs/vue3';
                             </template>
                         </template>
                     </a-table>
-                    <div class="mt-3 mb-5" style="
-                        border: 1px solid rgb(224, 224, 224);
-                        border-radius: 10px;
-                        padding: 10px;
-                    ">
-                        <div class="flex justify-end">
-                            <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
-                                v-model:page-size="pagination.pageSize" :show-size-changer="false" :total="pagination.total"
-                                :show-total="(total, range) =>
-                                    `${range[0]}-${range[1]} of ${total} reports`
-                                    " @change="handleTableChange" />
-                        </div>
-                    </div>
+                   <pagination class="mt-6" :datarecords="data" />
                 </a-card>
             </div>
         </div>
@@ -393,6 +381,7 @@ import { Head } from '@inertiajs/vue3';
 
 <script>
 import debounce from "lodash/debounce";
+import Pagination from "@/Components/Pagination.vue"
 import {
     SettingOutlined,
     TagOutlined,

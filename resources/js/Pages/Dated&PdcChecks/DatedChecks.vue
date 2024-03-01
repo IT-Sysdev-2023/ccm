@@ -46,18 +46,7 @@ const color = ref("green");
                             </template>
                         </template>
                     </a-table>
-
-                    <div class="flex justify-end">
-                        <a-pagination class="mt-0 mb-0" v-model:current="pagination.current" style="
-                                margin-top: 10px;
-                                border: 1px solid rgb(219, 219, 219);
-                                border-radius: 10px;
-                                padding: 10px;
-                            " v-model:page-size="pagination.pageSize" :show-size-changer="false"
-                            :total="pagination.total" :show-total="(total, range) =>
-                                `${range[0]}-${range[1]} of ${total} reports`
-                                " @change="handleTableChange" />
-                    </div>
+                    <pagination class="mt-6" :datarecords="data" />
                 </a-card>
             </div>
         </div>
@@ -187,7 +176,12 @@ const color = ref("green");
     </TreasuryLayout>
 </template>
 <script>
+import Pagination from "@/Components/Pagination.vue"
 export default {
+    components: {
+        Pagination,
+    },
+
     data() {
         return {
             isOpenModal: false,

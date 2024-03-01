@@ -111,9 +111,9 @@ const colors = "red";
                 </a-row>
                 <a-table :data-source="ds_c_table.data" :pagination="false" :columns="columns" size="small"
                     :scroll="{ x: 100, y: 470 }" class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
-                            _record.type === 'POST-DATED'
-                                ? 'POST-DATED'
-                                : 'DATED'
+                        _record.type === 'POST-DATED'
+                            ? 'POST-DATED'
+                            : 'DATED'
                         ">
                     <template #bodyCell="{ column, record, index }">
                         <template v-if="column.key === 'select'">
@@ -124,19 +124,7 @@ const colors = "red";
                         </template>
                     </template>
                 </a-table>
-                <div class="mt-3 mb-5" style="
-                        border: 1px solid rgb(224, 224, 224);
-                        border-radius: 10px;
-                        padding: 10px;
-                    ">
-                    <div class="flex justify-end">
-                        <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
-                            v-model:page-size="pagination.pageSize" :show-size-changer="false" :total="pagination.total"
-                            :show-total="(total, range) =>
-                                    `${range[0]}-${range[1]} of ${total} reports`
-                                " @change="handleTableChange" />
-                    </div>
-                </div>
+                <pagination class="mt-6" :datarecords="ds_c_table" />
             </div>
         </div>
     </TreasuryLayout>
@@ -151,6 +139,7 @@ import {
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
+import Pagination from "@/Components/Pagination.vue"
 
 export default {
     data() {
