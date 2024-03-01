@@ -519,7 +519,7 @@ class ColumnsHelper
             'title' => "Bounced date",
             'dataIndex' => "bounce_date",
             'key' => "checks_r",
-            'width' => "10%"
+            'width' => "15%"
         ],
         [
             'title' => "Checkdate",
@@ -551,19 +551,19 @@ class ColumnsHelper
             'title' => "Cash Paid",
             'dataIndex' => "paid_cash",
             'key' => "mode",
-            'width' => "7%"
+            'width' => "8%"
         ],
         [
             'title' => "Check Paid",
             'dataIndex' => "paid_check",
             'key' => "check_a",
-            'width' => "15%"
+            'width' => "8%"
         ],
         [
             'title' => 'Amount balance',
             'dataIndex' => "amount_balance",
             'key' => "check_a",
-            'width' => "15%"
+            'width' => "10%"
         ],
 
 

@@ -100,7 +100,7 @@ class AllTransactionController extends Controller
             ->where('new_check_replacement.mode', 'PARTIAL')
             ->select('checks.*', 'customers.*', 'new_check_replacement.status', 'new_check_replacement.*')
             // ->groupBy('new_check_replacement.checks_id')
-            ->paginate(100);
+            ->paginate(10);
 
 
 
@@ -132,6 +132,7 @@ class AllTransactionController extends Controller
 
             $value->bounce_date = $bounceDate;
             $value->paid_cash = NumberHelper::currency($paid_cash);
+            $value->check_amount = NumberHelper::currency($value->check_amount);
             $value->paid_check = NumberHelper::currency($paid_check);
             $value->amount_balance = NumberHelper::currency($amount_balance);
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
