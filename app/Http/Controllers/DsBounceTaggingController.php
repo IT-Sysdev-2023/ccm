@@ -57,7 +57,7 @@ class DsBounceTaggingController extends Controller
         $ds_checks_table->transform(function ($value) {
 
             $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST-DATED';
-            $value->done = empty($value->done) ? false : true;
+            $value->done = empty ($value->done) ? false : true;
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             $value->check_amount = NumberHelper::currency($value->check_amount);
@@ -107,6 +107,11 @@ class DsBounceTaggingController extends Controller
 
         return response()->json([
             'data' => $data->items(),
+            'pagination' => [
+                'current' => $data->currentPage(),
+                'total' => $data->total(),
+                'pageSize' => $data->perPage(),
+            ],
         ]);
     }
 
