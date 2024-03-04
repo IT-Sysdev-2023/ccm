@@ -18,8 +18,13 @@ class NewCheckReplacement extends Model
         return $builder->join('checks', 'new_check_replacement.checks_id', '=', 'checks.checks_id')
         ->join('customers', 'checks.customer_id', '=', 'customers.customer_id');
     }
+
+    public function scopeChecksMode(Builder $query, $id): Builder{
+        return $query->where('checks_id', $id)
+        ->where('mode', 'PARTIAL');
+    }
     public function check()
     {
-        return $this->belongsTo('App\Check', 'checks_id', 'checks_id');
+        return $this->belongsTo(Checks::class, 'checks_id', 'checks_id');
     }
 }

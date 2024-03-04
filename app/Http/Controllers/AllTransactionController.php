@@ -97,19 +97,11 @@ class AllTransactionController extends Controller
             // ->groupBy('new_check_replacement.checks_id')
             ->paginate(10);
 
-
-
         $data->transform(function ($value) {
 
-            $bounceDate = '';
-
-            $paid_cash = NewCheckReplacement::where('checks_id', $value->checks_id)
-                ->where('mode', 'PARTIAL')
-                ->sum('new_check_replacement.cash');
-            $paid_check = NewCheckReplacement::where('checks_id', $value->checks_id)
-                ->where('mode', 'PARTIAL')
-                ->sum('new_check_replacement.check_amount_paid');
-
+            $check_replacement = NewCheckReplacement::checksMode($value->checks_id)
+                ->selectRaw('SUM(new_check_replacement.cash) as paid_cash, SUM(new_check_replacement.check_amount_paid) as paid_check')
+                ->first();
 
             if ($value->bounce_id !== null) {
                 $bounceDate = NewBounceCheck::where('id', $value->bounce_id)->first();
@@ -118,17 +110,13 @@ class AllTransactionController extends Controller
                 $bounceDate = 'REDEEMED ' . Date::parse($value->date_time)->toFormattedDateString();
             }
 
-            $sub_total = $paid_cash + $paid_check;
+            $sub_total = collect($check_replacement)->sum();
             $amount_balance = $value->check_amount - $sub_total;
 
-            // dd($amount_balance);
-
-
-
             $value->bounce_date = $bounceDate;
-            $value->paid_cash = NumberHelper::currency($paid_cash);
+            $value->paid_cash = NumberHelper::currency($check_replacement->paid_cash);
             $value->check_amount = NumberHelper::currency($value->check_amount);
-            $value->paid_check = NumberHelper::currency($paid_check);
+            $value->paid_check = NumberHelper::currency($check_replacement->paid_check);
             $value->amount_balance = NumberHelper::currency($amount_balance);
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             return $value;
