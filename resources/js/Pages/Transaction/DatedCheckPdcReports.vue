@@ -25,7 +25,7 @@ import { Head } from '@inertiajs/vue3';
                         <a-select-option value="1">Dated Check Report</a-select-option>
                         <a-select-option value="2">Post Dated Check Report</a-select-option>
                     </a-select>
-                    <a-range-picker @change="handleChangeAll" v-model:value="dateRangeValue" />
+                    <a-range-picker @change="handleGetChange" v-model:value="dateReport" />
                     <a-table :data-source="data.data" :pagination="false" :columns="columns" size="small" bordered>
 
                         <template #bodyCell="{ column, record }">
@@ -65,30 +65,40 @@ import {
 
 } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
-import Pagination from "@/Components/Pagination.vue"
+import throttle from 'lodash/throttle';
+import pickBy from 'lodash/pickBy';
+import Pagination from "@/Components/Pagination.vue";
 export default {
     props: {
         data: Array,
         columns: Array,
         statusReport: Object,
         dateRange: Array,
+        filters: Array,
     },
     data() {
         return {
-            datedpdcSelect: this.statusReport,
-            // dateRangeValue: [dayjs(this.dateRange[0]), dayjs(this.dateRange[1])]
-            dateRangeValue: [this.dateRange[0] ? dayjs(this.dateRange[0]) : null, this.dateRange[0] ? dayjs(this.dateRange[0]) : null]
+            dateReport: {
+                date_from: this.filters.date_from,
+                date_to: this.filters.date_to,
+            },
+            form: {
+                status: ''
+            }
         }
     },
 
+    watch: {
+
+    },
+
     methods: {
-        handleChangeAll(obj, str) {
+        handleGetChange(obj, str) {
             this.$inertia.get(route("dcpdc.checks"), {
-                status: this.datedpdcSelect,
                 date_from: str[0],
                 date_to: str[1]
             });
-        }
+        },
     }
 }
 </script>

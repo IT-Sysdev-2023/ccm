@@ -6,6 +6,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class NewSavedChecks extends Model
 {
@@ -53,6 +54,25 @@ class NewSavedChecks extends Model
     {
         return $builder->where('businessunit_id', $bu)
             ->where('checks.check_no', 'like', '%' . $filter . '%');
+    }
+
+    public function scopeFilter($query, array $filters, $id)
+    {
+        // dd(gettype($filters['status']));
+        return $query->join('checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->where('checks.businessunit_id', $id)
+            ->where('new_saved_checks.status', '=', "")
+            ->when(!empty($filters) ?? null, function ($query, ) use ($filters) {
+                $query->whereBetween('checks.check_received', [$filters['date_from'], $filters['date_to']]);
+            })
+            ->when($filters['status'] ?? null, function ($query, $status) {
+                if ($status === '1') {
+                    $query->where('checks.check_date', '<=', DB::raw('check_received'));
+                } elseif ($status === '2') {
+                    $query->where('checks.check_date', '>', DB::raw('check_received'));
+                }
+            });
     }
 
     public function check()
