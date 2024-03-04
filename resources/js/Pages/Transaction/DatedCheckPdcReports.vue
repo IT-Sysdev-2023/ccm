@@ -4,6 +4,7 @@ import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -26,6 +27,7 @@ import { Head } from '@inertiajs/vue3';
                     </a-select>
                     <a-range-picker @change="handleChangeAll" v-model:value="dateRangeValue" />
                     <a-table :data-source="data.data" :pagination="false" :columns="columns" size="small" bordered>
+
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
                                 <a-button size="square" class="mx-1" @click="openUpDetails(record)">
@@ -36,7 +38,7 @@ import { Head } from '@inertiajs/vue3';
                             </template>
                         </template>
                     </a-table>
-                    <pagination class="mt-6" :datarecords="data"></pagination>
+                    <pagination class="mt-6" :datarecords="data" />
                 </a-card>
             </div>
         </div>
@@ -74,13 +76,13 @@ export default {
     data() {
         return {
             datedpdcSelect: this.statusReport,
-            dateRangeValue: [dayjs(this.dateRange[0]), dayjs(this.dateRange[1])]
+            // dateRangeValue: [dayjs(this.dateRange[0]), dayjs(this.dateRange[1])]
+            dateRangeValue: [this.dateRange[0] ? dayjs(this.dateRange[0]) : null, this.dateRange[0] ? dayjs(this.dateRange[0]) : null]
         }
     },
 
     methods: {
         handleChangeAll(obj, str) {
-
             this.$inertia.get(route("dcpdc.checks"), {
                 status: this.datedpdcSelect,
                 date_from: str[0],
