@@ -61,7 +61,6 @@ class DsBounceTaggingController extends Controller
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             $value->check_amount = NumberHelper::currency($value->check_amount);
-
             return $value;
         });
 
@@ -83,20 +82,18 @@ class DsBounceTaggingController extends Controller
     {
         ini_set('memory_limit', '-1');
 
-        $q = NewDsChecks::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
+        $data = NewDsChecks::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('users', 'new_ds_checks.user', 'users.id')
             ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
             ->join('department', 'department.department_id', 'checks.department_from')
-            ->where('checks.businessunit_id', Auth::user()->businessunit_id)
+            ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('new_ds_checks.status', '=', '')
             ->select('checks.*', 'customers.*', 'users.*', 'new_ds_checks.ds_no', 'new_ds_checks.user', 'new_ds_checks.date_time', 'new_ds_checks.date_deposit', 'department.department', 'banks.*')
             ->where('checks.check_no', 'like', '%' . $request->search . '%')
             ->whereYear('checks.check_received', $request->dt_year)
             ->orderBy('new_ds_checks.date_time', 'desc')
-            ->orderBy('checks.check_received', 'desc');
-
-        $data = $q->paginate(20);
+            ->orderBy('checks.check_received', 'desc')->paginate(20);
 
         $data->transform(function ($value) {
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();

@@ -143,8 +143,7 @@ class AllTransactionController extends Controller
     }
     public function getDatedPdcReports(Request $request)
     {
-        $q = DB::table('new_saved_checks')
-            ->join('checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+        $q = NewSavedChecks::join('checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('new_saved_checks.status', '=', "")
