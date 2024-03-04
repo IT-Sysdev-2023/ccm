@@ -34,15 +34,12 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/admin/dashboard', function () {
-    return Inertia::render('AdminDashboard');
-})->middleware(['auth', 'verified'])->name('admin_dashboard');
-Route::get('/accounting/dashboard', function () {
-    return Inertia::render('AccountingDashboard');
-})->middleware(['auth', 'verified'])->name('accounting_dashboard');
-Route::get('/treasury/dashboard', function () {
-    return Inertia::render('TreasuryDashboard');
-})->middleware(['auth', 'verified'])->name('treasury_dashboard');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/admin/dashboard', function () { return Inertia::render('AdminDashboard'); })->name('admin_dashboard');
+    Route::get('/accounting/dashboard', function () { return Inertia::render('AccountingDashboard'); })->name('accounting_dashboard');
+    Route::get('/treasury/dashboard', function () { return Inertia::render('TreasuryDashboard'); })->name('treasury_dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

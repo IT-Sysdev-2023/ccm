@@ -515,7 +515,7 @@ export default {
             console.log(`selected ${value}`);
         },
         createFormSubmit() {
-            axios.post('/create/user/', this.createUsers)
+            axios.post(route('users.store'), this.createUsers)
                 .then(response => {
                     this.openModalCreate = false;
 
@@ -526,7 +526,7 @@ export default {
                 });
         },
         editFormSubmit() {
-            axios.post(`/update_user/${this.selectedData.id}`, this.selectedData)
+            axios.post(route(`users.update`, this.selectedData.id), this.selectedData)
                 .then(response => {
                     this.openModal = false;
 
