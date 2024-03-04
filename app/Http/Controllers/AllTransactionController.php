@@ -131,28 +131,21 @@ class AllTransactionController extends Controller
     }
     public function getDatedPdcReports(Request $request)
     {
-        $q = NewSavedChecks::join('checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->where('new_saved_checks.status', '=', "")
-            ->whereBetween('checks.check_received', [$request->date_from, $request->date_to]);
 
-        $q = match ($request->status) {
-            '1' => $q->where('checks.check_date', '<=', DB::raw('check_received')),
-            '2' => $q->where('checks.check_date', '>', DB::raw('check_received')),
-            default => $q,
-        };
+        // dd($request->all());
 
-        $data = $q->paginate(10);
+        $data = NewSavedChecks::filter($request->only(['date_from', 'date_to', 'status']), $request->user()->businessunit_id)
+            ->paginate(10)->withQueryString();
 
-        $dateRangeValue = [$request->date_from, $request->date_to];
+        // $dateRangeValue = [$request->date_from, $request->date_to];
 
 
         return Inertia::render('Transaction/DatedCheckPdcReports', [
+            'filters' => $request->all('date_from', 'date_to', 'status'),
             'data' => $data,
             'columns' => ColumnsHelper::$datedpdcreportcheck_columns,
-            'statusReport' => $request->status,
-            'dateRange' => $dateRangeValue,
+            // 'statusReport' => $request->status,
+            // 'dateRange' => $dateRangeValue,
         ]);
     }
 }

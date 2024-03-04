@@ -9,7 +9,7 @@
             <a-config-provider>
                 <template v-for="(link, key) in datarecords.links" :key="`link-${key}`">
                     <a-button style="border-radius: 2px;" :type="link.active ? 'primary' : 'default'"
-                        v-html="link.label" @click="link.url ? $inertia.visit(link.url) : () => ({})" />
+                        v-html="link.label" @click="paginate(link)" />
                 </template>
             </a-config-provider>
         </a-col>
@@ -25,6 +25,18 @@ export default {
     },
     props: {
         datarecords: Object,
+
     },
+    methods: {
+        paginate(link) {
+
+            if (link.url) {
+                this.$inertia.visit(link.url, {
+                    preserveState: true,
+                    preserveScroll: true
+                })
+            }
+        }
+    }
 }
 </script>
