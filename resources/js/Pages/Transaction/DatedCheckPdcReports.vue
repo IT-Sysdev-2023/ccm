@@ -77,10 +77,11 @@ export default {
         statusReport: Object,
         dateRange: Array,
         filters: Array,
+        status: Object,
     },
     data() {
         return {
-            statusValue: null,
+            statusValue: this.status,
         }
     },
 
@@ -88,6 +89,7 @@ export default {
         handleGetChange(obj, str) {
             console.log(this.dateReport);
             this.$inertia.get(route("dcpdc.checks"), {
+                status: this.statusValue,
                 date_from: str[0],
                 date_to: str[1],
             }, {
@@ -95,6 +97,7 @@ export default {
             });
         },
         handleChangeStatus() {
+
             this.$inertia.get(route("dcpdc.checks"), {
                 status: this.statusValue,
                 date_from: this.filters.date_from || '',
