@@ -22,7 +22,7 @@ class AllTransactionController extends Controller
             ->where('new_saved_checks.status', '')
             ->where('checks.check_no', 'LIKE', '%' . $request->searchQuery . '%')
             ->orderBy('checks.check_received')
-            ->paginate(20);
+            ->paginate(10);
 
         $data->transform(function ($value) {
             $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST DATED';
@@ -39,7 +39,7 @@ class AllTransactionController extends Controller
     {
         $data = NewSavedChecks::joinChecksCustomer()->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
             ->whereColumn('check_date', '>', 'check_received')
-            ->paginate(15);
+            ->paginate(10);
 
         return Inertia::render('Transaction/MergeChecks', [
             'data' => $data,
@@ -52,7 +52,7 @@ class AllTransactionController extends Controller
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('new_bounce_check.status', '=', '')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->paginate(15);
+            ->paginate(10);
 
         // dd($data);
         return Inertia::render('Transaction/BounceChecks', [
@@ -79,7 +79,7 @@ class AllTransactionController extends Controller
             '4' => $q->where('mode', 'RE-DEPOSIT'),
             default => $q
         };
-        $data = $q->paginate(15);
+        $data = $q->paginate(10);
 
         return Inertia::render('Transaction/CheckReplace', [
             'data' => $data,

@@ -16,6 +16,7 @@ const color = ref("green");
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -36,9 +37,10 @@ const color = ref("green");
                 <a-card>
                     <a-table :pagination="false" :data-source="data.data" :loading="isLoadingTbl"
                         class="components-table-demo-nested" :columns="columns" size="small" bordered>
+
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
-                                <a-button @click="detailedChecks(record)">
+                                <a-button @click="detailedChecks(record)" size="small" style="width: 100%;">
                                     <template #icon>
                                         <SettingOutlined />
                                     </template>
@@ -51,8 +53,8 @@ const color = ref("green");
             </div>
         </div>
 
-        <a-modal v-model:open="isOpenModal" title="Details" style="top: 20px; width: 1000px" @ok="setModal1Visible(false)"
-            :footer="null">
+        <a-modal v-model:open="isOpenModal" title="Details" style="top: 20px; width: 1000px"
+            @ok="setModal1Visible(false)" :footer="null">
             <div class="product-container">
                 <table class="min-w-full divide-y divide-gray-200">
                     <tbody>
@@ -61,12 +63,14 @@ const color = ref("green");
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-t border-gray-200">
                                 Customer Name
                             </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
                                 {{ selectDataDetails.fullname }}
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check From
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -74,7 +78,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Number
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -82,7 +87,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Approving Officer
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -90,7 +96,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Class
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -98,7 +105,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Status
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -106,7 +114,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Date
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -114,7 +123,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account No
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -122,7 +132,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Received
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -130,7 +141,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account Name
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -138,7 +150,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Received As
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -146,7 +159,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Bank Name
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -154,7 +168,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Category
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -162,7 +177,8 @@ const color = ref("green");
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Amount
                             </td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
@@ -175,6 +191,7 @@ const color = ref("green");
         </a-modal>
     </TreasuryLayout>
 </template>
+
 <script>
 import Pagination from "@/Components/Pagination.vue"
 export default {
@@ -215,6 +232,7 @@ export default {
     },
 };
 </script>
+
 <style scoped>
 body {
     font-family: Arial, sans-serif;

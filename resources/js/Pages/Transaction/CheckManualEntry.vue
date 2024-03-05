@@ -4,6 +4,7 @@ import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -26,23 +27,27 @@ import { Head } from '@inertiajs/vue3';
                 <a-card>
                     <div class="flex justify-between">
                         <a-button class="mb-3" @click="modalAddChecksManual">
+
                             <template #icon>
                                 <FolderAddOutlined />
                             </template>
                             Add checks manual
                         </a-button>
-                        <a-input-search v-model:value="query.search" placeholder="input search text" style="width: 400px" />
+                        <a-input-search v-model:value="query.search" placeholder="input search text"
+                            style="width: 400px" />
                     </div>
                     <a-table :loading="isloadingtable" bordered size="small" :dataSource="data.data" :columns="columns"
                         :pagination="false">
+
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
-                                <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                <a-button size="small" class="mx-2" @click="openUpDetails(record)">
                                     <template #icon>
                                         <SettingOutlined />
                                     </template>
                                 </a-button>
-                                <a-button size="square" style="background-color: rgb(58, 168, 58); color: white;">
+                                <a-button size="small" style="background-color: rgb(58, 168, 58); color: white;">
+
                                     <template #icon>
                                         <TagOutlined />
                                     </template>
@@ -50,7 +55,7 @@ import { Head } from '@inertiajs/vue3';
                             </template>
                         </template>
                     </a-table>
-                   <pagination class="mt-6" :datarecords="data" />
+                    <pagination class="mt-6" :datarecords="data" />
                 </a-card>
             </div>
         </div>
@@ -65,9 +70,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Account Number</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter account number here">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -81,9 +88,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Check Date</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter check date here..">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -97,9 +106,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Currency</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter currency here..">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -114,9 +125,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Check From</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter Check From here..">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -130,9 +143,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Account Name</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter account name here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -148,9 +163,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Entere customer name here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -164,9 +181,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter check amount here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -180,9 +199,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Check Class</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter check class here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -196,9 +217,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Check Number</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter check number here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -212,9 +235,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter bank name here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -230,9 +255,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Check Received</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter check date here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -246,9 +273,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Check Category</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter Check categoty here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -262,9 +291,11 @@ import { Head } from '@inertiajs/vue3';
                         <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
+
                         <template #prefix>
 
                         </template>
+
                         <template #suffix>
                             <a-tooltip title="Enter Approving officer here...">
                                 <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
@@ -272,6 +303,7 @@ import { Head } from '@inertiajs/vue3';
                         </template>
                     </a-input>
                     <a-button class="mt-10" style="width: 100%; background: #15cc04; color: white;">
+
                         <template #icon>
                             <SaveOutlined />
                         </template>
@@ -290,87 +322,101 @@ import { Head } from '@inertiajs/vue3';
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l  border-t border-gray-200">
                                 Customer Name</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
                                 {{
-                                    selectDataDetails.fullname }}</td>
+                            selectDataDetails.fullname }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check From</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.department }}</td>
+                            selectDataDetails.department }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Number</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_no }}</td>
+                            selectDataDetails.check_no }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Approving Officer</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.approving_officer }}</td>
+                            selectDataDetails.approving_officer }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Class</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_class }}</td>
+                            selectDataDetails.check_class }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Status</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_status }}</td>
+                            selectDataDetails.check_status }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Date</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_date }}</td>
+                            selectDataDetails.check_date }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account No</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.account_no }}</td>
+                            selectDataDetails.account_no }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Received</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_received }}</td>
+                            selectDataDetails.check_received }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account Name</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.account_name }}</td>
+                            selectDataDetails.account_name }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Received As</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_type }}</td>
+                            selectDataDetails.check_type }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Bank Name</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.bankbranchname }}</td>
+                            selectDataDetails.bankbranchname }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Category</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_category }}</td>
+                            selectDataDetails.check_category }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Amount</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_amount }}</td>
+                            selectDataDetails.check_amount }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -448,6 +494,7 @@ export default {
     }
 }
 </script>
+
 <style>
 .product-table {
     margin: 20px;

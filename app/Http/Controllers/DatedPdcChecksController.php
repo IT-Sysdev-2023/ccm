@@ -19,7 +19,7 @@ class DatedPdcChecksController extends Controller
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
             ->whereColumn('checks.check_date', '>', 'checks.check_received')
-            ->paginate(20);
+            ->paginate(10);
 
         $data->transform(function ($value) {
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
@@ -39,7 +39,7 @@ class DatedPdcChecksController extends Controller
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
             ->whereColumn('check_date', '<=', 'check_received')
-            ->paginate(20);
+            ->paginate(10);
 
         $data->transform(function ($value) {
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();

@@ -28,13 +28,13 @@ const size = ref('large');
                         class="components-table-demo-nested" :columns="columns" size="small" bordered>
                         <template #bodyCell="{ column, record, index }">
                             <template v-if="column.key === 'action'">
-                                <a-button size="square" @click="openModaldated(record)">
+                                <a-button size="small" @click="openModaldated(record)">
                                     <template #icon>
                                         <!-- <FullscreenOutlined /> -->
                                         <SettingOutlined />
                                     </template>
                                 </a-button>
-                                <a-button type="primary" class="mx-2" size="square" @click="showModalReplace(record)">
+                                <a-button type="primary" class="mx-2" size="small" @click="showModalReplace(record)">
                                     <template #icon>
                                         <FileSyncOutlined />
                                     </template>

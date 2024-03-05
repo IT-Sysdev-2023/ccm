@@ -4,6 +4,7 @@ import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -35,38 +36,43 @@ import { Head } from '@inertiajs/vue3';
                     </a-select>
                     <a-table bordered :pagination="false" :loading="isloadingtable" :data-source="data.data"
                         :columns="columns" size="small">
+
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
                                 <template v-if="record.mode === 'CASH'">
-                                    <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                    <a-button size="small" class="mx-2" @click="openUpDetails(record)">
                                         <template #icon>
                                             <RedEnvelopeOutlined />
                                         </template>
                                     </a-button>
                                 </template>
+
                                 <template v-else-if="record.mode === 'RE-DEPOSIT'">
-                                    <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                    <a-button size="small" class="mx-2" @click="openUpDetails(record)">
                                         <template #icon>
                                             <DeliveredProcedureOutlined />
                                         </template>
                                     </a-button>
                                 </template>
+
                                 <template v-else-if="record.mode === 'PARTIAL'">
-                                    <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                    <a-button size="small" class="mx-2" @click="openUpDetails(record)">
                                         <template #icon>
                                             <BarChartOutlined />
                                         </template>
                                     </a-button>
                                 </template>
+
                                 <template v-else-if="record.mode === 'CHECK'">
-                                    <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                    <a-button size="small" class="mx-2" @click="openUpDetails(record)">
                                         <template #icon>
                                             <AuditOutlined />
                                         </template>
                                     </a-button>
                                 </template>
+
                                 <template v-else>
-                                    <a-button size="square" class="mx-2" @click="openUpDetails(record)">
+                                    <a-button size="small" class="mx-2" @click="openUpDetails(record)">
                                         <template #icon>
                                             <CreditCardOutlined />
                                         </template>
@@ -81,6 +87,7 @@ import { Head } from '@inertiajs/vue3';
         </div>
     </TreasuryLayout>
 </template>
+
 <script>
 import {
     SettingOutlined,

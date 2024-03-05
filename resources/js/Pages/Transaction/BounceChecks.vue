@@ -36,12 +36,12 @@ import { Head } from '@inertiajs/vue3';
                                 </a-switch>
                             </template>
                             <template v-if="column.key === 'action'">
-                                <a-button size="square" class="" @click="openUpDetails(record)">
+                                <a-button size="small" class="" @click="openUpDetails(record)">
                                     <template #icon>
                                         <SettingOutlined />
                                     </template>
                                 </a-button>
-                                <a-button size="square" class="mx-1" @click="openUpDetailsFolder(record)">
+                                <a-button size="small" class="mx-1" @click="openUpDetailsFolder(record)">
                                     <template #icon>
                                         <FolderOutlined />
                                     </template>
