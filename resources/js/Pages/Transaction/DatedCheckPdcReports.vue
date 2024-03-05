@@ -4,6 +4,7 @@ import { Head } from "@inertiajs/vue3";
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -17,37 +18,21 @@ import { Head } from "@inertiajs/vue3";
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mt-2 mb-3">
                     <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-                    <a-breadcrumb-item
-                        ><a href="">Transaction </a></a-breadcrumb-item
-                    >
+                    <a-breadcrumb-item><a href="">Transaction </a></a-breadcrumb-item>
                     <a-breadcrumb-item>Partial Payments</a-breadcrumb-item>
                 </a-breadcrumb>
                 <a-card>
-                    <a-select
-                        ref="select"
-                        placeholder="Select Status Checks Report"
-                        v-model:value="form.datedpdcSelect"
-                        style="width: 250px"
-                        @focus="focus"
-                        class="mb-2 mx-1"
-                    >
-                        <a-select-option value="1"
-                            >Dated Check Report</a-select-option
-                        >
-                        <a-select-option value="2"
-                            >Post Dated Check Report</a-select-option
-                        >
+                    <a-select ref="select" @change="handleChangeStatus" v-model:value="statusValue"
+                        placeholder="Select Status Checks Report" style="width: 250px" @focus="focus" class="mb-2 mx-1">
+                        <a-select-option value="1">Dated Check Report</a-select-option>
+                        <a-select-option value="2">Post Dated Check Report</a-select-option>
                     </a-select>
-                    <a-range-picker @change="handleGetChange" v-model:value="dateReport" />
+                    <a-range-picker @change="handleGetChange" />
                     <a-table :data-source="data.data" :pagination="false" :columns="columns" size="small" bordered>
 
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
-                                <a-button
-                                    size="square"
-                                    class="mx-1"
-                                    @click="openUpDetails(record)"
-                                >
+                                <a-button size="square" class="mx-1" @click="openUpDetails(record)">
                                     <template #icon>
                                         <SettingOutlined />
                                     </template>
@@ -95,27 +80,29 @@ export default {
     },
     data() {
         return {
-            dateReport: {
-                date_from: this.filters.date_from,
-                date_to: this.filters.date_to,
-            },
-            form: {
-                status: ''
-            }
+            statusValue: null,
         }
-    },
-
-    watch: {
-
     },
 
     methods: {
         handleGetChange(obj, str) {
+            console.log(this.dateReport);
             this.$inertia.get(route("dcpdc.checks"), {
                 date_from: str[0],
                 date_to: str[1],
+            }, {
+                preserveState: true
             });
         },
+        handleChangeStatus() {
+            this.$inertia.get(route("dcpdc.checks"), {
+                status: this.statusValue,
+                date_from: this.filters.date_from || '',
+                date_to: this.filters.date_to || ''
+            }, {
+                preserveState: true
+            });
+        }
     }
 }
 </script>
