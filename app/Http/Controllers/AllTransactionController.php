@@ -131,48 +131,37 @@ class AllTransactionController extends Controller
     }
     public function getDatedPdcReports(Request $request)
     {
-
-
         $data = NewSavedChecks::filter($request->only(['status']), $request->user()->businessunit_id)
+            ->select('*', 'checks.check_type as check-type', 'new_saved_checks.check_type as new_check_type')
             ->whereBetween('checks.check_received', [$request->date_from, $request->date_to])
             ->paginate(10)->withQueryString();
 
-
-
-
         $data->transform(function ($value) use ($request) {
             $typeStatus = '';
-
-            // dump($typeStatus);
-
-            if ($request->status == '1') {
-                if ($value->check_type <= date('Y-m-d')) {
+            if ($request->status == '1' || $request->status == '2') {
+                if ($value->new_check_type <= today()) {
                     $typeStatus = 'DATED';
                 } else {
                     $typeStatus = 'POST DATED';
                 }
-            } else if ($request->status == '2') {
-                if ($value->check_type <= date('Y-m-d')) {
-                    $typeStatus = 'DATED';
-                } else {
-                    $typeStatus = 'POST DATED';
-                }
-            } else {
-
             }
 
             $value->status = $typeStatus;
 
             return $value;
         });
-
-
+        // dd((!empty($request->date_from) && !empty($request->date_to)) ? [$request->date_from, $request->date_to] : '', );
 
         return Inertia::render('Transaction/DatedCheckPdcReports', [
             'filters' => $request->all('date_from', 'date_to', 'status'),
             'data' => $data,
             'columns' => ColumnsHelper::$datedpdcreportcheck_columns,
             'status' => $request->status,
+            'dateRangeValue' => (!empty($request->date_from) && !empty($request->date_to)) ? [$request->date_from, $request->date_to] : '',
         ]);
+    }
+    public function generate_report()
+    {
+        
     }
 }
