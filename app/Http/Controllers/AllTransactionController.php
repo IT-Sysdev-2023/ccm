@@ -134,14 +134,20 @@ class AllTransactionController extends Controller
 
 
         $data = NewSavedChecks::filter($request->only(['status']), $request->user()->businessunit_id)
-            ->whereBetween('checks.check_received', [$request->date_from, $request->date_to])
+            // ->whereBetween('checks.check_received', [$request->date_from, $request->date_to])
             ->paginate(10)->withQueryString();
+
+        dd($data->toArray());
 
 
 
 
         $data->transform(function ($value) use ($request) {
             $typeStatus = '';
+
+            // dump($value->check_type);
+
+            // dd(1);
 
             // dump($typeStatus);
 
