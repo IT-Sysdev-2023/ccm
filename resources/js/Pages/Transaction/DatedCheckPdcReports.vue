@@ -21,12 +21,22 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                     <a-breadcrumb-item>Partial Payments</a-breadcrumb-item>
                 </a-breadcrumb>
                 <a-card>
-                    <a-select ref="select" @change="handleChangeStatus" v-model:value="statusValue"
-                        placeholder="Select Status Checks Report" style="width: 250px" @focus="focus" class="mb-2 mx-1">
-                        <a-select-option value="1">Dated Check Report</a-select-option>
-                        <a-select-option value="2">Post Dated Check Report</a-select-option>
-                    </a-select>
-                    <a-range-picker @change="handleGetChange" />
+                    <div class="flex justify-between mb-10">
+                        <div>
+                            <a-select ref="select" @change="handleChangeStatus" v-model:value="statusValue" class="mr-2"
+                                placeholder="Select Status Checks Report" style="width: 250px" @focus="focus">
+                                <a-select-option value="1">Dated Check Report</a-select-option>
+                                <a-select-option value="2">Post Dated Check Report</a-select-option>
+                            </a-select>
+                            <a-range-picker @change="handleDateGenerate" v-model:value="dateRange" />
+                        </div>
+                        <div>
+                            <a-button @click="startGenerating">
+                                Generate Report Excel
+                            </a-button>
+                        </div>
+                    </div>
+
                     <a-table :data-source="data.data" :pagination="false" :columns="columns" size="small" bordered>
 
                         <template #bodyCell="{ column, record }">
@@ -56,19 +66,20 @@ export default {
         data: Array,
         columns: Array,
         statusReport: Object,
-        dateRange: Array,
+        dateRangeValue: Array,
         filters: Array,
         status: Object,
     },
     data() {
         return {
             statusValue: this.status,
+            dateRange: [dayjs(this.dateRangeValue[0]), dayjs(this.dateRangeValue[1])],
         }
     },
 
     methods: {
-        handleGetChange(obj, str) {
-            console.log(this.dateReport);
+        handleDateGenerate(obj, str) {
+            console.log(this.dateRangeValue);
             this.$inertia.get(route("dcpdc.checks"), {
                 status: this.statusValue,
                 date_from: str[0],
@@ -79,6 +90,7 @@ export default {
         },
         handleChangeStatus() {
 
+
             this.$inertia.get(route("dcpdc.checks"), {
                 status: this.statusValue,
                 date_from: this.filters.date_from || '',
@@ -86,6 +98,9 @@ export default {
             }, {
                 preserveState: true
             });
+        },
+        startGenerating() {
+            this.$inertia.get(route('generate_report.checks'));
         }
     }
 }

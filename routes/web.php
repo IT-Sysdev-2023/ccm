@@ -36,9 +36,15 @@ Route::get('/', function () {
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/admin/dashboard', function () { return Inertia::render('AdminDashboard'); })->name('admin_dashboard');
-    Route::get('/accounting/dashboard', function () { return Inertia::render('AccountingDashboard'); })->name('accounting_dashboard');
-    Route::get('/treasury/dashboard', function () { return Inertia::render('TreasuryDashboard'); })->name('treasury_dashboard');
+    Route::get('/admin/dashboard', function () {
+        return Inertia::render('AdminDashboard');
+    })->name('admin_dashboard');
+    Route::get('/accounting/dashboard', function () {
+        return Inertia::render('AccountingDashboard');
+    })->name('accounting_dashboard');
+    Route::get('/treasury/dashboard', function () {
+        return Inertia::render('TreasuryDashboard');
+    })->name('treasury_dashboard');
 });
 
 Route::middleware('auth')->group(function () {
@@ -94,6 +100,7 @@ Route::middleware('auth')->group(function () {
     Route::get('replace_checks', [AllTransactionController::class, 'getCheckReplace'])->name('replace.checks');
     Route::get('partial_payments_checks', [AllTransactionController::class, 'getPartialPayment'])->name('partial_payments.checks');
     Route::get('dated_check_pdc_reports', [AllTransactionController::class, 'getDatedPdcReports'])->name('dcpdc.checks');
+    Route::get('generate_report', [AllTransactionController::class, 'generate_report'])->name('generate_report.checks');
 });
 
 require __DIR__ . '/auth.php';
