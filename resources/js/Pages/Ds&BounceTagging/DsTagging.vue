@@ -131,12 +131,6 @@ const colors = "red";
 </template>
 
 <script>
-import {
-    HomeOutlined,
-    CheckOutlined,
-    CloseOutlined,
-    InfoCircleOutlined,
-} from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import Pagination from "@/Components/Pagination.vue"

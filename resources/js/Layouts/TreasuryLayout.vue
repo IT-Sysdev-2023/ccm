@@ -5,7 +5,6 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
 
 const placements = 'bottom';
 
@@ -15,7 +14,6 @@ const visible = ref(false);
 const hide = () => {
     visible.value = false;
 };
-import { SettingOutlined, UserOutlined } from '@ant-design/icons-vue'
 </script>
 
 <template>

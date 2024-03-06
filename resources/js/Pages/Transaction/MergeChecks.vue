@@ -1,6 +1,5 @@
 <script setup>
 import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
-import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
@@ -403,23 +402,6 @@ import { Head } from '@inertiajs/vue3';
     </TreasuryLayout>
 </template>
 <script>
-import {
-    SettingOutlined,
-    TagOutlined,
-    FolderAddOutlined,
-    HomeOutlined,
-    SaveOutlined,
-    AccountBookOutlined,
-    CalendarOutlined,
-    MoneyCollectOutlined,
-    UsergroupAddOutlined,
-    BankOutlined,
-    UserOutlined,
-    InfoCircleOutlined,
-    CheckOutlined,
-    CloseOutlined
-
-} from '@ant-design/icons-vue';
 import Pagination from "@/Components/Pagination.vue"
 export default {
     data() {

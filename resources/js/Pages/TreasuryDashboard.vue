@@ -1,6 +1,5 @@
 <script setup>
 import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
-import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>

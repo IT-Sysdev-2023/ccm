@@ -214,7 +214,6 @@ import { Head } from "@inertiajs/vue3";
 import Pagination from "@/Components/Pagination.vue"
 import debounce from "lodash/debounce";
 import dayjs from "dayjs";
-import { SaveOutlined, SettingOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons-vue";
 import { message } from 'ant-design-vue';
 
 export default {

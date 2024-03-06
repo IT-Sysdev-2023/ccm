@@ -1,7 +1,5 @@
 <script setup>
 import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { SmileOutlined, QuestionOutlined, UpSquareOutlined, ImportOutlined, UploadOutlined } from '@ant-design/icons-vue';
 const placement = 'top';
 
 const tabPosition = 'right';

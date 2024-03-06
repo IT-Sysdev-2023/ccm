@@ -1,14 +1,5 @@
 <script setup>
 import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-import { Head } from "@inertiajs/vue3";
-import {
-    InfoCircleOutlined,
-    UserOutlined,
-    SearchOutlined,
-    MenuFoldOutlined,
-    FileSyncOutlined,
-    SettingOutlined,
-} from "@ant-design/icons-vue";
 import { ref } from "vue";
 
 const size = ref("large");

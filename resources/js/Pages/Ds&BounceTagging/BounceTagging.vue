@@ -1,20 +1,5 @@
 <script setup>
 import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import {
-    SmileOutlined,
-    QuestionOutlined,
-    TagsOutlined,
-    UploadOutlined,
-    BarsOutlined,
-    HomeOutlined,
-    SettingOutlined,
-    ExclamationCircleOutlined,
-    InfoCircleOutlined,
-    FileSearchOutlined,
-    LoadingOutlined
-}
-    from '@ant-design/icons-vue';
 import { h } from 'vue';
 
 import axios from 'axios';

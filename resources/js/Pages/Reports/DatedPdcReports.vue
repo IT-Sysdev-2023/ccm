@@ -124,11 +124,6 @@ const colors = "red";
 </template>
 
 <script>
-import {
-    BarsOutlined,
-    InfoCircleOutlined,
-    FileSearchOutlined,
-} from "@ant-design/icons-vue";
 import debounce from "lodash/debounce";
 import axios from "axios";
 import { useToast } from "vue-toast-notification";

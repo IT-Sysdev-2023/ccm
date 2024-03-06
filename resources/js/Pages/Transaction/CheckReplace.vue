@@ -1,6 +1,5 @@
 <script setup>
 import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
-import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
@@ -89,18 +88,6 @@ import { Head } from '@inertiajs/vue3';
 </template>
 
 <script>
-import {
-    SettingOutlined,
-    TagOutlined,
-    FolderAddOutlined,
-    HomeOutlined,
-    BarChartOutlined,
-    DeliveredProcedureOutlined,
-    RedEnvelopeOutlined,
-    CreditCardOutlined,
-    AuditOutlined
-
-} from '@ant-design/icons-vue';
 import Pagination from "@/Components/Pagination.vue"
 export default {
     data() {

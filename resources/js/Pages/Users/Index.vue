@@ -1,6 +1,5 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Head } from '@inertiajs/vue3';
 
 
 import { ref, createVNode } from 'vue';
@@ -390,21 +389,6 @@ const handleOpen = val => {
 </template>
 
 <script>
-
-import {
-    EditOutlined,
-    TagOutlined,
-    QuestionCircleOutlined,
-    UserOutlined,
-    SmileOutlined,
-    InfoCircleOutlined,
-    FileExcelOutlined,
-    ContactsOutlined,
-    ExclamationCircleOutlined,
-    LockOutlined,
-    SettingOutlined
-
-} from '@ant-design/icons-vue';
 import axios from 'axios';
 import { Modal } from 'ant-design-vue';
 // import _ from 'lodash';
