@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\NewCheckReplacement;
 use App\Models\NewSavedChecks;
+use App\Services\TransactionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -160,8 +161,19 @@ class AllTransactionController extends Controller
             'dateRangeValue' => (!empty($request->date_from) && !empty($request->date_to)) ? [$request->date_from, $request->date_to] : '',
         ]);
     }
-    public function generate_report()
+    public function generate_report(Request $request)
     {
-        
+        $dateRange = [$request->date_from, $request->date_to];
+
+        $data = NewSavedChecks::filter($request->only(['status']), $request->user()->businessunit_id)
+            ->select('*', 'checks.check_type as check-type', 'new_saved_checks.check_type as new_check_type', 'department')
+            ->whereBetween('checks.check_received', $dateRange)
+            ->get()
+            ->groupBy('department');
+
+        return(
+            new TransactionService())
+            ->record($data)
+            ->writeResult($request->status, $dateRange);
     }
 }

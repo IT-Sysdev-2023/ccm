@@ -62,6 +62,8 @@ class NewSavedChecks extends Model
         return $query->join('checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('checks.businessunit_id', $id)
+            ->join('department', 'department.department_id', '=', 'checks.department_from')
+            ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
             ->where('new_saved_checks.status', '=', "")
             ->when($filters['status'] ?? null, function ($query, $status) {
                 if ($status === '1') {
