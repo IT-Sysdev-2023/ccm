@@ -247,16 +247,7 @@ export default {
                 generate_date: str,
             });
         },
-        handlePaginate(page = 1) {
-            this.isloadingTbl = true;
-            this.$inertia.get(route("check_for.clearing"), {
-                page: page,
-                generate_date: this.generateDate.format("YYYY-MM-DD"),
-                check_status: this.checkStatus
-            }, {
-                preserveScroll: true,
-            });
-        },
+       
         handleChangeStatus(page = 1) {
             this.isloadingTbl = true;
             this.$inertia.get(route("check_for.clearing"), {

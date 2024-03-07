@@ -31,12 +31,14 @@ const hide = () => {
                             </a>
                         </div>
                         <div class="hidden md:flex md:items-center md:justify-center md:gap-5">
-                            <Link class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
+                            <Link
+                                class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
                                 :class="{ 'bg-gray-600 text-white': route().current('treasury_dashboard'), 'text-white': !route().current('treasury_dashboard') }"
                                 :href="route('treasury_dashboard')">
                             Dashboard
                             </Link>
-                            <Link class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
+                            <Link
+                                class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
                                 :class="{ 'bg-gray-600 text-white': route().current('indeximportupdates'), 'text-white': !route().current('indeximportupdates') }"
                                 :href="route('indeximportupdates')">
                             Import&Update Checks
@@ -61,6 +63,7 @@ const hide = () => {
                             <a-dropdown arrow :placement="placements">
                                 <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
                                     href="#">Dated Checks/Pdc</a> -->
+
                                 <template #overlay>
                                     <a-menu>
                                         <a-menu-item>
@@ -75,9 +78,10 @@ const hide = () => {
                             <a-dropdown arrow :placement="placements">
                                 <a class="inline-block rounded px-2 p-2 text-sm text-white transition-all duration-200"
                                     :class="{
-                                        'bg-gray-600 text-white': route().current('bounce_tagging') || route().current('ds_tagging'),
-                                        'text-black-100': !route().current('bounce_tagging') && !route().current('ds_tagging'),
-                                    }" href="#">Ds/Bounce Tagging</a> -->
+                'bg-gray-600 text-white': route().current('bounce_tagging') || route().current('ds_tagging'),
+                'text-black-100': !route().current('bounce_tagging') && !route().current('ds_tagging'),
+            }" href="#">Ds/Bounce Tagging</a> -->
+
                                 <template #overlay>
                                     <a-menu>
                                         <a-menu-item>
@@ -92,6 +96,7 @@ const hide = () => {
                             <a-dropdown arrow :placement="placements">
                                 <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
                                     href="#">Transaction</a> -->
+
                                 <template #overlay>
                                     <a-menu>
                                         <a-menu-item>
@@ -113,7 +118,7 @@ const hide = () => {
                                             <Link :href="route('dcpdc.checks')">Dated/Pdc Reports</Link>
                                         </a-menu-item>
                                         <a-menu-item>
-                                            <a href="/datedpdcchecks-reports">Due Pdc Reports</a>
+                                            <Link :href="route('duePdcReports.checks')">Due Pdc Reports</Link>
                                         </a-menu-item>
                                     </a-menu>
                                 </template>
@@ -140,25 +145,26 @@ const hide = () => {
                                             <li class="flex items-center space-x-2">
                                                 <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M3 12h18M3 6h18M3 18h18"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M3 12h18M3 6h18M3 18h18"></path>
                                                 </svg>
                                                 <span class="text-gray-700">Location: New York</span>
                                             </li>
                                             <li class="flex items-center space-x-2">
                                                 <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                                 </svg>
-                                                <span class="text-gray-700">Username: {{ $page.props.auth.user.username }}
+                                                <span class="text-gray-700">Username: {{ $page.props.auth.user.username
+                                                    }}
                                                 </span>
                                             </li>
                                             <li class="flex items-center space-x-2">
                                                 <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M4 6h16M4 12h16m-7 6h7"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
                                                 </svg>
                                                 <span class="text-gray-700">{{ $page.props.auth.user.ContactNo }}</span>
                                             </li>
@@ -186,6 +192,7 @@ const hide = () => {
         </div>
     </div>
 </template>
+
 <style>
 .icons {
     margin-top: 1px;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BusinessUnit;
 use App\Models\NewCheckReplacement;
 use App\Models\NewSavedChecks;
 use App\Services\TransactionService;
@@ -175,5 +176,22 @@ class AllTransactionController extends Controller
             new TransactionService())
             ->record($data)
             ->writeResult($request->status, $dateRange);
+    }
+
+    public function getDuepdcReports(Request $request)
+    {
+        $dateRange = [$request->date_from, $request->date_to];
+        $buname = BusinessUnit::where('businessunit_id', $request->user()->businessunit_id)->first();
+
+
+
+        $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)->paginate(10)->withQueryString();
+
+        return Inertia::render('Transaction/DuePostDatedCheckReport', [
+            'data' => $data,
+            'columns' => ColumnsHelper::$due_pdc_reports_columns,
+            'dateRangeValue' => $dateRange[0] === null ? null : $dateRange,
+            'buname' => $buname,
+        ]);
     }
 }
