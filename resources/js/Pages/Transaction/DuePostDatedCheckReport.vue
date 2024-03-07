@@ -33,7 +33,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                                 <template #icon>
                                     <UploadOutlined />
                                 </template>
-                                Generate Report Excel
+                                Generate Due Post Dated Check Report Excel
                             </a-button>
                         </div>
                     </div>
@@ -169,6 +169,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 
 <script>
 import dayjs from 'dayjs';
+import { message } from "ant-design-vue";
 import Pagination from "@/Components/Pagination.vue";
 export default {
     props: {
@@ -197,6 +198,23 @@ export default {
                 date_to: str[1],
             });
         },
+        startGenerating() {
+            const params = {
+                date_from: this.dateRangeValue?.length > 0 ? dayjs(this.dateRangeValue[0]).format('YYYY-MM-DD') : '',
+                date_to: this.dateRangeValue?.length > 0 ? dayjs(this.dateRangeValue[1]).format('YYYY-MM-DD') : '',
+            };
+            const urlWithParams = "/generate_report_due_pdc?" + new URLSearchParams(params).toString();
+            window.location.href = urlWithParams;
+            this.isLoading = true;
+
+            this.$inertia.get(urlWithParams, {}, {
+                onFinish: () => {
+                    message.success("Successfully Generated excel file");
+                }
+            });
+
+
+        }
     }
 }
 </script>

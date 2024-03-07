@@ -36,7 +36,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 <template #icon>
                                     <UploadOutlined />
                                 </template>
-                                Generate Report Excel
+                                Generate Dated and Post Dated Check report excel
                             </a-button>
                         </div>
                     </div>
@@ -172,8 +172,6 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 
 <script>
 import dayjs from 'dayjs';
-import throttle from 'lodash/throttle';
-import pickBy from 'lodash/pickBy';
 import { message } from "ant-design-vue";
 import Pagination from "@/Components/Pagination.vue";
 export default {

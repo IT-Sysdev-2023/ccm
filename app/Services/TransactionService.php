@@ -34,6 +34,7 @@ class TransactionService
     {
 
 
+
         $headerTitle = '';
         $reportData = [];
 
@@ -82,6 +83,9 @@ class TransactionService
 
         $spreadsheet->getActiveSheet()->getCell('E1')->setValue('Status Type : ' . ' ' . $headerTitle);
         $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . $generate_date);
+
+        $spreadsheet->getActiveSheet()->getStyle('E1')->getFont()->setBold(true);
+        $spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
 
         $excel_row = 4;
 
@@ -242,6 +246,38 @@ class TransactionService
 
         return response()->download($tempFilePath, $filename);
 
+    }
+
+    public function writeResultDuePdc(array $dateRange, $businessUnit)
+    {
+
+        $dueReportData = $this->record;
+
+
+        $spreadsheet = new Spreadsheet();
+
+
+        // dd($dateRange);
+        if (!empty($dateRange[0]) && !empty($dateRange[1])) {
+            $spreadsheet->getActiveSheet()->getCell('A2')->setValue('From : ' . Date::parse($dateRange[0])->toFormattedDateString() . ' To: ' . Date::parse($dateRange[1])->toFormattedDateString());
+        } else {
+            $spreadsheet->getActiveSheet()->getCell('A2')->setValue('From : ' . today()->toFormattedDateString());
+        }
+
+        $spreadsheet->getActiveSheet()->getCell('A1')->setValue('Status Type : ' . ' ' . $businessUnit->bname);
+
+        $spreadsheet->getActiveSheet()->getStyle('E1')->getFont()->setBold(true);
+        $spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
+
+
+        $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($tempFilePath);
+
+        $filename = $businessUnit->bname . ' on ' . now()->format('M, d Y') . '.xlsx';
+
+
+        return response()->download($tempFilePath, $filename);
     }
 
 

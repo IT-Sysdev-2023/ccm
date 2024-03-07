@@ -102,6 +102,7 @@ Route::middleware('auth')->group(function () {
     Route::get('dated_check_pdc_reports', [AllTransactionController::class, 'getDatedPdcReports'])->name('dcpdc.checks');
     Route::get('generate_report', [AllTransactionController::class, 'generate_report'])->name('generate_report.checks');
     Route::get('get_due_pdc_reports', [AllTransactionController::class, 'getDuepdcReports'])->name('duePdcReports.checks');
+    Route::get('generate_report_due_pdc', [AllTransactionController::class, 'generateExcelDuePdcReports'])->name('generate_duepdcrep.checks');
 });
 
 require __DIR__ . '/auth.php';
