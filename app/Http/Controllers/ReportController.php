@@ -49,7 +49,7 @@ class ReportController extends Controller
             ->when($request->repporttype == '2', function (Builder $query) {
                 $query->has('dsCheck.check');
             })->paginate(10)->withQueryString();
-            
+
         $data->transform(function ($item) {
             $item->check_received = Date::parse($item->check_received)->toFormattedDateString();
             $item->check_date = Date::parse($item->check_date)->toFormattedDateString();
@@ -401,6 +401,6 @@ class ReportController extends Controller
         }
 
         // Download the file
-        return response()->download($tempFilePath, $filename)->deleteFileAfterSend(true);
+        return response()->download($tempFilePath, $filename, [], 'inline');
     }
 }

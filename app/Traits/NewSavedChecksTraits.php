@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Traits;
+
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 trait NewSavedChecksTraits
 {
@@ -52,6 +54,8 @@ trait NewSavedChecksTraits
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('checks.businessunit_id', $id)
             ->where('new_saved_checks.status', '=', "")
+            ->join('department', 'department.department_id', '=', 'checks.department_from')
+            ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
             ->when($filters['status'] ?? null, function ($query, $status) {
                 if ($status === '1') {
                     $query->where('checks.check_date', '<=', DB::raw('check_received'));

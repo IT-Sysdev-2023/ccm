@@ -6,6 +6,7 @@ const colors = "red";
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -79,6 +80,7 @@ const colors = "red";
                                 <a-col :span="8">
                                     <a-tooltip :color="colors" :open="isTooltipVisibleNo" title="Ds Number is required">
                                         <a-input placeholder="Ds Number" v-model:value="dsNo">
+
                                             <template #suffix>
                                                 <a-tooltip title="Please Enter a Ds Number">
                                                     <info-circle-outlined style="
@@ -95,7 +97,8 @@ const colors = "red";
                                     </a-tooltip>
                                 </a-col>
                                 <a-col :span="8">
-                                    <a-tooltip :color="colors" :open="isTooltipVisibleDt" title="Return Date is required ">
+                                    <a-tooltip :color="colors" :open="isTooltipVisibleDt"
+                                        title="Return Date is required ">
                                         <a-date-picker v-model:value="dateDeposit" />
                                     </a-tooltip>
                                 </a-col>
@@ -111,14 +114,16 @@ const colors = "red";
                 </a-row>
                 <a-table :data-source="ds_c_table.data" :pagination="false" :columns="columns" size="small"
                     :scroll="{ x: 100, y: 470 }" class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
-                        _record.type === 'POST-DATED'
-                            ? 'POST-DATED'
-                            : 'DATED'
-                        ">
+                    _record.type === 'POST-DATED'
+                        ? 'POST-DATED'
+                        : 'DATED'
+                    ">
+
                     <template #bodyCell="{ column, record, index }">
                         <template v-if="column.key === 'select'">
                             <a-switch v-model:checked="record.done" @change="handleSwitchChange(record)" size="small">
                                 <template #checkedChildren><check-outlined /></template>
+
                                 <template #unCheckedChildren><close-outlined /></template>
                             </a-switch>
                         </template>

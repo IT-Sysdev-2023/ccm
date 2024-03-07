@@ -17,6 +17,8 @@ class NewSavedChecks extends Model
     public $timestamps = false;
     protected $guarded = [];
 
+
+
     public function check()
     {
         return $this->hasOne(Checks::class, 'checks_id', 'checks_id');
