@@ -184,6 +184,19 @@ const hide = () => {
                 </div>
             </header>
 
+            <div>
+
+
+                <header style="display: flex; justify-content: center; align-items: center; text-align: center;">
+                    <img src="../../../public/Logo/ccmpbng.png" alt="" style="height: 80px;">
+                    <p>Look at those unbalanced lines.
+                    </p>
+                </header>
+            </div>
+
+
+
+
 
             <!-- Page Content -->
             <main>
@@ -204,5 +217,34 @@ const hide = () => {
 .b-icons {
     height: 16px;
     width: 100%
+}
+
+header {
+    width: 96vw;
+    padding: 2vw;
+    /* outline: 1px solid #fff3; */
+    /* background-color: #fff1; */
+
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.2vw;
+}
+
+
+p {
+    margin: 0;
+    color: rgba(34, 34, 34, 0.788);
+    font-size: max(1vw, 1rem);
+    font-style: italic;
+
+    &::before {
+        content: '';
+        /* display: block; */
+        width: 10vw;
+        margin: 1.5vw auto;
+        border-top: solid 2px;
+    }
 }
 </style>

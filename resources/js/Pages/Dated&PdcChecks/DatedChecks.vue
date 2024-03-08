@@ -23,8 +23,7 @@ const color = ref("green");
                     <a-breadcrumb-item><a href="">Dated Checks/Pdc</a></a-breadcrumb-item>
                     <a-breadcrumb-item>Dated Checks</a-breadcrumb-item>
                 </a-breadcrumb>
-                <a-page-header style="border: 1px solid rgb(235, 237, 240)" title="Dated Checks"
-                    sub-title="This is the table for all dated checks" @back="() => null" />
+            
                 <a-card>
                     <a-table :pagination="false" :data-source="data.data" :loading="isLoadingTbl"
                         class="components-table-demo-nested" :columns="columns" size="small" bordered>
