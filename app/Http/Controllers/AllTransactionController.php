@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ExcelGenerateEvents;
 use App\Models\BusinessUnit;
 use App\Models\NewCheckReplacement;
 use App\Models\NewSavedChecks;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Helper\ColumnsHelper;
@@ -199,6 +201,12 @@ class AllTransactionController extends Controller
         $buname = BusinessUnit::where('businessunit_id', $request->user()->businessunit_id)->first();
         $dateRange = [$request->date_from, $request->date_to];
         $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)->get();
+
+        $dataCounts = $data->count();
+
+        $userID = $request->user()->id;
+
+        ExcelGenerateEvents::dispatch($dataCounts, $userID, );
 
         return(new TransactionService())
             ->record($data)

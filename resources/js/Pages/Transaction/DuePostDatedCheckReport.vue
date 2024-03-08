@@ -28,7 +28,8 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                             <h2>{{ buname.bname }}</h2>
                         </div>
                         <div>
-                            <a-button @click="startGenerating" type="primary" :loading="isLoading">
+                            <a-button @click="startGenerating" type="primary" :loading="isLoading"
+                                :disabled="!data.data.length">
 
                                 <template #icon>
                                     <UploadOutlined />
@@ -208,13 +209,18 @@ export default {
             this.isLoading = true;
 
             this.$inertia.get(urlWithParams, {}, {
-                onFinish: () => {
-                    message.success("Successfully Generated excel file");
-                }
+
             });
 
 
+
         }
+    },
+    mounted() {
+        this.$ws.private(`excel-progress`)
+            .listen('ExcelGenerateEvents', (event) => {
+                console.log(event);
+            })
     }
 }
 </script>

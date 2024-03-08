@@ -3,6 +3,7 @@ import '../css/app.css';
 
 
 import { createApp, h } from 'vue';
+import ws from './utils/ws'
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
@@ -15,13 +16,18 @@ createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
-        return createApp({ render: () => h(App, props) })
-            .use(plugin)
-            .use(ZiggyVue)
-            .use(Antd)
-            .use(ToastPlugin)
-            .mount(el);
-    },
+   const app = createApp({ render: () => h(App, props) });
+   
+   app.use(plugin);
+   app.use(ZiggyVue);
+   app.use(Antd);
+   app.use(ToastPlugin);
+
+   // Adding global property $ws
+   app.config.globalProperties.$ws = ws;
+
+   app.mount(el);
+},
     progress: {
         color: '#3f8fff',
     },
