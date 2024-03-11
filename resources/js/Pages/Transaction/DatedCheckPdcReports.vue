@@ -27,8 +27,18 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             '0%': '#108ee9',
                             '100%': '#87d068',
                         }"
-                        :percent="percentage"
+                        :percent="
+                            Math.floor(
+                                (progressBar.currentRow /
+                                    progressBar.totalRows) *
+                                    100
+                            )
+                        "
                     />
+                    <p>{{ progressBar.message }}</p>
+                    <p>{{ progressBar.department }}</p>
+                    <p>{{ progressBar.currentRow }}</p>
+                    <p>{{ progressBar.totalRows }}</p>
                 </div>
                 <a-card>
                     <div class="flex justify-between mb-10">
@@ -301,7 +311,12 @@ export default {
     },
     data() {
         return {
-            percentage: 0,
+            progressBar: {
+                currentRow: 0,
+                department: "",
+                message: "",
+                totalRows: 0,
+            },
             statusValue: this.status,
             dateRange: [
                 dayjs(this.dateRangeValue[0]),
@@ -316,8 +331,7 @@ export default {
         this.$ws
             .private(`excel-progress.${this.$page.props.auth.user.id}`)
             .listen(".generate-excel", (e) => {
-                // console.log(e);
-                this.percentage = e.currentRow;
+                this.progressBar = e;
             });
     },
 
