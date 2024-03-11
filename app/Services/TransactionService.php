@@ -65,9 +65,9 @@ class TransactionService
             $headerTitle = 'Post Dated Check Report';
             $headerRow = $headerDefault->concat(['STATUS']);
         }
-        
-       
+
         $spreadsheet = new Spreadsheet();
+
         $spreadsheet->getActiveSheet()->getCell('E1')->setValue('Status Type : ' . ' ' . $headerTitle);
         $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . $generate_date);
 
@@ -87,7 +87,7 @@ class TransactionService
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getFont()->setBold(true);
             // Set header row
-            $headerRowIndex = $excel_row + 1;
+            $headerRowIndex = $excel_row++;
             $spreadsheet->getActiveSheet()->fromArray($headerRow->toArray(), null, 'A' . $headerRowIndex);
             $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->getFont()->setBold(true);
 
@@ -103,7 +103,7 @@ class TransactionService
                     ],
                 ]);
 
-            } else ($status === '2') {
+            } else if ($status === '2') {
                 $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->applyFromArray([
                     'font' => [
                         'bold' => true,
@@ -146,8 +146,6 @@ class TransactionService
                 $subtotal += $value->check_amount;
 
                 $countTable++;
-
-
                 ExcelGenerateEvents::dispatch($department, 'Generating Excel', $countTable, $item->count(), Auth::user());
             });
 
