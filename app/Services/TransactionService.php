@@ -64,8 +64,8 @@ class TransactionService
 
         $spreadsheet = new Spreadsheet();
 
-        if ($status == '1') {
-            $headerRow = array(
+        $headerDefault = collect(
+            [
                 "NO",
                 "CUSTOMER NAME",
                 "CHECK NO",
@@ -74,20 +74,9 @@ class TransactionService
                 "ACCOUNT NO",
                 "ACCOUNT NAME",
                 "BANK NAME",
-            );
-        } else {
-            $headerRow = array(
-                "NO",
-                "CUSTOMER NAME",
-                "CHECK NO",
-                "CHECK DATE",
-                "AMOUNT",
-                "ACCOUNT NO",
-                "ACCOUNT NAME",
-                "BANK NAME",
-                "STATUS",
-            );
-        }
+            ]
+        );
+        $headerRow = $status == '1' ? $headerDefault : $headerDefault->concat(['STATUS']);
 
         $spreadsheet->getActiveSheet()->getCell('E1')->setValue('Status Type : ' . ' ' . $headerTitle);
         $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . $generate_date);

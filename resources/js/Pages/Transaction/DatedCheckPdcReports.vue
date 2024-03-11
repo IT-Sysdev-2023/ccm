@@ -373,7 +373,7 @@ export default {
             const urlWithParams =
                 "/generate_report?" + new URLSearchParams(params).toString();
             // window.location.href = urlWithParams;
-            this.isLoading = true;
+            // this.isLoading = true;
 
             this.$inertia.get(
                 urlWithParams,
