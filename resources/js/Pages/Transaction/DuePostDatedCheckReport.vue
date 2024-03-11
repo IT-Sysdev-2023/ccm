@@ -205,11 +205,10 @@ export default {
                 date_to: this.dateRangeValue?.length > 0 ? dayjs(this.dateRangeValue[1]).format('YYYY-MM-DD') : '',
             };
             const urlWithParams = "/generate_report_due_pdc?" + new URLSearchParams(params).toString();
-            window.location.href = urlWithParams;
             this.isLoading = true;
 
             this.$inertia.get(urlWithParams, {}, {
-
+                onFinish: () => this.isLoading = false,
             });
 
 
