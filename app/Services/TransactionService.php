@@ -18,6 +18,20 @@ use Illuminate\Support\Facades\Date;
 class TransactionService
 {
     protected $record;
+    protected bool $status; 
+
+    protected $generateReportHeader = collect(
+        [
+            "NO",
+            "CUSTOMER NAME",
+            "CHECK NO",
+            "CHECK DATE",
+            "AMOUNT",
+            "ACCOUNT NO",
+            "ACCOUNT NAME",
+            "BANK NAME",
+        ]
+    );
 
     function record(object $data): self
     {
@@ -30,8 +44,14 @@ class TransactionService
         return $this;
     }
 
+    public function setStatus(bool $status){
+        $this->status = $status;
+        return $this;
+    }
+    
 
-    public function writeResult(string $status, array $dateRange)
+
+    public function writeResult(array $dateRange)
     {
 
         ini_set('max_execution_time', 3600);
@@ -44,26 +64,14 @@ class TransactionService
         $grandTotal = 0;
         $excel_row = 5;
 
-        // $reportData1 = $this->record;
-        $headerDefault = collect(
-            [
-                "NO",
-                "CUSTOMER NAME",
-                "CHECK NO",
-                "CHECK DATE",
-                "AMOUNT",
-                "ACCOUNT NO",
-                "ACCOUNT NAME",
-                "BANK NAME",
-            ]
-        );
+        $status = $this->status;
 
         if ($status == '1') {
             $headerTitle = 'Dated Check Report';
-            $headerRow = $headerDefault;
+            $headerRow = $this->generateReportHeader;
         } else {
             $headerTitle = 'Post Dated Check Report';
-            $headerRow = $headerDefault->concat(['STATUS']);
+            $headerRow = $this->generateReportHeader->concat(['STATUS']);
         }
 
         $spreadsheet = new Spreadsheet();
@@ -274,7 +282,6 @@ class TransactionService
                 ],
             ],
         ]);
-
         $table_columns = array(
             "NO.",
             "DATE RECIEVED",

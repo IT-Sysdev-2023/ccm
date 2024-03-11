@@ -177,7 +177,8 @@ class AllTransactionController extends Controller
         return(
             new TransactionService())
             ->record($data)
-            ->writeResult($request->status, $dateRange);
+            ->setStatus($request->status)
+            ->writeResult($dateRange);
     }
 
     public function getDuepdcReports(Request $request)
