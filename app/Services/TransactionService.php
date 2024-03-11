@@ -18,20 +18,24 @@ use Illuminate\Support\Facades\Date;
 class TransactionService
 {
     protected $record;
-    protected bool $status; 
+    protected bool $status;
 
-    protected $generateReportHeader = collect(
-        [
-            "NO",
-            "CUSTOMER NAME",
-            "CHECK NO",
-            "CHECK DATE",
-            "AMOUNT",
-            "ACCOUNT NO",
-            "ACCOUNT NAME",
-            "BANK NAME",
-        ]
-    );
+    protected $generateReportHeader;
+    public function __construct()
+    {
+        $this->generateReportHeader = collect(
+            [
+                "NO",
+                "CUSTOMER NAME",
+                "CHECK NO",
+                "CHECK DATE",
+                "AMOUNT",
+                "ACCOUNT NO",
+                "ACCOUNT NAME",
+                "BANK NAME",
+            ]
+        );
+    }
 
     function record(object $data): self
     {
@@ -44,11 +48,12 @@ class TransactionService
         return $this;
     }
 
-    public function setStatus(bool $status){
+    public function setStatus(bool $status)
+    {
         $this->status = $status;
         return $this;
     }
-    
+
 
 
     public function writeResult(array $dateRange)
@@ -58,9 +63,7 @@ class TransactionService
         ini_set('memory_limit', '-1');
         set_time_limit(3600);
 
-        $generate_date = today()->toFormattedDateString();
         $countTable = 1;
-        $countTable1 = 0;
         $grandTotal = 0;
         $excel_row = 5;
 
@@ -77,7 +80,7 @@ class TransactionService
         $spreadsheet = new Spreadsheet();
 
         $spreadsheet->getActiveSheet()->getCell('E1')->setValue('Status Type : ' . ' ' . $headerTitle);
-        $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . $generate_date);
+        $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . today()->toFormattedDateString());
 
         $spreadsheet->getActiveSheet()->getStyle('E1')->getFont()->setBold(true);
         $spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
@@ -157,11 +160,6 @@ class TransactionService
                 ExcelGenerateEvents::dispatch($department, 'Generating Excel', $countTable, $item->count(), Auth::user());
             });
 
-            // dump($item);
-
-
-
-
             $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row + count($item) + 1), 'Subtotal:');
             $spreadsheet->getActiveSheet()->setCellValue('F' . ($excel_row + count($item) + 1), number_format($subtotal, 2));
 
@@ -173,27 +171,11 @@ class TransactionService
 
             if ($status === '1') {
                 foreach (range('A3', 'H3') as $column) {
-                    $cellAddress = $column . $excel_row;
-                    $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
-                    $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                            ],
-                        ],
-                    ]);
+                    self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
             } else if ($status === '2') {
                 foreach (range('A3', 'I3') as $column) {
-                    $cellAddress = $column . $excel_row;
-                    $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
-                    $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                            ],
-                        ],
-                    ]);
+                    self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
             }
 
@@ -431,7 +413,18 @@ class TransactionService
 
         return response()->download($tempFilePath, $filename);
     }
+    public static function setColumnDimension($spreadsheet, $column, $excel_row){
+        $cellAddress = $column . $excel_row;
+        $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
+        $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => Border::BORDER_THIN,
+                            ],
+                        ],
+        ]);
 
+    }
 
 
 
