@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Events\ExcelGenerateEvents;
+use App\Helper\NumberHelper;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -146,8 +147,8 @@ class TransactionService
                     $countTable,
                     $value->fullname,
                     $value->check_no,
-                    date('M-d-Y', strtotime($value->check_type)),
-                    number_format($value->check_amount, 2),
+                    Date::parse($value->new_check_type)->format('M-d-Y'),
+                    NumberHelper::format($value->check_amount),
                     $value->account_no,
                     $value->account_name,
                     $value->bankbranchname,
@@ -155,8 +156,8 @@ class TransactionService
                 ];
 
                 $subtotal += $value->check_amount;
-
                 $countTable++;
+
                 ExcelGenerateEvents::dispatch($department, 'Generating Excel', $countTable, $item->count(), Auth::user());
             });
 
@@ -185,7 +186,8 @@ class TransactionService
                 $highestColumn = 'H';
             } else {
                 $highestColumn = 'I';
-            } // Assuming data goes up to column I
+            }
+
             $dataRange = "A$excel_row:$highestColumn$highestRow";
 
             $spreadsheet->getActiveSheet()->getStyle($dataRange)->applyFromArray([
@@ -200,12 +202,8 @@ class TransactionService
             $grandTotal += $subtotal;
 
             $excel_row += count($item) + 5; // Increment row number for the next department
-            // dump($countTable1);
-
 
         });
-
-        // dump($countTable);
 
         $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row), 'Grand Total:');
         $spreadsheet->getActiveSheet()->setCellValue('F' . ($excel_row), number_format($grandTotal, 2));
@@ -218,11 +216,7 @@ class TransactionService
 
         $filename = $headerTitle . ' on ' . now()->format('M, d Y') . '.xlsx';
 
-
-        // ExcelGenerateEvents::dispatch('assad', 'Generating Excel', 1, 2, Auth::user());
         return response()->download($tempFilePath, $filename);
-        // return response()->json(['t']);
-
     }
 
     public function writeResultDuePdc(array $dateRange, $businessUnit)
@@ -413,15 +407,16 @@ class TransactionService
 
         return response()->download($tempFilePath, $filename);
     }
-    public static function setColumnDimension($spreadsheet, $column, $excel_row){
+    public static function setColumnDimension($spreadsheet, $column, $excel_row)
+    {
         $cellAddress = $column . $excel_row;
         $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
         $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                            ],
-                        ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
         ]);
 
     }

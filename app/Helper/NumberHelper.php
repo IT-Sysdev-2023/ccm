@@ -13,7 +13,7 @@ class NumberHelper
         return (float) str_replace(',', '', $number);
     }
 
-    public function format($number)
+    public static function format($number)
     {
         return number_format($number, 2);
     }
