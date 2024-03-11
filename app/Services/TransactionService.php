@@ -21,7 +21,7 @@ class TransactionService
 {
     protected $record;
     protected bool $status;
-    
+
     private $border;
 
     protected $generateReportHeader;
@@ -67,7 +67,7 @@ class TransactionService
 
     public function setStatus(bool $status)
     {
-        $this->status = $status === '1' ? true : false ;
+        $this->status = $status === '1' ? true : false;
         return $this;
     }
     public function writeResult(array $dateRange)
@@ -77,7 +77,6 @@ class TransactionService
         ini_set('memory_limit', '-1');
         set_time_limit(3600);
 
-        $countTable = 1;
         $grandTotal = 0;
         $excel_row = 5;
 
@@ -101,10 +100,11 @@ class TransactionService
 
         $excel_row = 4;
 
-        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, $countTable, &$grandTotal) {
+        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, &$grandTotal) {
             $countTable = 1;
             $progressCount = 0;
 
+            // dd($department);
             $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
             // Merge cells for the department name
             $spreadsheet->getActiveSheet()->mergeCells('A' . $excel_row . ':I' . $excel_row);
@@ -172,7 +172,7 @@ class TransactionService
                 foreach (range('A3', 'H3') as $column) {
                     self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
-            } else{
+            } else {
                 foreach (range('A3', 'I3') as $column) {
                     self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
