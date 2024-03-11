@@ -100,12 +100,10 @@ class TransactionService
         // dd($reportData);
         // dd ATP - 
 
-        $reportData->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, &$countTable, &$countTable1, &$grandTotal) {
-
+        $reportData->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, $countTable, &$grandTotal) {
+            $countTable = 1;
 
             $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
-
-
             // Merge cells for the department name
             $spreadsheet->getActiveSheet()->mergeCells('A' . $excel_row . ':I' . $excel_row);
 
@@ -148,7 +146,8 @@ class TransactionService
             $subtotal = 0;
 
             //20
-            $item->each(function ($value, $key) use ($status, &$countTable, &$countTable1, &$subtotal, &$reportCollection, $department, $item) {
+            // dump($item);
+            $item->each(function ($value, $key) use ($status, &$countTable, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
                 if ($status == '2') {
@@ -173,9 +172,12 @@ class TransactionService
                 $subtotal += $value->check_amount;
 
                 $countTable++;
-                // $countTable1++;
-                ExcelGenerateEvents::dispatch($department, 'Generating Excel', $countTable++, $item->count(), Auth::user());
+
+
+                ExcelGenerateEvents::dispatch($department, 'Generating Excel', $countTable, $item->count(), Auth::user());
             });
+
+            // dump($item);
 
 
 
@@ -241,6 +243,7 @@ class TransactionService
 
         });
 
+        // dump($countTable);
 
         $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row), 'Grand Total:');
         $spreadsheet->getActiveSheet()->setCellValue('F' . ($excel_row), number_format($grandTotal, 2));
@@ -254,7 +257,9 @@ class TransactionService
         $filename = $headerTitle . ' on ' . now()->format('M, d Y') . '.xlsx';
 
 
+        // ExcelGenerateEvents::dispatch('assad', 'Generating Excel', 1, 2, Auth::user());
         return response()->download($tempFilePath, $filename);
+        // return response()->json(['t']);
 
     }
 

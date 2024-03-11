@@ -48,7 +48,7 @@ class ExcelGenerateEvents implements ShouldBroadcastNow
     public function broadcastWith()
     {
         return [
-            'step' => $this->department,
+            'department' => $this->department,
             'message' => $this->message,
             'currentRow' => $this->currentRow,
             'totalRows' => $this->totalRows,

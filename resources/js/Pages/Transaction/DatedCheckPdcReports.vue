@@ -20,6 +20,16 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                     >
                     <a-breadcrumb-item>Partial Payments</a-breadcrumb-item>
                 </a-breadcrumb>
+                <div>
+                    <a-progress
+                        type="circle"
+                        :stroke-color="{
+                            '0%': '#108ee9',
+                            '100%': '#87d068',
+                        }"
+                        :percent="percentage"
+                    />
+                </div>
                 <a-card>
                     <div class="flex justify-between mb-10">
                         <div>
@@ -291,6 +301,7 @@ export default {
     },
     data() {
         return {
+            percentage: 0,
             statusValue: this.status,
             dateRange: [
                 dayjs(this.dateRangeValue[0]),
@@ -302,7 +313,12 @@ export default {
         };
     },
     mounted() {
-        // console.log("object");
+        this.$ws
+            .private(`excel-progress.${this.$page.props.auth.user.id}`)
+            .listen(".generate-excel", (e) => {
+                // console.log(e);
+                this.percentage = e.currentRow;
+            });
     },
 
     methods: {
@@ -342,7 +358,7 @@ export default {
             };
             const urlWithParams =
                 "/generate_report?" + new URLSearchParams(params).toString();
-            window.location.href = urlWithParams;
+            // window.location.href = urlWithParams;
             this.isLoading = true;
 
             this.$inertia.get(
@@ -351,14 +367,6 @@ export default {
                 {
                     onFinish: () => {
                         message.success("Successfully Generated excel file");
-                        // console.log(this.$page.props.auth.user.id);
-                        this.$ws
-                            .private(
-                                `excel-progress.${this.$page.props.auth.user.id}`
-                            )
-                            .listen(".generate-excel", (e) => {
-                                console.log(e);
-                            });
                     },
                 }
             );
