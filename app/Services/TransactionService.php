@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Events\ExcelGenerateEvents;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,8 +45,11 @@ class TransactionService
 
         $generate_date = today()->toFormattedDateString();
         $countTable = 1;
+        $countTable1 = 0;
         $grandTotal = 0;
         $excel_row = 5;
+
+        // $reportData1 = $this->record;
 
 
         if ($status == '1') {
@@ -93,10 +97,12 @@ class TransactionService
 
         $excel_row = 4;
 
-        foreach ($reportData as $department => $values) {
+        // dd($reportData);
+        // dd ATP - 
+
+        $reportData->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, &$countTable, &$countTable1, &$grandTotal) {
 
 
-            // Set department name
             $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
 
 
@@ -136,15 +142,13 @@ class TransactionService
                 ]);
 
             }
-
-
-
             $excel_row += 2;
 
             $reportCollection = [];
             $subtotal = 0;
 
-            foreach ($values as $value) {
+            //20
+            $item->each(function ($value, $key) use ($status, &$countTable, &$countTable1, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
                 if ($status == '2') {
@@ -153,7 +157,6 @@ class TransactionService
                         $statusType = 'POST-DATED DUE';
                     }
                 }
-
                 // Add data for each value to the report collection
                 $reportCollection[] = [
                     $countTable,
@@ -166,18 +169,26 @@ class TransactionService
                     $value->bankbranchname,
                     $statusType
                 ];
+
                 $subtotal += $value->check_amount;
 
                 $countTable++;
-            }
+                // $countTable1++;
+                ExcelGenerateEvents::dispatch($department, 'Generating Excel', $countTable++, $item->count(), Auth::user());
+            });
 
-            $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row + count($values) + 1), 'Subtotal:');
-            $spreadsheet->getActiveSheet()->setCellValue('F' . ($excel_row + count($values) + 1), number_format($subtotal, 2));
 
-            $spreadsheet->getActiveSheet()->getStyle('E' . ($excel_row + count($values) + 1))->getFont()->setBold(true);
-            $spreadsheet->getActiveSheet()->getStyle('F' . ($excel_row + count($values) + 1))->getFont()->setBold(true);
+
+
+            $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row + count($item) + 1), 'Subtotal:');
+            $spreadsheet->getActiveSheet()->setCellValue('F' . ($excel_row + count($item) + 1), number_format($subtotal, 2));
+
+            $spreadsheet->getActiveSheet()->getStyle('E' . ($excel_row + count($item) + 1))->getFont()->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('F' . ($excel_row + count($item) + 1))->getFont()->setBold(true);
 
             $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$excel_row");
+
+
             if ($status === '1') {
                 foreach (range('A3', 'H3') as $column) {
                     $cellAddress = $column . $excel_row;
@@ -203,12 +214,9 @@ class TransactionService
                     ]);
                 }
             }
-            $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$excel_row");
-
-
 
             // Set borders for the data
-            $highestRow = $excel_row + count($values); // Determine the last row of data for this department
+            $highestRow = $excel_row + count($item); // Determine the last row of data for this department
             if ($status == '1') {
                 $highestColumn = 'H';
             } else {
@@ -225,21 +233,19 @@ class TransactionService
                 ],
             ]);
             $spreadsheet->getActiveSheet()->getStyle($dataRange)->getFont()->setName('Fira Sans')->setSize(9);
-
             $grandTotal += $subtotal;
 
-            $excel_row += count($values) + 5; // Increment row number for the next department
-        }
+            $excel_row += count($item) + 5; // Increment row number for the next department
+            // dump($countTable1);
+
+
+        });
 
 
         $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row), 'Grand Total:');
         $spreadsheet->getActiveSheet()->setCellValue('F' . ($excel_row), number_format($grandTotal, 2));
         $spreadsheet->getActiveSheet()->getStyle('E' . ($excel_row))->getFont()->setBold(true);
         $spreadsheet->getActiveSheet()->getStyle('F' . ($excel_row))->getFont()->setBold(true);
-
-
-
-
 
         $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
         $writer = new Xlsx($spreadsheet);

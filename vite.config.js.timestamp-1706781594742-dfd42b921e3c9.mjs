@@ -1,7 +1,7 @@
 // vite.config.js
-import { defineConfig } from "file:///C:/laragon/www/ccmr/node_modules/.pnpm/vite@5.0.12/node_modules/vite/dist/node/index.js";
-import laravel from "file:///C:/laragon/www/ccmr/node_modules/.pnpm/laravel-vite-plugin@1.0.1_vite@5.0.12/node_modules/laravel-vite-plugin/dist/index.js";
-import vue from "file:///C:/laragon/www/ccmr/node_modules/.pnpm/@vitejs+plugin-vue@5.0.3_vite@5.0.12_vue@3.4.15/node_modules/@vitejs/plugin-vue/dist/index.mjs";
+import { defineConfig } from "file:///C:/laragon/www/ccm/node_modules/.pnpm/vite@5.0.12/node_modules/vite/dist/node/index.js";
+import laravel from "file:///C:/laragon/www/ccm/node_modules/.pnpm/laravel-vite-plugin@1.0.1_vite@5.0.12/node_modules/laravel-vite-plugin/dist/index.js";
+import vue from "file:///C:/laragon/www/ccm/node_modules/.pnpm/@vitejs+plugin-vue@5.0.3_vite@5.0.12_vue@3.4.15/node_modules/@vitejs/plugin-vue/dist/index.mjs";
 var vite_config_default = defineConfig({
   plugins: [
     laravel({

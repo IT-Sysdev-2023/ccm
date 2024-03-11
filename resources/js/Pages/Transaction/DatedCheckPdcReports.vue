@@ -3,7 +3,6 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 </script>
 
 <template>
-
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -16,23 +15,46 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mt-2 mb-3">
                     <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-                    <a-breadcrumb-item><a href="">Transaction </a></a-breadcrumb-item>
+                    <a-breadcrumb-item
+                        ><a href="">Transaction </a></a-breadcrumb-item
+                    >
                     <a-breadcrumb-item>Partial Payments</a-breadcrumb-item>
                 </a-breadcrumb>
                 <a-card>
                     <div class="flex justify-between mb-10">
                         <div>
-                            <a-select ref="select" @change="handleChangeStatus" v-model:value="statusValue" class="mr-2"
-                                placeholder="Select Status Checks Report" style="width: 250px" @focus="focus">
-                                <a-select-option value="1">Dated Check Report</a-select-option>
-                                <a-select-option value="2">Post Dated Check Report</a-select-option>
+                            <a-select
+                                ref="select"
+                                @change="handleChangeStatus"
+                                v-model:value="statusValue"
+                                class="mr-2"
+                                placeholder="Select Status Checks Report"
+                                style="width: 250px"
+                                @focus="focus"
+                            >
+                                <a-select-option value="1"
+                                    >Dated Check Report</a-select-option
+                                >
+                                <a-select-option value="2"
+                                    >Post Dated Check Report</a-select-option
+                                >
                             </a-select>
-                            <a-range-picker @change="handleDateGenerate" v-model:value="dateRange" />
+                            <a-range-picker
+                                @change="handleDateGenerate"
+                                v-model:value="dateRange"
+                            />
                         </div>
                         <div>
-                            <a-button @click="startGenerating" type="primary" :loading="isLoading"
-                                :disabled="!statusValue || !dateRange || !data.data.length">
-
+                            <a-button
+                                @click="startGenerating"
+                                type="primary"
+                                :loading="isLoading"
+                                :disabled="
+                                    !statusValue ||
+                                    !dateRange ||
+                                    !data.data.length
+                                "
+                            >
                                 <template #icon>
                                     <UploadOutlined />
                                 </template>
@@ -41,11 +63,20 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                         </div>
                     </div>
 
-                    <a-table :data-source="data.data" :pagination="false" :columns="columns" size="small" bordered>
-
+                    <a-table
+                        :data-source="data.data"
+                        :pagination="false"
+                        :columns="columns"
+                        size="small"
+                        bordered
+                    >
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'details'">
-                                <a-button size="small" class="mx-1" @click="openUpDetails(record)">
+                                <a-button
+                                    size="small"
+                                    class="mx-1"
+                                    @click="openUpDetails(record)"
+                                >
                                     <template #icon>
                                         <SettingOutlined />
                                     </template>
@@ -57,111 +88,186 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                 </a-card>
             </div>
         </div>
-        <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details" @ok="handleOk"
-            :ok-button-props="{ hidden: true }" :cancel-button-props="{ hidden: true }" :footer="null">
+        <a-modal
+            v-model:open="openDetails"
+            style="top: 25px"
+            width="1000px"
+            title="Details"
+            @ok="handleOk"
+            :ok-button-props="{ hidden: true }"
+            :cancel-button-props="{ hidden: true }"
+            :footer="null"
+        >
             <div class="product-table">
                 <table class="min-w-full divide-y divide-gray-200">
-
                     <tbody>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l  border-t border-gray-200">
-                                Customer Name</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-t border-gray-200"
+                            >
+                                Customer Name
+                            </td>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
-                                {{
-                                selectDataDetails.fullname }}</td>
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200"
+                            >
+                                {{ selectDataDetails.fullname }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check From</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.department }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Check From
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.department }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Number</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_no }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Check Number
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.check_no }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Approving Officer</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.approving_officer }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Approving Officer
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.approving_officer }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Class</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_class }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Check Class
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.check_class }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Status</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_status }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Check Status
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.check_status }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Date</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_date }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Check Date
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.check_date }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Account No</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.account_no }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Account No
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.account_no }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Received</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_received }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Check Received
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.check_received }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Account Name</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.account_name }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Account Name
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.account_name }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Received As</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_type }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Received As
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.check_type }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Bank Name</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.bankbranchname }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Bank Name
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.bankbranchname }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Category</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_category }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Check Category
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.check_category }}
+                            </td>
                         </tr>
                         <tr>
                             <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Amount</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_amount }}</td>
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
+                            >
+                                Amount
+                            </td>
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
+                            >
+                                {{ selectDataDetails.check_amount }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -171,7 +277,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 </template>
 
 <script>
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import Pagination from "@/Components/Pagination.vue";
 export default {
@@ -186,58 +292,83 @@ export default {
     data() {
         return {
             statusValue: this.status,
-            dateRange: [dayjs(this.dateRangeValue[0]), dayjs(this.dateRangeValue[1])],
+            dateRange: [
+                dayjs(this.dateRangeValue[0]),
+                dayjs(this.dateRangeValue[1]),
+            ],
             isLoading: false,
             openDetails: false,
             selectDataDetails: [],
-        }
+        };
+    },
+    mounted() {
+        // console.log("object");
     },
 
     methods: {
         handleDateGenerate(obj, str) {
             console.log(this.dateRangeValue);
-            this.$inertia.get(route("dcpdc.checks"), {
-                status: this.statusValue,
-                date_from: str[0],
-                date_to: str[1],
-            }, {
-                preserveState: true
-            });
+            this.$inertia.get(
+                route("dcpdc.checks"),
+                {
+                    status: this.statusValue,
+                    date_from: str[0],
+                    date_to: str[1],
+                },
+                {
+                    preserveState: true,
+                }
+            );
         },
         handleChangeStatus() {
-
-
-            this.$inertia.get(route("dcpdc.checks"), {
-                status: this.statusValue,
-                date_from: this.filters.date_from || '',
-                date_to: this.filters.date_to || ''
-            }, {
-                preserveState: true
-            });
+            this.$inertia.get(
+                route("dcpdc.checks"),
+                {
+                    status: this.statusValue,
+                    date_from: this.filters.date_from || "",
+                    date_to: this.filters.date_to || "",
+                },
+                {
+                    preserveState: true,
+                }
+            );
         },
         startGenerating() {
             // window.location.href = 'generate_report';
             const params = {
                 status: this.statusValue,
-                date_from: dayjs(this.dateRangeValue[0]).format('YYYY-MM-DD'),
-                date_to: dayjs(this.dateRangeValue[1]).format('YYYY-MM-DD'),
+                date_from: dayjs(this.dateRangeValue[0]).format("YYYY-MM-DD"),
+                date_to: dayjs(this.dateRangeValue[1]).format("YYYY-MM-DD"),
             };
-            const urlWithParams = "/generate_report?" + new URLSearchParams(params).toString();
+            const urlWithParams =
+                "/generate_report?" + new URLSearchParams(params).toString();
             window.location.href = urlWithParams;
             this.isLoading = true;
 
-            this.$inertia.get(urlWithParams, {}, {
-                onFinish: () => {
-                    message.success("Successfully Generated excel file");
+            this.$inertia.get(
+                urlWithParams,
+                {},
+                {
+                    onFinish: () => {
+                        message.success("Successfully Generated excel file");
+                        // console.log(this.$page.props.auth.user.id);
+                        this.$ws
+                            .private(
+                                `excel-progress.${this.$page.props.auth.user.id}`
+                            )
+                            .listen(".generate-excel", (e) => {
+                                console.log(e);
+                            });
+                    },
                 }
-            });
+            );
         },
         openUpDetails(inData) {
             this.openDetails = true;
             this.selectDataDetails = inData;
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
 <style>
