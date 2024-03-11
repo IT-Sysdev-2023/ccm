@@ -38,11 +38,6 @@ class TransactionService
         ini_set('memory_limit', '-1');
         set_time_limit(3600);
 
-
-
-        $headerTitle = '';
-        $reportData = [];
-
         $generate_date = today()->toFormattedDateString();
         $countTable = 1;
         $countTable1 = 0;
@@ -50,20 +45,6 @@ class TransactionService
         $excel_row = 5;
 
         // $reportData1 = $this->record;
-
-
-        if ($status == '1') {
-            $reportData = $this->record;
-            $headerTitle = 'Dated Check Report';
-        } else {
-            $reportData = $this->record;
-            $headerTitle = 'Post Dated Check Report';
-
-        }
-
-
-        $spreadsheet = new Spreadsheet();
-
         $headerDefault = collect(
             [
                 "NO",
@@ -76,8 +57,17 @@ class TransactionService
                 "BANK NAME",
             ]
         );
-        $headerRow = $status == '1' ? $headerDefault : $headerDefault->concat(['STATUS']);
 
+        if ($status == '1') {
+            $headerTitle = 'Dated Check Report';
+            $headerRow = $headerDefault;
+        } else {
+            $headerTitle = 'Post Dated Check Report';
+            $headerRow = $headerDefault->concat(['STATUS']);
+        }
+        
+       
+        $spreadsheet = new Spreadsheet();
         $spreadsheet->getActiveSheet()->getCell('E1')->setValue('Status Type : ' . ' ' . $headerTitle);
         $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . $generate_date);
 
@@ -86,10 +76,7 @@ class TransactionService
 
         $excel_row = 4;
 
-        // dd($reportData);
-        // dd ATP - 
-
-        $reportData->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, $countTable, &$grandTotal) {
+        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, $countTable, &$grandTotal) {
             $countTable = 1;
 
             $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
@@ -101,7 +88,7 @@ class TransactionService
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getFont()->setBold(true);
             // Set header row
             $headerRowIndex = $excel_row + 1;
-            $spreadsheet->getActiveSheet()->fromArray($headerRow, null, 'A' . $headerRowIndex);
+            $spreadsheet->getActiveSheet()->fromArray($headerRow->toArray(), null, 'A' . $headerRowIndex);
             $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->getFont()->setBold(true);
 
             if ($status === '1') {
@@ -116,7 +103,7 @@ class TransactionService
                     ],
                 ]);
 
-            } else if ($status === '2') {
+            } else ($status === '2') {
                 $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->applyFromArray([
                     'font' => [
                         'bold' => true,
@@ -134,8 +121,6 @@ class TransactionService
             $reportCollection = [];
             $subtotal = 0;
 
-            //20
-            // dump($item);
             $item->each(function ($value, $key) use ($status, &$countTable, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
