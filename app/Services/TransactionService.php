@@ -14,6 +14,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Illuminate\Support\Facades\Date;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class TransactionService
@@ -102,6 +103,7 @@ class TransactionService
 
         $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, $countTable, &$grandTotal) {
             $countTable = 1;
+            $progressCount = 0;
 
             $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
             // Merge cells for the department name
@@ -126,7 +128,9 @@ class TransactionService
             $reportCollection = [];
             $subtotal = 0;
 
-            $item->each(function ($value, $key) use ($status, &$countTable, &$subtotal, &$reportCollection, $department, $item) {
+            //20
+            // dump($item);
+            $item->each(function ($value, $key) use ($status, &$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
                 if (!$status) {
@@ -137,7 +141,7 @@ class TransactionService
                 }
                 // Add data for each value to the report collection
                 $reportCollection[] = [
-                    $countTable,
+                    $countTable++,
                     $value->fullname,
                     $value->check_no,
                     Date::parse($value->new_check_type)->format('M-d-Y'),
@@ -149,9 +153,10 @@ class TransactionService
                 ];
 
                 $subtotal += $value->check_amount;
-                $countTable++;
 
-                ExcelGenerateEvents::dispatch($department, 'Generating Excel', $countTable, $item->count(), Auth::user());
+
+
+                ExcelGenerateEvents::dispatch($department, 'Generating Excel', ++$progressCount, $item->count(), Auth::user());
             });
 
             $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row + count($item) + 1), 'Subtotal:');
@@ -209,7 +214,11 @@ class TransactionService
 
         $filename = $headerTitle . ' on ' . now()->format('M, d Y') . '.xlsx';
 
+
+        // ExcelGenerateEvents::dispatch('assad', 'Generating Excel', 1, 2, Auth::user());
         return response()->download($tempFilePath, $filename);
+        // return response()->json(['t']);
+
     }
 
     public function writeResultDuePdc(array $dateRange, $businessUnit)
