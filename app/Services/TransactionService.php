@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Events\ExcelGenerateEvents;
+use App\Helper\Excel\ExcelWriter;
 use App\Helper\NumberHelper;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\Date;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
-class TransactionService
+class TransactionService extends ExcelWriter
 {
     protected LazyCollection $record;
     protected bool $status;
@@ -30,6 +31,8 @@ class TransactionService
     protected $generateReportHeader;
     public function __construct()
     {
+        parent::__construct();
+
         $this->generateReportHeader = collect(
             [
                 "NO",
@@ -43,16 +46,7 @@ class TransactionService
             ]
         );
 
-        $this->border = [
-            'font' => [
-                'bold' => true,
-            ],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                ],
-            ],
-        ];
+        $this->border = $this->initializedBorder();
 
     }
 
@@ -68,7 +62,7 @@ class TransactionService
         return $this;
     }
 
-    protected function writeHeader(Spreadsheet $spreadsheet): array
+    protected function transformColumn(): array
     {
         if ($this->status) {
             $headerTitle = 'Dated Check Report';
@@ -77,14 +71,17 @@ class TransactionService
             $headerTitle = 'Post Dated Check Report';
             $headerRow = $this->generateReportHeader->concat(['STATUS']);
         }
-
-        $spreadsheet->getActiveSheet()->getCell('E1')->setValue('Status Type : ' . ' ' . $headerTitle);
-        $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . today()->toFormattedDateString());
-
-        $spreadsheet->getActiveSheet()->getStyle('E1')->getFont()->setBold(true);
-        $spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
-
         return ['headerTitle' => $headerTitle, 'headerRow' => $headerRow];
+    }
+
+    private function headerStyle($title)
+    {
+
+        $this->getCellSetValue('E1', 'Status Type : ' . ' ' . $title);
+        $this->getCellSetValue('E2', 'Date : ' . ' ' . today()->toFormattedDateString());
+
+        $this->getStyleGetFontSetBold('E1');
+        $this->getStyleGetFontSetBold('E2');
     }
     public function writeResult(array $dateRange)
     {
@@ -94,43 +91,39 @@ class TransactionService
         set_time_limit(3600);
 
         $grandTotal = 0;
-
-        $spreadsheet = new Spreadsheet();
-
-        $header = $this->writeHeader($spreadsheet);
+        $header = $this->transformColumn();
+        $this->headerStyle($header['headerTitle']);
 
         $excel_row = 5;
 
-        $this->record->each(function ($item, string $department) use (&$spreadsheet, &$excel_row, $header, &$grandTotal) {
+        $this->record->each(function ($item, string $department) use (&$excel_row, $header, &$grandTotal) {
             $countTable = 1;
             $progressCount = 0;
 
-            $spreadsheet->getActiveSheet()->mergeCells('A' . $excel_row . ':I' . $excel_row);
+            $this->getActiveSheetExcel()->mergeCells('A' . $excel_row . ':I' . $excel_row);
 
-            $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
-            $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getFont()->setBold(true);
+            $this->getActiveSheetExcel()->setCellValue('A' . $excel_row, $department);
+            $this->setHorizontalAlignment('A' . $excel_row);
+            $this->getStyleGetFontSetBold('A' . $excel_row);
 
             $excel_row++;
 
 
-            $spreadsheet->getActiveSheet()->fromArray($header['headerRow']->toArray(), null, 'A' . $excel_row);
-            $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->getFont()->setBold(true);
+            $this->getActiveSheetExcel()->fromArray($header['headerRow']->toArray(), null, 'A' . $excel_row);
+            $this->getStyleGetFontSetBold('A' . $excel_row . ':I' . $excel_row);
 
             if ($this->status) {
-                $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':H' . $excel_row)->applyFromArray($this->border);
+                $this->getActiveSheetExcel()->getStyle('A' . $excel_row . ':H' . $excel_row)->applyFromArray($this->border);
             } else {
-                $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->applyFromArray($this->border);
+                $this->getActiveSheetExcel()->getStyle('A' . $excel_row . ':I' . $excel_row)->applyFromArray($this->border);
             }
 
             $excel_row++;
-
-
             $reportCollection = [];
             $subtotal = 0;
 
             $item->each(function ($value, $key) use (&$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
-                $statusType = ''; // Reset status type for each value
+                $statusType = '';
 
                 if (!$this->status) {
                     $statusType = 'POST-DATED';
@@ -153,32 +146,30 @@ class TransactionService
 
                 $subtotal += $value->check_amount;
 
-
-
+                //Broadcast Realtime Progress
                 ExcelGenerateEvents::dispatch($department, 'Generating Excel of', ++$progressCount, $item->count(), Auth::user());
             });
 
-            $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row + count($item) + 1), 'Subtotal:');
-            $spreadsheet->getActiveSheet()->setCellValue('F' . ($excel_row + count($item) + 1), number_format($subtotal, 2));
+            $this->setCellValueSheet('E' . ($excel_row + count($item) + 1), 'Subtotal:');
+            $this->setCellValueSheet('F' . ($excel_row + count($item) + 1), number_format($subtotal, 2));
 
-            $spreadsheet->getActiveSheet()->getStyle('E' . ($excel_row + count($item) + 1))->getFont()->setBold(true);
-            $spreadsheet->getActiveSheet()->getStyle('F' . ($excel_row + count($item) + 1))->getFont()->setBold(true);
+            $this->getStyleGetFontSetBold('E' . ($excel_row + count($item) + 1));
+            $this->getStyleGetFontSetBold('F' . ($excel_row + count($item) + 1));
 
-            $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$excel_row");
+            $this->getActiveSheetExcel()->fromArray($reportCollection, null, "A$excel_row");
 
 
             if ($this->status) {
                 foreach (range('A3', 'H3') as $column) {
-                    self::setColumnDimension($spreadsheet, $column, $excel_row);
+                    self::setColumnDimension($this->spreadsheet, $column, $excel_row);
                 }
             } else {
                 foreach (range('A3', 'I3') as $column) {
-                    self::setColumnDimension($spreadsheet, $column, $excel_row);
+                    self::setColumnDimension($this->spreadsheet, $column, $excel_row);
                 }
             }
-
             // Set borders for the data
-            $highestRow = $excel_row + count($item); // Determine the last row of data for this department
+            $highestRow = $excel_row + count($item);
             if ($this->status) {
                 $highestColumn = 'H';
             } else {
@@ -187,7 +178,7 @@ class TransactionService
 
             $dataRange = "A$excel_row:$highestColumn$highestRow";
 
-            $spreadsheet->getActiveSheet()->getStyle($dataRange)->applyFromArray([
+            $this->getActiveSheetExcel()->getStyle($dataRange)->applyFromArray([
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,
@@ -195,35 +186,32 @@ class TransactionService
                     ],
                 ],
             ]);
-            $spreadsheet->getActiveSheet()->getStyle($dataRange)->getFont()->setName('Fira Sans')->setSize(9);
+            $this->getActiveSheetExcel()->getStyle($dataRange)->getFont()->setName('Fira Sans')->setSize(9);
             $grandTotal += $subtotal;
 
-            $excel_row += count($item) + 4; // Increment row number for the next department
+            // Increment row number for the next department
+            $excel_row += count($item) + 4;
 
         });
 
-        $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row), 'Grand Total:');
-        $spreadsheet->getActiveSheet()->setCellValue('F' . ($excel_row), number_format($grandTotal, 2));
-        $spreadsheet->getActiveSheet()->getStyle('E' . ($excel_row))->getFont()->setBold(true);
-        $spreadsheet->getActiveSheet()->getStyle('F' . ($excel_row))->getFont()->setBold(true);
+        $this->setCellValueSheet('E' . ($excel_row), 'Grand Total:');
+        $this->setCellValueSheet('F' . ($excel_row), number_format($grandTotal, 2));
+        $this->getStyleGetFontSetBold('E' . ($excel_row));
+        $this->getStyleGetFontSetBold('F' . ($excel_row));
 
         $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
-        $writer = new Xlsx($spreadsheet);
+        $writer = new Xlsx($this->spreadsheet);
         $writer->save($tempFilePath);
 
         $filename = $header['headerTitle'] . ' on ' . now()->format('M, d Y') . '.xlsx';
-
-
         $filePath = storage_path('app/' . $filename);
 
 
-        $writer = new Xlsx($spreadsheet);
+        $writer = new Xlsx($this->spreadsheet);
         $writer->save($filePath);
 
         $downloadExcel = route('download.excel', ['filename' => $filename]);
 
-
-        // dd($this->record );
 
         return Inertia::render('Components/Result', [
             'downloadExcel' => $downloadExcel,
