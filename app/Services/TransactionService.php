@@ -22,8 +22,8 @@ class TransactionService
     protected $record;
     protected string $status;
 
+    private $border;
 
-    protected $border;
     protected $generateReportHeader;
     public function __construct()
     {
@@ -39,6 +39,7 @@ class TransactionService
                 "BANK NAME",
             ]
         );
+
         $this->border = [
             'font' => [
                 'bold' => true,
@@ -49,6 +50,7 @@ class TransactionService
                 ],
             ],
         ];
+
 
     }
 
@@ -68,9 +70,6 @@ class TransactionService
         $this->status = $status === '1' ? true : false;
         return $this;
     }
-
-
-
     public function writeResult(array $dateRange)
     {
 
@@ -78,9 +77,6 @@ class TransactionService
         ini_set('memory_limit', '-1');
         set_time_limit(3600);
 
-        $generate_date = today()->toFormattedDateString();
-        $countTable = 1;
-        $countTable1 = 0;
         $grandTotal = 0;
 
 
@@ -98,7 +94,7 @@ class TransactionService
         $spreadsheet = new Spreadsheet();
 
         $spreadsheet->getActiveSheet()->getCell('E1')->setValue('Status Type : ' . ' ' . $headerTitle);
-        $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . $generate_date);
+        $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . today()->toFormattedDateString());
 
         $spreadsheet->getActiveSheet()->getStyle('E1')->getFont()->setBold(true);
         $spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
@@ -143,7 +139,7 @@ class TransactionService
             $item->each(function ($value, $key) use ($status, &$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
-                if ($status == '2') {
+                if (!$status) {
                     $statusType = 'POST-DATED';
                     if ($value->check_date <= date('Y-m-d')) {
                         $statusType = 'POST-DATED DUE';
@@ -169,11 +165,6 @@ class TransactionService
                 ExcelGenerateEvents::dispatch($department, 'Generating Excel', ++$progressCount, $item->count(), Auth::user());
             });
 
-            // dump($item);
-
-
-
-
             $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row + count($item) + 1), 'Subtotal:');
             $spreadsheet->getActiveSheet()->setCellValue('F' . ($excel_row + count($item) + 1), number_format($subtotal, 2));
 
@@ -183,35 +174,19 @@ class TransactionService
             $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$excel_row");
 
 
-            if ($status === '1') {
+            if ($status) {
                 foreach (range('A3', 'H3') as $column) {
-                    $cellAddress = $column . $excel_row;
-                    $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
-                    $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                            ],
-                        ],
-                    ]);
+                    self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
-            } else if ($status === '2') {
+            } else {
                 foreach (range('A3', 'I3') as $column) {
-                    $cellAddress = $column . $excel_row;
-                    $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
-                    $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                            ],
-                        ],
-                    ]);
+                    self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
             }
 
             // Set borders for the data
             $highestRow = $excel_row + count($item); // Determine the last row of data for this department
-            if ($status == '1') {
+            if ($status) {
                 $highestColumn = 'H';
             } else {
                 $highestColumn = 'I';
@@ -246,8 +221,9 @@ class TransactionService
         $filename = $headerTitle . ' on ' . now()->format('M, d Y') . '.xlsx';
 
 
+        // ExcelGenerateEvents::dispatch('assad', 'Generating Excel', 1, 2, Auth::user());
         return response()->download($tempFilePath, $filename);
-
+        // return response()->json(['t']);
 
     }
 
@@ -439,7 +415,19 @@ class TransactionService
 
         return response()->download($tempFilePath, $filename);
     }
+    public static function setColumnDimension($spreadsheet, $column, $excel_row)
+    {
+        $cellAddress = $column . $excel_row;
+        $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
+        $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ]);
 
+    }
 
 
 
