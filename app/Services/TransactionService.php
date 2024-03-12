@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Events\ExcelGenerateEvents;
 use App\Helper\NumberHelper;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -16,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Illuminate\Support\Facades\Date;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 
 class TransactionService
@@ -23,7 +25,7 @@ class TransactionService
     protected LazyCollection $record;
     protected bool $status;
 
-    private $border;
+    private array $border;
 
     protected $generateReportHeader;
     public function __construct()
@@ -66,9 +68,8 @@ class TransactionService
         return $this;
     }
 
-    protected function writeHeader($spreadsheet) : array
+    protected function writeHeader(Spreadsheet $spreadsheet): array
     {
-
         if ($this->status) {
             $headerTitle = 'Dated Check Report';
             $headerRow = $this->generateReportHeader;
@@ -85,7 +86,7 @@ class TransactionService
 
         return ['headerTitle' => $headerTitle, 'headerRow' => $headerRow];
     }
-    public function writeResult(array $dateRange)
+    public function writeResult(array $dateRange): BinaryFileResponse
     {
 
         ini_set('max_execution_time', 3600);
@@ -100,7 +101,7 @@ class TransactionService
 
         $excel_row = 5;
 
-        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, $header, &$grandTotal) {
+        $this->record->each(function ($item, string $department) use (&$spreadsheet, &$excel_row, $header, &$grandTotal) {
             $countTable = 1;
             $progressCount = 0;
 
@@ -213,7 +214,7 @@ class TransactionService
         return response()->download($tempFilePath, $filename);
     }
 
-    public function writeResultDuePdc(array $dateRange, $businessUnit)
+    public function writeResultDuePdc(array $dateRange, $businessUnit): BinaryFileResponse
     {
 
         ini_set('max_execution_time', 3600);
@@ -401,7 +402,7 @@ class TransactionService
 
         return response()->download($tempFilePath, $filename);
     }
-    public static function setColumnDimension($spreadsheet, $column, $excel_row)
+    public static function setColumnDimension($spreadsheet, $column, $excel_row): void
     {
         $cellAddress = $column . $excel_row;
         $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
