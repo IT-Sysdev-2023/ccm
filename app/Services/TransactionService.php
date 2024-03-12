@@ -79,7 +79,6 @@ class TransactionService extends ExcelWriter
 
     private function headerStyle($title)
     {
-
         $this->getCellSetValue('E1', 'Status Type : ' . ' ' . $title);
         $this->getCellSetValue('E2', 'Date : ' . ' ' . today()->toFormattedDateString());
 
@@ -97,9 +96,12 @@ class TransactionService extends ExcelWriter
         $header = $this->transformColumn();
         $this->headerStyle($header['headerTitle']);
 
+        $recordCount = $this->record->count();
+        $recordSearch = $this->record->keys()->toArray();
         $excel_row = 5;
 
-        $this->record->each(function ($item, string $department) use (&$excel_row, $header, &$grandTotal) {
+        $this->record->each(function ($item, string $department) use (&$excel_row, $header, &$grandTotal, $recordCount, $recordSearch) {
+
             $countTable = 1;
             $progressCount = 0;
 
@@ -111,7 +113,6 @@ class TransactionService extends ExcelWriter
 
             $excel_row++;
 
-
             $this->getActiveSheetExcel()->fromArray($header['headerRow']->toArray(), null, 'A' . $excel_row);
             $this->getStyleGetFontSetBold('A' . $excel_row . ':I' . $excel_row);
 
@@ -121,11 +122,20 @@ class TransactionService extends ExcelWriter
                 $this->getActiveSheetExcel()->getStyle('A' . $excel_row . ':I' . $excel_row)->applyFromArray($this->border);
             }
 
+
             $excel_row++;
             $reportCollection = [];
             $subtotal = 0;
 
-            $item->each(function ($value, $key) use (&$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
+            $item->each(function ($value, $key) use (&$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item, $recordCount, &$excel_row, $recordSearch) {
+
+                // $this->setCellValueSheet("A$excel_row", $countTable++);
+                // $this->setCellValueSheet("B$excel_row", $value->fullname);
+                // $this->setCellValueSheet("C$excel_row", $value->check_no);
+                // $this->setCellValueSheet("D$excel_row", Date::parse($value->new_check_type)->format('M-d-Y'));
+                // $this->setCellValueSheet("E$excel_row", NumberHelper::format($value->check_amount));
+                // $this->setCellValueSheet("F$excel_row", $value->account_no);
+                // $this->setCellValueSheet("G$excel_row", $value->account_no);
                 $statusType = '';
 
                 if (!$this->status) {
@@ -134,7 +144,7 @@ class TransactionService extends ExcelWriter
                         $statusType = 'POST-DATED DUE';
                     }
                 }
-                // Add data for each value to the report collection
+
                 $reportCollection[] = [
                     $countTable++,
                     $value->fullname,
@@ -149,17 +159,13 @@ class TransactionService extends ExcelWriter
 
                 $subtotal += $value->check_amount;
 
-                // dd(array_search('ATP', $this->record->toArray()));
-                // dd($this->record->toArray()[a]);
+                $postion = array_search($department, $recordSearch);
 
-                $keys = array_keys($this->record->toArray());
-                $index = array_search($department, $keys);
-
-                ExcelGenerateEvents::dispatch($department, 'Generating Excel of', ++$progressCount, $item->count(), Auth::user(), $index, $this->record->count());
+                ExcelGenerateEvents::dispatch($department, 'Generating Excel of', ++$progressCount, $item->count(), Auth::user(), $postion, $recordCount);
             });
 
             $this->setCellValueSheet('E' . ($excel_row + count($item) + 1), 'Subtotal:');
-            $this->setCellValueSheet('F' . ($excel_row + count($item) + 1), number_format($subtotal, 2));
+            $this->setCellValueSheet('F' . ($excel_row + count($item) + 1), NumberHelper::format($subtotal));
 
             $this->getStyleGetFontSetBold('E' . ($excel_row + count($item) + 1));
             $this->getStyleGetFontSetBold('F' . ($excel_row + count($item) + 1));
