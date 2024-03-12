@@ -20,10 +20,11 @@ use Maatwebsite\Excel\Facades\Excel;
 class TransactionService
 {
     protected $record;
-    protected bool $status;
+    protected string $status;
+
+    private $border;
 
     protected $generateReportHeader;
-
     public function __construct()
     {
         $this->generateReportHeader = collect(
@@ -38,6 +39,19 @@ class TransactionService
                 "BANK NAME",
             ]
         );
+
+        $this->border = [
+            'font' => [
+                'bold' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ];
+
+
     }
 
     function record(object $data): self
@@ -53,12 +67,9 @@ class TransactionService
 
     public function setStatus(string $status)
     {
-        $this->status = $status === "1" ? true : false;
+        $this->status = $status === '1' ? true : false;
         return $this;
     }
-
-
-
     public function writeResult(array $dateRange)
     {
 
@@ -66,9 +77,6 @@ class TransactionService
         ini_set('memory_limit', '-1');
         set_time_limit(3600);
 
-        $generate_date = today()->toFormattedDateString();
-        $countTable = 1;
-        $countTable1 = 0;
         $grandTotal = 0;
 
 
@@ -77,24 +85,23 @@ class TransactionService
 
         if ($status) {
             $headerTitle = 'Dated Check Report';
-            $headerRow = $this->generateReportHeader->concat(['STATUS']);
+            $headerRow = $this->generateReportHeader;
         } else {
             $headerTitle = 'Post Dated Check Report';
-            $headerRow = $this->generateReportHeader;
-
+            $headerRow = $this->generateReportHeader->concat(['STATUS']);
         }
 
         $spreadsheet = new Spreadsheet();
 
         $spreadsheet->getActiveSheet()->getCell('E1')->setValue('Status Type : ' . ' ' . $headerTitle);
-        $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . $generate_date);
+        $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . today()->toFormattedDateString());
 
         $spreadsheet->getActiveSheet()->getStyle('E1')->getFont()->setBold(true);
         $spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
 
         $excel_row = 5;
 
-        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, $status, $headerRow, &$grandTotal) {
+        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, &$grandTotal) {
             $countTable = 1;
             $progressCount = 0;
 
@@ -127,10 +134,12 @@ class TransactionService
 
 
 
+            //20
+            // dump($item);
             $item->each(function ($value, $key) use ($status, &$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
-                if ($status) {
+                if (!$status) {
                     $statusType = 'POST-DATED';
                     if ($value->check_date <= date('Y-m-d')) {
                         $statusType = 'POST-DATED DUE';
@@ -156,11 +165,6 @@ class TransactionService
                 ExcelGenerateEvents::dispatch($department, 'Generating Excel', ++$progressCount, $item->count(), Auth::user());
             });
 
-            // dump($item);
-
-
-
-
             $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row + count($item) + 1), 'Subtotal:');
             $spreadsheet->getActiveSheet()->setCellValue('F' . ($excel_row + count($item) + 1), number_format($subtotal, 2));
 
@@ -172,27 +176,11 @@ class TransactionService
 
             if ($status) {
                 foreach (range('A3', 'H3') as $column) {
-                    $cellAddress = $column . $excel_row;
-                    $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
-                    $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                            ],
-                        ],
-                    ]);
+                    self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
             } else {
                 foreach (range('A3', 'I3') as $column) {
-                    $cellAddress = $column . $excel_row;
-                    $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
-                    $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                            ],
-                        ],
-                    ]);
+                    self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
             }
 
@@ -427,7 +415,19 @@ class TransactionService
 
         return response()->download($tempFilePath, $filename);
     }
+    public static function setColumnDimension($spreadsheet, $column, $excel_row)
+    {
+        $cellAddress = $column . $excel_row;
+        $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
+        $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ]);
 
+    }
 
 
 
