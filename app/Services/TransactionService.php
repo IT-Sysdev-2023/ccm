@@ -149,8 +149,13 @@ class TransactionService extends ExcelWriter
 
                 $subtotal += $value->check_amount;
 
-                //Broadcast Realtime Progress
-                ExcelGenerateEvents::dispatch($department, 'Generating Excel of', ++$progressCount, $item->count(), Auth::user());
+                // dd(array_search('ATP', $this->record->toArray()));
+                // dd($this->record->toArray()[a]);
+
+                $keys = array_keys($this->record->toArray());
+                $index = array_search($department, $keys);
+
+                ExcelGenerateEvents::dispatch($department, 'Generating Excel of', ++$progressCount, $item->count(), Auth::user(), $index, $this->record->count());
             });
 
             $this->setCellValueSheet('E' . ($excel_row + count($item) + 1), 'Subtotal:');
@@ -372,7 +377,7 @@ class TransactionService extends ExcelWriter
         });
 
 
-        
+
         foreach (range('A3', 'Q3') as $column) {
             $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
         }

@@ -33,6 +33,8 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 
 
                     </div>
+                    <span>{{ progressBar.preProcess }} ------</span>
+                    <span>{{ progressBar.departmentToBeProcessed }}</span>
                 </div>
                 <a-card>
 
@@ -234,6 +236,8 @@ export default {
                 department: "",
                 message: "",
                 totalRows: 0,
+                preProcess: 0,
+                departmentToBeProcessed: 0
             },
             statusValue: this.status,
             dateRange: [

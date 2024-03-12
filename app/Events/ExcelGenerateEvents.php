@@ -23,7 +23,7 @@ class ExcelGenerateEvents implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(protected string $department, protected string $message, protected int $currentRow, protected int $totalRows, protected User $user)
+    public function __construct(protected string $department, protected string $message, protected int $currentRow, protected int $totalRows, protected User $user, protected int $preprocess, protected int $departmenToBeProcessed)
     {
         $this->percentage = NumberHelper::percentage($currentRow, $totalRows);
     }
@@ -55,6 +55,8 @@ class ExcelGenerateEvents implements ShouldBroadcastNow
             'percentage' => $this->percentage,
             'currentRow' => $this->currentRow,
             'totalRows' => $this->totalRows,
+            'preProcess' => $this->preprocess,
+            'departmentToBeProcessed' => $this->departmenToBeProcessed,
         ];
     }
 }
