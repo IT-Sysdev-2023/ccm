@@ -22,18 +22,35 @@ class TransactionService
     protected $record;
     protected string $status;
 
-    protected $generateReportHeader = collect(
-        [
-            "NO",
-            "CUSTOMER NAME",
-            "CHECK NO",
-            "CHECK DATE",
-            "AMOUNT",
-            "ACCOUNT NO",
-            "ACCOUNT NAME",
-            "BANK NAME",
-        ]
-    );
+
+    protected $border;
+    protected $generateReportHeader;
+    public function __construct()
+    {
+        $this->generateReportHeader = collect(
+            [
+                "NO",
+                "CUSTOMER NAME",
+                "CHECK NO",
+                "CHECK DATE",
+                "AMOUNT",
+                "ACCOUNT NO",
+                "ACCOUNT NAME",
+                "BANK NAME",
+            ]
+        );
+        $this->border = [
+            'font' => [
+                'bold' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ];
+
+    }
 
     function record(object $data): self
     {
@@ -51,7 +68,7 @@ class TransactionService
         $this->status = $status === '1' ? true : false;
         return $this;
     }
-    
+
 
 
     public function writeResult(array $dateRange)
@@ -65,11 +82,12 @@ class TransactionService
         $countTable = 1;
         $countTable1 = 0;
         $grandTotal = 0;
-        $excel_row = 5;
+
 
         $status = $this->status;
 
-        if ($status == '1') {
+
+        if ($status) {
             $headerTitle = 'Dated Check Report';
             $headerRow = $this->generateReportHeader;
         } else {
@@ -92,48 +110,33 @@ class TransactionService
             $progressCount = 0;
 
 
-            // dd($department);
-            $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
-            // Merge cells for the department name
+
+
             $spreadsheet->getActiveSheet()->mergeCells('A' . $excel_row . ':I' . $excel_row);
 
-            // Center align the department name
+            $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getFont()->setBold(true);
-            // Set header row
-            $headerRowIndex = $excel_row++;
-            $spreadsheet->getActiveSheet()->fromArray($headerRow->toArray(), null, 'A' . $headerRowIndex);
-            $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->getFont()->setBold(true);
 
-            if ($status === '1') {
-                $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':H' . $headerRowIndex)->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                    ],
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => Border::BORDER_THIN,
-                        ],
-                    ],
-                ]);
+            $excel_row++;
 
-            } else if ($status === '2') {
-                $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                    ],
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => Border::BORDER_THIN,
-                        ],
-                    ],
-                ]);
 
+            $spreadsheet->getActiveSheet()->fromArray($headerRow->toArray(), null, 'A' . $excel_row);
+            $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->getFont()->setBold(true);
+
+            if ($status) {
+                $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':H' . $excel_row)->applyFromArray($this->border);
+            } else {
+                $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->applyFromArray($this->border);
             }
-            $excel_row += 2;
+
+            $excel_row++;
+
 
             $reportCollection = [];
             $subtotal = 0;
+
+
 
             //20
             // dump($item);
@@ -227,7 +230,7 @@ class TransactionService
             $spreadsheet->getActiveSheet()->getStyle($dataRange)->getFont()->setName('Fira Sans')->setSize(9);
             $grandTotal += $subtotal;
 
-            $excel_row += count($item) + 5; // Increment row number for the next department
+            $excel_row += count($item) + 4; // Increment row number for the next department
 
         });
 
@@ -243,9 +246,8 @@ class TransactionService
         $filename = $headerTitle . ' on ' . now()->format('M, d Y') . '.xlsx';
 
 
-        // ExcelGenerateEvents::dispatch('assad', 'Generating Excel', 1, 2, Auth::user());
         return response()->download($tempFilePath, $filename);
-        // return response()->json(['t']);
+
 
     }
 
