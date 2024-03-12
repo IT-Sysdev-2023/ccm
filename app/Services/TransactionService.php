@@ -99,17 +99,16 @@ class TransactionService
 
         $grandTotal = 0;
 
-        $status = $this->status;
-
         $spreadsheet = new Spreadsheet();
 
         $header = $this->writeHeader($spreadsheet);
 
         $headerRow = $header['headerRow'];
         $headerTitle = $header['headerTitle'];
+
         $excel_row = 5;
 
-        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, $headerRow, $status, &$grandTotal) {
+        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, $headerRow, &$grandTotal) {
             $countTable = 1;
             $progressCount = 0;
 
@@ -125,7 +124,7 @@ class TransactionService
             $spreadsheet->getActiveSheet()->fromArray($headerRow->toArray(), null, 'A' . $excel_row);
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->getFont()->setBold(true);
 
-            if ($status) {
+            if ($this->status) {
                 $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':H' . $excel_row)->applyFromArray($this->border);
             } else {
                 $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->applyFromArray($this->border);
@@ -137,10 +136,10 @@ class TransactionService
             $reportCollection = [];
             $subtotal = 0;
 
-            $item->each(function ($value, $key) use ($status, &$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
+            $item->each(function ($value, $key) use (&$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
-                if (!$status) {
+                if (!$this->status) {
                     $statusType = 'POST-DATED';
                     if ($value->check_date <= date('Y-m-d')) {
                         $statusType = 'POST-DATED DUE';
@@ -175,7 +174,7 @@ class TransactionService
             $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$excel_row");
 
 
-            if ($status) {
+            if ($this->status) {
                 foreach (range('A3', 'H3') as $column) {
                     self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
@@ -187,7 +186,7 @@ class TransactionService
 
             // Set borders for the data
             $highestRow = $excel_row + count($item); // Determine the last row of data for this department
-            if ($status) {
+            if ($this->status) {
                 $highestColumn = 'H';
             } else {
                 $highestColumn = 'I';
@@ -221,11 +220,7 @@ class TransactionService
 
         $filename = $headerTitle . ' on ' . now()->format('M, d Y') . '.xlsx';
 
-
-        // ExcelGenerateEvents::dispatch('assad', 'Generating Excel', 1, 2, Auth::user());
         return response()->download($tempFilePath, $filename);
-        // return response()->json(['t']);
-
     }
 
     public function writeResultDuePdc(array $dateRange, $businessUnit)
