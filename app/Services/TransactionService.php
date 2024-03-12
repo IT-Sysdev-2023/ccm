@@ -3,6 +3,9 @@ namespace App\Services;
 
 use App\Events\ExcelGenerateEvents;
 use App\Helper\NumberHelper;
+use App\Models\NewBounceCheck;
+use App\Models\NewCheckReplacement;
+use App\Models\NewDsChecks;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -225,7 +228,7 @@ class TransactionService
 
         // dd($this->record );
 
-        return Inertia::render('Components/Result', [
+        return Inertia::render('Components/TransactionPartials/ResultDatedPdcreports', [
             'downloadExcel' => $downloadExcel,
             'dataRecord' => $this->record,
         ]);
@@ -235,6 +238,7 @@ class TransactionService
 
     public function writeResultDuePdc(array $dateRange, $businessUnit)
     {
+        // dd($businessUnit->bname);
 
         ini_set('max_execution_time', 3600);
         ini_set('memory_limit', '-1');
@@ -246,14 +250,14 @@ class TransactionService
         $spreadsheet = new Spreadsheet();
 
 
-        // dd($dateRange);
         if (!empty($dateRange[0]) && !empty($dateRange[1])) {
-            $dueReportData = $this->record;
             $spreadsheet->getActiveSheet()->getCell('B2')->setValue('From : ' . Date::parse($dateRange[0])->toFormattedDateString() . ' To: ' . Date::parse($dateRange[1])->toFormattedDateString());
+            $dueReportData = $this->record;
         } else {
             $spreadsheet->getActiveSheet()->getCell('B2')->setValue('From : ' . today()->toFormattedDateString());
             $dueReportData = $this->record;
         }
+
 
         $spreadsheet->getActiveSheet()->getCell('B1')->setValue('Status Type : ' . ' ' . $businessUnit->bname);
 
@@ -295,11 +299,12 @@ class TransactionService
         $column = 1;
 
         $countTable = 1;
+        $progressCount = 0;
         $row = 6;
 
-        foreach ($dueReportData as $value) {
-            $deposited_status = DB::table('new_ds_checks')
-                ->where('checks_id', '=', $value->checks_id)
+        $dueReportData->each(function ($item, ) use (&$businessUnit, &$progressCount, &$dueReportData, &$reportCollection, &$spreadsheet, &$row, $countTable) {
+
+            $deposited_status = NewDsChecks::where('checks_id', '=', $item->checks_id)
                 ->select('ds_no', 'status', 'date_deposit')
                 ->first();
 
@@ -310,20 +315,19 @@ class TransactionService
             if ($deposited_status === null) {
                 $deposited_status = 'PENDING DEPOSIT';
             } else if ($deposited_status->status === 'BOUNCED') {
-                $bounce_status = DB::table('new_bounce_check')
-                    ->where('checks_id', '=', $value->checks_id)
+
+                $bounce_status = NewBounceCheck::where('checks_id', '=', $item->checks_id)
                     ->orderBy('new_bounce_check.id', 'desc')
                     ->first();
 
                 if ($bounce_status->status === 'SETTLE CHECK') {
-                    $replacement_type = db::table('new_check_replacement')
-                        ->where('bounce_id', $bounce_status->id)
+
+                    $replacement_type = NewCheckReplacement::where('bounce_id', $bounce_status->id)
                         ->orderBy('new_check_replacement.date_time', 'desc')
                         ->first();
 
                     if ($replacement_type->mode == 'RE-DEPOSIT') {
-                        $redeposited_status = DB::table('new_ds_checks')
-                            ->where('checks_id', '=', $value->checks_id)
+                        $redeposited_status = NewDsChecks::where('checks_id', '=', $item->checks_id)
                             ->select('ds_no', 'status', 'date_deposit')
                             ->orderBy('id', 'desc')
                             ->first();
@@ -343,9 +347,7 @@ class TransactionService
                 $deposited_status = 'CHECK CLEARED';
             }
 
-            $redeem = DB::table('new_check_replacement')
-                ->where('checks_id', $value->checks_id)
-                ->first();
+            $redeem = NewCheckReplacement::where('checks_id', $item->checks_id)->first();
 
             if ($redeem == null) {
 
@@ -355,40 +357,34 @@ class TransactionService
                 }
             }
 
-            $datetime1 = strtotime($value->check_date);
-            $datetime2 = strtotime($value->check_received);
-
-            $secs = $datetime1 - $datetime2;
-            $days = $secs / 86400;
-
-
-
             $reportCollection[] = [
-                $countTable,
-                date('m-d-Y', strtotime($value->check_received)),
-                date('m-d-Y', strtotime($value->check_date)),
-                $value->bankbranchname,
-                $value->account_no,
-                $value->account_name,
-                $value->fullname,
-                $value->approving_officer,
-                $value->check_class,
-                $value->check_category,
-                $value->department,
-                $value->check_no,
-                number_format($value->check_amount, 2),
+                $countTable++,
+                date('m-d-Y', strtotime($item->check_received)),
+                date('m-d-Y', strtotime($item->check_date)),
+                $item->bankbranchname,
+                $item->account_no,
+                $item->account_name,
+                $item->fullname,
+                $item->approving_officer,
+                $item->check_class,
+                $item->check_category,
+                $item->department,
+                $item->check_no,
+                number_format($item->check_amount, 2),
                 $deposited_status,
                 $ds_number,
                 $deposit_date,
                 $days,
             ];
 
-            $countTable++;
+            ExcelGenerateEvents::dispatch($businessUnit->bname, 'Generating Excel to', ++$progressCount, $dueReportData->count(), Auth::user());
 
             $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$row");
 
-        }
+        });
 
+
+        
         foreach (range('A3', 'Q3') as $column) {
             $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
         }
@@ -411,15 +407,23 @@ class TransactionService
 
         $spreadsheet->getActiveSheet()->fromArray($table_columns, null, 'A5');
 
-
-        $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($tempFilePath);
-
         $filename = $businessUnit->bname . ' on ' . now()->format('M, d Y') . '.xlsx';
 
+        $filePath = storage_path('app/' . $filename);
 
-        return response()->download($tempFilePath, $filename);
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filePath);
+
+        $downloadExcel = route('download.excel', ['filename' => $filename]);
+
+
+        return Inertia::render('Components/TransactionPartials/ResultDuePostDatedCheckReport', [
+            'downloadExcel' => $downloadExcel,
+            'buname' => $businessUnit->bname,
+            'dataCount' => $this->record->count(),
+        ]);
+
     }
     public static function setColumnDimension($spreadsheet, $column, $excel_row): void
     {
