@@ -18,6 +18,17 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                     <a-breadcrumb-item><a href="">Transaction </a></a-breadcrumb-item>
                     <a-breadcrumb-item>Due Post Dated Checks Report</a-breadcrumb-item>
                 </a-breadcrumb>
+                <div v-if="isProgressShowing" style="font-size: 14px;">
+
+                    <p> {{ progressBar.message }} {{ progressBar.department }} {{ progressBar.currentRow }} to
+                        {{
+                    progressBar.totalRows }} records</p>
+                    <a-progress :stroke-color="{
+                    from: '#108ee9',
+                    to: '#87d068',
+                }" :percent="progressBar.percentage" status="active" />
+                </div>
+
                 <a-card>
                     <div class="flex justify-between mb-10">
                         <div>
@@ -68,84 +79,84 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                             <td
                                 class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
                                 {{
-                                selectDataDetails.fullname }}</td>
+                    selectDataDetails.fullname }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check From</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.department }}</td>
+                    selectDataDetails.department }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Number</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_no }}</td>
+                    selectDataDetails.check_no }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Approving Officer</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.approving_officer }}</td>
+                    selectDataDetails.approving_officer }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Class</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_class }}</td>
+                    selectDataDetails.check_class }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Status</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_status }}</td>
+                    selectDataDetails.check_status }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Date</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_date }}</td>
+                    selectDataDetails.check_date }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account No</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.account_no }}</td>
+                    selectDataDetails.account_no }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Received</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_received }}</td>
+                    selectDataDetails.check_received }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account Name</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.account_name }}</td>
+                    selectDataDetails.account_name }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Received As</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_type }}</td>
+                    selectDataDetails.check_type }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Bank Name</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.bankbranchname }}</td>
+                    selectDataDetails.bankbranchname }}</td>
                         </tr>
                         <tr>
                             <td
@@ -186,6 +197,14 @@ export default {
             isLoading: false,
             openDetails: false,
             selectDataDetails: [],
+            isProgressShowing: false,
+            progressBar: {
+                currentRow: 0,
+                percentage: 0,
+                department: "",
+                message: "",
+                totalRows: 0,
+            },
         }
     },
     methods: {
@@ -200,26 +219,22 @@ export default {
             });
         },
         startGenerating() {
+            this.isProgressShowing = true;
             const params = {
                 date_from: this.dateRangeValue?.length > 0 ? dayjs(this.dateRangeValue[0]).format('YYYY-MM-DD') : '',
                 date_to: this.dateRangeValue?.length > 0 ? dayjs(this.dateRangeValue[1]).format('YYYY-MM-DD') : '',
             };
             const urlWithParams = "/generate_report_due_pdc?" + new URLSearchParams(params).toString();
             this.isLoading = true;
-
-            this.$inertia.get(urlWithParams, {}, {
-                onFinish: () => this.isLoading = false,
-            });
-
-
-
+            window.location.href = urlWithParams;
         }
     },
     mounted() {
-        this.$ws.private(`excel-progress`)
-            .listen('ExcelGenerateEvents', (event) => {
-                console.log(event);
-            })
+        this.$ws
+            .private(`excel-progress.${this.$page.props.auth.user.id}`)
+            .listen(".generate-excel", (e) => {
+                this.progressBar = e;
+            });
     }
 }
 </script>
