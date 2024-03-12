@@ -70,11 +70,12 @@ class TransactionService
         $countTable = 1;
         $countTable1 = 0;
         $grandTotal = 0;
-        $excel_row = 5;
+
 
         $status = $this->status;
 
-        if ($this->status) {
+
+        if ($status) {
             $headerTitle = 'Dated Check Report';
             $headerRow = $this->generateReportHeader->concat(['STATUS']);
         } else {
@@ -97,44 +98,34 @@ class TransactionService
             $countTable = 1;
             $progressCount = 0;
 
-            $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
+
+
+
             $spreadsheet->getActiveSheet()->mergeCells('A' . $excel_row . ':I' . $excel_row);
+
+            $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getFont()->setBold(true);
 
             $excel_row++;
 
+
             $spreadsheet->getActiveSheet()->fromArray($headerRow->toArray(), null, 'A' . $excel_row);
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->getFont()->setBold(true);
+
             if ($status) {
-                $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':H' . $excel_row)->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                    ],
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => Border::BORDER_THIN,
-                        ],
-                    ],
-                ]);
-
+                $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':H' . $excel_row)->applyFromArray($this->border);
             } else {
-                $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                    ],
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => Border::BORDER_THIN,
-                        ],
-                    ],
-                ]);
-
+                $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->applyFromArray($this->border);
             }
+
+            $excel_row++;
+
 
             $reportCollection = [];
             $subtotal = 0;
-            $excel_row++;
+
+
 
             $item->each(function ($value, $key) use ($status, &$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
@@ -226,7 +217,7 @@ class TransactionService
             $spreadsheet->getActiveSheet()->getStyle($dataRange)->getFont()->setName('Fira Sans')->setSize(9);
             $grandTotal += $subtotal;
 
-            $excel_row += count($item) + 5; // Increment row number for the next department
+            $excel_row += count($item) + 4; // Increment row number for the next department
 
         });
 
