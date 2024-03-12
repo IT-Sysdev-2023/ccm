@@ -70,6 +70,26 @@ class TransactionService
         $this->status = $status === '1' ? true : false;
         return $this;
     }
+
+    protected function writeHeader($spreadsheet)
+    {
+
+        if ($this->status) {
+            $headerTitle = 'Dated Check Report';
+            $headerRow = $this->generateReportHeader;
+        } else {
+            $headerTitle = 'Post Dated Check Report';
+            $headerRow = $this->generateReportHeader->concat(['STATUS']);
+        }
+
+        $spreadsheet->getActiveSheet()->getCell('E1')->setValue('Status Type : ' . ' ' . $headerTitle);
+        $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . today()->toFormattedDateString());
+
+        $spreadsheet->getActiveSheet()->getStyle('E1')->getFont()->setBold(true);
+        $spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
+
+        return ['headerTitle' => $headerTitle, 'headerRow' => $headerRow];
+    }
     public function writeResult(array $dateRange)
     {
 
@@ -79,34 +99,19 @@ class TransactionService
 
         $grandTotal = 0;
 
-
         $status = $this->status;
-
-
-        if ($status) {
-            $headerTitle = 'Dated Check Report';
-            $headerRow = $this->generateReportHeader;
-        } else {
-            $headerTitle = 'Post Dated Check Report';
-            $headerRow = $this->generateReportHeader->concat(['STATUS']);
-        }
 
         $spreadsheet = new Spreadsheet();
 
-        $spreadsheet->getActiveSheet()->getCell('E1')->setValue('Status Type : ' . ' ' . $headerTitle);
-        $spreadsheet->getActiveSheet()->getCell('E2')->setValue('Date : ' . ' ' . today()->toFormattedDateString());
+        $header = $this->writeHeader($spreadsheet);
 
-        $spreadsheet->getActiveSheet()->getStyle('E1')->getFont()->setBold(true);
-        $spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
-
+        $headerRow = $header['headerRow'];
+        $headerTitle = $header['headerTitle'];
         $excel_row = 5;
 
-        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, &$grandTotal) {
+        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, $headerRow, $status, &$grandTotal) {
             $countTable = 1;
             $progressCount = 0;
-
-
-
 
             $spreadsheet->getActiveSheet()->mergeCells('A' . $excel_row . ':I' . $excel_row);
 
@@ -132,10 +137,6 @@ class TransactionService
             $reportCollection = [];
             $subtotal = 0;
 
-
-
-            //20
-            // dump($item);
             $item->each(function ($value, $key) use ($status, &$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
