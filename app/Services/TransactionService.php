@@ -20,20 +20,25 @@ use Maatwebsite\Excel\Facades\Excel;
 class TransactionService
 {
     protected $record;
-    protected string $status;
+    protected bool $status;
 
-    protected $generateReportHeader = collect(
-        [
-            "NO",
-            "CUSTOMER NAME",
-            "CHECK NO",
-            "CHECK DATE",
-            "AMOUNT",
-            "ACCOUNT NO",
-            "ACCOUNT NAME",
-            "BANK NAME",
-        ]
-    );
+    protected $generateReportHeader;
+
+    public function __construct()
+    {
+        $this->generateReportHeader = collect(
+            [
+                "NO",
+                "CUSTOMER NAME",
+                "CHECK NO",
+                "CHECK DATE",
+                "AMOUNT",
+                "ACCOUNT NO",
+                "ACCOUNT NAME",
+                "BANK NAME",
+            ]
+        );
+    }
 
     function record(object $data): self
     {
@@ -48,10 +53,10 @@ class TransactionService
 
     public function setStatus(string $status)
     {
-        $this->status = $status === '1' ? true : false;
+        $this->status = $status === "1" ? true : false;
         return $this;
     }
-    
+
 
 
     public function writeResult(array $dateRange)
@@ -69,12 +74,13 @@ class TransactionService
 
         $status = $this->status;
 
-        if ($status == '1') {
+        if ($this->status) {
             $headerTitle = 'Dated Check Report';
-            $headerRow = $this->generateReportHeader;
+            $headerRow = $this->generateReportHeader->concat(['STATUS']);
         } else {
             $headerTitle = 'Post Dated Check Report';
-            $headerRow = $this->generateReportHeader->concat(['STATUS']);
+            $headerRow = $this->generateReportHeader;
+
         }
 
         $spreadsheet = new Spreadsheet();
@@ -87,26 +93,21 @@ class TransactionService
 
         $excel_row = 5;
 
-        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, &$grandTotal) {
+        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, $status, $headerRow, &$grandTotal) {
             $countTable = 1;
             $progressCount = 0;
 
-
-            // dd($department);
             $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
-            // Merge cells for the department name
             $spreadsheet->getActiveSheet()->mergeCells('A' . $excel_row . ':I' . $excel_row);
-
-            // Center align the department name
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row)->getFont()->setBold(true);
-            // Set header row
-            $headerRowIndex = $excel_row++;
-            $spreadsheet->getActiveSheet()->fromArray($headerRow->toArray(), null, 'A' . $headerRowIndex);
-            $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->getFont()->setBold(true);
 
-            if ($status === '1') {
-                $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':H' . $headerRowIndex)->applyFromArray([
+            $excel_row++;
+
+            $spreadsheet->getActiveSheet()->fromArray($headerRow->toArray(), null, 'A' . $excel_row);
+            $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->getFont()->setBold(true);
+            if ($status) {
+                $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':H' . $excel_row)->applyFromArray([
                     'font' => [
                         'bold' => true,
                     ],
@@ -117,8 +118,8 @@ class TransactionService
                     ],
                 ]);
 
-            } else if ($status === '2') {
-                $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->applyFromArray([
+            } else {
+                $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->applyFromArray([
                     'font' => [
                         'bold' => true,
                     ],
@@ -130,17 +131,15 @@ class TransactionService
                 ]);
 
             }
-            $excel_row += 2;
 
             $reportCollection = [];
             $subtotal = 0;
+            $excel_row++;
 
-            //20
-            // dump($item);
             $item->each(function ($value, $key) use ($status, &$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
-                if ($status == '2') {
+                if ($status) {
                     $statusType = 'POST-DATED';
                     if ($value->check_date <= date('Y-m-d')) {
                         $statusType = 'POST-DATED DUE';
@@ -180,7 +179,7 @@ class TransactionService
             $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$excel_row");
 
 
-            if ($status === '1') {
+            if ($status) {
                 foreach (range('A3', 'H3') as $column) {
                     $cellAddress = $column . $excel_row;
                     $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
@@ -192,7 +191,7 @@ class TransactionService
                         ],
                     ]);
                 }
-            } else if ($status === '2') {
+            } else {
                 foreach (range('A3', 'I3') as $column) {
                     $cellAddress = $column . $excel_row;
                     $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
@@ -208,7 +207,7 @@ class TransactionService
 
             // Set borders for the data
             $highestRow = $excel_row + count($item); // Determine the last row of data for this department
-            if ($status == '1') {
+            if ($status) {
                 $highestColumn = 'H';
             } else {
                 $highestColumn = 'I';

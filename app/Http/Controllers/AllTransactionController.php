@@ -173,7 +173,7 @@ class AllTransactionController extends Controller
             ->whereBetween('checks.check_received', $dateRange)
             ->get()
             ->groupBy('department');
-
+        // dd($request->status);
         return(
             new TransactionService())
             ->record($data)
