@@ -22,8 +22,6 @@ class TransactionService
     protected $record;
     protected bool $status;
 
-    private $border;
-
     protected $generateReportHeader;
     public function __construct()
     {
@@ -39,19 +37,6 @@ class TransactionService
                 "BANK NAME",
             ]
         );
-
-        $this->border = [
-            'font' => [
-                'bold' => true,
-            ],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                ],
-            ],
-        ];
-
-
     }
 
     function record(object $data): self
@@ -67,9 +52,12 @@ class TransactionService
 
     public function setStatus(bool $status)
     {
-        $this->status = $status === '1' ? true : false;
+        $this->status = $status;
         return $this;
     }
+
+
+
     public function writeResult(array $dateRange)
     {
 
@@ -82,7 +70,7 @@ class TransactionService
 
         $status = $this->status;
 
-        if ($status) {
+        if ($status == '1') {
             $headerTitle = 'Dated Check Report';
             $headerRow = $this->generateReportHeader;
         } else {
@@ -117,11 +105,30 @@ class TransactionService
             $spreadsheet->getActiveSheet()->fromArray($headerRow->toArray(), null, 'A' . $headerRowIndex);
             $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->getFont()->setBold(true);
 
-            if ($status) {
-                $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':H' . $headerRowIndex)->applyFromArray($this->border);
+            if ($status === '1') {
+                $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':H' . $headerRowIndex)->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                        ],
+                    ],
+                ]);
 
-            } else {
-                $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->applyFromArray($this->border);
+            } else if ($status === '2') {
+                $spreadsheet->getActiveSheet()->getStyle('A' . $headerRowIndex . ':I' . $headerRowIndex)->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                        ],
+                    ],
+                ]);
+
             }
             $excel_row += 2;
 
@@ -133,7 +140,7 @@ class TransactionService
             $item->each(function ($value, $key) use ($status, &$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
-                if (!$status) {
+                if ($status == '2') {
                     $statusType = 'POST-DATED';
                     if ($value->check_date <= date('Y-m-d')) {
                         $statusType = 'POST-DATED DUE';
@@ -168,11 +175,11 @@ class TransactionService
             $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$excel_row");
 
 
-            if ($status) {
+            if ($status === '1') {
                 foreach (range('A3', 'H3') as $column) {
                     self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
-            } else {
+            } else if ($status === '2') {
                 foreach (range('A3', 'I3') as $column) {
                     self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
@@ -180,7 +187,7 @@ class TransactionService
 
             // Set borders for the data
             $highestRow = $excel_row + count($item); // Determine the last row of data for this department
-            if ($status) {
+            if ($status == '1') {
                 $highestColumn = 'H';
             } else {
                 $highestColumn = 'I';
