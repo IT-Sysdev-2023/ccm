@@ -20,7 +20,9 @@ use Maatwebsite\Excel\Facades\Excel;
 class TransactionService
 {
     protected $record;
-    protected string $status;
+    protected bool $status;
+
+    protected $generateReportHeader;
 
     private $border;
 
@@ -67,7 +69,7 @@ class TransactionService
 
     public function setStatus(string $status)
     {
-        $this->status = $status === '1' ? true : false;
+        $this->status = $status === "1" ? true : false;
         return $this;
     }
     public function writeResult(array $dateRange)
@@ -85,10 +87,11 @@ class TransactionService
 
         if ($status) {
             $headerTitle = 'Dated Check Report';
-            $headerRow = $this->generateReportHeader;
+            $headerRow = $this->generateReportHeader->concat(['STATUS']);
         } else {
             $headerTitle = 'Post Dated Check Report';
-            $headerRow = $this->generateReportHeader->concat(['STATUS']);
+            $headerRow = $this->generateReportHeader;
+
         }
 
         $spreadsheet = new Spreadsheet();
@@ -101,7 +104,7 @@ class TransactionService
 
         $excel_row = 5;
 
-        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, &$grandTotal) {
+        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, $status, $headerRow, &$grandTotal) {
             $countTable = 1;
             $progressCount = 0;
 
@@ -134,8 +137,6 @@ class TransactionService
 
 
 
-            //20
-            // dump($item);
             $item->each(function ($value, $key) use ($status, &$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item) {
                 $statusType = ''; // Reset status type for each value
 
@@ -175,9 +176,11 @@ class TransactionService
 
 
             if ($status) {
+            if ($status) {
                 foreach (range('A3', 'H3') as $column) {
                     self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
+            } else {
             } else {
                 foreach (range('A3', 'I3') as $column) {
                     self::setColumnDimension($spreadsheet, $column, $excel_row);
@@ -186,6 +189,7 @@ class TransactionService
 
             // Set borders for the data
             $highestRow = $excel_row + count($item); // Determine the last row of data for this department
+            if ($status) {
             if ($status) {
                 $highestColumn = 'H';
             } else {
