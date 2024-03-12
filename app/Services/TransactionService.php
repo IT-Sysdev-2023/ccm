@@ -98,12 +98,9 @@ class TransactionService
 
         $header = $this->writeHeader($spreadsheet);
 
-        $headerRow = $header['headerRow'];
-        $headerTitle = $header['headerTitle'];
-
         $excel_row = 5;
 
-        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, $headerRow, &$grandTotal) {
+        $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, $header, &$grandTotal) {
             $countTable = 1;
             $progressCount = 0;
 
@@ -116,7 +113,7 @@ class TransactionService
             $excel_row++;
 
 
-            $spreadsheet->getActiveSheet()->fromArray($headerRow->toArray(), null, 'A' . $excel_row);
+            $spreadsheet->getActiveSheet()->fromArray($header['headerRow']->toArray(), null, 'A' . $excel_row);
             $spreadsheet->getActiveSheet()->getStyle('A' . $excel_row . ':I' . $excel_row)->getFont()->setBold(true);
 
             if ($this->status) {
@@ -211,7 +208,7 @@ class TransactionService
         $writer = new Xlsx($spreadsheet);
         $writer->save($tempFilePath);
 
-        $filename = $headerTitle . ' on ' . now()->format('M, d Y') . '.xlsx';
+        $filename = $header['headerTitle'] . ' on ' . now()->format('M, d Y') . '.xlsx';
 
         return response()->download($tempFilePath, $filename);
     }
