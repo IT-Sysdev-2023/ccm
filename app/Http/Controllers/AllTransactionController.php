@@ -171,9 +171,9 @@ class AllTransactionController extends Controller
         $data = NewSavedChecks::filter($request->only(['status']), $request->user()->businessunit_id)
             ->select('*', 'checks.check_type as check-type', 'new_saved_checks.check_type as new_check_type', 'department')
             ->whereBetween('checks.check_received', $dateRange)
-            ->get()
+            ->cursor()
             ->groupBy('department');
-        // dd($request->status);
+            
         return(
             new TransactionService())
             ->record($data)

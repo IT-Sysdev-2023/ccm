@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Helper\NumberHelper;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -17,13 +18,14 @@ class ExcelGenerateEvents implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-
+    protected $percentage; 
 
     /**
      * Create a new event instance.
      */
     public function __construct(protected string $department, protected string $message, protected int $currentRow, protected int $totalRows, protected User $user)
     {
+        $this->percentage = NumberHelper::percentage($currentRow, $totalRows);
     }
 
     /**
@@ -50,6 +52,7 @@ class ExcelGenerateEvents implements ShouldBroadcastNow
         return [
             'department' => $this->department,
             'message' => $this->message,
+            'percentage' => $this->percentage,
             'currentRow' => $this->currentRow,
             'totalRows' => $this->totalRows,
         ];

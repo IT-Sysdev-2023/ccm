@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\LazyCollection;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -19,8 +20,8 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class TransactionService
 {
-    protected $record;
-    protected string $status;
+    protected LazyCollection $record;
+    protected bool $status;
 
     private $border;
 
@@ -51,27 +52,21 @@ class TransactionService
             ],
         ];
 
-
     }
 
-    function record(object $data): self
+    function record(LazyCollection $data): self
     {
         $this->record = $data;
 
         return $this;
     }
-    public function headername()
-    {
-        return $this;
-    }
-
-    public function setStatus(string $status)
+    public function setStatus(string $status): self
     {
         $this->status = $status === '1' ? true : false;
         return $this;
     }
 
-    protected function writeHeader($spreadsheet)
+    protected function writeHeader($spreadsheet) : array
     {
 
         if ($this->status) {
@@ -159,8 +154,6 @@ class TransactionService
                 ];
 
                 $subtotal += $value->check_amount;
-
-
 
                 ExcelGenerateEvents::dispatch($department, 'Generating Excel', ++$progressCount, $item->count(), Auth::user());
             });

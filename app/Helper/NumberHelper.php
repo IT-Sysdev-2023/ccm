@@ -22,4 +22,9 @@ class NumberHelper
         $numberFormatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
         return $numberFormatter->formatCurrency($amount, $currency);
     }
+
+    public static function percentage($current, $total){
+        $percent = ($current / $total) * 100;
+        return self::format($percent);
+    } 
 }
