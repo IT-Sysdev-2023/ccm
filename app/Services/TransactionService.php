@@ -20,7 +20,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class TransactionService
 {
     protected $record;
-    protected bool $status; 
+    protected string $status;
 
     protected $generateReportHeader = collect(
         [
@@ -46,8 +46,9 @@ class TransactionService
         return $this;
     }
 
-    public function setStatus(bool $status){
-        $this->status = $status;
+    public function setStatus(string $status)
+    {
+        $this->status = $status === '1' ? true : false;
         return $this;
     }
     
@@ -84,11 +85,12 @@ class TransactionService
         $spreadsheet->getActiveSheet()->getStyle('E1')->getFont()->setBold(true);
         $spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
 
-        $excel_row = 4;
+        $excel_row = 5;
 
         $this->record->each(function ($item, $department) use (&$spreadsheet, &$excel_row, &$headerRow, &$status, &$grandTotal) {
             $countTable = 1;
             $progressCount = 0;
+
 
             // dd($department);
             $spreadsheet->getActiveSheet()->setCellValue('A' . $excel_row, $department);
