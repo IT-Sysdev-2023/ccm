@@ -19,9 +19,12 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                     <a-breadcrumb-item><a href="">Transaction </a></a-breadcrumb-item>
                     <a-breadcrumb-item>Partial Payments</a-breadcrumb-item>
                 </a-breadcrumb>
-                <div v-if="isProgressShowing">
-                    <a-row :gutter="[16, 16]">
-                        <a-col :span="18" class="mb-5">
+                <div v-if="isProgressShowing" style="font-size: 14px;">
+                    <div>
+                        <div v-if="isProgressShowing" class="mb-10">
+                            <p> {{ progressBar.message }} {{ progressBar.department }} {{ progressBar.currentRow }} to
+                                {{
+                    progressBar.totalRows }}</p>
                             <a-progress :stroke-color="{
                     from: '#108ee9',
                     to: '#87d068',
@@ -31,24 +34,14 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                     100
                 )
                     " status="active" />
-                        </a-col>
-                        <a-col :span="6">
-                            <div>
-                                <strong>{{ progressBar.message }}</strong>
-                            </div>
-                            <div>
-                                <strong>{{ progressBar.department }}</strong>
-                            </div>
-                            <div>
-                                <strong>{{ progressBar.currentRow }}</strong>
-                            </div>
-                            <div>
-                                <strong>{{ progressBar.totalRows }}</strong>
-                            </div>
-                        </a-col>
-                    </a-row>
+                        </div>
+
+
+                    </div>
                 </div>
                 <a-card>
+
+
                     <div class="flex justify-between mb-10">
                         <div>
                             <a-select ref="select" @change="handleChangeStatus" v-model:value="statusValue" class="mr-2"
@@ -295,7 +288,7 @@ export default {
         },
         startGenerating() {
             this.isProgressShowing = true;
-            console.log("you are here");
+            this.isLoading = true;
 
             const params = {
                 status: this.statusValue,

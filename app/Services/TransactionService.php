@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
+use Inertia\Inertia;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -162,7 +163,7 @@ class TransactionService
 
 
 
-                ExcelGenerateEvents::dispatch($department, 'Generating Excel', ++$progressCount, $item->count(), Auth::user());
+                ExcelGenerateEvents::dispatch($department, 'Generating Excel of', ++$progressCount, $item->count(), Auth::user());
             });
 
             $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row + count($item) + 1), 'Subtotal:');
@@ -214,16 +215,25 @@ class TransactionService
         $spreadsheet->getActiveSheet()->getStyle('E' . ($excel_row))->getFont()->setBold(true);
         $spreadsheet->getActiveSheet()->getStyle('F' . ($excel_row))->getFont()->setBold(true);
 
-        $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($tempFilePath);
-
         $filename = $headerTitle . ' on ' . now()->format('M, d Y') . '.xlsx';
 
 
-        // ExcelGenerateEvents::dispatch('assad', 'Generating Excel', 1, 2, Auth::user());
-        return response()->download($tempFilePath, $filename);
-        // return response()->json(['t']);
+        $filePath = storage_path('app/' . $filename);
+
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filePath);
+
+        $downloadExcel = route('download.excel', ['filename' => $filename]);
+
+
+        // dd($this->record );
+
+        return Inertia::render('Components/Result', [
+            'downloadExcel' => $downloadExcel,
+            'dataRecord' => $this->record,
+        ]);
+
 
     }
 

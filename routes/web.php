@@ -12,6 +12,7 @@ use App\Http\Controllers\ImportUpdateController;
 use App\Http\Controllers\DsBounceTaggingController;
 use App\Http\Controllers\DatedPdcChecksController;
 use App\Http\Controllers\CheckReceivingController;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,6 +104,10 @@ Route::middleware('auth')->group(function () {
     Route::get('generate_report', [AllTransactionController::class, 'generate_report'])->name('generate_report.checks');
     Route::get('get_due_pdc_reports', [AllTransactionController::class, 'getDuepdcReports'])->name('duePdcReports.checks');
     Route::get('generate_report_due_pdc', [AllTransactionController::class, 'generateExcelDuePdcReports'])->name('generate_duepdcrep.checks');
+    Route::get('/download/excel/{filename}', function ($filename) {
+        $filePath = storage_path('app/' . $filename);
+        return response()->download($filePath);
+    })->name('download.excel');
 });
 
 require __DIR__ . '/auth.php';
