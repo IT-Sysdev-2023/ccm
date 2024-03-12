@@ -26,7 +26,6 @@ class TransactionService
 
     private $border;
 
-    protected $generateReportHeader;
     public function __construct()
     {
         $this->generateReportHeader = collect(
@@ -175,12 +174,11 @@ class TransactionService
             $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$excel_row");
 
 
-            if ($status) {
+
             if ($status) {
                 foreach (range('A3', 'H3') as $column) {
                     self::setColumnDimension($spreadsheet, $column, $excel_row);
                 }
-            } else {
             } else {
                 foreach (range('A3', 'I3') as $column) {
                     self::setColumnDimension($spreadsheet, $column, $excel_row);
@@ -189,7 +187,7 @@ class TransactionService
 
             // Set borders for the data
             $highestRow = $excel_row + count($item); // Determine the last row of data for this department
-            if ($status) {
+
             if ($status) {
                 $highestColumn = 'H';
             } else {
