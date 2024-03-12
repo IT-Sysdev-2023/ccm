@@ -8,6 +8,10 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Facades\Request;
+use Inertia\Inertia;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -82,7 +86,7 @@ class TransactionService
 
         return ['headerTitle' => $headerTitle, 'headerRow' => $headerRow];
     }
-    public function writeResult(array $dateRange): BinaryFileResponse
+    public function writeResult(array $dateRange)
     {
 
         ini_set('max_execution_time', 3600);
@@ -149,7 +153,9 @@ class TransactionService
 
                 $subtotal += $value->check_amount;
 
-                ExcelGenerateEvents::dispatch($department, 'Generating Excel', ++$progressCount, $item->count(), Auth::user());
+
+
+                ExcelGenerateEvents::dispatch($department, 'Generating Excel of', ++$progressCount, $item->count(), Auth::user());
             });
 
             $spreadsheet->getActiveSheet()->setCellValue('E' . ($excel_row + count($item) + 1), 'Subtotal:');
@@ -207,10 +213,27 @@ class TransactionService
 
         $filename = $header['headerTitle'] . ' on ' . now()->format('M, d Y') . '.xlsx';
 
-        return response()->download($tempFilePath, $filename);
+
+        $filePath = storage_path('app/' . $filename);
+
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filePath);
+
+        $downloadExcel = route('download.excel', ['filename' => $filename]);
+
+
+        // dd($this->record );
+
+        return Inertia::render('Components/Result', [
+            'downloadExcel' => $downloadExcel,
+            'dataRecord' => $this->record,
+        ]);
+
+
     }
 
-    public function writeResultDuePdc(array $dateRange, $businessUnit): BinaryFileResponse
+    public function writeResultDuePdc(array $dateRange, $businessUnit)
     {
 
         ini_set('max_execution_time', 3600);
