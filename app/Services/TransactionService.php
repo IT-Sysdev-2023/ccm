@@ -97,7 +97,7 @@ class TransactionService extends ExcelWriter
         $this->headerStyle($header['headerTitle']);
 
         $recordCount = $this->record->count();
-        $recordSearch = $this->record->keys()->toArray();
+        $recordSearch = $this->record->keys()->all();
         $excel_row = 5;
 
         $this->record->each(function ($item, string $department) use (&$excel_row, $header, &$grandTotal, $recordCount, $recordSearch) {
