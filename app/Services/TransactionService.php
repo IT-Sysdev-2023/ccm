@@ -97,7 +97,10 @@ class TransactionService extends ExcelWriter
         $this->headerStyle($header['headerTitle']);
 
         $recordCount = $this->record->count();
-        $recordSearch = $this->record->keys()->all();
+        $recordkeys = $this->record->keys()->all();
+
+        $recordSearch = array_combine(range(1, count($recordkeys)), array_values($recordkeys));
+
         $excel_row = 5;
 
         $this->record->each(function ($item, string $department) use (&$excel_row, $header, &$grandTotal, $recordCount, $recordSearch) {
@@ -129,13 +132,7 @@ class TransactionService extends ExcelWriter
 
             $item->each(function ($value, $key) use (&$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item, $recordCount, &$excel_row, $recordSearch) {
 
-                // $this->setCellValueSheet("A$excel_row", $countTable++);
-                // $this->setCellValueSheet("B$excel_row", $value->fullname);
-                // $this->setCellValueSheet("C$excel_row", $value->check_no);
-                // $this->setCellValueSheet("D$excel_row", Date::parse($value->new_check_type)->format('M-d-Y'));
-                // $this->setCellValueSheet("E$excel_row", NumberHelper::format($value->check_amount));
-                // $this->setCellValueSheet("F$excel_row", $value->account_no);
-                // $this->setCellValueSheet("G$excel_row", $value->account_no);
+
                 $statusType = '';
 
                 if (!$this->status) {
@@ -144,6 +141,8 @@ class TransactionService extends ExcelWriter
                         $statusType = 'POST-DATED DUE';
                     }
                 }
+
+
 
                 $reportCollection[] = [
                     $countTable++,
@@ -243,7 +242,7 @@ class TransactionService extends ExcelWriter
         ini_set('memory_limit', '-1');
         set_time_limit(3600);
 
-        $dueReportData = [];
+        $dueReportData[] = [];
 
 
         $spreadsheet = new Spreadsheet();
@@ -256,6 +255,7 @@ class TransactionService extends ExcelWriter
             $spreadsheet->getActiveSheet()->getCell('B2')->setValue('From : ' . today()->toFormattedDateString());
             $dueReportData = $this->record;
         }
+        // dd($dueReportData->toArray());
 
 
         $spreadsheet->getActiveSheet()->getCell('B1')->setValue('Status Type : ' . ' ' . $businessUnit->bname);
@@ -301,33 +301,38 @@ class TransactionService extends ExcelWriter
         $progressCount = 0;
         $row = 6;
 
-        $dueReportData->each(function ($item, ) use (&$businessUnit, &$progressCount, &$dueReportData, &$reportCollection, &$spreadsheet, &$row, $countTable) {
+        $dueReportData->each(function ($item, ) use (&$businessUnit, &$progressCount, &$dueReportData, &$reportCollection, &$spreadsheet, &$row, &$countTable) {
 
             $deposited_status = NewDsChecks::where('checks_id', '=', $item->checks_id)
                 ->select('ds_no', 'status', 'date_deposit')
                 ->first();
 
+
             $ds_number = '';
             $deposit_date = '';
             $days = '';
+
+            $datetime1 = strtotime($item->check_date);
+            $datetime2 = strtotime($item->check_received);
+
+            $secs = $datetime1 - $datetime2;
+            $days = $secs / 86400;
 
             if ($deposited_status === null) {
                 $deposited_status = 'PENDING DEPOSIT';
             } else if ($deposited_status->status === 'BOUNCED') {
 
                 $bounce_status = NewBounceCheck::where('checks_id', '=', $item->checks_id)
-                    ->orderBy('new_bounce_check.id', 'desc')
                     ->first();
+
 
                 if ($bounce_status->status === 'SETTLE CHECK') {
 
                     $replacement_type = NewCheckReplacement::where('bounce_id', $bounce_status->id)
-                        ->orderBy('new_check_replacement.date_time', 'desc')
                         ->first();
 
                     if ($replacement_type->mode == 'RE-DEPOSIT') {
                         $redeposited_status = NewDsChecks::where('checks_id', '=', $item->checks_id)
-                            ->select('ds_no', 'status', 'date_deposit')
                             ->orderBy('id', 'desc')
                             ->first();
 
@@ -356,6 +361,7 @@ class TransactionService extends ExcelWriter
                 }
             }
 
+
             $reportCollection[] = [
                 $countTable++,
                 date('m-d-Y', strtotime($item->check_received)),
@@ -376,7 +382,7 @@ class TransactionService extends ExcelWriter
                 $days,
             ];
 
-            ExcelGenerateEvents::dispatch($businessUnit->bname, 'Generating Excel to', ++$progressCount, $dueReportData->count(), Auth::user());
+            ExcelGenerateEvents::dispatch($businessUnit->bname, 'Generating Excel to', ++$progressCount, $dueReportData->count(), Auth::user(), 12, 12);
 
             $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$row");
 
