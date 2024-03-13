@@ -187,12 +187,21 @@ const hide = () => {
             <div>
 
 
-                <header style="display: flex; justify-content: center; align-items: center; text-align: center;">
-                    <img src="../../../public/Logo/ccmpbng.png" alt="" style="height: 80px;">
-                    <p style="   color: rgba(34, 34, 34, 0.788);
+                <header style="width: auto;">
+                    <div class="flex justify-start items-center">
+                        <img src="../../../public/Logo/ccmpbng.png" alt="" style="height: 80px;">
+
+                        <p style="   color: rgba(34, 34, 34, 0.788);
     font-size: max(1vw, 1rem);
-    font-style: italic;">Look at those unbalanced lines.
-                    </p>
+    font-style: italic;">
+                            {{ $page.props.quote.quote }}
+                        </p>
+                        <br>
+
+                    </div>
+                    <p class="text-end text-sm underline">
+                        -{{ $page.props.quote.author }} </p>
+
                 </header>
             </div>
 
