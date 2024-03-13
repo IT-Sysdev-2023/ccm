@@ -3,6 +3,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>

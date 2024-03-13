@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helper\QuoteHelper;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -29,6 +30,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // dd(QuoteHelper::get());
         return [
             ...parent::share($request),
             'auth' => [
@@ -38,8 +40,9 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'info' => $request->session()->get('info'),
                 'error' => $request->session()->get('error'),
-                'style' => $request->session()->get('style'),   
+                'style' => $request->session()->get('style'),
             ],
+            'quote' => QuoteHelper::get(),
 
         ];
     }
