@@ -129,13 +129,7 @@ class TransactionService extends ExcelWriter
 
             $item->each(function ($value, $key) use (&$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item, $recordCount, &$excel_row, $recordSearch) {
 
-                // $this->setCellValueSheet("A$excel_row", $countTable++);
-                // $this->setCellValueSheet("B$excel_row", $value->fullname);
-                // $this->setCellValueSheet("C$excel_row", $value->check_no);
-                // $this->setCellValueSheet("D$excel_row", Date::parse($value->new_check_type)->format('M-d-Y'));
-                // $this->setCellValueSheet("E$excel_row", NumberHelper::format($value->check_amount));
-                // $this->setCellValueSheet("F$excel_row", $value->account_no);
-                // $this->setCellValueSheet("G$excel_row", $value->account_no);
+
                 $statusType = '';
 
                 if (!$this->status) {

@@ -22,9 +22,20 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                 <div v-if="isProgressShowing" style="font-size: 14px;">
                     <div>
                         <div v-if="isProgressShowing" class="mb-10">
-                            <p> {{ progressBar.message }} {{ progressBar.department }} {{ progressBar.currentRow }} to
-                                {{
+                            <div class="flex justify-between">
+                                <div>
+                                    <p> {{ progressBar.message }} {{ progressBar.department }} {{ progressBar.currentRow
+                                        }}
+                                        to
+                                        {{
                     progressBar.totalRows }}</p>
+                                </div>
+
+                                <div>
+                                    <span class="font-bold">{{ progressBar.preProcess }} </span> out of
+                                    <span class="font-bold">{{ progressBar.departmentToBeProcessed }}</span>
+                                </div>
+                            </div>
                             <a-progress :stroke-color="{
                     from: '#108ee9',
                     to: '#87d068',
@@ -33,8 +44,6 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 
 
                     </div>
-                    <span>{{ progressBar.preProcess }} ------</span>
-                    <span>{{ progressBar.departmentToBeProcessed }}</span>
                 </div>
                 <a-card>
 
