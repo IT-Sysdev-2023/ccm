@@ -57,8 +57,8 @@ const colors = 'red';
 
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
-                                <a-button class="mx-1" shape="square" ref="ref4"
-                                    style="background-color: rgba(115, 236, 91, 0.685);"
+                                <a-button class="mx-1" size="small" ref="ref4"
+                                    style="background: #1A5D1A; color: white;"
                                     v-on:click="confirmBounceTagg(record.checks_id)">
 
                                     <template #icon>
@@ -66,7 +66,7 @@ const colors = 'red';
                                     </template>
                                 </a-button>
 
-                                <a-button shape="square" v-on:click="openModalDetails(record)">
+                                <a-button size="small" v-on:click="openModalDetails(record)">
 
                                     <template #icon>
                                         <SettingOutlined />

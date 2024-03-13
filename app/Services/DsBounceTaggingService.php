@@ -18,9 +18,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\LazyCollection;
 use Inertia\Inertia;
 
-class DsBounceTaggingService{
+class DsBounceTaggingService
+{
 
-    public function __construct(public NewSavedChecks $newSavedChecks) {}
+    public function __construct(public NewSavedChecks $newSavedChecks)
+    {
+    }
 
     public function updateSwitch(Request $request)
     {
@@ -90,7 +93,7 @@ class DsBounceTaggingService{
             ->where('checks.check_no', 'like', '%' . $request->search . '%')
             ->whereYear('checks.check_received', $request->dt_year)
             ->orderBy('new_ds_checks.date_time', 'desc')
-            ->orderBy('checks.check_received', 'desc')->paginate(20);
+            ->orderBy('checks.check_received', 'desc')->paginate(10);
 
         $data->transform(function ($value) {
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();

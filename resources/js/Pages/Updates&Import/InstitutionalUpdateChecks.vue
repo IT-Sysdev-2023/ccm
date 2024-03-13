@@ -6,6 +6,7 @@ const tabPosition = 'right';
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -17,7 +18,7 @@ const tabPosition = 'right';
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
 
                 <a-row :gutter="[16, 16]">
-                    <a-col :span="6">
+                    <a-col :span="5">
                         <a-card style="height: 100%;">
                             <a-button style="width: 100%;" class="mb-5" @click="showImportInstutional"
                                 :class="{ 'active': isActive === 'import' }">
@@ -31,7 +32,7 @@ const tabPosition = 'right';
                             </a-button>
                         </a-card>
                     </a-col>
-                    <a-col :span="18">
+                    <a-col :span="19">
                         <a-card>
 
                             <div v-if="showImport">
@@ -42,7 +43,8 @@ const tabPosition = 'right';
                                     </a-col>
                                     <a-col :span="18">
                                         <a-card>
-                                            Hello There! <strong>{{ $page.props.auth.user.name }} </strong> , To proceed the
+                                            Hello There! <strong>{{ $page.props.auth.user.name }} </strong> , To proceed
+                                            the
                                             import instutional checks. Please click the "
                                             <strong>Start Importing</strong> "
                                         </a-card>
@@ -52,14 +54,17 @@ const tabPosition = 'right';
                                     <div class="book-wrapper">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 126 75"
                                             class="book">
-                                            <rect stroke-width="5" stroke="#e05452" rx="7.5" height="70" width="121" y="2.5"
-                                                x="2.5"></rect>
+                                            <rect stroke-width="5" stroke="#e05452" rx="7.5" height="70" width="121"
+                                                y="2.5" x="2.5"></rect>
                                             <line stroke-width="5" stroke="#e05452" y2="75" x2="63.5" x1="63.5"></line>
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M25 20H50">
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M25 20H50">
                                             </path>
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M101 20H76">
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M101 20H76">
                                             </path>
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M16 30L50 30">
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M16 30L50 30">
                                             </path>
                                             <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
                                                 d="M110 30L76 30">
@@ -68,9 +73,11 @@ const tabPosition = 'right';
 
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff74" viewBox="0 0 65 75"
                                             class="book-page">
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M40 20H15">
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M40 20H15">
                                             </path>
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M49 30L15 30">
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M49 30L15 30">
                                             </path>
                                             <path stroke-width="5" stroke="#e05452"
                                                 d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z">
@@ -82,9 +89,9 @@ const tabPosition = 'right';
                                         sub-title="Click  the start button, to import the institutional text-file.">
                                         <template #extra>
                                             <a-upload v-model:file-list="fileList" name="file"
-                                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers"
-                                                @change="handleChange">
-                                                <a-button style="background: #4791d6; color: white !important;">
+                                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                                                :headers="headers" @change="handleChange">
+                                                <a-button style="width: 300px; background: #0A1D56; color: white;">
                                                     <UploadOutlined />
                                                     Start importing
                                                 </a-button>
@@ -101,7 +108,8 @@ const tabPosition = 'right';
                                     </a-col>
                                     <a-col :span="18">
                                         <a-card>
-                                            Hello There! <strong>{{ $page.props.auth.user.name }} </strong>, To proceed the
+                                            Hello There! <strong>{{ $page.props.auth.user.name }} </strong>, To proceed
+                                            the
                                             atp
                                             update
                                             database. Please click the "
@@ -157,9 +165,9 @@ const tabPosition = 'right';
                                         </template>
                                         <template #extra>
                                             <a-upload v-model:file-list="fileList" name="file"
-                                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers"
-                                                @change="handleChange">
-                                                <a-button style="background: #4791d6; color: white !important;">
+                                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                                                :headers="headers" @change="handleChange">
+                                                <a-button style="width: 300px; background: #0A1D56; color: white;">
                                                     <UploadOutlined />
                                                     Start Updating
                                                 </a-button>
@@ -172,7 +180,8 @@ const tabPosition = 'right';
                                 <img src="../../../../public/Logo/ccmpbng.png" alt=""
                                     style="height: 350px; display: flex; justify-content: center;">
                                 <a-card>
-                                    Hi There! <strong>{{ $page.props.auth.user.name }} </strong> I'm <strong>Ccmbot</strong>
+                                    Hi There! <strong>{{ $page.props.auth.user.name }} </strong> I'm
+                                    <strong>Ccmbot</strong>
                                     We're thrilled to have you
                                     here. Explore our platform to discover a world of
                                     information, services, and resources tailored just for you. Whether you're seeking
@@ -180,7 +189,8 @@ const tabPosition = 'right';
                                     covered. Let's embark on this journey together! <br>
 
                                     <br>
-                                    Please click the button "<strong>Import institutional checks</strong>" & "<strong>Update
+                                    Please click the button "<strong>Import institutional checks</strong>" &
+                                    "<strong>Update
                                         atp
                                         database</strong>" to proceed
                                     the in the page
