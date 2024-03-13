@@ -20,6 +20,27 @@ use Illuminate\Support\Facades\Date;
 
 class ReportController extends Controller
 {
+
+    private $headerRow;
+    public function __construct() {
+        $this->headerRow = collect([
+            "DATE RECIEVED",
+            "CHECK DATE",
+            "BANK",
+            "ACCOUNT NUMBER",
+            "ACCOUNT NAME",
+            "CUSTOMER",
+            "APPROVING OFFICER",
+            "CHECK CLASS",
+            "CHECK CATEGORY",
+            "CHECK FROM",
+            "CHECK NO.",
+            "AMOUNT",
+            "DEPOSIT STATUS",
+            "DS_NO",
+            "DEPOSIT DATE",
+        ]);
+    }
     public function datedpdcchecksreports()
     {
 
@@ -100,47 +121,9 @@ class ReportController extends Controller
         $title = '';
         $h_type = '';
 
-
-        if ($request->ch_type == 2) {
-            $headerRow = array(
-                "DATE RECIEVED",
-                "CHECK DATE",
-                "BANK",
-                "ACCOUNT NUMBER",
-                "ACCOUNT NAME",
-                "CUSTOMER",
-                "APPROVING OFFICER",
-                "CHECK CLASS",
-                "CHECK CATEGORY",
-                "CHECK FROM",
-                "CHECK NO.",
-                "AMOUNT",
-                "DEPOSIT STATUS",
-                "DS_NO",
-                "DEPOSIT DATE",
-            );
-        } else if ($request->ch_type == 1) {
-            $headerRow = array(
-                "DATE RECIEVED",
-                "CHECK DATE",
-                "BANK",
-                "ACCOUNT NUMBER",
-                "ACCOUNT NAME",
-                "CUSTOMER",
-                "APPROVING OFFICER",
-                "CHECK CLASS",
-                "CHECK CATEGORY",
-                "CHECK FROM",
-                "CHECK NO.",
-                "AMOUNT",
-                "DEPOSIT STATUS",
-                "DS_NO",
-                "DEPOSIT DATE",
-                "PDC GAP(DAYS)",
-            );
+        if($request->ch_type == 1){
+            $this->headerRow->concat(["PDC GAP(DAYS)"]);
         }
-
-
 
         if ($request->ch_type === '2' && $request->repporttype === '0') {
             $h_type = 'ALL DATED CHECKS';
@@ -377,7 +360,7 @@ class ReportController extends Controller
 
 
 
-        $spreadsheet->getActiveSheet()->fromArray($headerRow, null, 'A5');
+        $spreadsheet->getActiveSheet()->fromArray($this->headerRow->all(), null, 'A5');
         $spreadsheet->getActiveSheet()->getCell('E3')->setValue('BUSINESS UNIT : ' . ' ' . $bname->bname);
         $spreadsheet->getActiveSheet()->getCell('E1')->setValue('REPORT TYPE : ' . ' ' . $h_type);
         if (!$request->dt_from && !$request->dt_to) {
