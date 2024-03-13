@@ -31,7 +31,8 @@ class TransactionService extends ExcelWriter
 
     private array $border;
 
-    protected $generateReportHeader;
+    protected \Illuminate\Support\Collection $generateReportHeader;
+    protected array $table_columnsHeader;
     public function __construct()
     {
         parent::__construct();
@@ -47,6 +48,27 @@ class TransactionService extends ExcelWriter
                 "ACCOUNT NAME",
                 "BANK NAME",
             ]
+        );
+
+
+        $this->table_columnsHeader = array(
+            "NO.",
+            "DATE RECIEVED",
+            "CHECK DATE",
+            "BANK",
+            "ACCOUNT NUMBER",
+            "ACCOUNT NAME",
+            "CUSTOMER",
+            "APPROVING OFFICER",
+            "CHECK CLASS",
+            "CHECK CATEGORY",
+            "CHECK FROM",
+            "CHECK NO.",
+            "AMOUNT",
+            "DEPOSIT STATUS",
+            "DS_NO",
+            "DEPOSIT DATE",
+            "PDC GAP(DAYS)",
         );
 
         $this->border = $this->initializedBorder();
@@ -88,9 +110,7 @@ class TransactionService extends ExcelWriter
     public function writeResult(array $dateRange)
     {
 
-        ini_set('max_execution_time', 3600);
-        ini_set('memory_limit', '-1');
-        set_time_limit(3600);
+        $this->executionTime();
 
         $grandTotal = 0;
         $header = $this->transformColumn();
@@ -236,36 +256,21 @@ class TransactionService extends ExcelWriter
 
     public function writeResultDuePdc(array $dateRange, $businessUnit)
     {
-        // dd($businessUnit->bname);
-
-        ini_set('max_execution_time', 3600);
-        ini_set('memory_limit', '-1');
-        set_time_limit(3600);
-
-        $dueReportData[] = [];
-
-
-        $spreadsheet = new Spreadsheet();
-
+        $this->executionTime();
 
         if (!empty($dateRange[0]) && !empty($dateRange[1])) {
-            $spreadsheet->getActiveSheet()->getCell('B2')->setValue('From : ' . Date::parse($dateRange[0])->toFormattedDateString() . ' To: ' . Date::parse($dateRange[1])->toFormattedDateString());
-            $dueReportData = $this->record;
+            $date = Date::parse($dateRange[0])->toFormattedDateString() . ' To: ' . Date::parse($dateRange[1])->toFormattedDateString();
         } else {
-            $spreadsheet->getActiveSheet()->getCell('B2')->setValue('From : ' . today()->toFormattedDateString());
-            $dueReportData = $this->record;
+            $date = today()->toFormattedDateString();
         }
-        // dd($dueReportData->toArray());
+        $this->getCellSetValue('B2', 'From : ' . $date);
+        $this->getCellSetValue('B1', 'Status Type : ' . ' ' . $businessUnit->bname);
+        $this->getStyleGetFontSetBold('E1');
+        $this->getStyleGetFontSetBold('E2');
+        $this->getStyleGetFontSetBold('B2');
+        $this->getStyleGetFontSetBold('B1');
 
-
-        $spreadsheet->getActiveSheet()->getCell('B1')->setValue('Status Type : ' . ' ' . $businessUnit->bname);
-
-        $spreadsheet->getActiveSheet()->getStyle('E1')->getFont()->setBold(true);
-        $spreadsheet->getActiveSheet()->getStyle('E2')->getFont()->setBold(true);
-        $spreadsheet->getActiveSheet()->getStyle('B2')->getFont()->setBold(true);
-        $spreadsheet->getActiveSheet()->getStyle('B1')->getFont()->setBold(true);
-
-        $spreadsheet->getActiveSheet()->getStyle('A5:Q5')->applyFromArray([
+        $this->getActiveSheetExcel()->getStyle('A5:Q5')->applyFromArray([
             'font' => [
                 'bold' => true,
             ],
@@ -275,56 +280,36 @@ class TransactionService extends ExcelWriter
                 ],
             ],
         ]);
-        $table_columns = array(
-            "NO.",
-            "DATE RECIEVED",
-            "CHECK DATE",
-            "BANK",
-            "ACCOUNT NUMBER",
-            "ACCOUNT NAME",
-            "CUSTOMER",
-            "APPROVING OFFICER",
-            "CHECK CLASS",
-            "CHECK CATEGORY",
-            "CHECK FROM",
-            "CHECK NO.",
-            "AMOUNT",
-            "DEPOSIT STATUS",
-            "DS_NO",
-            "DEPOSIT DATE",
-            "PDC GAP(DAYS)",
-        );
 
         $column = 1;
-
         $countTable = 1;
         $progressCount = 0;
         $row = 6;
+        // dd($this->record->take(10)->all());
 
-        $dueReportData->each(function ($item, ) use (&$businessUnit, &$progressCount, &$dueReportData, &$reportCollection, &$spreadsheet, &$row, &$countTable) {
-
-            $deposited_status = NewDsChecks::where('checks_id', '=', $item->checks_id)
+        $this->record->each(function ($item) use (&$businessUnit, &$progressCount, &$dueReportData, &$reportCollection, &$spreadsheet, &$row, &$countTable) {
+            $deposited_status = NewDsChecks::where('checks_id', $item->checks_id)
                 ->select('ds_no', 'status', 'date_deposit')
                 ->first();
-
 
             $ds_number = '';
             $deposit_date = '';
             $days = '';
 
-            $datetime1 = strtotime($item->check_date);
-            $datetime2 = strtotime($item->check_received);
+            $checkDate = Date::parse($item->check_date);
+            $checkRecieved = Date::parse($item->check_received);
 
-            $secs = $datetime1 - $datetime2;
-            $days = $secs / 86400;
+            // Calculate the difference in days
+            $days = $checkDate->diffInDays($checkRecieved);
 
             if ($deposited_status === null) {
+
                 $deposited_status = 'PENDING DEPOSIT';
+
             } else if ($deposited_status->status === 'BOUNCED') {
 
-                $bounce_status = NewBounceCheck::where('checks_id', '=', $item->checks_id)
+                $bounce_status = NewBounceCheck::where('checks_id', $item->checks_id)
                     ->first();
-
 
                 if ($bounce_status->status === 'SETTLE CHECK') {
 
@@ -353,9 +338,7 @@ class TransactionService extends ExcelWriter
 
             $redeem = NewCheckReplacement::where('checks_id', $item->checks_id)->first();
 
-            if ($redeem == null) {
-
-            } else {
+            if (!is_null($redeem)) {
                 if ($redeem->status == 'REDEEMED') {
                     $deposited_status = 'REDEEMED';
                 }
@@ -375,32 +358,30 @@ class TransactionService extends ExcelWriter
                 $item->check_category,
                 $item->department,
                 $item->check_no,
-                number_format($item->check_amount, 2),
+                NumberHelper::format($item->check_amount),
                 $deposited_status,
                 $ds_number,
                 $deposit_date,
                 $days,
             ];
 
-            ExcelGenerateEvents::dispatch($businessUnit->bname, 'Generating Excel to', ++$progressCount, $dueReportData->count(), Auth::user(), 12, 12);
+            ExcelGenerateEvents::dispatch($businessUnit->bname, 'Generating Excel to', ++$progressCount, $this->record->count(), Auth::user(), 12, 12);
 
-            $spreadsheet->getActiveSheet()->fromArray($reportCollection, null, "A$row");
+            $this->getActiveSheetExcel()->fromArray($reportCollection, null, "A$row");
 
         });
 
-
-
         foreach (range('A3', 'Q3') as $column) {
-            $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
+            $this->getActiveSheetExcel()->getColumnDimension($column)->setAutoSize(true);
         }
 
-        $highestRow = $row + count($dueReportData); // Determine the last row of data for this department
+        $highestRow = $row + count($this->record); // Determine the last row of data for this department
 
         $highestColumn = 'Q';
 
         $dataRange = "A$row:$highestColumn$highestRow";
 
-        $spreadsheet->getActiveSheet()->getStyle($dataRange)->applyFromArray([
+        $this->getActiveSheetExcel()->getStyle($dataRange)->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
@@ -410,14 +391,14 @@ class TransactionService extends ExcelWriter
         ]);
 
 
-        $spreadsheet->getActiveSheet()->fromArray($table_columns, null, 'A5');
+        $this->getActiveSheetExcel()->fromArray($this->table_columnsHeader, null, 'A5');
 
         $filename = $businessUnit->bname . ' on ' . now()->format('M, d Y') . '.xlsx';
 
         $filePath = storage_path('app/' . $filename);
 
 
-        $writer = new Xlsx($spreadsheet);
+        $writer = new Xlsx($this->spreadsheet);
         $writer->save($filePath);
 
         $downloadExcel = route('download.excel', ['filename' => $filename]);

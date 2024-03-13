@@ -201,9 +201,7 @@ class AllTransactionController extends Controller
     {
         $buname = BusinessUnit::where('businessunit_id', $request->user()->businessunit_id)->first();
         $dateRange = [$request->date_from, $request->date_to];
-        $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)->lazy();
-
-        // dd($data);
+        $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)->cursor();
 
         return(new TransactionService())
             ->record($data)
