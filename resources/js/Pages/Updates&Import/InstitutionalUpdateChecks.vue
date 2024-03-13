@@ -88,14 +88,11 @@ const tabPosition = 'right';
                                     <a-result status="" title="Import institutional checks!"
                                         sub-title="Click  the start button, to import the institutional text-file.">
                                         <template #extra>
-                                            <a-upload v-model:file-list="fileList" name="file"
-                                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                                :headers="headers" @change="handleChange">
-                                                <a-button style="width: 300px; background: #0A1D56; color: white;">
-                                                    <UploadOutlined />
-                                                    Start importing
-                                                </a-button>
-                                            </a-upload>
+                                            <a-button style="width: 300px; background: #0A1D56; color: white;"
+                                                @click="startImporting">
+                                                <UploadOutlined />
+                                                Start importing
+                                            </a-button>
                                         </template>
                                     </a-result>
                                 </div>
@@ -274,6 +271,9 @@ export default {
             this.showImport = false;
             this.showUpdate = true;
             this.isActive = 'update';
+        },
+        startImporting() {
+            this.$inertia.get(route('start.importing.checks'));
         }
     },
     mounted() {
