@@ -4,7 +4,8 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 
-trait ChecksTraits{
+trait ChecksTraits
+{
     public function scopeFindChecks(Builder $builder, $id): Builder
     {
         return $builder->where('checks_id', $id);
@@ -23,9 +24,15 @@ trait ChecksTraits{
         return $builder->where('check_no', 'like', '%' . $filter . '%');
     }
 
-    public function scopeWhereDateChecks(Builder $builder, $date): Builder
+    public function scopeWhereDateChecks($query, $date)
     {
-        return $builder->whereDate('checks.date_time', $date);
+        return $query->where(function ($query) use ($date) {
+            if ($date !== null) {
+                $query->whereDate('checks.date_time', $date);
+            } else {
+                $query->whereDate('checks.date_time', now()->toDateString());
+            }
+        });
     }
 
     public function scopeWhereDateTimeNotZero(Builder $builder): Builder
