@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\NewSavedChecks;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Helper\NumberHelper;
 use App\Helper\ColumnsHelper;
@@ -11,6 +12,7 @@ use App\Models\CheckHistory;
 use App\Models\Checks;
 use App\Models\NewDsChecks;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -25,7 +27,7 @@ class DsBounceTaggingService
     {
     }
 
-    public function updateSwitch(Request $request)
+    public function updateSwitch(Request $request): Response
     {
         $this->newSavedChecks->findChecks($request->id)
             ->update([
@@ -78,7 +80,7 @@ class DsBounceTaggingService
             'columns' => ColumnsHelper::$columns_ds_tagging,
         ]);
     }
-    public function get_bounce_tagging(Request $request)
+    public function get_bounce_tagging(Request $request): Response
     {
         ini_set('memory_limit', '-1');
 
@@ -112,10 +114,10 @@ class DsBounceTaggingService
         ]);
     }
 
-    public function tag_check_bounce(Request $request)
+    public function tag_check_bounce(Request $request): Builder
     {
 
-        DB::transaction(function () use ($request) {
+       return DB::transaction(function () use ($request) {
 
             Checks::findChecks($request->check_id)->update(['check_status' => 'BOUNCE']);
             NewSavedChecks::findChecks($request->check_id)->update(['status' => 'BOUNCED']);
@@ -138,7 +140,7 @@ class DsBounceTaggingService
         });
 
     }
-    public function submiCheckDs(Request $request)
+    public function submiCheckDs(Request $request): RedirectResponse
     {
         $request->validate([
             'dsNo' => 'required',
