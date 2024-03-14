@@ -3,6 +3,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 import { Head } from "@inertiajs/vue3";
 </script>
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -80,14 +81,14 @@ import { Head } from "@inertiajs/vue3";
                         </div>
                     </div>
                     <a-table :loading="isloadingTbl" :row-class-name="(_record, index) =>
-                        _record.check_status == 'PENDING'
-                            ? 'PENDING'
-                            : _record.check_status == 'CASH'
-                                ? 'CASH'
-                                : _record.check_status === 'BOUNCE'
-                                    ? 'BOUNCE'
-                                    : 'CLEARED'
-                        " size="small" :pagination="false" bordered :dataSource="data.data" :columns="columns">
+                                _record.check_status == 'PENDING'
+                                    ? 'PENDING'
+                                    : _record.check_status == 'CASH'
+                                        ? 'CASH'
+                                        : _record.check_status === 'BOUNCE'
+                                            ? 'BOUNCE'
+                                            : 'CLEARED'
+                                " size="small" :pagination="false" bordered :dataSource="data.data" :columns="columns">
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'check_box'">
                                 <template v-if="record.check_status === 'PENDING'">
@@ -121,84 +122,98 @@ import { Head } from "@inertiajs/vue3";
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l  border-t border-gray-200">
                                 Customer Name</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
                                 {{
-                                    selectDataDetails.fullname }}</td>
+                                selectDataDetails.fullname }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check From</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.department }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Number</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.check_no }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Approving Officer</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.approving_officer }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Class</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.check_class }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Status</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.check_status }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Date</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.check_date }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account No</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.account_no }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Received</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.check_received }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account Name</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.account_name }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Received As</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.check_type }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Bank Name</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.bankbranchname }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Category</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.check_category }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Amount</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.check_amount }}</td>
@@ -247,7 +262,7 @@ export default {
                 generate_date: str,
             });
         },
-       
+
         handleChangeStatus(page = 1) {
             this.isloadingTbl = true;
             this.$inertia.get(route("check_for.clearing"), {

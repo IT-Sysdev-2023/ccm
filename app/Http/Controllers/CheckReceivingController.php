@@ -6,6 +6,7 @@ use App\Models\Checks;
 use App\Models\NewSavedChecks;
 use Illuminate\Http\Request;
 use App\Helper\ColumnsHelper;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Date;
@@ -24,6 +25,8 @@ class CheckReceivingController extends Controller
             ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
             ->orderBy('check_date', 'ASC');
 
+        // dd($request->check_status);
+
 
         $q = match ($request->check_status) {
             'CLEARED' => $q->where('check_status', 'CLEARED'),
@@ -39,7 +42,7 @@ class CheckReceivingController extends Controller
         return Inertia::render('CheckReceiving/CheckForClearing', [
             'data' => $data,
             'columns' => ColumnsHelper::$check_for_clearing_columns,
-            'date' => $request->generate_date ?? today(),
+            'date' => $request->generate_date ?? now(),
             'value' => $request->check_status,
             'search' => $request->searchQuery,
         ]);
@@ -83,14 +86,15 @@ class CheckReceivingController extends Controller
     public function savedDatedLeasingpPdcChecks(Request $request)
     {
         collect($request->selected)->each(function ($check) use ($request) {
-            DB::transaction(function () use ($check, $request) {
+            $formdate = Carbon::createFromFormat('M d, Y', $check['check_date'])->format('Y-m-d');
+            DB::transaction(function () use ($check, $request, $formdate) {
 
                 Checks::findChecks($check['checks_id'])->update(['check_status' => 'CLEARED']);
 
                 NewSavedChecks::create([
                     'checks_id' => $check['checks_id'],
                     'remarks' => $request->remarks,
-                    'check_type' => $check['check_date'],
+                    'check_type' => $formdate,
                     'user' => $request->user()->id,
                     'date_time' => now(),
                 ]);
