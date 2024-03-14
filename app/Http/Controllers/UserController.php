@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Department;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Models\UserType;
@@ -36,7 +38,7 @@ class UserController extends Controller
             'userType' => $userType,
         ]);
     }
-    public function createUser(Request $request)
+    public function createUser(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required',
@@ -68,7 +70,7 @@ class UserController extends Controller
 
         return redirect()->back();
     }
-    public function updateUser(Request $request, $id)
+    public function updateUser(Request $request, $id): RedirectResponse
     {
         $request->validate([
             'name' => 'required',
@@ -96,7 +98,7 @@ class UserController extends Controller
         return redirect()->back();
     }
 
-    public function searchUsers(Request $request)
+    public function searchUsers(Request $request): Response
     {
         $query = $request->input('query');
 
@@ -114,7 +116,7 @@ class UserController extends Controller
 
         return response()->json($results);
     }
-    public function searchAnEmployeeName(Request $request)
+    public function searchAnEmployeeName(Request $request): Response
     {
         $query = $request->input('query');
 
@@ -129,7 +131,7 @@ class UserController extends Controller
 
         return response()->json($results);
     }
-    public function searchCompany(Request $request)
+    public function searchCompany(Request $request) : Response
     {
         $query = $request->input('query');
 
@@ -141,7 +143,7 @@ class UserController extends Controller
         return response()->json($results);
     }
 
-    public function searchBunit(Request $request)
+    public function searchBunit(Request $request): Response
     {
         $query = $request->input('query');
 
@@ -153,7 +155,7 @@ class UserController extends Controller
         return response()->json($results);
     }
 
-    public function searchDepartment(Request $request)
+    public function searchDepartment(Request $request): Response
     {
         $query = $request->input('query');
 
