@@ -337,12 +337,8 @@ export default {
                 new URLSearchParams(params).toString();
             window.location.href = urlWithParams;
 
-            this.$inertia.get(urlWithParams, {}, {
-                onFinish: () => {
-                    message.success("Successfully Generated excel file");
-                    this.loadingGenerate = false;
-                },
-            });
+           
+           
         },
     },
 };

@@ -15,7 +15,10 @@ class Checks extends Model
 {
     use HasFactory;
     use ChecksTraits;
+
+    protected $guarded = [];
     protected $table = 'checks';
+
     protected $primaryKey = 'checks_id';
     public $timestamps = false;
     protected $dates = ['deleted_at'];

@@ -42,11 +42,33 @@ const tabPosition = 'right';
                                             style="height: 130px; display: flex; justify-content: center;">
                                     </a-col>
                                     <a-col :span="18">
-                                        <a-card>
+                                        <a-card v-if="isNotProgressShowing">
                                             Hello There! <strong>{{ $page.props.auth.user.name }} </strong> , To proceed
                                             the
                                             import instutional checks. Please click the "
                                             <strong>Start Importing</strong> "
+                                        </a-card>
+                                        <a-card>
+                                            <div v-if="isProgressShowing" style="font-size: 14px;">
+                                                <div>
+                                                    <div v-if="isProgressShowing">
+                                                        <div class="flex justify-between">
+                                                            <div>
+                                                                <p> {{ progressBar.message }} {{ progressBar.currentRow
+                                                                    }} to
+                                                                    {{ progressBar.totalRows }}
+                                                                </p>
+                                                            </div>
+
+                                                            <div>
+                                                            </div>
+                                                        </div>
+                                                        <a-progress style="width: 98%; margin: 0 auto;" :stroke-color="{
+                    from: '#108ee9', to: '#87d068',
+                }" :percent="progressBar.percentage" status="active" />
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </a-card>
                                     </a-col>
                                 </a-row>
@@ -88,10 +110,14 @@ const tabPosition = 'right';
                                     <a-result status="" title="Import institutional checks!"
                                         sub-title="Click  the start button, to import the institutional text-file.">
                                         <template #extra>
-                                            <a-button style="width: 300px; background: #0A1D56; color: white;"
-                                                @click="startImporting">
-                                                <UploadOutlined />
-                                                Start importing
+                                            <a-button :loading="isLoading" style="width: 300px;" type="primary"
+                                                :disabled="!data.length" @click="startImporting">
+                                                <template #icon>
+                                                    <UploadOutlined />
+                                                </template>
+                                                {{ isLoading ? 'importing text file in progress please wait...'
+                    : 'Start Importing institutional text file'
+                                                }}
                                             </a-button>
                                         </template>
                                     </a-result>
@@ -243,12 +269,24 @@ const tabPosition = 'right';
 
 <script>
 export default {
+
     data() {
         return {
             jokes: '',
             showUpdate: false,
             showImport: false,
             isActive: null,
+            progressBar: {
+                currentRow: 0,
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+
+            },
+            isProgressShowing: false,
+            isNotProgressShowing: true,
+            isLoading: false,
+
         }
     },
     methods: {
@@ -273,15 +311,30 @@ export default {
             this.isActive = 'update';
         },
         startImporting() {
-            this.$inertia.get(route('start.importing.checks'));
+            this.isProgressShowing = true;
+            this.isNotProgressShowing = false;
+            this.isLoading = true;
+
+            this.$inertia.get(route('start.importing.checks'), {}, {
+                preserveScroll: true,
+                preserveState: true
+            });
         }
     },
     mounted() {
         this.getRandomJoke();
+
+        this.$ws
+            .private(`importing-progress.${this.$page.props.auth.user.id}`)
+            .listen(".importing-database", (e) => {
+                this.progressBar = e;
+
+            });
     },
 
     props: {
         qoute_api: Array,
+        data: Array,
     }
 }
 </script>

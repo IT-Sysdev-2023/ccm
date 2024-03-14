@@ -37,8 +37,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 </div>
                             </div>
                             <a-progress :stroke-color="{
-                    from: '#108ee9',
-                    to: '#87d068',
+                    from: '#108ee9', to: '#87d068',
                 }" :percent="progressBar.percentage" status="active" />
                         </div>
 
@@ -65,7 +64,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 <template #icon>
                                     <UploadOutlined />
                                 </template>
-                                Generate Dated and Post Dated Check report excel
+                                {{ isLoading ? 'Generating in progress please wait it will takes some time...' : 'Generate Dated and Post Dated Check report excel' }}
                             </a-button>
                         </div>
                     </div>
