@@ -1,9 +1,12 @@
 <?php
 namespace App\Helper\Excel;
 
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Font;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ExcelWriter
 {
@@ -22,28 +25,28 @@ class ExcelWriter
         set_time_limit(3600);
     }
 
-    function getActiveSheetExcel()
+    function getActiveSheetExcel(): Worksheet
     {
         return $this->spreadsheet->getActiveSheet();
     }
-    function getStyleGetFontSetBold($style)
+    function getStyleGetFontSetBold($style): Font
     {
         return $this->getActiveSheetExcel()->getStyle($style)->getFont()->setBold(true);
 
     }
-    function getCellSetValue($cell, $value)
+    function getCellSetValue($cell, $value): Cell
     {
         return $this->getActiveSheetExcel()->getCell($cell)->setValue($value);
     }
 
-    function setHorizontalAlignment($excel)  {
+    function setHorizontalAlignment($excel): Alignment  {
         return $this->getActiveSheetExcel()->getStyle($excel)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
     }
-    function setCellValueSheet($col, $title)  {
+    function setCellValueSheet($col, $title): Worksheet  {
         return $this->getActiveSheetExcel()->setCellValue($col, $title);
     }
 
-    function initializedBorder()
+    function initializedBorder(): array
     {
         return [
             'font' => [

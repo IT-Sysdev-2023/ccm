@@ -99,7 +99,7 @@ class TransactionService extends ExcelWriter
         return ['headerTitle' => $headerTitle, 'headerRow' => $headerRow];
     }
 
-    private function headerStyle($title)
+    private function headerStyle($title): void
     {
         $this->getCellSetValue('E1', 'Status Type : ' . ' ' . $title);
         $this->getCellSetValue('E2', 'Date : ' . ' ' . today()->toFormattedDateString());
