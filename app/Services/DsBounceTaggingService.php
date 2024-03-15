@@ -51,7 +51,7 @@ class DsBounceTaggingService
     public function indexDsTagging(Request $request)
     {
         $due_dates = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
-            ->whereDate('checks.check_date', today())
+            ->whereDate('checks.check_date', today()->toDateString())
             ->count();
 
         $ds_checks_table = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
@@ -83,7 +83,9 @@ class DsBounceTaggingService
     public function get_bounce_tagging(Request $request)
     {
         ini_set('memory_limit', '-1');
-        // dd(1);
+
+        $datedYear = $request->dt_year ?? now()->toDateString();
+
         $data = NewDsChecks::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('users', 'new_ds_checks.user', 'users.id')
@@ -93,11 +95,9 @@ class DsBounceTaggingService
             ->where('new_ds_checks.status', '=', '')
             ->select('checks.*', 'customers.*', 'users.*', 'new_ds_checks.ds_no', 'new_ds_checks.user', 'new_ds_checks.date_time', 'new_ds_checks.date_deposit', 'department.department', 'banks.*')
             ->where('checks.check_no', 'like', '%' . $request->search . '%')
-            ->whereYear('checks.check_received', $request->dt_year)
+            ->whereYear('checks.check_received', $datedYear)
             ->orderBy('new_ds_checks.date_time', 'desc')
             ->orderBy('checks.check_received', 'desc')->paginate(10)->withQueryString();
-
-        // dd($data->toArray());
 
         $data->transform(function ($value) {
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
@@ -106,9 +106,14 @@ class DsBounceTaggingService
             return $value;
         });
 
+
+
+
+
         return Inertia::render('Ds&BounceTagging/BounceTagging', [
             'data' => $data,
             'columns' => ColumnsHelper::$get_bounce_tagging_columns,
+            'sel_year' => $datedYear,
         ]);
     }
 

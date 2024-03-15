@@ -71,7 +71,7 @@ import { Head } from "@inertiajs/vue3";
                         </div>
                         <div>
                             <a-input-search v-model:value="query.search" class="mx-2" placeholder="Input Check Number"
-                                style="width: 200px" />
+                                style="width: 350px" />
                             <a-button style="background: rgba(99, 255, 99, 0.459)" @click="savedDatedChecks">
                                 <template #icon>
                                     <SaveOutlined />

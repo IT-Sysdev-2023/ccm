@@ -40,17 +40,9 @@ const colors = 'red';
                 <div style="display: flex; justify-content: space-between;" class="mb-3">
 
                     <a-date-picker @change="onDateChange" v-model:value="dtYear" picker="year" style=" width: 250px;" />
-                    <a-input placeholder="Search Cheques" style="width: 250px; " v-model:value="query.search">
-
-                        <template #suffix>
-                            <a-tooltip title="Please input name or check number to filter ">
-                                <a-spin size="small" v-if="isSearchLoading" :indicator="indicator" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-
+                    <a-input-search v-model:value="query.search" class="mx-2" placeholder="Input Check Number"
+                        style="width: 350px" />
                 </div>
-
                 <a-card>
                     <a-table :dataSource="data.data" :columns="columns" :pagination="false" :loading="loading"
                         class="components-table-demo-nested" bordered size="small">
@@ -215,14 +207,14 @@ export default {
     props: {
         data: Array,
         columns: Array,
+        sel_year: Object
     },
     data() {
         return {
             dataSource: [],
             isSearchLoading: false,
             loading: false,
-            dtYear: dayjs(),
-            showPag: false,
+            dtYear: dayjs(this.sel_year),
             c_page: '',
             openDetails: false,
             selectDataDetails: [],
@@ -231,48 +223,30 @@ export default {
             checksId: null,
             isLoadingbutton: false,
             showAtootltip: false,
+            page: 1,
             query: {
                 search: '',
-            },
-            pagination: {
-                current: 1,
-                total: 0,
-                pageSize: 10,
-
             },
         };
     },
     watch: {
         query: {
             deep: true,
-            handler: debounce(async function (page = 1) {
-                this.loading = true;
-                this.isSearchLoading = true;
+            handler: debounce(async function () {
                 try {
-                    const response = await axios.get(`get_bounce_tagging?page=${page}`, {
-                        params: {
-                            dt_year: this.dtYear.year(),
-                            search: this.query.search,
-                        },
-                    });
-
-                    if (!response.data.data) {
-                        this.showPag = false;
-                    } else {
-                        this.showPag = true;
-                    }
-
-
-                    this.dataSource = response.data.data;
-                    this.pagination = response.data.pagination;
+                    this.loading = true;
+                    this.$inertia.get(route('bounce_tagging'), {
+                        // page: this.page,
+                        dt_year: this.dtYear.format('YYYY'),
+                        search: this.query.search,
+                    }, { preserveState: true });
                 } catch (error) {
-                    console.error("Error in watcher:", error);
+                    console.log(error);
                 } finally {
                     this.loading = false;
-                    this.isSearchLoading = false;
                 }
-            }, 500)
-        },
+            }, 600),
+        }
     },
     methods: {
         onDateChange(dateObj, dateStr) {
@@ -283,43 +257,7 @@ export default {
         onDateChangeReturn(dateObj, dateStr) {
             this.returnDate = dateObj;
         },
-        // async getBounceTagging(page = 1) {
 
-        //     const key = 'updatable';
-
-        //     this.loading = true;
-        //     message.loading({
-        //         content: 'Fetching data please wait...',
-        //         key,
-        //     });
-        //     try {
-        //         const response = await axios.get(`get_bounce_tagging?page=${page}`, {
-        //             params: {
-        //                 dt_year: this.dtYear.year(),
-        //             },
-        //         });
-
-        //         if (!response.data.data) {
-        //             this.showPag = false;
-        //         } else {
-        //             this.showPag = true;
-        //         }
-
-        //         this.dataSource = response.data.data;
-        //         this.pagination = response.data.pagination;
-
-        //         // console.log(response.data.pagination)
-        //     } catch (error) {
-        //         // console.log(error);
-        //     } finally {
-        //         this.loading = false;
-        //         message.success({
-        //             content: 'Retrieve Successfully!',
-        //             key,
-        //             duration: 2,
-        //         });
-        //     }
-        // },
         handleTableChange(pagination) {
             this.getBounceTagging(pagination);
         },

@@ -60,25 +60,25 @@ class ColumnsHelper
             'title' => 'Check receive',
             'dataIndex' => 'check_received',
             'key' => 'checks_r',
-            'width' => '12%'
+            'width' => '8%'
         ],
         [
             'title' => 'Check Date',
             'dataIndex' => 'check_date',
             'key' => 'check_date',
-            'width' => '12%'
+            'width' => '8%'
         ],
         [
             'title' => 'Date Deposit',
             'dataIndex' => 'date_deposit',
             'key' => 'check_d',
-            'width' => '12%'
+            'width' => '8%'
         ],
         [
             'title' => 'Date Deposit',
             'dataIndex' => 'date_deposit',
             'key' => 'check_d',
-            'width' => '12%'
+            'width' => '8%'
         ],
         [
             'title' => 'Customer Name',

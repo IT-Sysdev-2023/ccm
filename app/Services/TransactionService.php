@@ -291,6 +291,10 @@ class TransactionService extends ExcelWriter
         $countTable = 1;
         $progressCount = 0;
         $row = 6;
+
+        ExcelGenerateEvents::dispatch('', 'Generating Excel to', 0, $this->record->count(), Auth::user(), 12, 12);
+
+        sleep(2);
         // dd($this->record->take(10)->all());
 
         $this->record->each(function ($item) use (&$businessUnit, &$progressCount, &$dueReportData, &$reportCollection, &$spreadsheet, &$row, &$countTable) {
@@ -306,7 +310,7 @@ class TransactionService extends ExcelWriter
             $checkRecieved = Date::parse($item->check_received);
 
             // Calculate the difference in days
-            $days = $checkDate->diffInDays($checkRecieved);
+            $days = $checkRecieved->diffInDays($checkDate);
 
             if ($deposited_status === null) {
 
@@ -408,6 +412,7 @@ class TransactionService extends ExcelWriter
         $writer->save($filePath);
 
         $downloadExcel = route('download.excel', ['filename' => $filename]);
+        sleep(1);
 
 
         return Inertia::render('Components/TransactionPartials/ResultDuePostDatedCheckReport', [
