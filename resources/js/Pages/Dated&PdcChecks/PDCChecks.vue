@@ -160,63 +160,25 @@ const size = ref('large');
             <a-row :gutter="[16, 16]">
                 <a-col :span="6">
                     <a-card>
-                        <a-breadcrumb class="mt-2 ml-3">
-                            <a-breadcrumb-item>Check Number</a-breadcrumb-item>
-                        </a-breadcrumb>
-                        <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                            <template #prefix>
-                                <UserOutlined />
-                            </template>
-                            <template #suffix>
-                                <a-tooltip title="Extra information">
-                                    <InfoCircleOutlined />
-                                </a-tooltip>
-                            </template>
-                        </a-input>
-                        <a-breadcrumb class="mt-2 ml-3">
-                            <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
-                        </a-breadcrumb>
-                        <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                            <template #prefix>
-                                <UserOutlined />
-                            </template>
-                            <template #suffix>
-                                <a-tooltip title="Extra information">
-                                    <InfoCircleOutlined />
-                                </a-tooltip>
-                            </template>
-                        </a-input>
-                        <a-breadcrumb class="mt-2 ml-3">
-                            <a-breadcrumb-item>Check Date</a-breadcrumb-item>
-                        </a-breadcrumb>
-                        <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                            <template #prefix>
-                                <UserOutlined />
-                            </template>
-                            <template #suffix>
-                                <a-tooltip title="Extra information">
-                                    <InfoCircleOutlined />
-                                </a-tooltip>
-                            </template>
-                        </a-input>
-                        <a-breadcrumb class="mt-2 ml-3">
-                            <a-breadcrumb-item>Replace Date</a-breadcrumb-item>
-                        </a-breadcrumb>
-                        <a-date-picker style="width: 100%;" v-model:value="userName" class="" placeholder="Basic usage">
-                            <template #prefix>
-                                <UserOutlined />
-                            </template>
-                            <template #suffix>
-                                <a-tooltip title="Extra information">
-                                    <InfoCircleOutlined />
-                                </a-tooltip>
-                            </template>
-                        </a-date-picker>
-                        <a-breadcrumb class="mt-2 ml-3">
-                            <a-breadcrumb-item>Type of Replacement</a-breadcrumb-item>
-                        </a-breadcrumb>
-                        <a-select ref="select" class="" v-model:value="value1" style="width: 100%"
-                            @focus="focus"></a-select>
+                        <table class="table">
+                            <thead>
+                                <th class="thh" colspan="2">Check Information</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Check Number</th>
+                                    <td>Hello</td>
+                                </tr>
+                                <tr>
+                                    <th>Check Amount</th>
+                                    <td>Hello</td>
+                                </tr>
+                                <tr>
+                                    <th>Check Date</th>
+                                    <td>Hello</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </a-card>
                 </a-col>
                 <a-col :span="18">
@@ -411,10 +373,13 @@ export default {
         openModaldated(data) {
             this.isModalOpen = true;
             this.selectDataDetails = data;
-            console.log(this.selectDataDetails);
         },
         showModalReplace(data) {
+            console.log(data);
             this.openModalReplace = true;
+            this.selectDataDetails = data;
+
+            console.log(data);
         },
         handleTableChange(page) {
             this.isLoadingTbl = true;
@@ -452,5 +417,30 @@ body {
 
 .product-container td {
     border: 1px solid #ddd;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+
+td {
+    border: 1px solid rgb(85, 85, 85);
+    padding: 7px;
+    text-align: left;
+    /* border-radius: 10px; */
+}
+
+th {
+    border: 1px solid rgb(85, 85, 85);
+    padding: 7px;
+    text-align: left;
+    width: 40%
+        /* border-radius: 10px; */
+}
+
+.thh {
+    background-color: #f2f2f2;
 }
 </style>

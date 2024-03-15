@@ -53,4 +53,8 @@ class DatedPdcChecksController extends Controller
 
         ]);
     }
+    public function replacement_check()
+    {
+
+    }
 }
