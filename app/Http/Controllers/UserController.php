@@ -176,7 +176,7 @@ class UserController extends Controller
             ->join('usertype', 'usertype.usertype_id', '=', 'users.usertype_id')
             ->select('users.*', 'company.*', 'department.*', 'businessunit.*', 'usertype.*')
             ->orderBy('users.updated_at', 'desc')
-            ->get();
+            ->cursor();
 
         // Create a new Spreadsheet object
         $spreadsheet = new Spreadsheet();

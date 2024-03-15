@@ -22,7 +22,8 @@ class ReportController extends Controller
 {
 
     private $headerRow;
-    public function __construct() {
+    public function __construct()
+    {
         $this->headerRow = collect([
             "DATE RECIEVED",
             "CHECK DATE",
@@ -121,7 +122,7 @@ class ReportController extends Controller
         $title = '';
         $h_type = '';
 
-        if($request->ch_type == 1){
+        if ($request->ch_type == 1) {
             $this->headerRow->concat(["PDC GAP(DAYS)"]);
         }
 

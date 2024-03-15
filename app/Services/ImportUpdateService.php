@@ -129,7 +129,7 @@ class ImportUpdateService
             $checkdate = trim($cdateArray[2]) . '-' . trim($cdateArray[0]) . '-' . trim($cdateArray[1]);
 
             // Check this if the expire dont have a value date
-            if (empty($cleaned_expire) || empty(trim($expire))) {
+            if (empty ($cleaned_expire) || empty (trim($expire))) {
                 $expire = NULL;
             } else {
                 $expire = trim($cdateArray[2]) . '-' . trim($cdateArray[0]) . '-' . trim($cdateArray[1]);
@@ -222,6 +222,6 @@ class ImportUpdateService
         sleep(2);
 
         return Inertia::render('Components/ImportUpdatePartials/ImportUpdateResult');
-    
+
     }
 }
