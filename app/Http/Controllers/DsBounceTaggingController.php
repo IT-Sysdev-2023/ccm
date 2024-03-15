@@ -22,11 +22,13 @@ use Inertia\Inertia;
 class DsBounceTaggingController extends Controller
 {
 
-    public function __construct(public DsBounceTaggingService $dsBounceTaggingService) {
-    }
-    public function indexBounceTagging()
+    public function __construct(public DsBounceTaggingService $dsBounceTaggingService)
     {
-        return Inertia::render('Ds&BounceTagging/BounceTagging');
+    }
+    public function indexBounceTagging(Request $request)
+    {
+
+        return $this->dsBounceTaggingService->get_bounce_tagging($request);
     }
     public function updateSwitch(Request $request)
     {
@@ -39,6 +41,7 @@ class DsBounceTaggingController extends Controller
 
     public function get_bounce_tagging(Request $request)
     {
+        // dd(1);
         return $this->dsBounceTaggingService->get_bounce_tagging($request);
     }
 

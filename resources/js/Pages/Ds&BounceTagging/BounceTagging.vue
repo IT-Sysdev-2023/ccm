@@ -52,7 +52,7 @@ const colors = 'red';
                 </div>
 
                 <a-card>
-                    <a-table :dataSource="dataSource" :columns="columns" :pagination="false" :loading="loading"
+                    <a-table :dataSource="data.data" :columns="columns" :pagination="false" :loading="loading"
                         class="components-table-demo-nested" bordered size="small">
 
                         <template #bodyCell="{ column, record }">
@@ -77,16 +77,7 @@ const colors = 'red';
                         </template>
 
                     </a-table>
-                    <div v-if="showPag" class="mt-3 mb-5"
-                        style="border: 1px solid rgb(224, 224, 224); border-radius: 10px; padding: 10px">
-                        <div class="flex justify-end">
-                            <a-pagination class="mt-0 mb-0" v-model:current="pagination.current"
-                                v-model:page-size="pagination.pageSize" :show-size-changer="false"
-                                :total="pagination.total"
-                                :show-total="(total, range) => `${range[0]}-${range[1]} of ${total} reports`"
-                                @change="handleTableChange" />
-                        </div>
-                    </div>
+                    <pagination class="mt-6" :datarecords="data" />
                 </a-card>
             </div>
             <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details" @ok="handleOk"
@@ -221,6 +212,10 @@ import dayjs from 'dayjs';
 import { message } from 'ant-design-vue';
 import debounce from 'lodash/debounce'
 export default {
+    props: {
+        data: Array,
+        columns: Array,
+    },
     data() {
         return {
             dataSource: [],
@@ -245,55 +240,6 @@ export default {
                 pageSize: 10,
 
             },
-            columns: [
-                {
-                    title: 'Check receive',
-                    dataIndex: 'check_received',
-                    key: 'checks_r',
-                    width: '12%'
-                },
-                {
-                    title: 'Check date',
-                    dataIndex: 'check_date',
-                    key: 'check_dep',
-                    width: '12%'
-                },
-                {
-                    title: 'Date Deposited',
-                    dataIndex: 'date_deposit',
-                    key: 'check_d',
-                    width: '12%'
-                },
-                {
-                    title: 'Customer name',
-                    dataIndex: 'fullname',
-                    key: 'fullname',
-                    width: '30%'
-                },
-                {
-                    title: 'Check No',
-                    dataIndex: 'check_no',
-                    key: 'address',
-                },
-                {
-                    title: 'Amount',
-                    dataIndex: 'check_amount',
-                    key: 'check_am',
-                },
-                {
-                    title: 'Ds No',
-                    dataIndex: 'ds_no',
-                    key: 'address',
-                    width: '7%'
-                },
-                {
-                    title: 'Actions',
-                    dataIndex: 'action',
-                    key: 'action',
-                    align: 'center',
-                    width: '12%'
-                },
-            ],
         };
     },
     watch: {
@@ -330,50 +276,50 @@ export default {
     },
     methods: {
         onDateChange(dateObj, dateStr) {
-            this.dtYear = dateObj;
-
-            this.getBounceTagging()
+            this.$inertia.get(route('bounce_tagging'), {
+                dt_year: dateStr
+            });
         },
         onDateChangeReturn(dateObj, dateStr) {
             this.returnDate = dateObj;
         },
-        async getBounceTagging(page = 1) {
+        // async getBounceTagging(page = 1) {
 
-            const key = 'updatable';
+        //     const key = 'updatable';
 
-            this.loading = true;
-            message.loading({
-                content: 'Fetching data please wait...',
-                key,
-            });
-            try {
-                const response = await axios.get(`get_bounce_tagging?page=${page}`, {
-                    params: {
-                        dt_year: this.dtYear.year(),
-                    },
-                });
+        //     this.loading = true;
+        //     message.loading({
+        //         content: 'Fetching data please wait...',
+        //         key,
+        //     });
+        //     try {
+        //         const response = await axios.get(`get_bounce_tagging?page=${page}`, {
+        //             params: {
+        //                 dt_year: this.dtYear.year(),
+        //             },
+        //         });
 
-                if (!response.data.data) {
-                    this.showPag = false;
-                } else {
-                    this.showPag = true;
-                }
+        //         if (!response.data.data) {
+        //             this.showPag = false;
+        //         } else {
+        //             this.showPag = true;
+        //         }
 
-                this.dataSource = response.data.data;
-                this.pagination = response.data.pagination;
+        //         this.dataSource = response.data.data;
+        //         this.pagination = response.data.pagination;
 
-                // console.log(response.data.pagination)
-            } catch (error) {
-                // console.log(error);
-            } finally {
-                this.loading = false;
-                message.success({
-                    content: 'Retrieve Successfully!',
-                    key,
-                    duration: 2,
-                });
-            }
-        },
+        //         // console.log(response.data.pagination)
+        //     } catch (error) {
+        //         // console.log(error);
+        //     } finally {
+        //         this.loading = false;
+        //         message.success({
+        //             content: 'Retrieve Successfully!',
+        //             key,
+        //             duration: 2,
+        //         });
+        //     }
+        // },
         handleTableChange(pagination) {
             this.getBounceTagging(pagination);
         },
@@ -414,11 +360,6 @@ export default {
 
 
     },
-
-    mounted() {
-
-        this.getBounceTagging();
-    }
 };
 </script>
 

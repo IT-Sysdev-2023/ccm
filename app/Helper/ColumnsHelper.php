@@ -54,6 +54,59 @@ class ColumnsHelper
             'align' => 'center',
         ],
     ];
+
+    public static $get_bounce_tagging_columns = [
+        [
+            'title' => 'Check receive',
+            'dataIndex' => 'check_received',
+            'key' => 'checks_r',
+            'width' => '12%'
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
+            'key' => 'check_date',
+            'width' => '12%'
+        ],
+        [
+            'title' => 'Date Deposit',
+            'dataIndex' => 'date_deposit',
+            'key' => 'check_d',
+            'width' => '12%'
+        ],
+        [
+            'title' => 'Date Deposit',
+            'dataIndex' => 'date_deposit',
+            'key' => 'check_d',
+            'width' => '12%'
+        ],
+        [
+            'title' => 'Customer Name',
+            'dataIndex' => 'fullname',
+            'key' => 'fname',
+            'width' => '30%'
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_no',
+            'key' => 'check_no',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+            'key' => 'check_amount',
+        ],
+        [
+            'title' => 'Ds Number',
+            'dataIndex' => 'ds_no',
+            'key' => 'dsno',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
+        ],
+
+    ];
     public static $pdc_check_columns = [
         [
             'title' => 'Customer Name',

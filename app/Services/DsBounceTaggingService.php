@@ -80,10 +80,10 @@ class DsBounceTaggingService
             'columns' => ColumnsHelper::$columns_ds_tagging,
         ]);
     }
-    public function get_bounce_tagging(Request $request): Response
+    public function get_bounce_tagging(Request $request)
     {
         ini_set('memory_limit', '-1');
-
+        // dd(1);
         $data = NewDsChecks::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('users', 'new_ds_checks.user', 'users.id')
@@ -95,7 +95,9 @@ class DsBounceTaggingService
             ->where('checks.check_no', 'like', '%' . $request->search . '%')
             ->whereYear('checks.check_received', $request->dt_year)
             ->orderBy('new_ds_checks.date_time', 'desc')
-            ->orderBy('checks.check_received', 'desc')->paginate(10);
+            ->orderBy('checks.check_received', 'desc')->paginate(10)->withQueryString();
+
+        // dd($data->toArray());
 
         $data->transform(function ($value) {
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
@@ -104,20 +106,16 @@ class DsBounceTaggingService
             return $value;
         });
 
-        return response()->json([
-            'data' => $data->items(),
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
+        return Inertia::render('Ds&BounceTagging/BounceTagging', [
+            'data' => $data,
+            'columns' => ColumnsHelper::$get_bounce_tagging_columns,
         ]);
     }
 
     public function tag_check_bounce(Request $request): Builder
     {
 
-       return DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
 
             Checks::findChecks($request->check_id)->update(['check_status' => 'BOUNCE']);
             NewSavedChecks::findChecks($request->check_id)->update(['status' => 'BOUNCED']);
