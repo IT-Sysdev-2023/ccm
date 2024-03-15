@@ -155,236 +155,705 @@ const size = ref('large');
             </div>
 
         </a-modal>
-        <a-modal v-model:open="openModalReplace" title="Basic Modal" style="top: 20px; width: 100%;"
-            wrap-class-name="full-modal" @ok="handleOk">
+        <a-modal v-model:open="openModalReplace" title="Replacement Checks Configuration" :footer="null"
+            style="top: 20px; width: 100%;" wrap-class-name="full-modal" @ok="handleOk">
             <a-row :gutter="[16, 16]">
                 <a-col :span="6">
                     <a-card>
-                        <a-breadcrumb class="mt-2 ml-3">
-                            <a-breadcrumb-item>Check Number</a-breadcrumb-item>
-                        </a-breadcrumb>
-                        <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                            <template #prefix>
-                                <UserOutlined />
-                            </template>
-                            <template #suffix>
-                                <a-tooltip title="Extra information">
-                                    <InfoCircleOutlined />
-                                </a-tooltip>
-                            </template>
-                        </a-input>
-                        <a-breadcrumb class="mt-2 ml-3">
-                            <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
-                        </a-breadcrumb>
-                        <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                            <template #prefix>
-                                <UserOutlined />
-                            </template>
-                            <template #suffix>
-                                <a-tooltip title="Extra information">
-                                    <InfoCircleOutlined />
-                                </a-tooltip>
-                            </template>
-                        </a-input>
-                        <a-breadcrumb class="mt-2 ml-3">
-                            <a-breadcrumb-item>Check Date</a-breadcrumb-item>
-                        </a-breadcrumb>
-                        <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                            <template #prefix>
-                                <UserOutlined />
-                            </template>
-                            <template #suffix>
-                                <a-tooltip title="Extra information">
-                                    <InfoCircleOutlined />
-                                </a-tooltip>
-                            </template>
-                        </a-input>
-                        <a-breadcrumb class="mt-2 ml-3">
-                            <a-breadcrumb-item>Replace Date</a-breadcrumb-item>
-                        </a-breadcrumb>
-                        <a-date-picker style="width: 100%;" v-model:value="userName" class="" placeholder="Basic usage">
-                            <template #prefix>
-                                <UserOutlined />
-                            </template>
-                            <template #suffix>
-                                <a-tooltip title="Extra information">
-                                    <InfoCircleOutlined />
-                                </a-tooltip>
-                            </template>
-                        </a-date-picker>
-                        <a-breadcrumb class="mt-2 ml-3">
-                            <a-breadcrumb-item>Type of Replacement</a-breadcrumb-item>
-                        </a-breadcrumb>
-                        <a-select ref="select" class="" v-model:value="value1" style="width: 100%"
-                            @focus="focus"></a-select>
+                        <table class="table">
+                            <thead>
+                                <th class="thh" colspan="2">Check Information</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Check Number</th>
+                                    <td>{{ selectDataDetails.check_no }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Check Amount</th>
+                                    <td>{{ selectDataDetails.check_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Check Date</th>
+                                    <td>{{ selectDataDetails.check_date }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </a-card>
+                    <a-card class="mt-1">
+                        <p class="text-center font-bold">Please Select Type Of Payment</p>
+                        <a-button class="mt-2" block @click="cashButtonType">
+                            Cash
+                        </a-button>
+                        <a-button class="mt-2" block @click="checkButtonType">
+                            Check
+                        </a-button>
+                        <a-button class="mt-2" block @click="cashCheckButtonType">
+                            Check and cash
+                        </a-button>
+                        <a-button class="mt-2" block @click="partialPayCashButtton">
+                            Partial Payment Cash
+                        </a-button>
+                        <a-button class="mt-2" block @click="partialPayCheckButtton">
+                            Partial Payment Check
+                        </a-button>
                     </a-card>
                 </a-col>
                 <a-col :span="18">
-                    <a-card>
+                    <a-card class="flex justify-center" style="height: 100%;">
+                        <template # v-if="defaultShow">
+                            <a-result title="Please select type you wish to replace !"
+                                sub-title="And always remember dont have a good day have a great day!">
+                                <template #icon>
+                                    <img src="../../../../public/Logo/ccmpbng.png" alt="ccmrobot"
+                                        style="height: 160px;">
+                                </template>
+                                <template #extra>
 
-                        <a-row :gutter="[16, 16]">
-                            <a-col :span="8">
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Account Number</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                                    <template #prefix>
-                                        <UserOutlined />
-                                    </template>
-                                    <template #suffix>
-                                        <a-tooltip title="Extra information">
-                                            <InfoCircleOutlined />
-                                        </a-tooltip>
-                                    </template>
-                                </a-input>
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Account Name</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                                    <template #prefix>
-                                        <UserOutlined />
-                                    </template>
-                                    <template #suffix>
-                                        <a-tooltip title="Extra information">
-                                            <InfoCircleOutlined />
-                                        </a-tooltip>
-                                    </template>
-                                </a-input>
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Check Number</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                                    <template #prefix>
-                                        <UserOutlined />
-                                    </template>
-                                    <template #suffix>
-                                        <a-tooltip title="Extra information">
-                                            <InfoCircleOutlined />
-                                        </a-tooltip>
-                                    </template>
-                                </a-input>
-                                <a-breadcrumb class="mt-20 ml-3">
+                                </template>
+                            </a-result>
+                        </template>
+                        <template #extra v-if="cashShow">
+                            <p class="text-center font-bold"> CASH TYPE
+                            </p>
+                            <a-breadcrumb class="mt-2 ml-1">
+                                <a-breadcrumb-item>Cash Amount</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-input v-model:value="userName" class="mb-2" placeholder="Enter cash amount">
+                                <template #prefix>
+                                    <UserOutlined />
+                                </template>
+                                <template #suffix>
+                                    <a-tooltip title="Enter cash amount here">
+                                        <InfoCircleOutlined />
+                                    </a-tooltip>
+                                </template>
+                            </a-input>
+                            <a-breadcrumb class="mt-2 ml-1">
+                                <a-breadcrumb-item>Penalty Amount</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-input v-model:value="userName" class="mb-2" placeholder="Enter penalty amount">
+                                <template #prefix>
+                                    <UserOutlined />
+                                </template>
+                                <template #suffix>
+                                    <a-tooltip title="Enter penalty amount here!">
+                                        <InfoCircleOutlined />
+                                    </a-tooltip>
+                                </template>
+                            </a-input>
+                            <a-breadcrumb class="mt-2 ml-1">
+                                <a-breadcrumb-item>AR # & DS #</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-input v-model:value="userName" class="mb-2" placeholder="Enter AR# and DS#">
+                                <template #prefix>
+                                    <UserOutlined />
+                                </template>
+                                <template #suffix>
+                                    <a-tooltip title="Enter AR and DS # here">
+                                        <InfoCircleOutlined />
+                                    </a-tooltip>
+                                </template>
+                            </a-input>
+                            <a-textarea v-model:value="value" placeholder="Your reason of replace" :rows="3" />
+                            <a-row :gutter="[16, 16]">
+                                <a-col :span="12">
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-date-picker style="width: 100%;">
+
+                                    </a-date-picker>
+                                </a-col>
+                                <a-col :span="12">
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Proceed?</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-button block type="primary">
+                                        Submit replacing cash
+                                    </a-button>
+                                </a-col>
+                            </a-row>
+
+                        </template>
+                        <template #extra v-else-if="checkShow">
+                            <p class="text-center font-bold py-5"> CHECK TYPE
+                            </p>
+
+                            <a-row :gutter="[16, 16]">
+                                <a-col :span="12" style="width: 600px">
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Account Number</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Account Number"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Account Number here">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Account Name</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Account Name"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Account name">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Number</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Check number"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Check number here">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Date</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-date-picker v-model:value="userName" style="width: 100%">
+                                    </a-date-picker>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Received</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-date-picker v-model:value="userName" style="width: 100%">
+                                    </a-date-picker>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Basic usage" style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Check Amount">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Penalty</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Penalty Amount"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Penalty amount">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter approving officer"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Extra information">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-date-picker style="width: 100%;" class="mb-5">
+
+                                    </a-date-picker>
+                                </a-col>
+                                <a-col :span="12">
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check From</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input-search v-model:value="value" placeholder="Search Check From"
+                                        style="width: 100%" @search="onSearch" />
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input-search v-model:value="value" placeholder="Search bank" style="width: 100%"
+                                        @search="onSearch" />
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input-search v-model:value="value" placeholder="Customer name"
+                                        style="width: 100%" @search="onSearch" />
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Currency</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-select ref="select" placeholder="Select Currency" v-model:value="value1"
+                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        <a-select-option value="jack">Jack</a-select-option>
+                                        <a-select-option value="lucy">Lucy</a-select-option>
+                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
+                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    </a-select>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check From</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-select ref="select" placeholder="Select Check From" v-model:value="value1"
+                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        <a-select-option value="jack">Jack</a-select-option>
+                                        <a-select-option value="lucy">Lucy</a-select-option>
+                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
+                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    </a-select>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check class</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-select ref="select" placeholder="Select Check class" v-model:value="value1"
+                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        <a-select-option value="jack">Jack</a-select-option>
+                                        <a-select-option value="lucy">Lucy</a-select-option>
+                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
+                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    </a-select>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Reason for return</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-textarea v-model:value="value" placeholder="Input text heres" :rows="4" />
+                                    <a-button block class="mt-2" type="primary">
+                                        Submit replacement check type
+                                    </a-button>
+                                </a-col>
+                            </a-row>
+                        </template>
+                        <template #extra v-else-if="cashCheckShow">
+                            <p class="text-center font-bold py-5"> CHECK AND CASH TYPE
+                            </p>
+
+                            <a-row :gutter="[16, 16]">
+                                <a-col :span="12" style="width: 500px">
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Account Number</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Account Number"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Account Number here">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Account Name</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Account Name"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Account name">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Number</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Check number"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Check number here">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Date</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-date-picker v-model:value="userName" style="width: 100%">
+                                    </a-date-picker>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Received</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-date-picker v-model:value="userName" style="width: 100%">
+                                    </a-date-picker>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Basic usage" style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Check Amount">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Penalty</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Penalty Amount"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Penalty amount">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter approving officer"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Extra information">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Cash Amount</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter approving officer"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Extra information">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>AR# and DS#</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter approving officer"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Extra information">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-date-picker style="width: 100%;" class="mb-5">
+
+                                    </a-date-picker>
+                                </a-col>
+                                <a-col :span="12">
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check From</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input-search v-model:value="value" placeholder="Search Check From"
+                                        style="width: 100%" @search="onSearch" />
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input-search v-model:value="value" placeholder="Search bank" style="width: 100%"
+                                        @search="onSearch" />
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input-search v-model:value="value" placeholder="Customer name"
+                                        style="width: 100%" @search="onSearch" />
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Currency</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-select ref="select" placeholder="Select Currency" v-model:value="value1"
+                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        <a-select-option value="jack">Jack</a-select-option>
+                                        <a-select-option value="lucy">Lucy</a-select-option>
+                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
+                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    </a-select>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check From</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-select ref="select" placeholder="Select Check From" v-model:value="value1"
+                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        <a-select-option value="jack">Jack</a-select-option>
+                                        <a-select-option value="lucy">Lucy</a-select-option>
+                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
+                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    </a-select>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check class</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-select ref="select" placeholder="Select Check class" v-model:value="value1"
+                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        <a-select-option value="jack">Jack</a-select-option>
+                                        <a-select-option value="lucy">Lucy</a-select-option>
+                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
+                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    </a-select>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Reason for return</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-textarea v-model:value="value" placeholder="Input text heres" :rows="5" />
+                                    <a-button block class="mt-2" type="primary">
+                                        Submit replacement check and cash type
+                                    </a-button>
+                                </a-col>
+                            </a-row>
+                        </template>
+                        <template #extra v-else-if="partialPayCash">
+                            <div style="width: 500px">
+                                <p class="text-center font-bold"> PARTIAL PAYMENT CASH
+                                </p>
+                                <a-breadcrumb class="mt-2 ml-1">
                                     <a-breadcrumb-item>Cash Amount</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-input v-model:value="userName" class="" placeholder="Basic usage">
+                                <a-input v-model:value="userName" class="mb-2" placeholder="Enter cash amount">
                                     <template #prefix>
                                         <UserOutlined />
                                     </template>
                                     <template #suffix>
-                                        <a-tooltip title="Extra information">
+                                        <a-tooltip title="Enter cash amount here">
                                             <InfoCircleOutlined />
                                         </a-tooltip>
                                     </template>
                                 </a-input>
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Reason of return</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-textarea v-model:value="value" placeholder="Basic usage" :rows="4" />
-                            </a-col>
-                            <a-col :span="8">
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-auto-complete placeholder="Search Cheques" style="width: 100%;">
-                                </a-auto-complete>
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-auto-complete placeholder="Search Cheques" style="width: 100%;">
-                                </a-auto-complete>
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Check From</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-auto-complete placeholder="Search Cheques" style="width: 100%;">
-                                </a-auto-complete>
-
-                                <a-breadcrumb class="mt-20 ml-3">
-                                    <a-breadcrumb-item>Ar# / Ds#</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                                    <template #prefix>
-                                        <UserOutlined />
-                                    </template>
-                                    <template #suffix>
-                                        <a-tooltip title="Extra information">
-                                            <InfoCircleOutlined />
-                                        </a-tooltip>
-                                    </template>
-                                </a-input>
-                                <a-breadcrumb class="mt-2 ml-3">
+                                <a-breadcrumb class="mt-2 ml-1">
                                     <a-breadcrumb-item>Penalty Amount</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-input v-model:value="userName" class="" placeholder="Basic usage">
+                                <a-input v-model:value="userName" class="mb-2" placeholder="Enter penalty amount">
                                     <template #prefix>
                                         <UserOutlined />
                                     </template>
                                     <template #suffix>
-                                        <a-tooltip title="Extra information">
+                                        <a-tooltip title="Enter penalty amount here!">
                                             <InfoCircleOutlined />
                                         </a-tooltip>
                                     </template>
                                 </a-input>
-                            </a-col>
-                            <a-col :span="8">
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Check Date</a-breadcrumb-item>
+                                <a-breadcrumb class="mt-2 ml-1">
+                                    <a-breadcrumb-item>AR # & DS #</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-date-picker style="width: 100%;" v-model:value="userName" class=""
-                                    placeholder="Basic usage">
+                                <a-input v-model:value="userName" class="mb-2" placeholder="Enter AR# and DS#">
                                     <template #prefix>
                                         <UserOutlined />
                                     </template>
                                     <template #suffix>
-                                        <a-tooltip title="Extra information">
-                                            <InfoCircleOutlined />
-                                        </a-tooltip>
-                                    </template>
-                                </a-date-picker>
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Check Received</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-date-picker style="width: 100%;" v-model:value="userName" class=""
-                                    placeholder="Basic usage">
-                                    <template #prefix>
-                                        <UserOutlined />
-                                    </template>
-                                    <template #suffix>
-                                        <a-tooltip title="Extra information">
-                                            <InfoCircleOutlined />
-                                        </a-tooltip>
-                                    </template>
-                                </a-date-picker>
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Check Class</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-select ref="select" class="" v-model:value="value1" style="width: 100%"
-                                    @focus="focus"></a-select>
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Check Category</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-select ref="select" class="" v-model:value="value1" style="width: 100%"
-                                    @focus="focus"></a-select>
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Currency</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-select ref="select" class="" v-model:value="value1" style="width: 100%"
-                                    @focus="focus"></a-select>
-                                <a-breadcrumb class="mt-2 ml-3">
-                                    <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-input v-model:value="userName" class="" placeholder="Basic usage">
-                                    <template #prefix>
-                                        <UserOutlined />
-                                    </template>
-                                    <template #suffix>
-                                        <a-tooltip title="Extra information">
+                                        <a-tooltip title="Enter AR and DS # here">
                                             <InfoCircleOutlined />
                                         </a-tooltip>
                                     </template>
                                 </a-input>
+                                <a-textarea v-model:value="value" placeholder="Your reason of replace" :rows="3" />
+                                <a-row :gutter="[16, 16]">
+                                    <a-col :span="12">
+                                        <a-breadcrumb class="mt-2 ml-1">
+                                            <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
+                                        </a-breadcrumb>
+                                        <a-date-picker style="width: 100%;">
 
-                            </a-col>
-                        </a-row>
+                                        </a-date-picker>
+                                    </a-col>
+                                    <a-col :span="12">
+                                        <a-breadcrumb class="mt-2 ml-1">
+                                            <a-breadcrumb-item>Proceed?</a-breadcrumb-item>
+                                        </a-breadcrumb>
+                                        <a-button block type="primary">
+                                            Submit replacing cash
+                                        </a-button>
+                                    </a-col>
+                                </a-row>
+                            </div>
+                        </template>
+                        <template #extra v-else-if="partialPayCheck">
+                            <p class="text-center font-bold py-5"> PARTIAL PAYMENT CHECK TYPE
+                            </p>
+
+                            <a-row :gutter="[16, 16]">
+                                <a-col :span="12" style="width: 600px">
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Account Number</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Account Number"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Account Number here">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Account Name</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Account Name"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Account name">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Number</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Check number"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Check number here">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Date</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-date-picker v-model:value="userName" style="width: 100%">
+                                    </a-date-picker>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Received</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-date-picker v-model:value="userName" style="width: 100%">
+                                    </a-date-picker>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Basic usage" style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Check Amount">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Penalty</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter Penalty Amount"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Penalty amount">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input v-model:value="userName" placeholder="Enter approving officer"
+                                        style="width: 100%">
+                                        <template #prefix>
+                                            <user-outlined />
+                                        </template>
+                                        <template #suffix>
+                                            <a-tooltip title="Extra information">
+                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                            </a-tooltip>
+                                        </template>
+                                    </a-input>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-date-picker style="width: 100%;" class="mb-5">
+
+                                    </a-date-picker>
+                                </a-col>
+                                <a-col :span="12">
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check From</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input-search v-model:value="value" placeholder="Search Check From"
+                                        style="width: 100%" @search="onSearch" />
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input-search v-model:value="value" placeholder="Search bank" style="width: 100%"
+                                        @search="onSearch" />
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-input-search v-model:value="value" placeholder="Customer name"
+                                        style="width: 100%" @search="onSearch" />
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Currency</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-select ref="select" placeholder="Select Currency" v-model:value="value1"
+                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        <a-select-option value="jack">Jack</a-select-option>
+                                        <a-select-option value="lucy">Lucy</a-select-option>
+                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
+                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    </a-select>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check From</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-select ref="select" placeholder="Select Check From" v-model:value="value1"
+                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        <a-select-option value="jack">Jack</a-select-option>
+                                        <a-select-option value="lucy">Lucy</a-select-option>
+                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
+                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    </a-select>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Check class</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-select ref="select" placeholder="Select Check class" v-model:value="value1"
+                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        <a-select-option value="jack">Jack</a-select-option>
+                                        <a-select-option value="lucy">Lucy</a-select-option>
+                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
+                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    </a-select>
+                                    <a-breadcrumb class="mt-2 ml-1">
+                                        <a-breadcrumb-item>Reason for return</a-breadcrumb-item>
+                                    </a-breadcrumb>
+                                    <a-textarea v-model:value="value" placeholder="Input text heres" :rows="4" />
+                                    <a-button block class="mt-2" type="primary">
+                                        Submit replacement check type
+                                    </a-button>
+                                </a-col>
+                            </a-row>
+                        </template>
                     </a-card>
                 </a-col>
             </a-row>
@@ -399,7 +868,13 @@ export default {
             isModalOpen: false,
             openModalReplace: false,
             selectDataDetails: [],
-            isLoadingTbl: false
+            isLoadingTbl: false,
+            checkShow: false,
+            cashShow: false,
+            cashCheckShow: false,
+            partialPayCheck: false,
+            partialPayCash: false,
+            defaultShow: true,
         }
     },
     props: {
@@ -411,9 +886,10 @@ export default {
         openModaldated(data) {
             this.isModalOpen = true;
             this.selectDataDetails = data;
-            console.log(this.selectDataDetails);
         },
-        showModalReplace(data) {
+
+        showModalReplace(dataIn) {
+            this.selectDataDetails = dataIn;
             this.openModalReplace = true;
         },
         handleTableChange(page) {
@@ -429,6 +905,46 @@ export default {
             } catch {
 
             }
+        },
+        checkButtonType() {
+            this.checkShow = true;
+            this.defaultShow = false;
+            this.cashShow = false;
+            this.cashChecShow = false;
+            this.partialPayCheck = false;
+            this.partialPayCash = false;
+        },
+        cashButtonType() {
+            this.checkShow = false;
+            this.defaultShow = false;
+            this.cashShow = true;
+            this.cashChecShow = false;
+            this.partialPayCheck = false;
+            this.partialPayCash = false;
+        },
+        cashCheckButtonType() {
+            this.checkShow = false;
+            this.defaultShow = false;
+            this.cashShow = false;
+            this.cashCheckShow = true;
+            this.partialPayCheck = false;
+            this.partialPayCash = false;
+        },
+        partialPayCashButtton() {
+            this.checkShow = false;
+            this.defaultShow = false;
+            this.cashShow = false;
+            this.cashCheckShow = false;
+            this.partialPayCheck = false;
+            this.partialPayCash = true;
+        },
+        partialPayCheckButtton() {
+            this.checkShow = false;
+            this.defaultShow = false;
+            this.cashShow = false;
+            this.cashCheckShow = false;
+            this.partialPayCheck = true;
+            this.partialPayCash = false;
         }
     }
 };
@@ -452,5 +968,30 @@ body {
 
 .product-container td {
     border: 1px solid #ddd;
+}
+
+.table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+
+td {
+    border: 1px solid rgb(172, 172, 172);
+    padding: 7px;
+    text-align: left;
+    /* border-radius: 10px; */
+}
+
+th {
+    border: 1px solid rgb(189, 189, 189);
+    padding: 7px;
+    text-align: left;
+    width: 40%
+        /* border-radius: 10px; */
+}
+
+.thh {
+    background-color: #d3d3d3;
 }
 </style>
