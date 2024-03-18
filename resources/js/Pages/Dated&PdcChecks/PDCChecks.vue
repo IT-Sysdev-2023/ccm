@@ -157,7 +157,7 @@ const size = ref('large');
         </a-modal>
 
         <a-modal v-model:open="openModalReplace" title="Replacement Checks Configuration" :footer="null"
-            :after-close="afterClose" style="top: 20px; width: 100%;" wrap-class-name="full-modal" @ok="handleOk">
+            :after-close="afterClose" style="top: 20px; width: 100%;" wrap-class-name="full-modal">
             <a-row :gutter="[16, 16]">
                 <a-col :span="6">
                     <a-card>
@@ -312,16 +312,18 @@ const size = ref('large');
                         <template #extra v-else-if="checkShow">
                             <p class="text-center font-bold py-5"> CHECK TYPE
                             </p>
-
                             <a-row :gutter="[16, 16]">
                                 <a-col :span="12" style="width: 600px">
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Account Number</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-input v-model:value="userName" placeholder="Enter Account Number"
+                                    <a-input class="hidden" v-model:value="check_form.rep_check_id">
+
+                                    </a-input>
+                                    <a-input v-model:value="check_form.accountnumber" placeholder="Enter Account Number"
                                         style="width: 100%">
                                         <template #prefix>
-                                            <user-outlined />
+                                            <NumberOutlined />
                                         </template>
                                         <template #suffix>
                                             <a-tooltip title="Account Number here">
@@ -332,7 +334,7 @@ const size = ref('large');
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Account Name</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-input v-model:value="userName" placeholder="Enter Account Name"
+                                    <a-input v-model:value="check_form.accountname" placeholder="Enter Account Name"
                                         style="width: 100%">
                                         <template #prefix>
                                             <user-outlined />
@@ -346,10 +348,10 @@ const size = ref('large');
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Number</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-input v-model:value="userName" placeholder="Enter Check number"
+                                    <a-input v-model:value="check_form.checkNumber" placeholder="Enter Check number"
                                         style="width: 100%">
                                         <template #prefix>
-                                            <user-outlined />
+                                            <NumberOutlined />
                                         </template>
                                         <template #suffix>
                                             <a-tooltip title="Check number here">
@@ -360,19 +362,20 @@ const size = ref('large');
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Date</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-date-picker v-model:value="userName" style="width: 100%">
+                                    <a-date-picker v-model:value="check_form.rep_check_date" style="width: 100%">
                                     </a-date-picker>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Received</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-date-picker v-model:value="userName" style="width: 100%">
+                                    <a-date-picker v-model:value="check_form.rep_check_recieved" style="width: 100%">
                                     </a-date-picker>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-input v-model:value="userName" placeholder="Basic usage" style="width: 100%">
+                                    <a-input v-model:value="check_form.rep_check_amount" placeholder="Basic usage"
+                                        style="width: 100%">
                                         <template #prefix>
-                                            <user-outlined />
+                                            <MoneyCollectOutlined />
                                         </template>
                                         <template #suffix>
                                             <a-tooltip title="Check Amount">
@@ -383,10 +386,10 @@ const size = ref('large');
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Penalty</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-input v-model:value="userName" placeholder="Enter Penalty Amount"
-                                        style="width: 100%">
+                                    <a-input v-model:value="check_form.rep_check_penalty"
+                                        placeholder="Enter Penalty Amount" style="width: 100%">
                                         <template #prefix>
-                                            <user-outlined />
+                                            <MoneyCollectOutlined />
                                         </template>
                                         <template #suffix>
                                             <a-tooltip title="Penalty amount">
@@ -397,75 +400,106 @@ const size = ref('large');
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-input v-model:value="userName" placeholder="Enter approving officer"
-                                        style="width: 100%">
-                                        <template #prefix>
-                                            <user-outlined />
+                                    <a-select show-search placeholder="Search check form"
+                                        :default-active-first-option="false" v-model:value="check_form.approvingOfficer"
+                                        style="width: 100%" :show-arrow="false" :filter-option="false"
+                                        :not-found-content="isRetrieving ? undefined : null" :options="allOptions"
+                                        @search="handleSearchEmployee">
+                                        <template v-if="isRetrieving" #notFoundContent>
+                                            <a-spin size="small" />
                                         </template>
-                                        <template #suffix>
-                                            <a-tooltip title="Extra information">
-                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                                            </a-tooltip>
-                                        </template>
-                                    </a-input>
+                                    </a-select>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-date-picker style="width: 100%;" class="mb-5">
-
+                                    <a-date-picker style="width: 100%;" class="mb-5"
+                                        v-model:value="check_form.rep_date">
                                     </a-date-picker>
                                 </a-col>
                                 <a-col :span="12">
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check From</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-input-search v-model:value="value" placeholder="Search Check From"
-                                        style="width: 100%" @search="onSearch" />
+
+
+                                    <a-select show-search placeholder="Search check from"
+                                        :default-active-first-option="false" v-model:value="check_form.checkFrom_id"
+                                        style="width: 100%" :show-arrow="false" :filter-option="false"
+                                        :not-found-content="isRetrieving ? undefined : null" :options="allOptions"
+                                        @search="handleSearchCheckFrom">
+                                        <template v-if="isRetrieving" #notFoundContent>
+                                            <a-spin size="small" />
+                                        </template>
+                                    </a-select>
+
+
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-input-search v-model:value="value" placeholder="Search bank" style="width: 100%"
-                                        @search="onSearch" />
+                                    <a-select show-search placeholder="Search bank name"
+                                        :default-active-first-option="false" v-model:value="check_form.bank_id"
+                                        style="width: 100%" :show-arrow="false" :filter-option="false"
+                                        :not-found-content="isRetrieving ? undefined : null" :options="allOptions"
+                                        @search="handleSearchBank">
+                                        <template v-if="isRetrieving" #notFoundContent>
+                                            <a-spin size="small" />
+                                        </template>
+                                    </a-select>
+
+
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-input-search v-model:value="value" placeholder="Customer name"
-                                        style="width: 100%" @search="onSearch" />
+                                    <a-select show-search placeholder="Search customer name"
+                                        :default-active-first-option="false" v-model:value="check_form.customerName"
+                                        style="width: 100%" :show-arrow="false" :filter-option="false"
+                                        :not-found-content="isRetrieving ? undefined : null" :options="allOptions"
+                                        @search="handleSearchCustomer">
+                                        <template v-if="isRetrieving" #notFoundContent>
+                                            <a-spin size="small" />
+                                        </template>
+                                    </a-select>
+
+
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Currency</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-select ref="select" placeholder="Select Currency" v-model:value="value1"
-                                        style="width: 100%" @focus="focus" @change="handleChange">
-                                        <a-select-option value="jack">Jack</a-select-option>
-                                        <a-select-option value="lucy">Lucy</a-select-option>
-                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
-                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    <a-select placeholder="Select Currency" v-model:value="check_form.currency_id"
+                                        style="width: 100%">
+
+                                        <a-select-option v-for="(item , key) in currency"
+                                            v-model:value="item.currency_id">{{
+                                            item.currency_name
+                                            }}</a-select-option>
+
                                     </a-select>
                                     <a-breadcrumb class="mt-2 ml-1">
-                                        <a-breadcrumb-item>Check From</a-breadcrumb-item>
+                                        <a-breadcrumb-item>Check Category</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-select ref="select" placeholder="Select Check From" v-model:value="value1"
-                                        style="width: 100%" @focus="focus" @change="handleChange">
-                                        <a-select-option value="jack">Jack</a-select-option>
-                                        <a-select-option value="lucy">Lucy</a-select-option>
-                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
-                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    <a-select ref="select" placeholder="Select category"
+                                        v-model:value="check_form.category" style="width: 100%">
+                                        <a-select-option v-for="(catItem , key) in category"
+                                            v-model:value="catItem.check_category">{{
+                                            catItem.check_category
+                                            }}</a-select-option>
+
                                     </a-select>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check class</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-select ref="select" placeholder="Select Check class" v-model:value="value1"
-                                        style="width: 100%" @focus="focus" @change="handleChange">
-                                        <a-select-option value="jack">Jack</a-select-option>
-                                        <a-select-option value="lucy">Lucy</a-select-option>
-                                        <a-select-option value="disabled" disabled>Disabled</a-select-option>
-                                        <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                                    <a-select ref="select" placeholder="Select category"
+                                        v-model:value="check_form.checkClass" style="width: 100%">
+                                        <a-select-option v-for="(chclass , key) in check_class"
+                                            v-model:value="chclass.check_class">{{
+                                            chclass.check_class
+                                            }}</a-select-option>
                                     </a-select>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Reason for return</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-textarea v-model:value="value" placeholder="Input text heres" :rows="4" />
-                                    <a-button block class="mt-2" type="primary">
+                                    <a-textarea v-model:value="check_form.rep_reason" placeholder="Input text heres"
+                                        :rows="4" />
+                                    <a-button block class="mt-2" type="primary" @click="submitReplacementCheck">
                                         Submit replacement check type
                                     </a-button>
                                 </a-col>
@@ -625,7 +659,7 @@ const size = ref('large');
                                         <a-breadcrumb-item>Currency</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-select ref="select" placeholder="Select Currency" v-model:value="value1"
-                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        style="width: 100%" @focus="focus">
                                         <a-select-option value="jack">Jack</a-select-option>
                                         <a-select-option value="lucy">Lucy</a-select-option>
                                         <a-select-option value="disabled" disabled>Disabled</a-select-option>
@@ -635,7 +669,7 @@ const size = ref('large');
                                         <a-breadcrumb-item>Check From</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-select ref="select" placeholder="Select Check From" v-model:value="value1"
-                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        style="width: 100%" @focus="focus">
                                         <a-select-option value="jack">Jack</a-select-option>
                                         <a-select-option value="lucy">Lucy</a-select-option>
                                         <a-select-option value="disabled" disabled>Disabled</a-select-option>
@@ -645,7 +679,7 @@ const size = ref('large');
                                         <a-breadcrumb-item>Check class</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-select ref="select" placeholder="Select Check class" v-model:value="value1"
-                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        style="width: 100%" @focus="focus">
                                         <a-select-option value="jack">Jack</a-select-option>
                                         <a-select-option value="lucy">Lucy</a-select-option>
                                         <a-select-option value="disabled" disabled>Disabled</a-select-option>
@@ -851,7 +885,7 @@ const size = ref('large');
                                         <a-breadcrumb-item>Currency</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-select ref="select" placeholder="Select Currency" v-model:value="value1"
-                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        style="width: 100%" @focus="focus">
                                         <a-select-option value="jack">Jack</a-select-option>
                                         <a-select-option value="lucy">Lucy</a-select-option>
                                         <a-select-option value="disabled" disabled>Disabled</a-select-option>
@@ -861,7 +895,7 @@ const size = ref('large');
                                         <a-breadcrumb-item>Check From</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-select ref="select" placeholder="Select Check From" v-model:value="value1"
-                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        style="width: 100%" @focus="focus">
                                         <a-select-option value="jack">Jack</a-select-option>
                                         <a-select-option value="lucy">Lucy</a-select-option>
                                         <a-select-option value="disabled" disabled>Disabled</a-select-option>
@@ -871,7 +905,7 @@ const size = ref('large');
                                         <a-breadcrumb-item>Check class</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-select ref="select" placeholder="Select Check class" v-model:value="value1"
-                                        style="width: 100%" @focus="focus" @change="handleChange">
+                                        style="width: 100%" @focus="focus">
                                         <a-select-option value="jack">Jack</a-select-option>
                                         <a-select-option value="lucy">Lucy</a-select-option>
                                         <a-select-option value="disabled" disabled>Disabled</a-select-option>
@@ -898,6 +932,7 @@ import Pagination from "@/Components/Pagination.vue"
 import dayjs from 'dayjs';
 import { useForm } from '@inertiajs/vue3';
 import { message } from 'ant-design-vue';
+import debounce from 'lodash/debounce'
 export default {
     data() {
         return {
@@ -911,6 +946,9 @@ export default {
             partialPayCheck: false,
             partialPayCash: false,
             defaultShow: true,
+            allData: [],
+            allOptions: [],
+
             cash_form: useForm({
                 rep_check_id: '',
                 rep_cash_amount: '',
@@ -918,13 +956,34 @@ export default {
                 rep_ar_ds: '',
                 rep_reason: '',
                 rep_date: '',
+            }),
+            check_form: useForm({
+                rep_check_id: '',
+                checkFrom_id: null,
+                bank_id: null,
+                customerName: null,
+                approvingOfficer: null,
+                currency_id: null,
+                category: null,
+                rep_reason: null,
+                checkClass: null,
+                rep_date: '',
+                rep_check_date: '',
+                rep_check_recieved: '',
+                rep_check_penalty: '',
+                rep_check_amount: '',
+                accountname: '',
+                accountnumber: '',
+                checkNumber: '',
             })
         }
     },
     props: {
         data: Array,
         columns: Array,
-        pagination: Object,
+        currency: Array,
+        category: Array,
+        check_class: Array
     },
     methods: {
         openModaldated(data) {
@@ -935,6 +994,7 @@ export default {
         showModalReplace(dataIn) {
             this.selectDataDetails = dataIn;
             this.cash_form.rep_check_id = dataIn.checks_id;
+            this.check_form.rep_check_id = dataIn.checks_id;
             this.cash_form.rep_cash_amount = dataIn.check_amount;
             this.openModalReplace = true;
         },
@@ -993,26 +1053,28 @@ export default {
             this.partialPayCash = false;
         },
         submit_cash_replacement() {
-            try {
-                this.isLoadingbutton = true;
-                this.cash_form.transform((data) => ({
-                    ...data,
-                    rep_date: dayjs(data.rep_date).format('YYYY-MM-DD')
-                })).
-                    post(route('pdc_cash.replacement'), {
-                        onSuccess: () => {
-                            this.openModalReplace = false;
-                            this.isLoadingbutton = false;
-                            this.cash_form.reset();
-                            message.success({
-                                content: "Successfully replaced the cash type!",
-                                duration: 3,
-                            });
-                        }
-                    })
-            } catch (e) {
-                console.log(e);
-            }
+            this.isLoadingbutton = true;
+            this.cash_form.transform((data) => ({
+                ...data,
+                rep_date: dayjs(data.rep_date).format('YYYY-MM-DD')
+            })).
+                post(route('pdc_cash.replacement'), {
+                    onSuccess: () => {
+                        this.openModalReplace = false;
+                        this.isLoadingbutton = false;
+                        this.cash_form.reset();
+                        message.success({
+                            content: "Successfully replaced the cash type!",
+                            duration: 3,
+                        });
+                    }
+                })
+        },
+        submitReplacementCheck() {
+            this.check_form.transform((data) => ({
+                ...data,
+                rep_date: dayjs(data.rep_date).format('YYYY-MM-DD')
+            })).post(route('pdc_check.replacement'), {});
         },
         afterClose() {
             this.cash_form.clearErrors();
@@ -1022,7 +1084,73 @@ export default {
             this.cashCheckShow = false;
             this.partialPayCheck = false;
             this.partialPayCash = false;
-        }
+        },
+
+        handleSearchCheckFrom: debounce(async function (query) {
+            console.log('object');
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.allOptions = []
+                    const { data } = await axios.get(route('search.checkfrom', { search: query }))
+                    this.allData = data
+                    this.allOptions = this.allData.map(checkfrom => ({ title: checkfrom.department, value: checkfrom.department_id, label: checkfrom.department }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchBank: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.allOptions = []
+                    const { data } = await axios.get(route('search.bankName', { search: query }))
+                    this.allData = data
+                    this.allOptions = this.allData.map(bank => ({ title: bank.bankbranchname, value: bank.bank_id, label: bank.bankbranchname }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchCustomer: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.allOptions = []
+                    const { data } = await axios.get(route('search.customerName', { search: query }))
+                    this.allData = data
+                    this.allOptions = this.allData.map(customer => ({ title: customer.fullname, value: customer.fullname, label: customer.fullname }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchEmployee: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.allOptions = []
+                    const { data } = await axios.get(route('search.employeeName', { search: query }))
+                    this.allData = data
+                    this.allOptions = this.allData.map(employee => ({ title: employee.name, value: employee.name, label: employee.name }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
 
     }
 };

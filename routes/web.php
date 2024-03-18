@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AllTransactionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchInputController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -87,6 +88,16 @@ Route::middleware('auth')->group(function () {
     Route::get('pdc_checks', [DatedPdcChecksController::class, 'pdc_index'])->name('pdc.checks');
     Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_index'])->name('dated.checks');
     Route::post('pdc/cash/replacement', [DatedPdcChecksController::class, 'pdc_cash_replacement'])->name('pdc_cash.replacement');
+    Route::post('pdc/check/replacement', [DatedPdcChecksController::class, 'pdc_check_replacement'])->name('pdc_check.replacement');
+
+
+
+    Route::get('search/checkfrom/', [SearchInputController::class, 'searchCheckFrom'])->name('search.checkfrom');
+    Route::get('search/bank/name', [SearchInputController::class, 'searchBankName'])->name('search.bankName');
+    Route::get('search/customer/name', [SearchInputController::class, 'searchCustomerName'])->name('search.customerName');
+    Route::get('search/employee/name', [SearchInputController::class, 'searchEmployee'])->name('search.employeeName');
+
+
 
     Route::get('check_for_clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
     Route::get('search_dated', [CheckReceivingController::class, 'searchDatedChecks'])->name('search_dated');

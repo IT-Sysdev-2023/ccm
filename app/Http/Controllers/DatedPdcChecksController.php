@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helper\ColumnsHelper;
 use App\Helper\NumberHelper;
 use App\Models\Checks;
+use App\Models\Currency;
 use App\Models\NewCheckReplacement;
 use App\Models\NewSavedChecks;
 use Illuminate\Http\Request;
@@ -23,6 +24,10 @@ class DatedPdcChecksController extends Controller
             ->whereColumn('checks.check_date', '>', 'checks.check_received')
             ->paginate(10);
 
+        $currency = Currency::orderBy('currency_name')->get();
+        $category = Checks::select('check_category')->where('check_category', '!=', '')->groupBy('check_category')->get();
+        $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
+
         $data->transform(function ($value) {
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
@@ -33,6 +38,9 @@ class DatedPdcChecksController extends Controller
         return Inertia::render('Dated&PdcChecks/PDCChecks', [
             'data' => $data,
             'columns' => ColumnsHelper::$pdc_check_columns,
+            'currency' => $currency,
+            'category' => $category,
+            'check_class' => $check_class,
         ]);
     }
     public function dated_index(Request $request)
@@ -100,5 +108,10 @@ class DatedPdcChecksController extends Controller
         });
 
         return redirect()->back();
+    }
+    public function pdc_check_replacement(Request $request)
+    {
+        // dd(1);
+        dd($request->all());
     }
 }
