@@ -52,10 +52,6 @@ class DsBounceTaggingController extends Controller
 
     }
 
-    public function dummy()
-    {
-        $dummy = Checks::with('checkreceived')->get();
-    }
 
     public function submiCheckDs(Request $request)
     {

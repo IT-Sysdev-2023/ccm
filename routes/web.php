@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('pdc_checks', [DatedPdcChecksController::class, 'pdc_index'])->name('pdc.checks');
     Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_index'])->name('dated.checks');
+    Route::post('pdc/cash/replacement', [DatedPdcChecksController::class, 'pdc_cash_replacement'])->name('pdc_cash.replacement');
 
     Route::get('check_for_clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
     Route::get('search_dated', [CheckReceivingController::class, 'searchDatedChecks'])->name('search_dated');

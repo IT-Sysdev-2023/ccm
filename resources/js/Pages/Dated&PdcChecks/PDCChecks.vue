@@ -155,8 +155,9 @@ const size = ref('large');
             </div>
 
         </a-modal>
+
         <a-modal v-model:open="openModalReplace" title="Replacement Checks Configuration" :footer="null"
-            style="top: 20px; width: 100%;" wrap-class-name="full-modal" @ok="handleOk">
+            :after-close="afterClose" style="top: 20px; width: 100%;" wrap-class-name="full-modal" @ok="handleOk">
             <a-row :gutter="[16, 16]">
                 <a-col :span="6">
                     <a-card>
@@ -200,7 +201,7 @@ const size = ref('large');
                     </a-card>
                 </a-col>
                 <a-col :span="18">
-                    <a-card class="flex justify-center" style="height: 100%;">
+                    <a-card class="flex justify-center" style="height: 100%; ">
                         <template # v-if="defaultShow">
                             <a-result title="Please select type you wish to replace !"
                                 sub-title="And always remember dont have a good day have a great day!">
@@ -219,9 +220,12 @@ const size = ref('large');
                             <a-breadcrumb class="mt-2 ml-1">
                                 <a-breadcrumb-item>Cash Amount</a-breadcrumb-item>
                             </a-breadcrumb>
-                            <a-input v-model:value="userName" class="mb-2" placeholder="Enter cash amount">
+                            <a-input v-model:value="cash_form.rep_check_id" class="hidden">
+                            </a-input>
+                            <a-input v-model:value="cash_form.rep_cash_amount" class="mb-2" readonly
+                                style="width: 550px;" placeholder="Enter cash amount">
                                 <template #prefix>
-                                    <UserOutlined />
+                                    <MoneyCollectOutlined />
                                 </template>
                                 <template #suffix>
                                     <a-tooltip title="Enter cash amount here">
@@ -232,9 +236,10 @@ const size = ref('large');
                             <a-breadcrumb class="mt-2 ml-1">
                                 <a-breadcrumb-item>Penalty Amount</a-breadcrumb-item>
                             </a-breadcrumb>
-                            <a-input v-model:value="userName" class="mb-2" placeholder="Enter penalty amount">
+                            <a-input v-model:value="cash_form.rep_cash_penalty" class="mb-2"
+                                placeholder="Enter penalty amount">
                                 <template #prefix>
-                                    <UserOutlined />
+                                    <MoneyCollectOutlined />
                                 </template>
                                 <template #suffix>
                                     <a-tooltip title="Enter penalty amount here!">
@@ -242,12 +247,16 @@ const size = ref('large');
                                     </a-tooltip>
                                 </template>
                             </a-input>
+                            <div v-if="cash_form.errors.rep_cash_penalty" class="text-red-600" style="font-size: 12px;">
+                                {{
+                        cash_form.errors.rep_cash_penalty }}
+                            </div>
                             <a-breadcrumb class="mt-2 ml-1">
                                 <a-breadcrumb-item>AR # & DS #</a-breadcrumb-item>
                             </a-breadcrumb>
-                            <a-input v-model:value="userName" class="mb-2" placeholder="Enter AR# and DS#">
+                            <a-input v-model:value="cash_form.rep_ar_ds" class="mb-2" placeholder="Enter AR# and DS#">
                                 <template #prefix>
-                                    <UserOutlined />
+                                    <NumberOutlined />
                                 </template>
                                 <template #suffix>
                                     <a-tooltip title="Enter AR and DS # here">
@@ -255,24 +264,48 @@ const size = ref('large');
                                     </a-tooltip>
                                 </template>
                             </a-input>
-                            <a-textarea v-model:value="value" placeholder="Your reason of replace" :rows="3" />
+                            <div v-if="cash_form.errors.rep_ar_ds" class="text-red-600" style="font-size: 12px;">
+                                {{
+                        cash_form.errors.rep_ar_ds }}
+                            </div>
+                            <a-textarea v-model:value="cash_form.rep_reason" placeholder="Your reason of replace"
+                                :rows="3" />
+                            <div v-if="cash_form.errors.rep_reason" class="text-red-600" style="font-size: 12px;">
+                                {{
+                        cash_form.errors.rep_reason }}
+                            </div>
+                            <a-breadcrumb class="mt-2 ml-1">
+                                <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-date-picker style="width: 100%;" v-model:value="cash_form.rep_date">
+                            </a-date-picker>
+                            <div v-if="cash_form.errors.rep_date" class="text-red-600" style="font-size: 12px;">
+                                {{
+                        cash_form.errors.rep_date }}
+                            </div>
                             <a-row :gutter="[16, 16]">
-                                <a-col :span="12">
-                                    <a-breadcrumb class="mt-2 ml-1">
-                                        <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
-                                    </a-breadcrumb>
-                                    <a-date-picker style="width: 100%;">
 
-                                    </a-date-picker>
+                                <a-col :span="12">
+                                    <a-button block class="mb-10 mt-5"
+                                        @click="() => cash_form.reset('rep_cash_penalty', 'rep_ar_ds', 'repDatePicker', 'rep_date', 'rep_reason')"
+                                        type="primary" danger>
+                                        <template #icon>
+                                            <ClearOutlined />
+                                        </template>
+                                        Reset
+                                        form</a-button>
                                 </a-col>
                                 <a-col :span="12">
-                                    <a-breadcrumb class="mt-2 ml-1">
-                                        <a-breadcrumb-item>Proceed?</a-breadcrumb-item>
-                                    </a-breadcrumb>
-                                    <a-button block type="primary">
-                                        Submit replacing cash
+                                    <a-button block type="primary" @click="submit_cash_replacement" class="mt-5"
+                                        :loading="cash_form.processing">
+                                        <template #icon>
+                                            <SaveOutlined />
+                                        </template>
+                                        {{ cash_form.processing ?
+                                        "Submitting... " : "Submit cash type" }}
                                     </a-button>
                                 </a-col>
+
                             </a-row>
 
                         </template>
@@ -862,6 +895,9 @@ const size = ref('large');
 </template>
 <script>
 import Pagination from "@/Components/Pagination.vue"
+import dayjs from 'dayjs';
+import { useForm } from '@inertiajs/vue3';
+import { message } from 'ant-design-vue';
 export default {
     data() {
         return {
@@ -875,6 +911,14 @@ export default {
             partialPayCheck: false,
             partialPayCash: false,
             defaultShow: true,
+            cash_form: useForm({
+                rep_check_id: '',
+                rep_cash_amount: '',
+                rep_cash_penalty: '',
+                rep_ar_ds: '',
+                rep_reason: '',
+                rep_date: '',
+            })
         }
     },
     props: {
@@ -890,6 +934,8 @@ export default {
 
         showModalReplace(dataIn) {
             this.selectDataDetails = dataIn;
+            this.cash_form.rep_check_id = dataIn.checks_id;
+            this.cash_form.rep_cash_amount = dataIn.check_amount;
             this.openModalReplace = true;
         },
         handleTableChange(page) {
@@ -945,7 +991,39 @@ export default {
             this.cashCheckShow = false;
             this.partialPayCheck = true;
             this.partialPayCash = false;
+        },
+        submit_cash_replacement() {
+            try {
+                this.isLoadingbutton = true;
+                this.cash_form.transform((data) => ({
+                    ...data,
+                    rep_date: dayjs(data.rep_date).format('YYYY-MM-DD')
+                })).
+                    post(route('pdc_cash.replacement'), {
+                        onSuccess: () => {
+                            this.openModalReplace = false;
+                            this.isLoadingbutton = false;
+                            this.cash_form.reset();
+                            message.success({
+                                content: "Successfully replaced the cash type!",
+                                duration: 3,
+                            });
+                        }
+                    })
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        afterClose() {
+            this.cash_form.clearErrors();
+            this.defaultShow = true;
+            this.checkShow = false;
+            this.cashShow = false;
+            this.cashCheckShow = false;
+            this.partialPayCheck = false;
+            this.partialPayCash = false;
         }
+
     }
 };
 </script>
