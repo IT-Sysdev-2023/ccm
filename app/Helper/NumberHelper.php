@@ -8,16 +8,16 @@ use NumberFormatter;
 
 class NumberHelper
 {
-    public static function float($number)
+    public static function float(string $number) : float | int
     {
         return (float) str_replace(',', '', $number);
     }
 
-    public static function format($number)
+    public static function format(mixed $number) : string
     {
         return number_format($number, 2);
     }
-    public static function currency(float $amount, $locale = 'en_PH', string $currency = 'PHP')
+    public static function currency(float $amount, string $locale = 'en_PH', string $currency = 'PHP')
     {
         $numberFormatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
         return $numberFormatter->formatCurrency($amount, $currency);
