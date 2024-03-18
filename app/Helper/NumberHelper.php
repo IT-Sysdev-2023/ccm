@@ -10,12 +10,17 @@ class NumberHelper
 {
     public static function float($number)
     {
-        return (float) str_replace(',', '', $number);
+        return (float) str_replace(['₱',','], '', $number);
     }
 
     public static function format($number)
     {
         return number_format($number, 2);
+    }
+
+    public static function formatterFloat($number)
+    {
+        return (float) number_format($number, 2);
     }
     public static function currency(float $amount, $locale = 'en_PH', string $currency = 'PHP')
     {
