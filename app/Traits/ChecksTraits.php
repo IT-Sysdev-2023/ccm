@@ -24,7 +24,7 @@ trait ChecksTraits
         return $builder->where('check_no', 'like', '%' . $filter . '%');
     }
 
-    public function scopeWhereDateChecks($query, $date)
+    public function scopeWhereDateChecks($query, $date): Builder
     {
         return $query->where(function ($query) use ($date) {
             if ($date !== null) {
