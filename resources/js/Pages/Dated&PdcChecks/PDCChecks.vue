@@ -1158,6 +1158,7 @@ export default {
                     onSuccess: () => {
                         this.openModalReplace = false;
                         this.cash_form.reset();
+                        this.openModalReplace = false;
                         message.success({
                             content: "Successfully replaced the cash type!",
                             duration: 3,
@@ -1170,7 +1171,7 @@ export default {
                 ...data,
                 rep_date: dayjs(data.rep_date).format('YYYY-MM-DD'),
                 rep_check_date: dayjs(data.rep_check_date).format('YYYY-MM-DD'),
-                rep_check_recieved: dayjs(data.rep_check_recieved).format('YYYY-MM-DD'),
+                rep_check_received: dayjs(data.rep_check_received).format('YYYY-MM-DD'),
             })).post(route('pdc_check.replacement'), {
                 onSuccess: () => {
                     this.check_form.reset();
