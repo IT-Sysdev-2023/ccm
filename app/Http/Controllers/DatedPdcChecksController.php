@@ -8,6 +8,7 @@ use App\Models\Checks;
 use App\Models\Currency;
 use App\Models\NewCheckReplacement;
 use App\Models\NewSavedChecks;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -111,7 +112,109 @@ class DatedPdcChecksController extends Controller
     }
     public function pdc_check_replacement(Request $request)
     {
-        // dd(1);
-        dd($request->all());
+        // dd($request->all());
+        $request->validate(
+            [
+                'checkFrom_id' => 'required',
+                'bank_id' => 'required',
+                'customerId' => 'required',
+                'approvingOfficer' => 'required',
+                'currency_id' => 'required',
+                'category' => 'required',
+                'rep_reason' => 'required',
+                'checkClass' => 'required',
+                'rep_date' => 'required|date',
+                'rep_check_date' => 'required|date',
+                'rep_check_received' => 'required|date',
+                'rep_check_penalty' => 'required',
+                'rep_check_amount' => 'required|numeric',
+                'accountname' => 'required',
+                'accountnumber' => 'required',
+                'checkNumber' => 'required',
+            ],
+            [
+                'checkFrom_id.required' => 'The check from field is required.',
+                'bank_id.required' => 'The bank name field is required.',
+                'customerId.required' => 'The customer name field is required.',
+                'approvingOfficer.required' => 'The approving officer field is required.',
+                'currency_id.required' => 'The currency field is required.',
+                'category.required' => 'The category field is required.',
+                'rep_reason.required' => 'The reason field is required.',
+                'checkClass.required' => 'The check class field is required.',
+                'rep_date.required' => 'The replace date field is required.',
+                'rep_date.date' => 'The replace date field is required.',
+                'rep_check_date.required' => 'The check date field is required.',
+                'rep_check_date.date' => 'The check date field must be a valid date format.',
+                'rep_check_received.required' => 'The check recieved field is required.',
+                'rep_check_received.date' => 'The check recieved field must be a valid date format.',
+                'rep_check_penalty.required' => 'The penalty field is required.',
+                'rep_check_penalty.numeric' => 'The penalty field must be a number.',
+                'accountname.required' => 'The account name field is required.',
+                'accountnumber.required' => 'The account number field is required.',
+                'checkNumber.required' => 'The check number field is required.',
+            ]
+        );
+        $check_type = "";
+
+        if ($request->rep_check_date > today()->toDateString()) {
+            $check_type = "POST DATED";
+        } else {
+            $check_type = "DATED CHECK";
+
+        }
+
+        DB::transaction(function () use ($request, $check_type) {
+            Checks::create([
+                'checksreceivingtransaction_id' => 0,
+                'businessunit_id' => $request->user()->businessunit_id,
+                'check_bounced_id' => $request->rep_check_id,
+                'date_time' => today()->toDateString(),
+                'check_type' => $check_type,
+                'user' => $request->user()->id,
+                'check_status' => 'CLEARED',
+                'check_no' => $request->checkNumber,
+                'bank_id' => $request->bank_id,
+                'department_from' => $request->checkFrom_id,
+                'currency_id' => $request->currency_id,
+                'check_date' => $request->rep_check_date,
+                'check_amount' => NumberHelper::float($request->rep_check_amount),
+                'check_class' => $request->checkClass,
+                'check_category' => $request->category,
+                'check_received' => $request->rep_checpk_recieved,
+                'account_name' => $request->accountname,
+                'account_no' => $request->accountnumber,
+                'approving_officer' => $request->approvingOfficer,
+                'customer_id' => $request->customerId,
+                'is_exist' => 0,
+                'is_manual_entry' => 0,
+            ]);
+
+            $new_check_id = Checks::orderBy('checks_id', 'DESC')->first();
+
+            NewSavedChecks::create([
+                'checks_id' => $new_check_id->checks_id,
+                'check_type' => $request->rep_check_date,
+                'user' => $request->user()->id,
+                'date_time' => today()->toDateString(),
+            ]);
+
+            NewCheckReplacement::create([
+                'bounce_id' => 0,
+                'checks_id' => $request->rep_check_id,
+                'cash' => 0,
+                'rep_check_id' => $new_check_id->checks_id,
+                'reason' => $request->rep_reason,
+                'penalty' => NumberHelper::float($request->rep_check_penalty),
+                'ar_ds' => $request->rep_ar_ds,
+                'check_amount' => NumberHelper::float($request->rep_check_amount),
+                'check_amount_paid' => NumberHelper::float($request->rep_check_amount),
+                'mode' => "CHECK",
+                'status' => "REDEEMED",
+                'user' => $request->user()->id,
+                'date_time' => $request->rep_date,
+            ]);
+        });
+
+        return redirect()->back();
     }
 }

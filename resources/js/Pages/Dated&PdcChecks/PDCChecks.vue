@@ -292,8 +292,8 @@ const size = ref('large');
                                         <template #icon>
                                             <ClearOutlined />
                                         </template>
-                                        Reset
-                                        form</a-button>
+                                        Clear all inputs
+                                    </a-button>
                                 </a-col>
                                 <a-col :span="12">
                                     <a-button block type="primary" @click="submit_cash_replacement" class="mt-5"
@@ -318,7 +318,6 @@ const size = ref('large');
                                         <a-breadcrumb-item>Account Number</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-input class="hidden" v-model:value="check_form.rep_check_id">
-
                                     </a-input>
                                     <a-input v-model:value="check_form.accountnumber" placeholder="Enter Account Number"
                                         style="width: 100%">
@@ -331,20 +330,26 @@ const size = ref('large');
                                             </a-tooltip>
                                         </template>
                                     </a-input>
+                                    <div v-if="check_form.errors.accountnumber" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.accountnumber }}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Account Name</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-input v-model:value="check_form.accountname" placeholder="Enter Account Name"
-                                        style="width: 100%">
-                                        <template #prefix>
-                                            <user-outlined />
+                                    <a-select show-search placeholder="Search acount name"
+                                        :default-active-first-option="false" v-model:value="check_form.accountname"
+                                        style="width: 100%" :show-arrow="false" :filter-option="false"
+                                        :not-found-content="isRetrieving ? undefined : null" :options="accountOption"
+                                        @search="handleSearchAccountName">
+                                        <template v-if="isRetrieving" #notFoundContent>
+                                            <a-spin size="small" />
                                         </template>
-                                        <template #suffix>
-                                            <a-tooltip title="Account name">
-                                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                                            </a-tooltip>
-                                        </template>
-                                    </a-input>
+                                    </a-select>
+                                    <div v-if="check_form.errors.accountname   " class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.accountname }}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Number</a-breadcrumb-item>
                                     </a-breadcrumb>
@@ -359,21 +364,34 @@ const size = ref('large');
                                             </a-tooltip>
                                         </template>
                                     </a-input>
+                                    <div v-if="check_form.errors.checkNumber   " class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.checkNumber }}</div>
+
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Date</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-date-picker v-model:value="check_form.rep_check_date" style="width: 100%">
                                     </a-date-picker>
+                                    <div v-if="check_form.errors.rep_check_date   " class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.rep_check_date }}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Received</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-date-picker v-model:value="check_form.rep_check_recieved" style="width: 100%">
+                                    <a-date-picker v-model:value="check_form.rep_check_received" style="width: 100%">
                                     </a-date-picker>
+                                    <div v-if="check_form.errors.rep_check_received" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.rep_check_received}}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-input v-model:value="check_form.rep_check_amount" placeholder="Basic usage"
-                                        style="width: 100%">
+                                        readonly style="width: 100%">
                                         <template #prefix>
                                             <MoneyCollectOutlined />
                                         </template>
@@ -397,41 +415,53 @@ const size = ref('large');
                                             </a-tooltip>
                                         </template>
                                     </a-input>
+                                    <div v-if="check_form.errors.rep_check_penalty" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.rep_check_penalty}}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-select show-search placeholder="Search check form"
+                                    <a-select show-search placeholder="Search approving officer"
                                         :default-active-first-option="false" v-model:value="check_form.approvingOfficer"
                                         style="width: 100%" :show-arrow="false" :filter-option="false"
-                                        :not-found-content="isRetrieving ? undefined : null" :options="allOptions"
+                                        :not-found-content="isRetrieving ? undefined : null" :options="appoffOption"
                                         @search="handleSearchEmployee">
                                         <template v-if="isRetrieving" #notFoundContent>
                                             <a-spin size="small" />
                                         </template>
                                     </a-select>
+                                    <div v-if="check_form.errors.approvingOfficer" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.approvingOfficer}}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
                                     </a-breadcrumb>
-                                    <a-date-picker style="width: 100%;" class="mb-5"
-                                        v-model:value="check_form.rep_date">
+                                    <a-date-picker style="width: 100%;" v-model:value="check_form.rep_date">
                                     </a-date-picker>
+                                    <div v-if="check_form.errors.rep_date" class="text-red-600 mb-5"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.rep_date}}</div>
                                 </a-col>
                                 <a-col :span="12">
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check From</a-breadcrumb-item>
                                     </a-breadcrumb>
-
-
                                     <a-select show-search placeholder="Search check from"
                                         :default-active-first-option="false" v-model:value="check_form.checkFrom_id"
                                         style="width: 100%" :show-arrow="false" :filter-option="false"
-                                        :not-found-content="isRetrieving ? undefined : null" :options="allOptions"
+                                        :not-found-content="isRetrieving ? undefined : null" :options="checkOption"
                                         @search="handleSearchCheckFrom">
                                         <template v-if="isRetrieving" #notFoundContent>
                                             <a-spin size="small" />
                                         </template>
                                     </a-select>
-
+                                    <div v-if="check_form.errors.checkFrom_id" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.checkFrom_id}}</div>
 
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
@@ -439,26 +469,34 @@ const size = ref('large');
                                     <a-select show-search placeholder="Search bank name"
                                         :default-active-first-option="false" v-model:value="check_form.bank_id"
                                         style="width: 100%" :show-arrow="false" :filter-option="false"
-                                        :not-found-content="isRetrieving ? undefined : null" :options="allOptions"
+                                        :not-found-content="isRetrieving ? undefined : null" :options="bankOption"
                                         @search="handleSearchBank">
                                         <template v-if="isRetrieving" #notFoundContent>
                                             <a-spin size="small" />
                                         </template>
                                     </a-select>
+                                    <div v-if="check_form.errors.bank_id" class="text-red-600" style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.bank_id}}</div>
 
 
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-select show-search placeholder="Search customer name"
-                                        :default-active-first-option="false" v-model:value="check_form.customerName"
+                                        :default-active-first-option="false" v-model:value="check_form.customerId"
                                         style="width: 100%" :show-arrow="false" :filter-option="false"
-                                        :not-found-content="isRetrieving ? undefined : null" :options="allOptions"
+                                        :not-found-content="isRetrieving ? undefined : null" :options="customerOption"
                                         @search="handleSearchCustomer">
                                         <template v-if="isRetrieving" #notFoundContent>
                                             <a-spin size="small" />
                                         </template>
                                     </a-select>
+                                    <div v-if="check_form.errors.customerId" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.customerId
+                                        }}</div>
 
 
                                     <a-breadcrumb class="mt-2 ml-1">
@@ -472,7 +510,12 @@ const size = ref('large');
                                             item.currency_name
                                             }}</a-select-option>
 
+
                                     </a-select>
+                                    <div v-if="check_form.errors.currency_id" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.currency_id}}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Category</a-breadcrumb-item>
                                     </a-breadcrumb>
@@ -484,6 +527,10 @@ const size = ref('large');
                                             }}</a-select-option>
 
                                     </a-select>
+                                    <div v-if="check_form.errors.category" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.category}}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check class</a-breadcrumb-item>
                                     </a-breadcrumb>
@@ -494,14 +541,58 @@ const size = ref('large');
                                             chclass.check_class
                                             }}</a-select-option>
                                     </a-select>
+                                    <div v-if="check_form.errors.checkClass" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.checkClass}}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Reason for return</a-breadcrumb-item>
                                     </a-breadcrumb>
                                     <a-textarea v-model:value="check_form.rep_reason" placeholder="Input text heres"
                                         :rows="4" />
-                                    <a-button block class="mt-2" type="primary" @click="submitReplacementCheck">
-                                        Submit replacement check type
-                                    </a-button>
+                                    <div v-if="check_form.errors.rep_reason" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        check_form.errors.rep_reason}}</div>
+
+                                    <a-row :gutter="[16, 16]" class="mt-4">
+                                        <a-col :span="12">
+                                            <a-button block class="mt-2" type="primary" danger @click="() => check_form.reset(
+                                                    'checkFrom_id',
+                                                    'bank_id',
+                                                    'customerId',
+                                                    'approvingOfficer',
+                                                    'currency_id',
+                                                    'category',
+                                                    'rep_reason',
+                                                    'checkClass',
+                                                    'rep_date',
+                                                    'rep_check_date',
+                                                    'rep_check_recieved',
+                                                    'rep_check_penalty',
+                                                    'accountname',
+                                                    'accountnumber',
+                                                    'checkNumber',
+                                                    )">
+                                                <template #icon>
+                                                    <ClearOutlined />
+                                                </template>
+                                                Clear all inputs
+                                            </a-button>
+                                        </a-col>
+                                        <a-col :span="12" class="mb-7">
+                                            <a-button block class="mt-2" type="primary" @click="submitReplacementCheck"
+                                                :loading="check_form.processing">
+                                                <template #icon>
+                                                    <SaveOutlined />
+                                                </template>
+                                                {{ check_form.processing
+                                                ? 'Submitting check type...'
+                                                : 'Submit checktype'
+                                                }}
+                                            </a-button>
+                                        </a-col>
+                                    </a-row>
                                 </a-col>
                             </a-row>
                         </template>
@@ -947,7 +1038,11 @@ export default {
             partialPayCash: false,
             defaultShow: true,
             allData: [],
-            allOptions: [],
+            checkOption: [],
+            bankOption: [],
+            appoffOption: [],
+            customerOption: [],
+            accountOption: [],
 
             cash_form: useForm({
                 rep_check_id: '',
@@ -961,7 +1056,7 @@ export default {
                 rep_check_id: '',
                 checkFrom_id: null,
                 bank_id: null,
-                customerName: null,
+                customerId: null,
                 approvingOfficer: null,
                 currency_id: null,
                 category: null,
@@ -969,10 +1064,10 @@ export default {
                 checkClass: null,
                 rep_date: '',
                 rep_check_date: '',
-                rep_check_recieved: '',
+                rep_check_received: '',
                 rep_check_penalty: '',
                 rep_check_amount: '',
-                accountname: '',
+                accountname: null,
                 accountnumber: '',
                 checkNumber: '',
             })
@@ -996,6 +1091,7 @@ export default {
             this.cash_form.rep_check_id = dataIn.checks_id;
             this.check_form.rep_check_id = dataIn.checks_id;
             this.cash_form.rep_cash_amount = dataIn.check_amount;
+            this.check_form.rep_check_amount = dataIn.check_amount;
             this.openModalReplace = true;
         },
         handleTableChange(page) {
@@ -1060,8 +1156,6 @@ export default {
             })).
                 post(route('pdc_cash.replacement'), {
                     onSuccess: () => {
-                        this.openModalReplace = false;
-                        this.isLoadingbutton = false;
                         this.cash_form.reset();
                         message.success({
                             content: "Successfully replaced the cash type!",
@@ -1073,11 +1167,23 @@ export default {
         submitReplacementCheck() {
             this.check_form.transform((data) => ({
                 ...data,
-                rep_date: dayjs(data.rep_date).format('YYYY-MM-DD')
-            })).post(route('pdc_check.replacement'), {});
+                rep_date: dayjs(data.rep_date).format('YYYY-MM-DD'),
+                rep_check_date: dayjs(data.rep_check_date).format('YYYY-MM-DD'),
+                rep_check_recieved: dayjs(data.rep_check_recieved).format('YYYY-MM-DD'),
+            })).post(route('pdc_check.replacement'), {
+                onSuccess: () => {
+                    this.cash_form.reset();
+                    message.success({
+                        content: "Successfully replaced the check type!",
+                        duration: 3,
+                    });
+                }
+            });
         },
+
         afterClose() {
             this.cash_form.clearErrors();
+            this.check_form.clearErrors();
             this.defaultShow = true;
             this.checkShow = false;
             this.cashShow = false;
@@ -1087,15 +1193,14 @@ export default {
         },
 
         handleSearchCheckFrom: debounce(async function (query) {
-            console.log('object');
             try {
                 if (query.trim().length) {
                     this.isRetrieving = true
                     this.allData = []
-                    this.allOptions = []
+                    this.checkOption = []
                     const { data } = await axios.get(route('search.checkfrom', { search: query }))
                     this.allData = data
-                    this.allOptions = this.allData.map(checkfrom => ({ title: checkfrom.department, value: checkfrom.department_id, label: checkfrom.department }))
+                    this.checkOption = this.allData.map(checkfrom => ({ title: checkfrom.department, value: checkfrom.department_id, label: checkfrom.department }))
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -1108,10 +1213,10 @@ export default {
                 if (query.trim().length) {
                     this.isRetrieving = true
                     this.allData = []
-                    this.allOptions = []
+                    this.bankOption = []
                     const { data } = await axios.get(route('search.bankName', { search: query }))
                     this.allData = data
-                    this.allOptions = this.allData.map(bank => ({ title: bank.bankbranchname, value: bank.bank_id, label: bank.bankbranchname }))
+                    this.bankOption = this.allData.map(bank => ({ title: bank.bankbranchname, value: bank.bank_id, label: bank.bankbranchname }))
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -1124,10 +1229,26 @@ export default {
                 if (query.trim().length) {
                     this.isRetrieving = true
                     this.allData = []
-                    this.allOptions = []
+                    this.customerOption = []
                     const { data } = await axios.get(route('search.customerName', { search: query }))
                     this.allData = data
-                    this.allOptions = this.allData.map(customer => ({ title: customer.fullname, value: customer.fullname, label: customer.fullname }))
+                    this.customerOption = this.allData.map(customer => ({ title: customer.fullname, value: customer.customer_id, label: customer.fullname }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchAccountName: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.accountOption = []
+                    const { data } = await axios.get(route('search.customerName', { search: query }))
+                    this.allData = data
+                    this.accountOption = this.allData.map(account => ({ title: account.fullname, value: account.fullname, label: account.fullname }))
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -1140,10 +1261,10 @@ export default {
                 if (query.trim().length) {
                     this.isRetrieving = true
                     this.allData = []
-                    this.allOptions = []
+                    this.appoffOption = []
                     const { data } = await axios.get(route('search.employeeName', { search: query }))
                     this.allData = data
-                    this.allOptions = this.allData.map(employee => ({ title: employee.name, value: employee.name, label: employee.name }))
+                    this.appoffOption = this.allData.map(employee => ({ title: employee.name, value: employee.name, label: employee.name }))
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
