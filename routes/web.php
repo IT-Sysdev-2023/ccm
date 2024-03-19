@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
     Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_index'])->name('dated.checks');
     Route::post('pdc/cash/replacement', [DatedPdcChecksController::class, 'pdc_cash_replacement'])->name('pdc_cash.replacement');
     Route::post('pdc/check/replacement', [DatedPdcChecksController::class, 'pdc_check_replacement'])->name('pdc_check.replacement');
+    Route::post('pdc/cash/check/replacement', [DatedPdcChecksController::class, 'pdc_check_cash_replacement'])->name('pdc_cash_check.replacement');
 
 
 
