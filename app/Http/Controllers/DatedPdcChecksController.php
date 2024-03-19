@@ -112,7 +112,7 @@ class DatedPdcChecksController extends Controller
     }
     public function pdc_check_replacement(Request $request)
     {
-        // dd($request->all());
+    
         $request->validate(
             [
                 'checkFrom_id' => 'required',
