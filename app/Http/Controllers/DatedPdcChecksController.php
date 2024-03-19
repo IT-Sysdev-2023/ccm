@@ -127,7 +127,6 @@ class DatedPdcChecksController extends Controller
                 'rep_check_date' => 'required|date',
                 'rep_check_received' => 'required|date',
                 'rep_check_penalty' => 'required',
-                'rep_check_amount' => 'required|numeric',
                 'accountname' => 'required',
                 'accountnumber' => 'required',
                 'checkNumber' => 'required',
@@ -164,7 +163,7 @@ class DatedPdcChecksController extends Controller
         }
 
         DB::transaction(function () use ($request, $check_type) {
-            Checks::create([
+            $new_check_id = Checks::create([
                 'checksreceivingtransaction_id' => 0,
                 'businessunit_id' => $request->user()->businessunit_id,
                 'check_bounced_id' => $request->rep_check_id,
@@ -180,7 +179,7 @@ class DatedPdcChecksController extends Controller
                 'check_amount' => NumberHelper::float($request->rep_check_amount),
                 'check_class' => $request->checkClass,
                 'check_category' => $request->category,
-                'check_received' => $request->rep_checpk_recieved,
+                'check_received' => $request->rep_check_received,
                 'account_name' => $request->accountname,
                 'account_no' => $request->accountnumber,
                 'approving_officer' => $request->approvingOfficer,
@@ -188,8 +187,6 @@ class DatedPdcChecksController extends Controller
                 'is_exist' => 0,
                 'is_manual_entry' => 0,
             ]);
-
-            $new_check_id = Checks::orderBy('checks_id', 'DESC')->first();
 
             NewSavedChecks::create([
                 'checks_id' => $new_check_id->checks_id,
@@ -213,8 +210,13 @@ class DatedPdcChecksController extends Controller
                 'user' => $request->user()->id,
                 'date_time' => $request->rep_date,
             ]);
+
+            NewSavedChecks::where('checks_id', $request->rep_check_id)->update(['status' => 'REDEEM']);
         });
 
+
         return redirect()->back();
+
+
     }
 }
