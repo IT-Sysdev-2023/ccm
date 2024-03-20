@@ -90,6 +90,8 @@ Route::middleware('auth')->group(function () {
     Route::post('pdc/cash/replacement', [DatedPdcChecksController::class, 'pdc_cash_replacement'])->name('pdc_cash.replacement');
     Route::post('pdc/check/replacement', [DatedPdcChecksController::class, 'pdc_check_replacement'])->name('pdc_check.replacement');
     Route::post('pdc/cash/check/replacement', [DatedPdcChecksController::class, 'pdc_check_cash_replacement'])->name('pdc_cash_check.replacement');
+    Route::post('pdc/cash/partial/replacement', [DatedPdcChecksController::class, 'pdc_partial_replacement_cash'])->name('pdc_cash_partial.replacement');
+    Route::post('pdc/check/partial/replacement', [DatedPdcChecksController::class, 'pdc_partial_replacement_check'])->name('pdc_check_partial.replacement');
 
 
 
