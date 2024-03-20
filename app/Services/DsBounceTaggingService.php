@@ -27,7 +27,7 @@ class DsBounceTaggingService
     {
     }
 
-    public function updateSwitch(Request $request): Response
+    public function updateSwitch(Request $request)
     {
         $this->newSavedChecks->findChecks($request->id)
             ->update([
@@ -45,7 +45,7 @@ class DsBounceTaggingService
             $amount -= NumberHelper::float($request->checkAmount);
         }
 
-        return response()->json(['newAmount' => $amount, 'newCount' => $count]);
+        return redirect()->back();
     }
 
     public function indexDsTagging(Request $request)
@@ -63,7 +63,7 @@ class DsBounceTaggingService
             $value->done = empty ($value->done) ? false : true;
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
-            $value->check_amount = NumberHelper::currency($value->check_amount);
+            $value->check_amount = NumberHelper::float($value->check_amount);
             return $value;
         });
 

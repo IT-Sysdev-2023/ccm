@@ -3,6 +3,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -24,9 +25,9 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                 </a-breadcrumb>
                 <a-card>
                     <div class="flex justify-between">
-                        <a-button class="mb-3" @click="modalMergeChecks">
+                        <a-button class="mb-3" @click="modalMergeChecks" style="width: 350px;" type="primary">
                             <template #icon>
-                                <FolderAddOutlined />
+                                <PlusSquareOutlined />
                             </template>
                             Merge a checks
                         </a-button>
@@ -36,7 +37,8 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                         :pagination="false">
                         <template #bodyCell="{ column, record, index }">
                             <template v-if="column.key === 'check_box'">
-                                <a-switch size="small" v-model:checked="record.isChecked" @change="computedAmount(record)">
+                                <a-switch size="small" v-model:checked="record.isChecked"
+                                    @change="computedAmount(record)">
                                     <template #checkedChildren><check-outlined /></template>
                                     <template #unCheckedChildren><close-outlined /></template>
                                 </a-switch>
@@ -313,84 +315,98 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l  border-t border-gray-200">
                                 Customer Name</td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
                                 {{
-                                    selectDataDetails.fullname }}</td>
+                            selectDataDetails.fullname }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check From</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.department }}</td>
+                            selectDataDetails.department }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Number</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_no }}</td>
+                            selectDataDetails.check_no }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Approving Officer</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.approving_officer }}</td>
+                            selectDataDetails.approving_officer }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Class</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_class }}</td>
+                            selectDataDetails.check_class }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Status</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_status }}</td>
+                            selectDataDetails.check_status }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Date</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_date }}</td>
+                            selectDataDetails.check_date }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account No</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.account_no }}</td>
+                            selectDataDetails.account_no }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Received</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_received }}</td>
+                            selectDataDetails.check_received }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account Name</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.account_name }}</td>
+                            selectDataDetails.account_name }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Received As</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_type }}</td>
+                            selectDataDetails.check_type }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Bank Name</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.bankbranchname }}</td>
+                            selectDataDetails.bankbranchname }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Category</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                                selectDataDetails.check_category }}</td>
+                            selectDataDetails.check_category }}</td>
                         </tr>
                         <tr>
-                            <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            <td
+                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Amount</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
                                 selectDataDetails.check_amount }}</td>
