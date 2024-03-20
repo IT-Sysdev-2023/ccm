@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Events\ExcelGenerateEvents;
 use App\Models\BusinessUnit;
+use App\Models\Checks;
+use App\Models\Currency;
 use App\Models\NewCheckReplacement;
 use App\Models\NewSavedChecks;
 use App\Services\TransactionService;
@@ -20,6 +22,10 @@ class AllTransactionController extends Controller
 {
     public function getCheckManualEntry(Request $request)
     {
+        $currency = Currency::orderBy('currency_name')->get();
+        $category = Checks::select('check_category')->where('check_category', '!=', '')->groupBy('check_category')->get();
+        $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
+
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('checks.is_manual_entry', true)
@@ -37,7 +43,94 @@ class AllTransactionController extends Controller
         return Inertia::render('Transaction/CheckManualEntry', [
             'data' => $data,
             'columns' => ColumnsHelper::$check_manual_column,
+            'currency' => $currency,
+            'category' => $category,
+            'check_class' => $check_class,
         ]);
+    }
+    public function checkManualEntryStore(Request $request)
+    {
+        // dd($request->all());
+
+        $request->validate(
+            [
+                'accountnumber' => 'required',
+                'checkdate' => 'required|date',
+                'currency' => 'required',
+                'checkfrom' => 'required',
+                'accountname' => 'required',
+                'customer' => 'required',
+                'checkamount' => 'required|numeric',
+                'checkclass' => 'required',
+                'checknumber' => 'required',
+                'bankname' => 'required',
+                'checkreceived' => 'required|date',
+                'checkcategory' => 'required',
+                'approvingOfficer' => 'required',
+            ],
+            [
+                'accountnumber.required' => 'The account number field is required.',
+                'checkdate.required' => 'The check date field is required.',
+                'checkdate.date' => 'The check date must be a valid date format.',
+                'currency.required' => 'The currency field is required.',
+                'checkfrom.required' => 'The check from field is required.',
+                'accountname.required' => 'The account name field is required.',
+                'customer.required' => 'The customer field is required.',
+                'checkamount.required' => 'The check amount field is required.',
+                'checkamount.numeric' => 'The check amount must be a numeric value.',
+                'checkclass.required' => 'The check class field is required.',
+                'checknumber.required' => 'The check number field is required.',
+                'bankname.required' => 'The bank name field is required.',
+                'checkreceived.required' => 'The check received field is required.',
+                'checkreceived.date' => 'The check received is required.',
+                'checkcategory.required' => 'The check category field is required.',
+                'approvingOfficer.required' => 'The approving officer field is required.',
+            ]
+        );
+        $checkType = "";
+
+        if ($request->checkdate > today()->toDateString()) {
+            $checkType = "POST DATED";
+        } else {
+            $checkType = "DATED CHECK";
+
+        }
+        DB::transaction(function () use ($request, $checkType) {
+            $data = Checks::create([
+                'businessunit_id' => $request->user()->businessunit_id,
+                'check_type' => $checkType,
+                'check_status' => "CLEARED",
+                'user' => $request->user()->id,
+                'date_time' => today()->toDateString(),
+                'check_no' => $request->checknumber,
+                'customer_id' => $request->customer,
+                'bank_id' => $request->bankname,
+                'department_from' => $request->check_from,
+                'currency_id' => $request->currency,
+                'check_date' => $request->checkdate,
+                'check_amount' => NumberHelper::float($request->checkamount),
+                'check_class' => $request->checkclass,
+                'check_category' => $request->checkcategory,
+                'check_received' => $request->checkreceived,
+                'account_no' => $request->accountnumber,
+                'account_name' => $request->accountname,
+                'approving_officer' => $request->approvingOfficer,
+                'is_manual_entry' => 1,
+                'checksreceivingtransaction_id' => 0,
+                'check_bounced_id' => 0,
+                'is_exist' => 0,
+            ]);
+
+            NewSavedChecks::create([
+                'checks_id' => $data->checks_id,
+                'check_type' => $request->checkdate,
+                'user' => $request->user()->id,
+                'date_time' => today()->toDateString(),
+            ]);
+
+        });
+        return redirect()->back();
+
     }
     public function getMergeChecks(Request $request)
     {
@@ -161,7 +254,7 @@ class AllTransactionController extends Controller
             'data' => $data,
             'columns' => ColumnsHelper::$datedpdcreportcheck_columns,
             'status' => $request->status,
-            'dateRangeValue' => (!empty($request->date_from) && !empty($request->date_to)) ? [$request->date_from, $request->date_to] : '',
+            'dateRangeValue' => (!empty ($request->date_from) && !empty ($request->date_to)) ? [$request->date_from, $request->date_to] : '',
         ]);
     }
     public function generate_report(Request $request)
@@ -174,7 +267,7 @@ class AllTransactionController extends Controller
             ->cursor()
             ->groupBy('department');
 
-        return(
+        return (
             new TransactionService())
             ->record($data)
             ->setStatus($request->status)
@@ -203,7 +296,7 @@ class AllTransactionController extends Controller
         $dateRange = [$request->date_from, $request->date_to];
         $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)->cursor();
 
-        return(new TransactionService())
+        return (new TransactionService())
             ->record($data)
             ->writeResultDuePdc($dateRange, $buname);
     }

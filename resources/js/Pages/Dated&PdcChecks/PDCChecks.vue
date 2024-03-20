@@ -1240,10 +1240,10 @@ const size = ref('large');
 
 
                                     </a-select>
-                                    <div v-if="partial_check_form.errors.currency_id" class="text-red-600"
-                                        style="font-size: 12px;">
-                                        {{
-                                        partial_check_form.errors.currency_id}}</div>
+                                        <div v-if="partial_check_form.errors.currency_id" class="text-red-600"
+                                            style="font-size: 12px;">
+                                            {{
+                                            partial_check_form.errors.currency_id}}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Category</a-breadcrumb-item>
                                     </a-breadcrumb>
