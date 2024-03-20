@@ -110,7 +110,8 @@ Route::middleware('auth')->group(function () {
     Route::get('leasing_checks', [CheckReceivingController::class, 'getLeasingChecks'])->name('leasing.checks');
 
 
-    Route::get('check_manual_entry', [AllTransactionController::class, 'getCheckManualEntry'])->name('manual_entry.checks');
+    Route::get('check/manual/entry', [AllTransactionController::class, 'getCheckManualEntry'])->name('manual_entry.checks');
+    Route::post('check/manual/entry/store', [AllTransactionController::class, 'checkManualEntryStore'])->name('manual_entry_store.checks');
     Route::get('merge_checks', [AllTransactionController::class, 'getMergeChecks'])->name('mergechecks.checks');
     Route::get('bounce_checks', [AllTransactionController::class, 'getBounceChecks'])->name('bounce.checks');
     Route::get('replace_checks', [AllTransactionController::class, 'getCheckReplace'])->name('replace.checks');
