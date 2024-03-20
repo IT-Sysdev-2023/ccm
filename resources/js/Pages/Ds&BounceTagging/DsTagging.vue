@@ -40,7 +40,7 @@ const colors = "red";
                                     <a-avatar shape="square" size="large" src="../icons/abacus.png" />
                                 </a-badge>
                                 <p class="ml-10 font-bold">
-                                    {{ defaultTotal.count }}
+                                    {{ total.count }}
                                 </p>
                             </div>
                         </a-card>
@@ -56,7 +56,7 @@ const colors = "red";
                                 </a-badge>
                                 <p class="ml-10 font-bold">
                                     ₱
-                                    {{ defaultTotal.totalSum.toLocaleString() }}
+                                    {{ total.totalSum.toLocaleString() }}
                                 </p>
                             </div>
                         </a-card>
@@ -139,6 +139,7 @@ const colors = "red";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import Pagination from "@/Components/Pagination.vue"
+import axios from "axios";
 
 export default {
     data() {
@@ -160,12 +161,13 @@ export default {
         columns: Array,
         ds_c_table: Array,
         type: Object,
-        total: Number,
-        due_dates: Number,
+        total: Array,
+        due_dates: Date,
     },
     computed: {},
     methods: {
         switchRecord() {
+            window.alert('click');
             this.switchValues = this.ds_c_table.data.map((value) =>
                 value.done === "" ? false : true
             );
@@ -282,37 +284,35 @@ export default {
         },
 
         async handleSwitchChange(data) {
-            // console.log(this.total.totalSum);
-            const res = await axios.put(route("update.switch"), {
+            const key = "updatable";
+
+            this.$inertia.put(route("update.switch"), {
                 id: data.checks_id,
                 isCheck: data.done,
                 checkAmount: data.check_amount,
                 oldAmount: this.total.totalSum,
                 oldCount: this.defaultTotal.count,
+            }, {
+                onSuccess: () => {
+                    if (data.done) {
+                        setTimeout(() => {
+                            message.success({
+                                content: "Checked Successfully!",
+                                key,
+                                duration: 2,
+                            });
+                        }, 100);
+                    } else {
+                        setTimeout(() => {
+                            message.warning({
+                                content: "Uncheck Successfully!",
+                                key,
+                                duration: 2,
+                            });
+                        }, 100);
+                    }
+                }
             });
-
-            this.defaultTotal.totalSum = res.data.newAmount;
-            this.defaultTotal.count = res.data.newCount;
-
-            const key = "updatable";
-
-            if (data.done) {
-                setTimeout(() => {
-                    message.success({
-                        content: "Checked Successfully!",
-                        key,
-                        duration: 2,
-                    });
-                }, 100);
-            } else {
-                setTimeout(() => {
-                    message.warning({
-                        content: "Uncheck Successfully!",
-                        key,
-                        duration: 2,
-                    });
-                }, 100);
-            }
         },
     },
     created() {
