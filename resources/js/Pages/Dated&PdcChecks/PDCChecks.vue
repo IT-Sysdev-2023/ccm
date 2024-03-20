@@ -183,19 +183,23 @@ const size = ref('large');
                     </a-card>
                     <a-card class="mt-1">
                         <p class="text-center font-bold">Please Select Type Of Payment</p>
-                        <a-button class="mt-2" block @click="cashButtonType">
+                        <a-button class="mt-2" block @click="cashButtonType" :class="{ 'active': isActive === 'cash' }">
                             Cash
                         </a-button>
-                        <a-button class="mt-2" block @click="checkButtonType">
+                        <a-button class="mt-2" block @click="checkButtonType"
+                            :class="{ 'active': isActive === 'check' }">
                             Check
                         </a-button>
-                        <a-button class="mt-2" block @click="cashCheckButtonType">
+                        <a-button class="mt-2" block @click="cashCheckButtonType"
+                            :class="{ 'active': isActive === 'check&cash' }">
                             Check and cash
                         </a-button>
-                        <a-button class="mt-2" block @click="partialPayCashButtton">
+                        <a-button class="mt-2" block @click="partialPayCashButtton"
+                            :class="{ 'active': isActive === 'partialpaycash' }">
                             Partial Payment Cash
                         </a-button>
-                        <a-button class="mt-2" block @click="partialPayCheckButtton">
+                        <a-button class="mt-2" block @click="partialPayCheckButtton"
+                            :class="{ 'active': isActive === 'partialpaycheck' }">
                             Partial Payment Check
                         </a-button>
                     </a-card>
@@ -1027,7 +1031,7 @@ const size = ref('large');
                             </div>
                         </template>
                         <template #extra v-else-if="partialPayCheck">
-                            <p class="text-center font-bold py-5"> CHECK TYPE
+                            <p class="text-center font-bold py-5"> PARTIAL PAYMENT CHECK
                             </p>
                             <a-row :gutter="[16, 16]">
                                 <a-col :span="12" style="width: 600px">
@@ -1336,6 +1340,7 @@ import debounce from 'lodash/debounce'
 export default {
     data() {
         return {
+            isActive: null,
             isModalOpen: false,
             openModalReplace: false,
             selectDataDetails: [],
@@ -1473,6 +1478,7 @@ export default {
             }
         },
         checkButtonType() {
+            this.isActive = 'check';
             this.checkShow = true;
             this.defaultShow = false;
             this.cashShow = false;
@@ -1481,6 +1487,7 @@ export default {
             this.partialPayCash = false;
         },
         cashButtonType() {
+            this.isActive = 'cash';
             this.checkShow = false;
             this.defaultShow = false;
             this.cashShow = true;
@@ -1489,6 +1496,7 @@ export default {
             this.partialPayCash = false;
         },
         cashCheckButtonType() {
+            this.isActive = 'check&cash';
             this.checkShow = false;
             this.defaultShow = false;
             this.cashShow = false;
@@ -1497,6 +1505,7 @@ export default {
             this.partialPayCash = false;
         },
         partialPayCashButtton() {
+            this.isActive = 'partialpaycash';
             this.checkShow = false;
             this.defaultShow = false;
             this.cashShow = false;
@@ -1505,6 +1514,7 @@ export default {
             this.partialPayCash = true;
         },
         partialPayCheckButtton() {
+            this.isActive = 'partialpaycheck';
             this.checkShow = false;
             this.defaultShow = false;
             this.cashShow = false;
@@ -1606,6 +1616,7 @@ export default {
             this.cashCheckShow = false;
             this.partialPayCheck = false;
             this.partialPayCash = false;
+            this.isActive = null;
         },
 
         handleSearchCheckFrom: debounce(async function (query) {
@@ -1736,5 +1747,11 @@ th {
 
 .thh {
     background-color: #d3d3d3;
+}
+
+.active {
+    background-color: rgb(10, 79, 143);
+    color: white;
+
 }
 </style>
