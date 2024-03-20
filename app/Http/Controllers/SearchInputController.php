@@ -14,7 +14,7 @@ class SearchInputController extends Controller
     public function searchCheckFrom(Request $request)
     {
         $result = Department::where('department', 'LIKE', '%' . $request->search . '%')
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         return response()->json($result);
@@ -23,13 +23,13 @@ class SearchInputController extends Controller
 
     public function searchBankName(Request $request)
     {
-        $result = Bank::where('bankbranchname', 'LIKE', '%' . $request->search . '%')->limit(10)->get();
+        $result = Bank::where('bankbranchname', 'LIKE', '%' . $request->search . '%')->limit(5)->get();
         return response()->json($result);
     }
     public function searchCustomerName(Request $request)
     {
         $result = Customer::where('fullname', 'LIKE', '%' . $request->search . '%')
-            ->where('is_blacklist', '=', '0')->limit(10)->get();
+            ->where('is_blacklist', '=', '0')->limit(5)->get();
 
         return response()->json($result);
     }
@@ -39,7 +39,7 @@ class SearchInputController extends Controller
         $result = DB::connection('pis')
             ->table('employee3')
             ->where('name', 'like', '%' . $request->search . '%')
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         return response()->json($result);
