@@ -342,7 +342,7 @@ export default {
 <style scoped>
 .active {
 
-    background-color: rgb(0, 21, 41);
+    background-color: rgb(10, 79, 143);
     color: white;
 
 }
