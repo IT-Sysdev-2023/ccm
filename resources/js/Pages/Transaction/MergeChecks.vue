@@ -179,7 +179,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                             </a-breadcrumb-item>
                             <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-input v-model:value="merge_checks_form.checkamount" placeholder="Enter here..." readonly>
+                        <a-input v-model:value="merge_checks_form.checkamount" placeholder="Enter here...">
 
                             <template #prefix>
 
@@ -463,6 +463,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 import Pagination from "@/Components/Pagination.vue"
 import { useForm } from '@inertiajs/vue3';
 import debounce from "lodash/debounce";
+import dayjs from 'dayjs';
 export default {
     data() {
         return {
@@ -471,6 +472,12 @@ export default {
             openDetails: false,
             checkedRecords: [],
             openModal: false,
+            allData: [],
+            checkOption: [],
+            bankOption: [],
+            customerOption: [],
+            accountOption: [],
+            appoffOption: [],
             merge_checks_form: useForm({
                 accountnumber: '',
                 checkdate: '',
@@ -487,6 +494,7 @@ export default {
                 approvingOfficer: null,
                 checkedItems: null,
                 penalty: '',
+                reason: '',
             }),
 
         }
@@ -510,17 +518,26 @@ export default {
         modalMergeChecks() {
             this.merge_checks_form.checkamount = this.checkedRecords.map(record => parseFloat(record.check_amount))
                 .reduce((acc, subtotal) => { return acc + subtotal }, 0);
-            this.penalty = this.merge_checks_form.checkamount * parseFloat(0.2);
 
-            console.log(this.penalty);
+            parseFloat(this.merge_checks_form.checkamount).toLocaleString(undefined, { minimumFractionDigits: 2 })
+
+            this.merge_checks_form.penalty = this.merge_checks_form.checkamount * parseFloat(.02);
+
             this.openModal = true;
         },
         submitMergingChecks() {
             this.merge_checks_form.transform((data) => ({
                 ...data,
                 checkedItems: this.checkedRecords,
-            }))
-                .post(route('mergecheckstore.checks'));
+                checkdate: dayjs(data.checkdate).format('YYYY-MM-DD'),
+                checkreceived: dayjs(data.checkreceived).format('YYYY-MM-DD'),
+            })).post(route('mergecheckstore.checks'), {
+                onSuccess: () => {
+                    this.openModal = false;
+                }
+            }, {
+                preserveState: true,
+            });
         },
         handleSearchCheckFrom: debounce(async function (query) {
             try {
