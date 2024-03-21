@@ -152,49 +152,49 @@ class AllTransactionController extends Controller
     }
     public function getMergeCheckStore(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
 
 
-        // $request->validate(
-        //     [
-        //         'accountnumber' => 'required',
-        //         'checkdate' => 'required|date',
-        //         'currency' => 'required',
-        //         'checkfrom' => 'required',
-        //         'accountname' => 'required',
-        //         'customer' => 'required',
-        //         'checkamount' => 'required|numeric',
-        //         'checkclass' => 'required',
-        //         'checknumber' => 'required',
-        //         'bankname' => 'required',
-        //         'checkreceived' => 'required|date',
-        //         'checkcategory' => 'required',
-        //         'approvingOfficer' => 'required',
-        //         'penalty' => 'required|numeric',
-        //         'reason' => 'required',
-        //     ],
-        //     [
-        //         'accountnumber.required' => 'The account number field is required.',
-        //         'checkdate.required' => 'The check date field is required.',
-        //         'checkdate.date' => 'The check date must be a valid date format.',
-        //         'currency.required' => 'The currency field is required.',
-        //         'checkfrom.required' => 'The check from field is required.',
-        //         'accountname.required' => 'The account name field is required.',
-        //         'customer.required' => 'The customer field is required.',
-        //         'checkamount.required' => 'The check amount field is required.',
-        //         'checkamount.numeric' => 'The check amount must be a numeric value.',
-        //         'checkclass.required' => 'The check class field is required.',
-        //         'checknumber.required' => 'The check number field is required.',
-        //         'bankname.required' => 'The bank name field is required.',
-        //         'checkreceived.required' => 'The check received field is required.',
-        //         'checkreceived.date' => 'The check received is required.',
-        //         'checkcategory.required' => 'The check category field is required.',
-        //         'approvingOfficer.required' => 'The approving officer field is required.',
-        //         'penalty.required' => 'The penalty field is required.',
-        //         'penalty.numeric' => 'The penalty should be a number',
-        //         'reason.required' => 'The reason field is required.',
-        //     ]
-        // );
+        $request->validate(
+            [
+                'accountnumber' => 'required',
+                'checkdate' => 'required|date',
+                'currency' => 'required',
+                'checkfrom' => 'required',
+                'accountname' => 'required',
+                'customer' => 'required',
+                'checkamount' => 'required|numeric',
+                'checkclass' => 'required',
+                'checknumber' => 'required',
+                'bankname' => 'required',
+                'checkreceived' => 'required|date',
+                'checkcategory' => 'required',
+                'approvingOfficer' => 'required',
+                'penalty' => 'required|numeric',
+                'reason' => 'required',
+            ],
+            [
+                'accountnumber.required' => 'The account number field is required.',
+                'checkdate.required' => 'The check date field is required.',
+                'checkdate.date' => 'The check date must be a valid date format.',
+                'currency.required' => 'The currency field is required.',
+                'checkfrom.required' => 'The check from field is required.',
+                'accountname.required' => 'The account name field is required.',
+                'customer.required' => 'The customer field is required.',
+                'checkamount.required' => 'The check amount field is required.',
+                'checkamount.numeric' => 'The check amount must be a numeric value.',
+                'checkclass.required' => 'The check class field is required.',
+                'checknumber.required' => 'The check number field is required.',
+                'bankname.required' => 'The bank name field is required.',
+                'checkreceived.required' => 'The check received field is required.',
+                'checkreceived.date' => 'The check received is required.',
+                'checkcategory.required' => 'The check category field is required.',
+                'approvingOfficer.required' => 'The approving officer field is required.',
+                'penalty.required' => 'The penalty field is required.',
+                'penalty.numeric' => 'The penalty should be a number',
+                'reason.required' => 'The reason field is required.',
+            ]
+        );
 
         $checkType = '';
 
@@ -240,6 +240,7 @@ class AllTransactionController extends Controller
             foreach ($request->checkedItems as $check) {
 
                 $mergeCheckAmount = NumberHelper::float($request->checkamount);
+
                 $totalPenalty = NumberHelper::float($request->penalty);
                 $percentage = $mergeCheckAmount / $totalPenalty;
 
@@ -256,14 +257,17 @@ class AllTransactionController extends Controller
                     'date_time' => $request->checkreceived,
                     'reason' => $request->reason,
                     'penalty' => $penaltyIndividual,
+                    'bounce_id' => 0,
+                    'cash' => 0,
                 ]);
 
                 NewSavedChecks::where('checks_id', $check['checks_id'])->update(['status' => 'REDEEM']);
 
             }
 
-
         });
+
+        return redirect()->route('mergechecks.checks');
 
 
     }
