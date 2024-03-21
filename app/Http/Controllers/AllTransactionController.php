@@ -32,7 +32,7 @@ class AllTransactionController extends Controller
             ->where('new_saved_checks.status', '')
             ->where('checks.check_no', 'LIKE', '%' . $request->searchQuery . '%')
             ->orderBy('checks.check_received')
-            ->paginate(10);
+            ->paginate(10)->withQueryString();
 
         $data->transform(function ($value) {
             $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST DATED';
@@ -134,14 +134,142 @@ class AllTransactionController extends Controller
     }
     public function getMergeChecks(Request $request)
     {
+        $currency = Currency::orderBy('currency_name')->get();
+        $category = Checks::select('check_category')->where('check_category', '!=', '')->groupBy('check_category')->get();
+        $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
+
         $data = NewSavedChecks::joinChecksCustomer()->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
             ->whereColumn('check_date', '>', 'check_received')
-            ->paginate(10);
+            ->paginate(500)->withQueryString();
 
         return Inertia::render('Transaction/MergeChecks', [
             'data' => $data,
             'columns' => ColumnsHelper::$merge_checks_column,
+            'currency' => $currency,
+            'category' => $category,
+            'check_class' => $check_class,
         ]);
+    }
+    public function getMergeCheckStore(Request $request)
+    {
+        // dd($request->all());
+
+
+        $request->validate(
+            [
+                'accountnumber' => 'required',
+                'checkdate' => 'required|date',
+                'currency' => 'required',
+                'checkfrom' => 'required',
+                'accountname' => 'required',
+                'customer' => 'required',
+                'checkamount' => 'required|numeric',
+                'checkclass' => 'required',
+                'checknumber' => 'required',
+                'bankname' => 'required',
+                'checkreceived' => 'required|date',
+                'checkcategory' => 'required',
+                'approvingOfficer' => 'required',
+                'penalty' => 'required|numeric',
+                'reason' => 'required',
+            ],
+            [
+                'accountnumber.required' => 'The account number field is required.',
+                'checkdate.required' => 'The check date field is required.',
+                'checkdate.date' => 'The check date must be a valid date format.',
+                'currency.required' => 'The currency field is required.',
+                'checkfrom.required' => 'The check from field is required.',
+                'accountname.required' => 'The account name field is required.',
+                'customer.required' => 'The customer field is required.',
+                'checkamount.required' => 'The check amount field is required.',
+                'checkamount.numeric' => 'The check amount must be a numeric value.',
+                'checkclass.required' => 'The check class field is required.',
+                'checknumber.required' => 'The check number field is required.',
+                'bankname.required' => 'The bank name field is required.',
+                'checkreceived.required' => 'The check received field is required.',
+                'checkreceived.date' => 'The check received is required.',
+                'checkcategory.required' => 'The check category field is required.',
+                'approvingOfficer.required' => 'The approving officer field is required.',
+                'penalty.required' => 'The penalty field is required.',
+                'penalty.numeric' => 'The penalty should be a number',
+                'reason.required' => 'The reason field is required.',
+            ]
+        );
+
+        $checkType = '';
+
+        if ($request->checkdate > today()->toDateString()) {
+            $checkType = "POST DATED";
+        } else {
+            $checkType = "DATED CHECK";
+        }
+
+        DB::transaction(function () use ($request, $checkType) {
+            $data = Checks::create([
+                'businessunit_id' => $request->user()->businessunit_id,
+                'check_type' => $checkType,
+                'check_status' => "CLEARED",
+                'user' => $request->user()->id,
+                'date_time' => today()->toDateString(),
+                'check_no' => $request->checknumber,
+                'customer_id' => $request->customer,
+                'bank_id' => $request->bankname,
+                'department_from' => $request->check_from,
+                'currency_id' => $request->currency,
+                'check_date' => $request->checkdate,
+                'check_amount' => NumberHelper::float($request->checkamount),
+                'check_class' => $request->checkclass,
+                'check_category' => $request->checkcategory,
+                'check_received' => $request->checkreceived,
+                'account_no' => $request->accountnumber,
+                'account_name' => $request->accountname,
+                'approving_officer' => $request->approvingOfficer,
+                'is_manual_entry' => 1,
+                'checksreceivingtransaction_id' => 0,
+                'check_bounced_id' => 0,
+                'is_exist' => 0,
+            ]);
+
+            NewSavedChecks::create([
+                'checks_id' => $data->checks_id,
+                'check_type' => $request->checkdate,
+                'user' => $request->user()->id,
+                'date_time' => today()->toDateString(),
+            ]);
+
+            foreach ($request->checkedItems as $check) {
+
+                $mergeCheckAmount = NumberHelper::float($request->checkamount);
+
+                $totalPenalty = NumberHelper::float($request->penalty);
+                $percentage = $mergeCheckAmount / $totalPenalty;
+
+                $penaltyIndividual = $check['check_amount'] * $percentage;
+
+                NewCheckReplacement::create([
+                    'checks_id' => $check['checks_id'],
+                    'rep_check_id' => $data->checks_id,
+                    'check_amount' => $check['check_amount'],
+                    'check_amount_paid' => NumberHelper::float($request->checkamount),
+                    'status' => 'REDEEMED',
+                    'mode' => 'CHECK',
+                    'user' => $request->user()->id,
+                    'date_time' => $request->checkreceived,
+                    'reason' => $request->reason,
+                    'penalty' => $penaltyIndividual,
+                    'bounce_id' => 0,
+                    'cash' => 0,
+                ]);
+
+                NewSavedChecks::where('checks_id', $check['checks_id'])->update(['status' => 'REDEEM']);
+
+            }
+
+        });
+
+        return redirect()->route('mergechecks.checks');
+
+
     }
     public function getBounceChecks(Request $request)
     {
