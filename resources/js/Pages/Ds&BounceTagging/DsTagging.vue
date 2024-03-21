@@ -31,8 +31,9 @@ const colors = "red";
                 </a-breadcrumb>
                 <a-row :gutter="[16, 16]">
                     <a-col :span="4">
-                        <a-card style="width: 200px; height: 90px" class="mb-5">
-                            <div style="display: flex">
+                        <p class="text-center mb-1 font-bold">check count</p>
+                        <a-card style="width: 100%; height: 90px" class="mb-5">
+                            <div class="flex justify-center items-center">
                                 <a-badge count="0" style="
                                         display: flex;
                                         justify-content: center;
@@ -46,8 +47,9 @@ const colors = "red";
                         </a-card>
                     </a-col>
                     <a-col :span="5">
-                        <a-card style="width: 250px; height: 90px" class="mb-5">
-                            <div style="display: flex">
+                        <p class="text-center mb-1 font-bold">total amount</p>
+                        <a-card style="width: 100%; height: 90px" class="mb-5">
+                            <div class="flex justify-center items-center">
                                 <a-badge count="0" style="
                                         display: flex;
                                         justify-content: center;
@@ -62,8 +64,10 @@ const colors = "red";
                         </a-card>
                     </a-col>
                     <a-col :span="4">
-                        <a-card style="width: 180px; height: 90px" class="mb-5">
-                            <div style="display: flex">
+                        <p class="text-center mb-1 font-bold">due dates</p>
+                        <a-card style="width: 100%; height: 90px" class="mb-5">
+                            <div class="flex justify-center items-center">
+
                                 <a-badge count="0" style="
                                         display: flex;
                                         justify-content: center;
@@ -99,14 +103,17 @@ const colors = "red";
                                 <a-col :span="8">
                                     <a-tooltip :color="colors" :open="isTooltipVisibleDt"
                                         title="Return Date is required ">
-                                        <a-date-picker v-model:value="dateDeposit" />
+                                        <a-date-picker v-model:value="dateDeposit" style="width: 100%" />
                                     </a-tooltip>
                                 </a-col>
                                 <a-col :span="8">
-                                    <a-button :loading="isLoadingbutton" style="
-                                            background-color: aquamarine;
-                                            color: rgb(92, 92, 92);
-                                        " ghost @click="submitToConButton()">submit ds number</a-button>
+
+                                    <a-button :loading="isLoadingbutton" style="width: 100%;" type="primary"
+                                        @click="submitToConButton()">
+                                        <template #icon>
+                                            <SaveOutlined />
+                                        </template>
+                                        submit ds number</a-button>
                                 </a-col>
                             </a-row>
                         </a-card>
