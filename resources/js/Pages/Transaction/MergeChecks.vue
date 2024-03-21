@@ -25,7 +25,8 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                 </a-breadcrumb>
                 <a-card>
                     <div class="flex justify-between">
-                        <a-button class="mb-3" @click="modalMergeChecks" style="width: 350px;" type="primary">
+                        <a-button class="mb-3" @click="modalMergeChecks" style="width: 350px;" type="primary"
+                            :disabled="checkedRecords.length < 2">
                             <template #icon>
                                 <PlusSquareOutlined />
                             </template>
@@ -38,7 +39,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                         <template #bodyCell="{ column, record, index }">
                             <template v-if="column.key === 'check_box'">
                                 <a-switch size="small" v-model:checked="record.isChecked"
-                                    @change="computedAmount(record)">
+                                    @change="merginCheckSwitch(record)">
                                     <template #checkedChildren><check-outlined /></template>
                                     <template #unCheckedChildren><close-outlined /></template>
                                 </a-switch>
@@ -56,256 +57,297 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                 </a-card>
             </div>
         </div>
-        <a-modal v-model:open="openModal" title="Basic Modal" width="80%" wrap-class-name="full-modal" @ok="handleOk"
-            :footer="null">
-            <a-row :gutter="[16, 16]">
-                <a-col :span="8">
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <AccountBookOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Account Number</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+        <a-modal v-model:open="openModal" style="top: 55px;" title="Merge a checks inputs" width="80%"
+            wrap-class-name="full-modal" :footer="null">
+            <a-card>
+                <p class="p-4 flex justify-center font-bold">Merging a checks</p>
+                <a-row :gutter="[16, 16]">
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter account number here">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <CalendarOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Check Date</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                    <a-col :span="8">
+                        <a-breadcrumb>
+                            <a-breadcrumb-item href="">
+                                <AccountBookOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Account Number</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-input v-model:value="merge_checks_form.accountnumber" placeholder="Enter here...">
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter check date here..">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <MoneyCollectOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Currency</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                            <template #prefix>
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter currency here..">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
+                            </template>
 
-                            <BankOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Check From</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                            <template #suffix>
+                                <a-tooltip title="Enter account number here">
+                                    <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                </a-tooltip>
+                            </template>
+                        </a-input>
+                        <div v-if="merge_checks_form.errors.accountnumber" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.accountnumber }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <CalendarOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Check Date</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-date-picker v-model:value="merge_checks_form.checkdate" style="width: 100%;">
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter Check From here..">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <UsergroupAddOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Account Name</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                        </a-date-picker>
+                        <div v-if="merge_checks_form.errors.checkdate" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.checkdate }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <MoneyCollectOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Currency</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-select placeholder="Select Currency" v-model:value="merge_checks_form.currency"
+                            style="width: 100%">
+                            <a-select-option v-for="(item, key) in currency" v-model:value="item.currency_id">{{
+                                item.currency_name
+                            }}</a-select-option>
+                        </a-select>
+                        <div v-if="merge_checks_form.errors.currency" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.currency }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter account name here...">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                </a-col>
-                <a-col :span="8">
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <UserOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                                <BankOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Check From</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-select show-search placeholder="Search Check From" :default-active-first-option="false"
+                            v-model:value="merge_checks_form.checkfrom" style="width: 100%" :show-arrow="false"
+                            :filter-option="false" :not-found-content="isRetrieving ? undefined : null"
+                            :options="checkOption" @search="handleSearchCheckFrom">
+                            <template v-if="isRetrieving" #notFoundContent>
+                                <a-spin size="small" />
+                            </template>
+                        </a-select>
+                        <div v-if="merge_checks_form.errors.checkfrom" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.checkfrom }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <UsergroupAddOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Account Name</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-select show-search placeholder="Search Account name" :default-active-first-option="false"
+                            v-model:value="merge_checks_form.accountname" style="width: 100%" :show-arrow="false"
+                            :filter-option="false" :not-found-content="isRetrieving ? undefined : null"
+                            :options="accountOption" @search="handleSearchAccountName">
+                            <template v-if="isRetrieving" #notFoundContent>
+                                <a-spin size="small" />
+                            </template>
+                        </a-select>
+                        <div v-if="merge_checks_form.errors.accountname" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.accountname }}</div>
+                    </a-col>
+                    <a-col :span="8">
+                        <a-breadcrumb>
+                            <a-breadcrumb-item href="">
+                                <UserOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-select show-search placeholder="Search customer name" :default-active-first-option="false"
+                            v-model:value="merge_checks_form.customer" style="width: 100%" :show-arrow="false"
+                            :filter-option="false" :not-found-content="isRetrieving ? undefined : null"
+                            :options="customerOption" @search="handleSearchCustomer">
+                            <template v-if="isRetrieving" #notFoundContent>
+                                <a-spin size="small" />
+                            </template>
+                        </a-select>
+                        <div v-if="merge_checks_form.errors.customer" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.customer }}</div>
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Entere customer name here...">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <MoneyCollectOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <MoneyCollectOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-input v-model:value="merge_checks_form.checkamount" placeholder="Enter here..." readonly>
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter check amount here...">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <BankOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Check Class</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                            <template #prefix>
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter check class here...">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <MoneyCollectOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Check Number</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                            </template>
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter check number here...">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <BankOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                            <template #suffix>
+                                <a-tooltip title="Enter check amount here...">
+                                    <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                </a-tooltip>
+                            </template>
+                        </a-input>
+                        <div v-if="merge_checks_form.errors.checkamount" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.checkamount }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <BankOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Check Class</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-select placeholder="Select Currency" v-model:value="merge_checks_form.checkclass"
+                            style="width: 100%">
+                            <a-select-option v-for="(item, key) in check_class" v-model:value="item.check_class">{{
+                                item.check_class
+                            }}</a-select-option>
+                        </a-select>
+                        <div v-if="merge_checks_form.errors.checkclass" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.checkclass }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <MoneyCollectOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Check Number</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-input v-model:value="merge_checks_form.checknumber" placeholder="Enter here...">
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter bank name here...">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                </a-col>
-                <a-col :span="8">
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <CalendarOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Check Received</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                            <template #prefix>
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter check date here...">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <HomeOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Check Category</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                            </template>
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter Check categoty here...">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <UsergroupAddOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="userName" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                            <template #suffix>
+                                <a-tooltip title="Enter check number here...">
+                                    <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                </a-tooltip>
+                            </template>
+                        </a-input>
+                        <div v-if="merge_checks_form.errors.checknumber" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.checknumber }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <BankOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-select show-search placeholder="Search bank name" :default-active-first-option="false"
+                            v-model:value="merge_checks_form.bankname" style="width: 100%" :show-arrow="false"
+                            :filter-option="false" :not-found-content="isRetrieving ? undefined : null"
+                            :options="bankOption" @search="handleSearchBank">
+                            <template v-if="isRetrieving" #notFoundContent>
+                                <a-spin size="small" />
+                            </template>
+                        </a-select>
+                        <div v-if="merge_checks_form.errors.bankname" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.bankname }}</div>
+                    </a-col>
+                    <a-col :span="8">
+                        <a-breadcrumb>
+                            <a-breadcrumb-item href="">
+                                <CalendarOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Check Received</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-date-picker v-model:value="merge_checks_form.checkreceived" style="width: 100%;">
+                        </a-date-picker>
+                        <div v-if="merge_checks_form.errors.checkreceived" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.checkreceived }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <HomeOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Check Category</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-select placeholder="Select Currency" v-model:value="merge_checks_form.checkcategory"
+                            style="width: 100%">
+                            <a-select-option v-for="(item, key) in category" v-model:value="item.check_category">{{
+                                item.check_category
+                            }}</a-select-option>
+                        </a-select>
+                        <div v-if="merge_checks_form.errors.checkcategory" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.checkcategory }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <UsergroupAddOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Penalty</a-breadcrumb-item>
+                        </a-breadcrumb>
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter Approving officer here...">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <UsergroupAddOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Penalty</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-input v-model:value="amount" class="mb-3" placeholder="Enter here...">
-                        <template #prefix>
+                        <a-input v-model:value="merge_checks_form.penalty" placeholder="Enter here...">
+                            <template #prefix>
+                            </template>
+                            <template #suffix>
+                                <a-tooltip title="Enter check number here...">
+                                    <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+                                </a-tooltip>
+                            </template>
+                        </a-input>
+                        <div v-if="merge_checks_form.errors.penalty" class="text-white mb-3"
+                            style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.penalty }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <UsergroupAddOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
+                        </a-breadcrumb>
 
-                        </template>
-                        <template #suffix>
-                            <a-tooltip title="Enter Approving officer here...">
-                                <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                    <a-breadcrumb>
-                        <a-breadcrumb-item href="">
-                            <UsergroupAddOutlined />
-                        </a-breadcrumb-item>
-                        <a-breadcrumb-item>Reason for return</a-breadcrumb-item>
-                    </a-breadcrumb>
-                    <a-textarea v-model:value="value" placeholder="Basic usage" :rows="4" />
-                    <a-button class="mt-2" style="width: 100%; background: #15cc04; color: white;">
-                        <template #icon>
-                            <SaveOutlined />
-                        </template>
-                        continue merging?
-                    </a-button>
-                </a-col>
-            </a-row>
+                        <a-select show-search placeholder="Search Employee name" :default-active-first-option="false"
+                            v-model:value="merge_checks_form.approvingOfficer" style="width: 100%" :show-arrow="false"
+                            :filter-option="false" :not-found-content="isRetrieving ? undefined : null"
+                            :options="appoffOption" @search="handleSearchEmployee">
+                            <template v-if="isRetrieving" #notFoundContent>
+                                <a-spin size="small" />
+                            </template>
+                        </a-select>
+                        <div v-if="merge_checks_form.errors.approvingOfficer" class="text-white mb-3"
+                            style=" font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                            {{
+                                merge_checks_form.errors.approvingOfficer }}</div>
+                        <a-breadcrumb class="mt-3">
+                            <a-breadcrumb-item href="">
+                                <UsergroupAddOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Reason</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-textarea v-model:value="merge_checks_form.reason" placeholder="Enter reason here..."
+                            :rows="4" />
+                        <a-button class="mt-5" block type="primary" @click="submitMergingChecks"
+                            :loading="merge_checks_form.processing">
+
+                            <template #icon>
+                                <SaveOutlined />
+                            </template>
+                            {{ merge_checks_form.processing ? 'merge check saving...' : 'save merge checks' }}
+                        </a-button>
+                        <a-button style="background-color: #DDDDDD" class="mt-2" block
+                            @click="() => merge_checks_form.reset()">
+                            <template #icon>
+                                <ClearOutlined></ClearOutlined>
+                            </template>
+                            clear input fields
+                        </a-button>
+                    </a-col>
+                </a-row>
+            </a-card>
         </a-modal>
-        <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details" @ok="handleOk"
+        <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details"
             :ok-button-props="{ hidden: true }" :cancel-button-props="{ hidden: true }" :footer="null">
             <div class="product-table">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -318,91 +360,91 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                             <td
                                 class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
                                 {{
-                            selectDataDetails.fullname }}</td>
+                                selectDataDetails.fullname }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check From</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.department }}</td>
+                                selectDataDetails.department }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Number</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.check_no }}</td>
+                                selectDataDetails.check_no }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Approving Officer</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.approving_officer }}</td>
+                                selectDataDetails.approving_officer }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Class</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.check_class }}</td>
+                                selectDataDetails.check_class }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Status</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.check_status }}</td>
+                                selectDataDetails.check_status }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Date</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.check_date }}</td>
+                                selectDataDetails.check_date }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account No</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.account_no }}</td>
+                                selectDataDetails.account_no }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Received</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.check_received }}</td>
+                                selectDataDetails.check_received }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Account Name</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.account_name }}</td>
+                                selectDataDetails.account_name }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Received As</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.check_type }}</td>
+                                selectDataDetails.check_type }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Bank Name</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.bankbranchname }}</td>
+                                selectDataDetails.bankbranchname }}</td>
                         </tr>
                         <tr>
                             <td
                                 class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                                 Check Category</td>
                             <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">{{
-                            selectDataDetails.check_category }}</td>
+                                selectDataDetails.check_category }}</td>
                         </tr>
                         <tr>
                             <td
@@ -419,6 +461,8 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 </template>
 <script>
 import Pagination from "@/Components/Pagination.vue"
+import { useForm } from '@inertiajs/vue3';
+import debounce from "lodash/debounce";
 export default {
     data() {
         return {
@@ -427,33 +471,137 @@ export default {
             openDetails: false,
             checkedRecords: [],
             openModal: false,
+            merge_checks_form: useForm({
+                accountnumber: '',
+                checkdate: '',
+                currency: null,
+                checkfrom: null,
+                accountname: null,
+                customer: null,
+                checkamount: null,
+                checkclass: null,
+                checknumber: '',
+                bankname: null,
+                checkreceived: '',
+                checkcategory: null,
+                approvingOfficer: null,
+                checkedItems: null,
+                penalty: '',
+            }),
+
         }
     },
     props: {
-        data: Array,
+        data: Object,
         columns: Array,
-        pagination: Array,
+        currency: Object,
+        category: Object,
+        check_class: Object,
     },
     methods: {
-        handleTableChange(page = 1) {
-            this.isLoadingTable = true;
-            this.$inertia.get(route("mergechecks.checks"), {
-                page: page,
-            }, {
-                preserveScroll: true,
-            })
-        },
         openUpDetails(dataIn) {
             this.openDetails = true;
             this.selectDataDetails = dataIn;
         },
-        computedAmount() {
+        merginCheckSwitch() {
             this.checkedRecords = this.data.data.filter(record => record.isChecked);
             return this.checkedRecords.length;
         },
         modalMergeChecks() {
+            this.merge_checks_form.checkamount = this.checkedRecords.map(record => parseFloat(record.check_amount))
+                .reduce((acc, subtotal) => { return acc + subtotal }, 0);
+            this.penalty = this.merge_checks_form.checkamount * parseFloat(0.2);
+
+            console.log(this.penalty);
             this.openModal = true;
-        }
+        },
+        submitMergingChecks() {
+            this.merge_checks_form.transform((data) => ({
+                ...data,
+                checkedItems: this.checkedRecords,
+            }))
+                .post(route('mergecheckstore.checks'));
+        },
+        handleSearchCheckFrom: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.checkOption = []
+                    const { data } = await axios.get(route('search.checkfrom', { search: query }))
+                    this.allData = data
+                    this.checkOption = this.allData.map(checkfrom => ({ title: checkfrom.department, value: checkfrom.department_id, label: checkfrom.department }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchBank: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.bankOption = []
+                    const { data } = await axios.get(route('search.bankName', { search: query }))
+                    this.allData = data
+                    this.bankOption = this.allData.map(bank => ({ title: bank.bankbranchname, value: bank.bank_id, label: bank.bankbranchname }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchCustomer: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.customerOption = []
+                    const { data } = await axios.get(route('search.customerName', { search: query }))
+                    this.allData = data
+                    this.customerOption = this.allData.map(customer => ({ title: customer.fullname, value: customer.customer_id, label: customer.fullname }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchAccountName: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.accountOption = []
+                    const { data } = await axios.get(route('search.customerName', { search: query }))
+                    this.allData = data
+                    this.accountOption = this.allData.map(account => ({ title: account.fullname, value: account.fullname, label: account.fullname }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchEmployee: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.appoffOption = []
+                    const { data } = await axios.get(route('search.employeeName', { search: query }))
+                    this.allData = data
+                    this.appoffOption = this.allData.map(employee => ({ title: employee.name, value: employee.name, label: employee.name }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
     },
 
 }

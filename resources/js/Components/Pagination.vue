@@ -29,7 +29,6 @@ export default {
     },
     methods: {
         paginate(link) {
-
             if (link.url) {
                 this.$inertia.visit(link.url, {
                     preserveState: true,
