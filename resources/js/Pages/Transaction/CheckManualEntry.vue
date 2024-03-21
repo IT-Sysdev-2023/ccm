@@ -30,7 +30,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                             <template #icon>
                                 <PlusSquareOutlined />
                             </template>
-                            add manual check
+                            Add manual check
                         </a-button>
                         <a-input-search v-model:value="query.search" placeholder="input search text"
                             style="width: 400px" />
@@ -58,8 +58,8 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                 </a-card>
             </div>
         </div>
-        <a-modal v-model:open="openModal" title="Add manual checks Modal" :footer="null" width="90%" :after-close="() => manual_check_form.clearErrors()"
-            wrap-class-name="full-modal" @ok="handleOk">
+        <a-modal v-model:open="openModal" title="Add manual checks Modal" :footer="null" width="90%"
+            :after-close="() => manual_check_form.clearErrors()" wrap-class-name="full-modal" @ok="handleOk">
             <a-card>
                 <div class="p-5 text-center">
                     <h3>
@@ -304,12 +304,13 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                             style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
                             {{
                             manual_check_form.errors.approvingOfficer }}</div>
-                        <a-button class="mt-5" block type="primary" @click="submitManualCheckEntry" :loading="manual_check_form.processing">
+                        <a-button class="mt-5" block type="primary" @click="submitManualCheckEntry"
+                            :loading="manual_check_form.processing">
 
                             <template #icon>
                                 <SaveOutlined />
                             </template>
-                            {{ manual_check_form.processing ? 'saving checks...': 'save manual checks?' }}
+                            {{ manual_check_form.processing ? 'saving checks...' : 'save manual checks?' }}
                         </a-button>
                         <a-button class="mt-2" block type="primary" danger @click="() => manual_check_form.reset()">
 
