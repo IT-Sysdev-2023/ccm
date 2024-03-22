@@ -10,6 +10,7 @@ use App\Models\NewCheckReplacement;
 use App\Models\NewSavedChecks;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -277,13 +278,61 @@ class AllTransactionController extends Controller
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('new_bounce_check.status', '=', '')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->paginate(10);
+            ->select('new_bounce_check.*', 'new_bounce_check.id as bounceId', 'checks.*', 'customers.*')
+            ->paginate(10)->withQueryString();
 
-        // dd($data);
+
         return Inertia::render('Transaction/BounceChecks', [
             'data' => $data,
             'columns' => ColumnsHelper::$bounced_checks_columns,
         ]);
+    }
+
+    public function bouncedCashReplacement(Request $request)
+    {
+
+        $request->validate([
+            'rep_cash_penalty' => 'required|numeric',
+            'rep_ar_ds' => 'required|string',
+            'rep_reason' => 'required|string',
+            'rep_date' => 'required|date'
+        ], [
+            'rep_cash_penalty.required' => 'The cash penalty field is required.',
+            'rep_cash_penalty.numeric' => 'The cash penalty must be a number.',
+            'rep_ar_ds.required' => 'The AR DS field is required.',
+            'rep_ar_ds.string' => 'The AR DS must be a string.',
+            'rep_reason.required' => 'The reason field is required.',
+            'rep_reason.string' => 'The reason must be a string.',
+            'rep_date.required' => 'The date field is required.',
+            'rep_date.date' => 'The date must be a valid date format.'
+        ]);
+
+
+        $data = Checks::where('checks_id', $request->rep_check_id)->first();
+
+
+        DB::transaction(function () use ($request, $data) {
+            NewCheckReplacement::create([
+                'bounce_id' => $request->rep_bounce_id,
+                'rep_check_id' => 0,
+                'check_amount_paid' => 0,
+                'checks_id' => $request->rep_check_id,
+                'check_amount' => NumberHelper::float($data->check_amount),
+                'cash' => NumberHelper::float($request->rep_cash_amount),
+                'penalty' => NumberHelper::float($request->rep_cash_penalty),
+                'ar_ds' => $request->rep_ar_ds,
+                'reason' => $request->rep_reason,
+                'mode' => "BOUNCED",
+                'status' => "CASH",
+                'user' => Auth::user()->id,
+                'date_time' => $request->rep_date,
+            ]);
+
+            Checks::where('checks_id', $request->rep_check_id)->update(['check_status' => 'CASH', 'cash' => NumberHelper::float($request->rep_cash_amount)]);
+            NewBounceCheck::where('id', $request->rep_bounce_id)->update(['status' => 'SETTLED CHECK']);
+        });
+
+        return redirect()->back();
     }
     public function getCheckReplace(Request $request)
     {
