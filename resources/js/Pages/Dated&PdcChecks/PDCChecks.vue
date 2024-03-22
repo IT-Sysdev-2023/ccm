@@ -1625,6 +1625,9 @@ export default {
         afterClose() {
             this.cash_form.clearErrors();
             this.check_form.clearErrors();
+            this.cash_check_form.clearErrors();
+            this.partial_cash_form.clearErrors();
+            this.partial_check_form.clearErrors();
             this.defaultShow = true;
             this.checkShow = false;
             this.cashShow = false;

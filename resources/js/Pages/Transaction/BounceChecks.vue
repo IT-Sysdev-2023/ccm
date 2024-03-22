@@ -1439,6 +1439,7 @@ export default {
                 rep_ar_ds: '',
                 rep_reason: '',
                 rep_date: '',
+                rep_bounce_id: null,
             }),
 
             partial_check_form: useForm({
@@ -1459,6 +1460,7 @@ export default {
                 accountname: null,
                 accountnumber: '',
                 checkNumber: '',
+                rep_bounce_id: null,
             }),
         }
     },
@@ -1479,6 +1481,8 @@ export default {
             this.cash_check_form.rep_check_amount = dataIn.check_amount;
             this.partial_cash_form.rep_cash_amount = dataIn.check_amount;
             this.partial_cash_form.rep_check_id = dataIn.checks_id;
+            this.partial_cash_form.rep_bounce_id = dataIn.bounceId;
+            this.partial_check_form.rep_bounce_id = dataIn.bounceId;
             this.partial_check_form.rep_check_amount = dataIn.check_amount;
             this.partial_check_form.rep_check_id = dataIn.checks_id;
             this.openModalReplace = true;
@@ -1552,6 +1556,53 @@ export default {
                         });
                     }
                 })
+        },
+         submitReplacementCashPartial() {
+            this.partial_cash_form.transform((data) => ({
+                ...data,
+                rep_date: dayjs(data.rep_date).format('YYYY-MM-DD'),
+            })).post(route('bouncePartialCash.replace'), {
+                onSuccess: () => {
+                    this.partial_cash_form.reset();
+                    this.openModalReplace = false;
+                    message.success({
+                        content: "Successfully replaced the cash partial!",
+                        duration: 3,
+                    });
+                }
+            });
+        },
+         submitReplacementCheckPartial() {
+            this.partial_check_form.transform((data) => ({
+                ...data,
+                rep_date: dayjs(data.rep_date).format('YYYY-MM-DD'),
+                rep_check_date: dayjs(data.rep_check_date).format('YYYY-MM-DD'),
+                rep_check_received: dayjs(data.rep_check_received).format('YYYY-MM-DD'),
+            })).post(route('bouncePartialCheck.replace'), {
+                onSuccess: () => {
+                    this.partial_check_form.reset();
+                    this.openModalReplace = false;
+                    message.success({
+                        content: "Successfully replaced the cash partial!",
+                        duration: 3,
+                    });
+                }
+            });
+        },
+             afterClose() {
+            this.cash_form.clearErrors();
+            this.check_form.clearErrors();
+            this.cash_check_form.clearErrors();
+            this.partial_cash_form.clearErrors();
+            this.partial_check_form.clearErrors();
+            this.re_deposit_form.clearErrors();
+            this.defaultShow = true;
+            this.checkShow = false;
+            this.cashShow = false;
+            this.cashCheckShow = false;
+            this.partialPayCheck = false;
+            this.partialPayCash = false;
+            this.isActive = null;
         },
         checkButtonType() {
             this.isActive = 'check';

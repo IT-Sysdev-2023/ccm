@@ -126,6 +126,8 @@ Route::middleware('auth')->group(function () {
     Route::post('bounce/check/replacement', [AllTransactionController::class, 'bouncedCheckReplacement'])->name('bounceCheck.replace');
     Route::post('bounce/check/cash/replacement', [AllTransactionController::class, 'bouncedCheckCashReplacement'])->name('bounceCheckCash.replace');
     Route::post('bounce/redeposit/replacement', [AllTransactionController::class, 'bounceCheckReDeposit'])->name('bounceReDeposit.replace');
+    Route::post('bounce/partial/cash', [AllTransactionController::class, 'bouncePartialPaymentCash'])->name('bouncePartialCash.replace');
+    Route::post('bounce/partial/check', [AllTransactionController::class, 'bouncePartialReplaymentCheck'])->name('bouncePartialCheck.replace');
 
     Route::get('/download/excel/{filename}', function ($filename) {
         $filePath = storage_path('app/' . $filename);
