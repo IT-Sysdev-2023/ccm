@@ -7,6 +7,7 @@ use App\Models\BusinessUnit;
 use App\Models\Checks;
 use App\Models\Currency;
 use App\Models\NewCheckReplacement;
+use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
@@ -567,7 +568,61 @@ class AllTransactionController extends Controller
         return redirect()->back();
 
     }
+    public function bounceCheckReDeposit(Request $request)
+    {
+        // dd($request->all());
+        $request->validate([
+            'rep_date' => 'required|date',
+            'rep_penalty' => 'required|numeric',
+            'rep_reason' => 'required|string',
+        ], [
+            'rep_date.required' => 'The replacement date is required',
+            'rep_date.date' => 'The replacement date must ba a valid date',
+            'rep_penalty.required' => 'The penalty is required',
+            'rep_penalty.numeric' => 'The penalty must be a number',
+            'rep_reason.required' => 'The reason is required',
+        ]);
 
+        $is_exist = NewCheckReplacement::where('checks_id', $request->rep_check_id)->where('mode', 'RE-DEPOSIT')->exists();
+
+        if ($is_exist) {
+            return response()->json(['Exists' => true]);
+        } else {
+            DB::transaction(function () use ($request) {
+                NewSavedChecks::where('checks_id', $request->rep_check_id)->update(['status' => '']);
+
+                Checks::where('checks_id', $request->rep_check_id)->update(['check_status' => 'CLEARED']);
+
+                NewCheckReplacement::create([
+                    'checks_id' => $request->rep_check_id,
+                    'check_amount' => NumberHelper::float($request->rep_check_amount),
+                    'mode' => 'RE-DEPOSIT',
+                    'status' => 'BOUNCED',
+                    'penalty' => $request->rep_penalty,
+                    'ar_ds' => $request->rep_ar_ds,
+                    'reason' => $request->rep_reason,
+                    'user' => $request->user()->id,
+                    'date_time' => $request->rep_date,
+                    'bounce_id' => $request->rep_bounce_id,
+                    'rep_check_id' => 0,
+                    'check_amount_paid' => 0,
+                    'cash' => 0,
+                ]);
+
+                NewDsChecks::create([
+                    'checks_id' => $request->rep_check_id,
+                    'ds_no' => $request->rep_ar_ds,
+                    'date_deposit' => $request->rep_date,
+                    'user' => $request->user()->id,
+                    'date_time' => today()->toDateString(),
+                    'status' => '',
+                ]);
+                NewBounceCheck::where('id', $request->rep_bounce_id)->update(['status' => 'SETTLED CHECK']);
+
+            });
+            return redirect()->back();
+        }
+    }
     public function getCheckReplace(Request $request)
     {
         $q = NewCheckReplacement::joinCheckReplacementCustomer()
