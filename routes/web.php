@@ -123,6 +123,8 @@ Route::middleware('auth')->group(function () {
     Route::get('generate_report_due_pdc', [AllTransactionController::class, 'generateExcelDuePdcReports'])->name('generate_duepdcrep.checks');
 
     Route::post('bounce/cash/replacement', [AllTransactionController::class, 'bouncedCashReplacement'])->name('bounceCash.replace');
+    Route::post('bounce/check/replacement', [AllTransactionController::class, 'bouncedCheckReplacement'])->name('bounceCheck.replace');
+    Route::post('bounce/check/cash/replacement', [AllTransactionController::class, 'bouncedCheckCashReplacement'])->name('bounceCheckCash.replace');
 
     Route::get('/download/excel/{filename}', function ($filename) {
         $filePath = storage_path('app/' . $filename);

@@ -44,7 +44,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                                 </a-button>
                                 <a-button size="small" class="mx-1" @click="openUpDetailsFolder(record)">
                                     <template #icon>
-                                        <FolderOutlined />
+                                        <AuditOutlined />
                                     </template>
                                 </a-button>
                             </template>
@@ -82,22 +82,45 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                     <a-card class="mt-1">
                         <p class="text-center font-bold">Please Select Type Of Payment</p>
                         <a-button class="mt-2" block @click="cashButtonType" :class="{ 'active': isActive === 'cash' }">
+                            <template #icon>
+                                <DollarCircleOutlined />
+                            </template>
                             Cash
                         </a-button>
                         <a-button class="mt-2" block @click="checkButtonType"
                             :class="{ 'active': isActive === 'check' }">
+                            <template #icon>
+                                <CreditCardOutlined />
+                            </template>
                             Check
                         </a-button>
                         <a-button class="mt-2" block @click="cashCheckButtonType"
                             :class="{ 'active': isActive === 'check&cash' }">
+                            <template #icon>
+                                <IdcardOutlined />
+                            </template>
+
                             Check and cash
+                        </a-button>
+                        <a-button class="mt-2" block @click="reDepositButtonType"
+                            :class="{ 'active': isActive === 'reDeposit' }">
+                            <template #icon>
+                                <RollbackOutlined />
+                            </template>
+                            Re Deposit
                         </a-button>
                         <a-button class="mt-2" block @click="partialPayCashButtton"
                             :class="{ 'active': isActive === 'partialpaycash' }">
+                            <template #icon>
+                                <ApartmentOutlined />
+                            </template>
                             Partial Payment Cash
                         </a-button>
                         <a-button class="mt-2" block @click="partialPayCheckButtton"
                             :class="{ 'active': isActive === 'partialpaycheck' }">
+                            <template #icon>
+                                <PartitionOutlined />
+                            </template>
                             Partial Payment Check
                         </a-button>
                     </a-card>
@@ -207,7 +230,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                                             <SaveOutlined />
                                         </template>
                                         {{ cash_form.processing ?
-                                        "Submitting... " : "Submit cash type" }}
+                        "Submitting... " : "Submit cash type" }}
                                     </a-button>
                                 </a-col>
 
@@ -831,6 +854,89 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                                 </a-col>
                             </a-row>
                         </template>
+                        <template #extra v-if="reDepositShow">
+                            <p class="text-center font-bold"> RE-DEPOSIT TYPE
+                            </p>
+                            <a-breadcrumb class="mt-2 ml-1">
+                                <a-breadcrumb-item>Penalty Amount</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-input v-model:value="cash_form.rep_cash_penalty" class="mb-2"
+                                placeholder="Enter penalty amount">
+                                <template #prefix>
+                                    <MoneyCollectOutlined />
+                                </template>
+                                <template #suffix>
+                                    <a-tooltip title="Enter penalty amount here!">
+                                        <InfoCircleOutlined />
+                                    </a-tooltip>
+                                </template>
+                            </a-input>
+                            <div v-if="cash_form.errors.rep_cash_penalty" class="text-white"
+                                style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                                {{
+                        cash_form.errors.rep_cash_penalty }}
+                            </div>
+                            <a-breadcrumb class="mt-2 ml-1">
+                                <a-breadcrumb-item>AR # & DS #</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-input v-model:value="cash_form.rep_ar_ds" class="mb-2" placeholder="Enter AR# and DS#">
+                                <template #prefix>
+                                    <NumberOutlined />
+                                </template>
+                                <template #suffix>
+                                    <a-tooltip title="Enter AR and DS # here">
+                                        <InfoCircleOutlined />
+                                    </a-tooltip>
+                                </template>
+                            </a-input>
+                            <div v-if="cash_form.errors.rep_ar_ds" class="text-white"
+                                style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                                {{
+                        cash_form.errors.rep_ar_ds }}
+                            </div>
+                            <a-textarea v-model:value="cash_form.rep_reason" placeholder="Your reason of replace"
+                                :rows="3" />
+                            <div v-if="cash_form.errors.rep_reason" class="text-white"
+                                style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                                {{
+                        cash_form.errors.rep_reason }}
+                            </div>
+                            <a-breadcrumb class="mt-2 ml-1">
+                                <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-date-picker style="width: 100%;" v-model:value="cash_form.rep_date">
+                            </a-date-picker>
+                            <div v-if="cash_form.errors.rep_date" class="text-white"
+                                style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
+                                {{
+                        cash_form.errors.rep_date }}
+                            </div>
+                            <a-row :gutter="[16, 16]">
+
+                                <a-col :span="12">
+                                    <a-button block class="mb-10 mt-5"
+                                        @click="() => cash_form.reset('rep_cash_penalty', 'rep_ar_ds', 'repDatePicker', 'rep_date', 'rep_reason')"
+                                        type="primary" danger>
+                                        <template #icon>
+                                            <ClearOutlined />
+                                        </template>
+                                        Clear all inputs
+                                    </a-button>
+                                </a-col>
+                                <a-col :span="12">
+                                    <a-button block type="primary" @click="submit_cash_replacement" class="mt-5"
+                                        :loading="cash_form.processing">
+                                        <template #icon>
+                                            <SaveOutlined />
+                                        </template>
+                                        {{ cash_form.processing ?
+                                        "Submitting... " : "Submit cash type" }}
+                                    </a-button>
+                                </a-col>
+
+                            </a-row>
+
+                        </template>
                         <template #extra v-else-if="partialPayCash">
                             <div style="width: 500px">
                                 <p class="text-center font-bold">PARTIAL PAYMENTS CASH TYPE
@@ -1237,11 +1343,15 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 import Pagination from "@/Components/Pagination.vue";
 import { useForm } from '@inertiajs/vue3';
 import dayjs from 'dayjs';
+import debounce from 'lodash/debounce';
+import { message } from 'ant-design-vue';
 export default {
     props: {
-        data: Array,
+        data: Object,
         columns: Array,
-        pagination: Array,
+        currency: Object,
+        check_class: Object,
+        category: Object,
     },
     data() {
         return {
@@ -1251,10 +1361,17 @@ export default {
             checkShow: false,
             cashShow: false,
             cashCheckShow: false,
+            reDepositShow: false,
             partialPayCheck: false,
             partialPayCash: false,
             defaultShow: true,
             selectDataDetails: {},
+            allData: [],
+            checkOption: [],
+            bankOption: [],
+            appoffOption: [],
+            customerOption: [],
+            accountOption: [],
             cash_form: useForm({
                 rep_bounce_id: '',
                 rep_check_id: '',
@@ -1265,6 +1382,7 @@ export default {
                 rep_date: '',
             }),
             check_form: useForm({
+                rep_bounce_id: null,
                 rep_check_id: '',
                 checkFrom_id: null,
                 bank_id: null,
@@ -1284,6 +1402,7 @@ export default {
                 checkNumber: '',
             }),
             cash_check_form: useForm({
+                rep_bounce_id: null,
                 rep_check_id: '',
                 checkFrom_id: null,
                 bank_id: null,
@@ -1339,6 +1458,8 @@ export default {
             this.selectDataDetails = dataIn;
             this.cash_form.rep_check_id = dataIn.checks_id;
             this.cash_form.rep_bounce_id = dataIn.bounceId;
+            this.check_form.rep_bounce_id = dataIn.bounceId;
+            this.cash_check_form.rep_bounce_id = dataIn.bounceId;
             this.check_form.rep_check_id = dataIn.checks_id;
             this.cash_form.rep_cash_amount = dataIn.check_amount;
             this.check_form.rep_check_amount = dataIn.check_amount;
@@ -1370,6 +1491,40 @@ export default {
                     }
                 })
         },
+        submitReplacementCheck() {
+            this.check_form.transform((data) => ({
+                ...data,
+                rep_date: dayjs(data.rep_date).format('YYYY-MM-DD'),
+                rep_check_date: dayjs(data.rep_check_date).format('YYYY-MM-DD'),
+                rep_check_received: dayjs(data.rep_check_received).format('YYYY-MM-DD'),
+            })).post(route('bounceCheck.replace'), {
+                onSuccess: () => {
+                    this.check_form.reset();
+                    this.openModalReplace = false;
+                    message.success({
+                        content: "Successfully replaced the check!",
+                        duration: 3,
+                    });
+                }
+            });
+        },
+        submitReplacementCashCheck() {
+            this.cash_check_form.transform((data) => ({
+                ...data,
+                rep_date: dayjs(data.rep_date).format('YYYY-MM-DD'),
+                rep_check_date: dayjs(data.rep_check_date).format('YYYY-MM-DD'),
+                rep_check_received: dayjs(data.rep_check_received).format('YYYY-MM-DD'),
+            })).post(route('bounceCheckCash.replace'), {
+                onSuccess: () => {
+                    this.cash_check_form.reset();
+                    this.openModalReplace = false;
+                    message.success({
+                        content: "Successfully replaced the cash check!",
+                        duration: 3,
+                    });
+                }
+            });
+        },
         checkButtonType() {
             this.isActive = 'check';
             this.checkShow = true;
@@ -1378,6 +1533,7 @@ export default {
             this.cashChecShow = false;
             this.partialPayCheck = false;
             this.partialPayCash = false;
+            this.reDepositShow = false;
         },
         cashButtonType() {
             this.isActive = 'cash';
@@ -1387,6 +1543,7 @@ export default {
             this.cashChecShow = false;
             this.partialPayCheck = false;
             this.partialPayCash = false;
+            this.reDepositShow = false;
         },
         cashCheckButtonType() {
             this.isActive = 'check&cash';
@@ -1394,6 +1551,17 @@ export default {
             this.defaultShow = false;
             this.cashShow = false;
             this.cashCheckShow = true;
+            this.partialPayCheck = false;
+            this.partialPayCash = false;
+            this.reDepositShow = false;
+        },
+        reDepositButtonType() {
+            this.isActive = 'reDeposit';
+            this.checkShow = false;
+            this.defaultShow = false;
+            this.cashShow = false;
+            this.reDepositShow = true;
+            this.cashCheckShow = false;
             this.partialPayCheck = false;
             this.partialPayCash = false;
         },
@@ -1405,6 +1573,7 @@ export default {
             this.cashCheckShow = false;
             this.partialPayCheck = false;
             this.partialPayCash = true;
+            this.reDepositShow = false;
         },
         partialPayCheckButtton() {
             this.isActive = 'partialpaycheck';
@@ -1414,7 +1583,89 @@ export default {
             this.cashCheckShow = false;
             this.partialPayCheck = true;
             this.partialPayCash = false;
+            this.reDepositShow = false;
         },
+
+        handleSearchCheckFrom: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.checkOption = []
+                    const { data } = await axios.get(route('search.checkfrom', { search: query }))
+                    this.allData = data
+                    this.checkOption = this.allData.map(checkfrom => ({ title: checkfrom.department, value: checkfrom.department_id, label: checkfrom.department }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchBank: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.bankOption = []
+                    const { data } = await axios.get(route('search.bankName', { search: query }))
+                    this.allData = data
+                    this.bankOption = this.allData.map(bank => ({ title: bank.bankbranchname, value: bank.bank_id, label: bank.bankbranchname }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchCustomer: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.customerOption = []
+                    const { data } = await axios.get(route('search.customerName', { search: query }))
+                    this.allData = data
+                    this.customerOption = this.allData.map(customer => ({ title: customer.fullname, value: customer.customer_id, label: customer.fullname }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchAccountName: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.accountOption = []
+                    const { data } = await axios.get(route('search.customerName', { search: query }))
+                    this.allData = data
+                    this.accountOption = this.allData.map(account => ({ title: account.fullname, value: account.fullname, label: account.fullname }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchEmployee: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true
+                    this.allData = []
+                    this.appoffOption = []
+                    const { data } = await axios.get(route('search.employeeName', { search: query }))
+                    this.allData = data
+                    this.appoffOption = this.allData.map(employee => ({ title: employee.name, value: employee.name, label: employee.name }))
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
     }
 }
 </script>
