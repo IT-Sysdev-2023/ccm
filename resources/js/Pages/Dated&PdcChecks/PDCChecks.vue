@@ -184,22 +184,38 @@ const size = ref('large');
                     <a-card class="mt-1">
                         <p class="text-center font-bold">Please Select Type Of Payment</p>
                         <a-button class="mt-2" block @click="cashButtonType" :class="{ 'active': isActive === 'cash' }">
+                            <template #icon>
+                                <DollarCircleOutlined />
+                            </template>
                             Cash
                         </a-button>
                         <a-button class="mt-2" block @click="checkButtonType"
                             :class="{ 'active': isActive === 'check' }">
+                            <template #icon>
+                                <CreditCardOutlined />
+                            </template>
                             Check
                         </a-button>
                         <a-button class="mt-2" block @click="cashCheckButtonType"
                             :class="{ 'active': isActive === 'check&cash' }">
+                            <template #icon>
+                                <IdcardOutlined />
+                            </template>
+
                             Check and cash
                         </a-button>
                         <a-button class="mt-2" block @click="partialPayCashButtton"
                             :class="{ 'active': isActive === 'partialpaycash' }">
+                            <template #icon>
+                                <ApartmentOutlined />
+                            </template>
                             Partial Payment Cash
                         </a-button>
                         <a-button class="mt-2" block @click="partialPayCheckButtton"
                             :class="{ 'active': isActive === 'partialpaycheck' }">
+                            <template #icon>
+                                <PartitionOutlined />
+                            </template>
                             Partial Payment Check
                         </a-button>
                     </a-card>
@@ -1240,10 +1256,10 @@ const size = ref('large');
 
 
                                     </a-select>
-                                        <div v-if="partial_check_form.errors.currency_id" class="text-red-600"
-                                            style="font-size: 12px;">
-                                            {{
-                                            partial_check_form.errors.currency_id}}</div>
+                                    <div v-if="partial_check_form.errors.currency_id" class="text-red-600"
+                                        style="font-size: 12px;">
+                                        {{
+                                        partial_check_form.errors.currency_id}}</div>
                                     <a-breadcrumb class="mt-2 ml-1">
                                         <a-breadcrumb-item>Check Category</a-breadcrumb-item>
                                     </a-breadcrumb>
@@ -1610,6 +1626,9 @@ export default {
         afterClose() {
             this.cash_form.clearErrors();
             this.check_form.clearErrors();
+            this.cash_check_form.clearErrors();
+            this.partial_cash_form.clearErrors();
+            this.partial_check_form.clearErrors();
             this.defaultShow = true;
             this.checkShow = false;
             this.cashShow = false;
