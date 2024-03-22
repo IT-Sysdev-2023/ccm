@@ -860,7 +860,7 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                             <a-breadcrumb class="mt-2 ml-1">
                                 <a-breadcrumb-item>Penalty Amount</a-breadcrumb-item>
                             </a-breadcrumb>
-                            <a-input v-model:value="cash_form.rep_cash_penalty" class="mb-2"
+                            <a-input v-model:value="re_deposit_form.rep_penalty" class="mb-2"
                                 placeholder="Enter penalty amount">
                                 <template #prefix>
                                     <MoneyCollectOutlined />
@@ -871,15 +871,15 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                                     </a-tooltip>
                                 </template>
                             </a-input>
-                            <div v-if="cash_form.errors.rep_cash_penalty" class="text-white"
+                            <div v-if="re_deposit_form.errors.rep_penalty" class="text-white"
                                 style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
                                 {{
-                        cash_form.errors.rep_cash_penalty }}
+                        re_deposit_form.errors.rep_penalty }}
                             </div>
                             <a-breadcrumb class="mt-2 ml-1">
                                 <a-breadcrumb-item>AR # & DS #</a-breadcrumb-item>
                             </a-breadcrumb>
-                            <a-input v-model:value="cash_form.rep_ar_ds" class="mb-2" placeholder="Enter AR# and DS#">
+                            <a-input v-model:value="re_deposit_form.rep_ar_ds" class="mb-2" placeholder="Enter AR# and DS#">
                                 <template #prefix>
                                     <NumberOutlined />
                                 </template>
@@ -889,33 +889,33 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                                     </a-tooltip>
                                 </template>
                             </a-input>
-                            <div v-if="cash_form.errors.rep_ar_ds" class="text-white"
+                            <div v-if="re_deposit_form.errors.rep_ar_ds" class="text-white"
                                 style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
                                 {{
-                        cash_form.errors.rep_ar_ds }}
+                        re_deposit_form.errors.rep_ar_ds }}
                             </div>
-                            <a-textarea v-model:value="cash_form.rep_reason" placeholder="Your reason of replace"
+                            <a-textarea v-model:value="re_deposit_form.rep_reason" placeholder="Your reason of replace"
                                 :rows="3" />
-                            <div v-if="cash_form.errors.rep_reason" class="text-white"
+                            <div v-if="re_deposit_form.errors.rep_reason" class="text-white"
                                 style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
                                 {{
-                        cash_form.errors.rep_reason }}
+                        re_deposit_form.errors.rep_reason }}
                             </div>
                             <a-breadcrumb class="mt-2 ml-1">
                                 <a-breadcrumb-item>Replacement date</a-breadcrumb-item>
                             </a-breadcrumb>
-                            <a-date-picker style="width: 100%;" v-model:value="cash_form.rep_date">
+                            <a-date-picker style="width: 100%;" v-model:value="re_deposit_form.rep_date">
                             </a-date-picker>
-                            <div v-if="cash_form.errors.rep_date" class="text-white"
+                            <div v-if="re_deposit_form.errors.rep_date" class="text-white"
                                 style="font-size: 12px; border: 1px solid #FF5C58; border-radius: 5px; background: rgba(255, 99, 71, 0.6);">
                                 {{
-                        cash_form.errors.rep_date }}
+                        re_deposit_form.errors.rep_date }}
                             </div>
                             <a-row :gutter="[16, 16]">
 
                                 <a-col :span="12">
                                     <a-button block class="mb-10 mt-5"
-                                        @click="() => cash_form.reset('rep_cash_penalty', 'rep_ar_ds', 'repDatePicker', 'rep_date', 'rep_reason')"
+                                        @click="() => re_deposit_form.reset('rep_penalty', 'rep_ar_ds', 'repDatePicker', 'rep_date', 'rep_reason')"
                                         type="primary" danger>
                                         <template #icon>
                                             <ClearOutlined />
@@ -924,12 +924,12 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                                     </a-button>
                                 </a-col>
                                 <a-col :span="12">
-                                    <a-button block type="primary" @click="submit_cash_replacement" class="mt-5"
-                                        :loading="cash_form.processing">
+                                    <a-button block type="primary" @click="submitReDepositCheck" class="mt-5"
+                                        :loading="re_deposit_form.processing">
                                         <template #icon>
                                             <SaveOutlined />
                                         </template>
-                                        {{ cash_form.processing ?
+                                        {{ re_deposit_form.processing ?
                                         "Submitting... " : "Submit cash type" }}
                                     </a-button>
                                 </a-col>
@@ -1423,6 +1423,15 @@ export default {
                 accountnumber: '',
                 checkNumber: '',
             }),
+            re_deposit_form: useForm({
+                rep_bounce_id: null,
+                rep_check_id: null,
+                rep_penalty: '',
+                rep_reason: '',
+                rep_ar_ds: '',
+                rep_date: '',
+                rep_check_amount: '',
+            }),
             partial_cash_form: useForm({
                 rep_check_id: '',
                 rep_cash_amount: '',
@@ -1459,6 +1468,9 @@ export default {
             this.cash_form.rep_check_id = dataIn.checks_id;
             this.cash_form.rep_bounce_id = dataIn.bounceId;
             this.check_form.rep_bounce_id = dataIn.bounceId;
+            this.re_deposit_form.rep_bounce_id = dataIn.bounceId;
+            this.re_deposit_form.rep_check_id = dataIn.checks_id;
+            this.re_deposit_form.rep_check_amount = dataIn.check_amount;
             this.cash_check_form.rep_bounce_id = dataIn.bounceId;
             this.check_form.rep_check_id = dataIn.checks_id;
             this.cash_form.rep_cash_amount = dataIn.check_amount;
@@ -1524,6 +1536,22 @@ export default {
                     });
                 }
             });
+        },
+        submitReDepositCheck() {
+            this.re_deposit_form.transform((data) => ({
+                ...data,
+                rep_date: dayjs(data.rep_date).format('YYYY-MM-DD')
+            })).
+                post(route('bounceReDeposit.replace'), {
+                    onSuccess: () => {
+                        this.re_deposit_form.reset();
+                        this.openModalReplace = false;
+                        message.success({
+                            content: "Successfully Re Deposit check",
+                            duration: 3,
+                        });
+                    }
+                })
         },
         checkButtonType() {
             this.isActive = 'check';
@@ -1666,6 +1694,7 @@ export default {
                 this.isRetrieving = false;
             }
         }, 1000),
+
     }
 }
 </script>
