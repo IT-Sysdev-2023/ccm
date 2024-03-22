@@ -49,61 +49,79 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/profile', 'edit')->name('profile.edit');
+        Route::patch('/profile', 'update')->name('profile.update');
+        Route::delete('/profile', 'destroy')->name('profile.destroy');
+    });
 
 
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::post('/update_user/{id}', [UserController::class, 'updateUser'])->name('users.update');
-    Route::post('/create/user', [UserController::class, 'createUser'])->name('users.store');
-    Route::get('/user/details/{id}', [UserController::class, 'userDetails'])->name('users.details');
-    Route::get('/autoc_users/search', [UserController::class, 'searchUsers'])->name('users.search');
-    Route::get('/autoc_company/search', [UserController::class, 'searchCompany'])->name('company.search');
-    Route::get('/autoc_bunit/search', [UserController::class, 'searchBunit'])->name('bunit.search');
-    Route::get('/autoc_department/search', [UserController::class, 'searchDepartment'])->name('department.search');
-    Route::get('/export-excel/users', [UserController::class, 'exportExcel'])->name('users.excel');
-    Route::post('/resign-reactive/{id}', [UserController::class, 'resignReactive'])->name('users.resrec');
-    Route::get('/search_an_employee', [UserController::class, 'searchAnEmployeeName'])->name('searchAnEmployeeName');
+    //User Controller
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/users', 'index')->name('users.index');
+        Route::post('/update_user/{id}', 'updateUser')->name('users.update');
+        Route::post('/create/user', 'createUser')->name('users.store');
+        Route::get('/user/details/{id}', 'userDetails')->name('users.details');
+        Route::get('/autoc_users/search', 'searchUsers')->name('users.search');
+        Route::get('/autoc_company/search', 'searchCompany')->name('company.search');
+        Route::get('/autoc_bunit/search', 'searchBunit')->name('bunit.search');
+        Route::get('/autoc_department/search', 'searchDepartment')->name('department.search');
+        Route::get('/export-excel/users', 'exportExcel')->name('users.excel');
+        Route::post('/resign-reactive/{id}', 'resignReactive')->name('users.resrec');
+        Route::get('/search_an_employee', 'searchAnEmployeeName')->name('searchAnEmployeeName');
+    });
 
 
-    Route::get('datedpdcchecks-reports', [ReportController::class, 'datedpdcchecksreports'])->name('reports.dpdc');
-    Route::get('get_dated_pdc_checks_rep', [ReportController::class, 'get_dated_pdc_checks_rep'])->name('get.dpdc');
-    Route::get('generate_reps_to_excel', [ReportController::class, 'generate_reps_to_excel'])->name('excel.dpdc');
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('datedpdcchecks-reports', 'datedpdcchecksreports')->name('reports.dpdc');
+        Route::get('get_dated_pdc_checks_rep', 'get_dated_pdc_checks_rep')->name('get.dpdc');
+        Route::get('generate_reps_to_excel', 'generate_reps_to_excel')->name('excel.dpdc');
+    });
+
+    Route::controller(ImportUpdateController::class)->group(function () {
+        Route::get('/indeximportupdates', 'indeximportupdates')->name('indeximportupdates');
+        Route::get('instImport', 'instImportfunction')->name('instImport');
+    });
+
+    Route::controller(DsBounceTaggingController::class)->group(function () {
+        Route::get('/bounce_tagging', 'indexBounceTagging')->name('bounce_tagging');
+        Route::get('/ds_tagging', 'indexDsTagging')->name('ds_tagging');
+        Route::get('/get_bounce_tagging', 'get_bounce_tagging')->name('get_bounce_tagging');
+        Route::post('/tag_check_bounce', 'check_for.clearingtag_check_bounce')->name('tag_check_bounce');
+        Route::post('/submit-ds-tagging', 'submiCheckDs')->name('submit.ds.tagging');
+        Route::put('update-switch', 'updateSwitch')->name('update.switch');
+    });
+
+    Route::controller(CheckReceivingController::class)->group(function () {
+        Route::get('pdc_checks', 'pdc_index')->name('pdc.checks');
+        Route::get('dated_checks', 'dated_index')->name('dated.checks');
+    });
+
+
+    Route::controller(CheckReceivingController::class)->group(function () {
+        Route::get('check_for_clearing', 'getCheckForClearing')->name('check_for.clearing');
+        Route::get('search_dated', 'searchDatedChecks')->name('search_dated');
+        Route::get('check-uncheck', 'checkAndUncheck')->name('checkUncheck.checks');
+        Route::post('save_dated_leasing_pdc_checks', 'savedDatedLeasingpPdcChecks')->name('datedleaspdc.checks');
+        Route::get('pdc_check_clearing', 'pdcChecksCLearing')->name('pdc_clearing.checks');
+        Route::get('leasing_checks', 'getLeasingChecks')->name('leasing.checks');
+    });
 
 
 
+    Route::controller(AllTransactionController::class)->group(function () {
+        Route::get('check_manual_entry', 'getCheckManualEntry')->name('manual_entry.checks');
+        Route::get('merge_checks', 'getMergeChecks')->name('mergechecks.checks');
+        Route::get('bounce_checks', 'getBounceChecks')->name('bounce.checks');
+        Route::get('replace_checks', 'getCheckReplace')->name('replace.checks');
+        Route::get('partial_payments_checks', 'getPartialPayment')->name('partial_payments.checks');
+        Route::get('dated_check_pdc_reports', 'getDatedPdcReports')->name('dcpdc.checks');
+        Route::get('generate_report', 'generate_report')->name('generate_report.checks');
+        Route::get('get_due_pdc_reports', 'getDuepdcReports')->name('duePdcReports.checks');
+        Route::get('generate_report_due_pdc', 'generateExcelDuePdcReports')->name('generate_duepdcrep.checks');
+    });
 
-    Route::get('/indeximportupdates', [ImportUpdateController::class, 'indeximportupdates'])->name('indeximportupdates');
-    Route::get('instImport', [ImportUpdateController::class, 'instImportfunction'])->name('instImport');
-
-    Route::get('/bounce_tagging', [DsBounceTaggingController::class, 'indexBounceTagging'])->name('bounce_tagging');
-    Route::get('/ds_tagging', [DsBounceTaggingController::class, 'indexDsTagging'])->name('ds_tagging');
-    Route::get('/get_bounce_tagging', [DsBounceTaggingController::class, 'get_bounce_tagging'])->name('get_bounce_tagging');
-    Route::post('/tag_check_bounce', [DsBounceTaggingController::class, 'check_for.clearingtag_check_bounce'])->name('tag_check_bounce');
-    Route::post('/submit-ds-tagging', [DsBounceTaggingController::class, 'submiCheckDs'])->name('submit.ds.tagging');
-    Route::put('update-switch', [DsBounceTaggingController::class, 'updateSwitch'])->name('update.switch');
-
-    Route::get('pdc_checks', [DatedPdcChecksController::class, 'pdc_index'])->name('pdc.checks');
-    Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_index'])->name('dated.checks');
-
-    Route::get('check_for_clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
-    Route::get('search_dated', [CheckReceivingController::class, 'searchDatedChecks'])->name('search_dated');
-    Route::get('check-uncheck', [CheckReceivingController::class, 'checkAndUncheck'])->name('checkUncheck.checks');
-    Route::post('save_dated_leasing_pdc_checks', [CheckReceivingController::class, 'savedDatedLeasingpPdcChecks'])->name('datedleaspdc.checks');
-    Route::get('pdc_check_clearing', [CheckReceivingController::class, 'pdcChecksCLearing'])->name('pdc_clearing.checks');
-    Route::get('leasing_checks', [CheckReceivingController::class, 'getLeasingChecks'])->name('leasing.checks');
-
-
-    Route::get('check_manual_entry', [AllTransactionController::class, 'getCheckManualEntry'])->name('manual_entry.checks');
-    Route::get('merge_checks', [AllTransactionController::class, 'getMergeChecks'])->name('mergechecks.checks');
-    Route::get('bounce_checks', [AllTransactionController::class, 'getBounceChecks'])->name('bounce.checks');
-    Route::get('replace_checks', [AllTransactionController::class, 'getCheckReplace'])->name('replace.checks');
-    Route::get('partial_payments_checks', [AllTransactionController::class, 'getPartialPayment'])->name('partial_payments.checks');
-    Route::get('dated_check_pdc_reports', [AllTransactionController::class, 'getDatedPdcReports'])->name('dcpdc.checks');
-    Route::get('generate_report', [AllTransactionController::class, 'generate_report'])->name('generate_report.checks');
-    Route::get('get_due_pdc_reports', [AllTransactionController::class, 'getDuepdcReports'])->name('duePdcReports.checks');
-    Route::get('generate_report_due_pdc', [AllTransactionController::class, 'generateExcelDuePdcReports'])->name('generate_duepdcrep.checks');
 
     Route::get('/download/excel/{filename}', function ($filename) {
         $filePath = storage_path('app/' . $filename);
