@@ -32,6 +32,7 @@ class DsBounceTaggingController extends Controller
     }
     public function updateSwitch(Request $request)
     {
+        // dd(1);
         return $this->dsBounceTaggingService->updateSwitch($request);
     }
     public function indexDsTagging(Request $request)
@@ -52,10 +53,6 @@ class DsBounceTaggingController extends Controller
 
     }
 
-    public function dummy()
-    {
-        $dummy = Checks::with('checkreceived')->get();
-    }
 
     public function submiCheckDs(Request $request)
     {

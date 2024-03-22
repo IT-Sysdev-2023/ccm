@@ -445,16 +445,7 @@ export default {
                     dataIndex: 'ContactNo',
                     key: 'contac_no',
                 },
-                // {
-                //     title: 'Company',
-                //     dataIndex: 'acroname',
-                //     key: 'acroname',
-                // },
-                // {
-                //     title: 'Business Unit',
-                //     dataIndex: 'bname',
-                //     key: 'bname',
-                // },
+  
                 {
                     title: 'Department',
                     dataIndex: 'department',

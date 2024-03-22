@@ -31,8 +31,9 @@ const colors = "red";
                 </a-breadcrumb>
                 <a-row :gutter="[16, 16]">
                     <a-col :span="4">
-                        <a-card style="width: 200px; height: 90px" class="mb-5">
-                            <div style="display: flex">
+                        <p class="text-center mb-1 font-bold">check count</p>
+                        <a-card style="width: 100%; height: 90px" class="mb-5">
+                            <div class="flex justify-center items-center">
                                 <a-badge count="0" style="
                                         display: flex;
                                         justify-content: center;
@@ -40,14 +41,15 @@ const colors = "red";
                                     <a-avatar shape="square" size="large" src="../icons/abacus.png" />
                                 </a-badge>
                                 <p class="ml-10 font-bold">
-                                    {{ defaultTotal.count }}
+                                    {{ total.count }}
                                 </p>
                             </div>
                         </a-card>
                     </a-col>
                     <a-col :span="5">
-                        <a-card style="width: 250px; height: 90px" class="mb-5">
-                            <div style="display: flex">
+                        <p class="text-center mb-1 font-bold">total amount</p>
+                        <a-card style="width: 100%; height: 90px" class="mb-5">
+                            <div class="flex justify-center items-center">
                                 <a-badge count="0" style="
                                         display: flex;
                                         justify-content: center;
@@ -56,14 +58,16 @@ const colors = "red";
                                 </a-badge>
                                 <p class="ml-10 font-bold">
                                     ₱
-                                    {{ defaultTotal.totalSum.toLocaleString() }}
+                                    {{ total.totalSum.toLocaleString() }}
                                 </p>
                             </div>
                         </a-card>
                     </a-col>
                     <a-col :span="4">
-                        <a-card style="width: 180px; height: 90px" class="mb-5">
-                            <div style="display: flex">
+                        <p class="text-center mb-1 font-bold">due dates</p>
+                        <a-card style="width: 100%; height: 90px" class="mb-5">
+                            <div class="flex justify-center items-center">
+
                                 <a-badge count="0" style="
                                         display: flex;
                                         justify-content: center;
@@ -75,7 +79,7 @@ const colors = "red";
                         </a-card>
                     </a-col>
                     <a-col :span="11">
-                        <a-card style="width: 100%" class="mb-5;">
+                        <a-card style="width: 100%" class="mb-5 mt-5">
                             <a-row :gutter="[16, 16]" class="mt-2">
                                 <a-col :span="8">
                                     <a-tooltip :color="colors" :open="isTooltipVisibleNo" title="Ds Number is required">
@@ -99,14 +103,17 @@ const colors = "red";
                                 <a-col :span="8">
                                     <a-tooltip :color="colors" :open="isTooltipVisibleDt"
                                         title="Return Date is required ">
-                                        <a-date-picker v-model:value="dateDeposit" />
+                                        <a-date-picker v-model:value="dateDeposit" style="width: 100%" />
                                     </a-tooltip>
                                 </a-col>
                                 <a-col :span="8">
-                                    <a-button :loading="isLoadingbutton" style="
-                                            background-color: aquamarine;
-                                            color: rgb(92, 92, 92);
-                                        " ghost @click="submitToConButton()">submit ds number</a-button>
+
+                                    <a-button :loading="isLoadingbutton" style="width: 100%;" type="primary"
+                                        @click="submitToConButton()">
+                                        <template #icon>
+                                            <SaveOutlined />
+                                        </template>
+                                        submit ds number</a-button>
                                 </a-col>
                             </a-row>
                         </a-card>
@@ -139,6 +146,7 @@ const colors = "red";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import Pagination from "@/Components/Pagination.vue"
+import axios from "axios";
 
 export default {
     data() {
@@ -160,12 +168,13 @@ export default {
         columns: Array,
         ds_c_table: Array,
         type: Object,
-        total: Number,
-        due_dates: Number,
+        total: Array,
+        due_dates: Date,
     },
     computed: {},
     methods: {
         switchRecord() {
+            window.alert('click');
             this.switchValues = this.ds_c_table.data.map((value) =>
                 value.done === "" ? false : true
             );
@@ -282,37 +291,35 @@ export default {
         },
 
         async handleSwitchChange(data) {
-            // console.log(this.total.totalSum);
-            const res = await axios.put(route("update.switch"), {
+            const key = "updatable";
+
+            this.$inertia.put(route("update.switch"), {
                 id: data.checks_id,
                 isCheck: data.done,
                 checkAmount: data.check_amount,
                 oldAmount: this.total.totalSum,
                 oldCount: this.defaultTotal.count,
+            }, {
+                onSuccess: () => {
+                    if (data.done) {
+                        setTimeout(() => {
+                            message.success({
+                                content: "Checked Successfully!",
+                                key,
+                                duration: 2,
+                            });
+                        }, 100);
+                    } else {
+                        setTimeout(() => {
+                            message.warning({
+                                content: "Uncheck Successfully!",
+                                key,
+                                duration: 2,
+                            });
+                        }, 100);
+                    }
+                }
             });
-
-            this.defaultTotal.totalSum = res.data.newAmount;
-            this.defaultTotal.count = res.data.newCount;
-
-            const key = "updatable";
-
-            if (data.done) {
-                setTimeout(() => {
-                    message.success({
-                        content: "Checked Successfully!",
-                        key,
-                        duration: 2,
-                    });
-                }, 100);
-            } else {
-                setTimeout(() => {
-                    message.warning({
-                        content: "Uncheck Successfully!",
-                        key,
-                        duration: 2,
-                    });
-                }, 100);
-            }
         },
     },
     created() {

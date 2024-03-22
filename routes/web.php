@@ -93,7 +93,7 @@ Route::middleware('auth')->group(function () {
         Route::put('update-switch', 'updateSwitch')->name('update.switch');
     });
 
-    Route::controller(CheckReceivingController::class)->group(function () {
+    Route::controller(DatedPdcChecksController::class)->group(function () {
         Route::get('pdc_checks', 'pdc_index')->name('pdc.checks');
         Route::get('dated_checks', 'dated_index')->name('dated.checks');
     });
