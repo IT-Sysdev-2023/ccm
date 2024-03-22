@@ -79,7 +79,7 @@ const colors = "red";
                         </a-card>
                     </a-col>
                     <a-col :span="11">
-                        <a-card style="width: 100%" class="mb-5;">
+                        <a-card style="width: 100%" class="mb-5 mt-5">
                             <a-row :gutter="[16, 16]" class="mt-2">
                                 <a-col :span="8">
                                     <a-tooltip :color="colors" :open="isTooltipVisibleNo" title="Ds Number is required">
