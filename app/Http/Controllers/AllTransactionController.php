@@ -1051,15 +1051,17 @@ class AllTransactionController extends Controller
             // ->groupBy('new_check_replacement.checks_id')
             ->paginate(10);
 
-        $data->transform(function ($value) {
 
+        $data->transform(function ($value) {
             $check_replacement = NewCheckReplacement::checksMode($value->checks_id)
                 ->selectRaw('SUM(new_check_replacement.cash) as paid_cash, SUM(new_check_replacement.check_amount_paid) as paid_check')
                 ->first();
 
-            if ($value->bounce_id !== null) {
-                $bounceDate = NewBounceCheck::where('id', $value->bounce_id)->first();
-                $bounceDate = Date::parse($bounceDate->date_time)->toFormattedDateString();
+            $bounceDate = '';
+
+            if ($value->bounce_id != null) {
+                $bounceDateRecord = NewBounceCheck::where('id', $value->bounce_id)->first();
+                $bounceDate = Date::parse($bounceDateRecord->date_time)->toFormattedDateString();
             } else {
                 $bounceDate = 'REDEEMED ' . Date::parse($value->date_time)->toFormattedDateString();
             }
@@ -1075,6 +1077,10 @@ class AllTransactionController extends Controller
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             return $value;
         });
+
+        // dd($data->toArray());
+
+
 
 
 
