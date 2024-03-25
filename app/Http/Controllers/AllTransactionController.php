@@ -788,7 +788,7 @@ class AllTransactionController extends Controller
             ->join('users', 'users.id', '=', 'new_check_replacement.user')
             ->where('new_check_replacement.status', '!=', '')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            // ->where('mode', 'PARTIAL')
+            // ->where('mode', 'CHECK & CASH')
             ->orderBy('new_check_replacement.id', 'desc')
             ->select('*', 'new_check_replacement.date_time');
 
@@ -800,7 +800,7 @@ class AllTransactionController extends Controller
             '4' => $q->where('mode', 'RE-DEPOSIT'),
             default => $q
         };
-        $data = $q->paginate(10);
+        $data = $q->paginate(10)->withQueryString();
 
         return Inertia::render('Transaction/CheckReplace', [
             'data' => $data,
@@ -808,6 +808,239 @@ class AllTransactionController extends Controller
             'getModeProps' => $request->getMode
         ]);
     }
+
+    public function replacementDetails(Request $request)
+    {
+
+        // dd($request->bouncedId);
+
+        if ($request->bouncedId == 0) {
+            $data = NewCheckReplacement::join('checks', 'checks.checks_id', 'new_check_replacement.checks_id')
+                ->select('new_check_replacement.*', 'checks.approving_officer', )
+                ->where('new_check_replacement.checks_id', $request->checksId)
+                ->orderBy('id', 'ASC')
+                ->first();
+
+        } else {
+            $data = NewCheckReplacement::join('checks', 'checks.checks_id', 'new_check_replacement.checks_id')
+                ->select('new_check_replacement.*', 'checks.approving_officer')
+                ->where('new_check_replacement.bounce_id', $request->bouncedId)
+                ->orderBy('id', 'ASC')
+                ->first();
+        }
+
+
+        $repCheckNo = Checks::where('checks_id', $data->rep_check_id)->first();
+
+
+        $result = [];
+
+        if ($data->mode == 'CASH') {
+            $result = [
+                'mode' => $data->mode,
+                'check_amount' => number_format($data->check_amount, 2),
+                'check_amount_paid' => number_format($data->cash, 2),
+                'penalty' => number_format($data->penalty, 2),
+                'reason' => $data->reason,
+                'ar_ds' => $data->ar_ds,
+                'replacement_id' => $data->id,
+                'replacement_status' => $data->status,
+                'approving_officer' => $data->approving_officer
+            ];
+        } elseif ($data->mode == 'CHECK') {
+            $result = [
+                'mode' => $data->mode,
+                'check_no' => $repCheckNo->check_no,
+                'check_amount' => number_format($data->check_amount_paid, 2),
+                'penalty' => number_format($data->penalty, 2),
+                'reason' => $data->reason,
+                'ar_ds' => $data->ar_ds,
+                'replacement_id' => $data->id,
+                'replacement_status' => $data->status,
+                'rep_check_id' => $data->rep_check_id,
+                'approving_officer' => $data->approving_officer
+            ];
+        } elseif ($data->mode == 'CHECK & CASH') {
+            $result = [
+                'mode' => $data->mode,
+                'check_no' => $repCheckNo->check_no,
+                'check_amount' => number_format($data->check_amount_paid, 2),
+                'cash' => number_format($data->cash, 2),
+                'penalty' => number_format($data->penalty, 2),
+                'reason' => $data->reason,
+                'ar_ds' => $data->ar_ds,
+                'replacement_id' => $data->id,
+                'replacement_status' => $data->status,
+                'rep_check_id' => $data->rep_check_id,
+                'approving_officer' => $data->approving_officer
+            ];
+        } elseif ($data->mode == 'PARTIAL') {
+            $result = [
+                'mode' => $data->mode,
+                'checks_id' => $request->checksId,
+                'bounce_id' => $request->bouncedId
+            ];
+        } elseif ($data->mode == 'RE-DEPOSIT') {
+            $result = [
+                'mode' => $data->mode,
+                'penalty' => number_format($data->penalty, 2),
+                'reason' => $data->reason,
+                'ar_ds' => $data->ar_ds,
+                'replacement_id' => $data->id,
+                'replacement_status' => $data->status,
+                'approving_officer' => $data->approving_officer
+            ];
+        }
+
+        return response()->json($result);
+
+    }
+
+    public function replacedPartialPaymentTable(Request $request)
+    {
+
+        $result = [];
+        if ($request->bouncedId == 0) {
+            $data = NewCheckReplacement::join('users', 'users.id', '=', 'new_check_replacement.user')
+                ->where('new_check_replacement.checks_id', $request->checksId)->cursor();
+
+            $result = [];
+            $cash = 0;
+            $c = 0;
+            $balance = 0;
+            $amount = 0;
+
+            $data->each(function ($item) use (&$result, &$cash, &$c, &$balance, &$amount) {
+
+
+                $balanced = 0;
+
+                if ($c = 0) {
+                    $amount = $item->check_amount;
+                    $balance = $item->cash - $item->check_amount;
+                    if ($item->check_amount_paid != 0) {
+                        $balance = $item->check_amount - $item->check_amount_paid;
+                    }
+                } else {
+                    $amount = $balanced;
+                    $balance = $item->cash - $balance;
+                    if ($item->check_amount_paid != 0) {
+                        $balance = $item->check_amount_paid - $balance;
+                    }
+                }
+
+
+                $balanced = $amount - $cash;
+
+                $partialCheckNo = Checks::where('checks_id', $item->rep_check_id)->first();
+                if ($partialCheckNo) {
+                    $result[] = [
+                        'date' => date('m-d-Y', strtotime($item->date_time)),
+                        'balanced' => number_format($balanced, 2),
+                        'cash' => number_format($item->cash, 2),
+                        'check_paid' => number_format($item->check_amount_paid, 2),
+                        'balance' => number_format($balance, 2),
+                        'penalty' => number_format($item->penalty, 2),
+                        'checkNumber' => $partialCheckNo->check_no,
+                        'partial_check_amount' => NumberHelper::float($partialCheckNo->check_amount),
+                        'ar_ds' => $item->ar_ds,
+                        'name' => $item->name
+                    ];
+                } else {
+                    $result[] = [
+                        'date' => date('m-d-Y', strtotime($item->date_time)),
+                        'balanced' => number_format($balanced, 2),
+                        'cash' => number_format($item->cash, 2),
+                        'check_paid' => number_format($item->check_amount_paid, 2),
+                        'balance' => number_format($balance, 2),
+                        'penalty' => number_format($item->penalty, 2),
+                        'checkNumber' => 'N/A',
+                        'ar_ds' => $item->ar_ds,
+                        'name' => $item->name
+                    ];
+
+                }
+                $cash = $item->cash;
+                if ($item->check_amount_paid != 0) {
+                    $cash = $item->check_amount_paid;
+                }
+                $c++;
+            });
+
+        } else {
+
+            $data = NewCheckReplacement::join('users', 'users.id', '=', 'new_check_replacement.user')
+                ->where('new_check_replacement.bounce_id', $request->bouncedId)->cursor();
+
+            $result = [];
+            $cash = 0;
+            $c = 0;
+            $balance = 0;
+            $amount = 0;
+
+            $data->each(function ($item) use (&$result, &$cash, &$c, &$balance, &$amount) {
+                $balanced = 0;
+
+                if ($c = 0) {
+                    $amount = $item->check_amount;
+                    $balance = $item->cash - $item->check_amount;
+                    if ($item->check_amount_paid != 0) {
+                        $balance = $item->check_amount - $item->check_amount_paid;
+                    }
+                } else {
+                    $amount = $balanced;
+                    $balance = $item->cash - $balance;
+                    if ($item->check_amount_paid != 0) {
+                        $balance = $item->check_amount_paid - $balance;
+                    }
+                }
+
+
+                $balanced = $amount - $cash;
+
+                $partialCheckNo = Checks::where('checks_id', $item->rep_check_id)->first();
+                if ($partialCheckNo) {
+                    $result[] = [
+                        'date' => date('m-d-Y', strtotime($item->date_time)),
+                        'balanced' => number_format($balanced, 2),
+                        'cash' => number_format($item->cash, 2),
+                        'check_paid' => number_format($item->check_amount_paid, 2),
+                        'balance' => number_format($balance, 2),
+                        'penalty' => number_format($item->penalty, 2),
+                        'checkNumber' => $partialCheckNo->check_no . ' [ Check amount ] : ' . NumberHelper::float($partialCheckNo->check_amount),
+                        'ar_ds' => $item->ar_ds,
+                        'name' => $item->name
+
+                    ];
+                } else {
+                    $result[] = [
+                        'date' => date('m-d-Y', strtotime($item->date_time)),
+                        'balanced' => number_format($balanced, 2),
+                        'cash' => number_format($item->cash, 2),
+                        'check_paid' => number_format($item->check_amount_paid, 2),
+                        'balance' => number_format($balance, 2),
+                        'penalty' => number_format($item->penalty, 2),
+                        'checkNumber' => 'N/A',
+                        'ar_ds' => $item->ar_ds,
+                        'name' => $item->name
+
+                    ];
+
+                }
+                $cash = $item->cash;
+                if ($item->check_amount_paid != 0) {
+                    $cash = $item->check_amount_paid;
+                }
+                $c++;
+            });
+
+        }
+        // dd($result);
+        return response()->json($result);
+    }
+
+
+
     public function getPartialPayment(Request $request)
     {
         $data = NewCheckReplacement::joinCheckReplacementCustomer()

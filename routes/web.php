@@ -115,12 +115,15 @@ Route::middleware('auth')->group(function () {
     Route::get('merge/checks', [AllTransactionController::class, 'getMergeChecks'])->name('mergechecks.checks');
     Route::post('merge/checks/store', [AllTransactionController::class, 'getMergeCheckStore'])->name('mergecheckstore.checks');
     Route::get('bounce/checks', [AllTransactionController::class, 'getBounceChecks'])->name('bounce.checks');
-    Route::get('replace_checks', [AllTransactionController::class, 'getCheckReplace'])->name('replace.checks');
+    Route::get('replaced/checks', [AllTransactionController::class, 'getCheckReplace'])->name('replace.checks');
     Route::get('partial_payments_checks', [AllTransactionController::class, 'getPartialPayment'])->name('partial_payments.checks');
     Route::get('dated_check_pdc_reports', [AllTransactionController::class, 'getDatedPdcReports'])->name('dcpdc.checks');
     Route::get('generate_report', [AllTransactionController::class, 'generate_report'])->name('generate_report.checks');
     Route::get('get_due_pdc_reports', [AllTransactionController::class, 'getDuepdcReports'])->name('duePdcReports.checks');
-    Route::get('generate_report_due_pdc', [AllTransactionController::class, 'generateExcelDuePdcReports'])->name('generate_duepdcrep.checks');
+    Route::post('generate_report_due_pdc', [AllTransactionController::class, 'generateExcelDuePdcReports'])->name('generate_duepdcrep.checks');
+
+    Route::get('replacement/details/checks', [AllTransactionController::class, 'replacementDetails'])->name('replacment.details');
+    Route::get('replacement/partial/payment', [AllTransactionController::class, 'replacedPartialPaymentTable'])->name('replacmentpartialTable.details');
 
     Route::post('bounce/cash/replacement', [AllTransactionController::class, 'bouncedCashReplacement'])->name('bounceCash.replace');
     Route::post('bounce/check/replacement', [AllTransactionController::class, 'bouncedCheckReplacement'])->name('bounceCheck.replace');
