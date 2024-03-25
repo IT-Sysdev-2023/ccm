@@ -1,5 +1,5 @@
 <script setup>
-import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 </script>
 
 <template>
@@ -7,31 +7,64 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
 
     <TreasuryLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">This is treasury Dashboard</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                This is treasury Dashboard
+            </h2>
         </template>
 
         <div class="py-0">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mt-2 mb-3">
                     <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-                    <a-breadcrumb-item><a href="">Transaction </a></a-breadcrumb-item>
+                    <a-breadcrumb-item
+                        ><a href="">Transaction </a></a-breadcrumb-item
+                    >
                     <a-breadcrumb-item>Partial Payments</a-breadcrumb-item>
                 </a-breadcrumb>
                 <a-card>
-                    <a-table :data-source="data.data" :pagination="false" :columns="columns" size="small" bordered>
+                    <a-table
+                        :data-source="data.data"
+                        :pagination="false"
+                        :columns="columns"
+                        size="small"
+                        bordered
+                    >
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
-                                <a-button size="small" class="mx-1" @click="openUpDetails(record)">
+                                <a-button
+                                    size="small"
+                                    class="mx-1"
+                                    @click="openUpDetails(record)"
+                                >
                                     <template #icon>
                                         <SettingOutlined />
                                     </template>
                                 </a-button>
-                                <a-button size="small" class="mx-1" @click="openUpDetails(record)">
+                                <a-button
+                                    size="small"
+                                    class="mx-1"
+                                    @click="partialPaymentNotNull(record)"
+                                    v-if="record.bounce_id != null"
+                                >
                                     <template #icon>
-                                        <MoneyCollectOutlined />
+                                        <IdcardOutlined />
                                     </template>
                                 </a-button>
-                                <a-button size="small" class="mx-1" @click="openUpDetails(record)">
+                                <a-button
+                                    size="small"
+                                    class="mx-1"
+                                    @click="openUpDetails(record)"
+                                    v-else
+                                >
+                                    <template #icon>
+                                        <IdcardOutlined />
+                                    </template>
+                                </a-button>
+                                <a-button
+                                    size="small"
+                                    class="mx-1"
+                                    @click="openUpDetails(record)"
+                                >
                                     <template #icon>
                                         <CreditCardFilled />
                                     </template>
@@ -44,14 +77,35 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
             </div>
         </div>
     </TreasuryLayout>
+    <a-modal
+        v-model:open="openModalPPayment"
+        title="Basic Modal"
+        width="100%"
+        wrap-class-name="full-modal"
+        @ok="handleOk"
+    >
+    <a-card>
+        
+    </a-card>
+    </a-modal>
 </template>
 
 <script>
-import Pagination from "@/Components/Pagination.vue"
+import Pagination from "@/Components/Pagination.vue";
 export default {
     props: {
         data: Array,
         columns: Array,
-    }
-}
+    },
+    data() {
+        return {
+            openModalPPayment: false,
+        };
+    },
+    methods: {
+        partialPaymentNotNull() {
+            this.openModalPPayment = true;
+        },
+    },
+};
 </script>
