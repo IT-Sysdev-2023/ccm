@@ -500,8 +500,15 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
         :footer="null"
         style="top: 50px"
     >
-        <a-table :data-source="partialData" :columns="partialColumns">
-        </a-table>
+        <a-card style="border: none">
+            <a-table
+                bordered
+                :data-source="partialData"
+                size="small"
+                :columns="partialColumns"
+            >
+            </a-table>
+        </a-card>
     </a-modal>
 </template>
 
