@@ -1087,6 +1087,7 @@ class AllTransactionController extends Controller
 
     public function partialPaymentTableNotNull(Request $request)
     {
+        // dd($request->all());
         $partialsData = NewCheckReplacement::join('users', 'users.id', '=', 'new_check_replacement.user')
             ->where('checks_id', $request->checksId)
             ->where('mode', "PARTIAL")
@@ -1130,18 +1131,65 @@ class AllTransactionController extends Controller
 
 
     }
-    public function submitPartialPayment(Request $request)
-    {
 
+    public function partialPaymentTableNull(Request $request)
+    {
         // dd($request->all());
 
+        $partialsData = NewCheckReplacement::join('users', 'users.id', '=', 'new_check_replacement.user')
+            ->where('checks_id', $request->checksId)
+            ->where('mode', "PARTIAL")
+            ->cursor();
+
+        $checkData = Checks::where('checks_id', $request->checksId)
+            ->first();
+
+        $checkDate = strtotime($checkData->check_date);
+        $today = strtotime(now()->toDateString());
+
+        $seconds = $today - $checkDate;
+        $days = $seconds / 86400;
+
+        $result = [];
+
+        $total = 0;
+        $checkAmount = 0;
+        $count = 1;
+
+        $partialsData->each(function ($value) use (&$total, &$result, &$checkAmount, &$count) {
+            $result[] = [
+                'count' => $count++ . ".",
+                'cash' => number_format($value->cash, 2),
+                'cashAmountPaid' => number_format($value->check_amount_paid, 2),
+                'penalty' => number_format($value->penalty, 2),
+                'arDs' => $value->ar_ds,
+                'reason' => $value->reason,
+                'name' => $value->name,
+                'dateTime' => Date::parse($value->date_time)->toFormattedDateString(),
+            ];
+            $total += $value->cash;
+            $total += $value->check_amount_paid;
+            $checkAmount = $value->check_amount;
+        });
+
+        $grandTotal = $checkAmount - $total;
+
+        return response()->json([
+            'data' => $result,
+            'grandTotal' => NumberHelper::float($grandTotal),
+            'days' => $days,
+        ]);
+    }
+    public function submitPartialPayment(Request $request)
+    {
         DB::transaction(function () use ($request) {
             if ($request->bouncedId == 0) {
                 $transactions = $request->checkAmount - $request->checkAmountBalance;
                 if ($transactions == 0) {
-                    Checks::where('checks_id', $request->checksId)->update(['checks_status' => 'CASH']);
+                    Checks::where('checks_id', $request->checksId)->update(['check_status' => 'CASH']);
                 }
                 NewCheckReplacement::create([
+                    'rep_check_id' => 0,
                     'checks_id' => $request->checksId,
                     'check_amount' => $request->checkAmount,
                     'cash' => $request->checkAmountBalance,
@@ -1151,6 +1199,9 @@ class AllTransactionController extends Controller
                     'mode' => "PARTIAL",
                     'user' => Auth::user()->id,
                     'date_time' => $request->parRepDate,
+                    'bounce_id' => 0,
+                    'check_amount_paid' => 0,
+                    'status' => '',
                 ]);
             } else {
                 $transactions = $request->checkAmount - $request->checkAmountBalance;
@@ -1175,6 +1226,63 @@ class AllTransactionController extends Controller
                 ]);
             }
         });
+    }
+    public function getBounceCheckType(Request $request)
+    {
+
+        if ($request->type == 1) {
+            $data = NewBounceCheck::join('checks', 'checks.checks_id', '=', 'new_bounce_check.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->where('new_bounce_check.status', '=', '')
+                ->where('checks.businessunit_id', Auth::user()->businessunit_id)
+                ->select(
+                    'check_received',
+                    'check_date',
+                    'new_bounce_check.date_time',
+                    'fullname',
+                    'check_no',
+                    'new_bounce_check.checks_id',
+                    'check_amount',
+                    'new_bounce_check.id',
+                    'checks.account_name',
+                    'checks.account_no'
+                )->cursor();
+
+            $result = [];
+
+            $data->each(function ($value) use (&$result) {
+                $result[] =
+                    [
+                        'bounce_id' => $value->id,
+                        'customer' => $value->fullname,
+                        'amount' => $value->check_amount,
+                    ];
+            });
+        } else {
+            $data = NewSavedChecks::join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->where('check_date', '>', DB::raw('check_received'))
+                ->where('new_saved_checks.status', "")
+                ->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('new_ds_checks')
+                        ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+                })
+                ->where('checks.businessunit_id', Auth::user()->businessunit_id)
+                ->cursor();
+
+            $result = [];
+
+            $data->each(function ($value) use (&$result) {
+                $result[] =
+                    [
+                        'bounce_id' => $value->id,
+                        'customer' => $value->fullname,
+                        'amount' => $value->check_amount,
+                    ];
+            });
+        }
+        return response()->json($result);
     }
     public function getDatedPdcReports(Request $request)
     {
