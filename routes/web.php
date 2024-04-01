@@ -49,35 +49,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-
-    Route::controller(ProfileController::class)->group(function () {
-        Route::get('/profile', 'edit')->name('profile.edit');
-        Route::patch('/profile', 'update')->name('profile.update');
-        Route::delete('/profile', 'destroy')->name('profile.destroy');
-    });
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
-    //User Controller
-    Route::controller(UserController::class)->group(function () {
-        Route::get('/users', 'index')->name('users.index');
-        Route::post('/update_user/{id}', 'updateUser')->name('users.update');
-        Route::post('/create/user', 'createUser')->name('users.store');
-        Route::get('/user/details/{id}', 'userDetails')->name('users.details');
-        Route::get('/autoc_users/search', 'searchUsers')->name('users.search');
-        Route::get('/autoc_company/search', 'searchCompany')->name('company.search');
-        Route::get('/autoc_bunit/search', 'searchBunit')->name('bunit.search');
-        Route::get('/autoc_department/search', 'searchDepartment')->name('department.search');
-        Route::get('/export-excel/users', 'exportExcel')->name('users.excel');
-        Route::post('/resign-reactive/{id}', 'resignReactive')->name('users.resrec');
-        Route::get('/search_an_employee', 'searchAnEmployeeName')->name('searchAnEmployeeName');
-    });
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::post('update_user/{id}', [UserController::class, 'updateUser'])->name('users.update');
+    Route::post('create/user', [UserController::class, 'createUser'])->name('users.store');
+    Route::get('user/details/{id}', [UserController::class, 'userDetails'])->name('users.details');
+    Route::get('autoc_users/search', [UserController::class, 'searchUsers'])->name('users.search');
+    Route::get('autoc_company/search', [UserController::class, 'searchCompany'])->name('company.search');
+    Route::get('autoc_bunit/search', [UserController::class, 'searchBunit'])->name('bunit.search');
+    Route::get('autoc_department/search', [UserController::class, 'searchDepartment'])->name('department.search');
+    Route::get('export-excel/users', [UserController::class, 'exportExcel'])->name('users.excel');
+    Route::post('resign-reactive/{id}', [UserController::class, 'resignReactive'])->name('users.resrec');
+    Route::get('search_an_employee', [UserController::class, 'searchAnEmployeeName'])->name('searchAnEmployeeName');
 
 
-    Route::controller(ReportController::class)->group(function () {
-        Route::get('datedpdcchecks-reports', 'datedpdcchecksreports')->name('reports.dpdc');
-        Route::get('get_dated_pdc_checks_rep', 'get_dated_pdc_checks_rep')->name('get.dpdc');
-        Route::get('generate_reps_to_excel', 'generate_reps_to_excel')->name('excel.dpdc');
-    });
+    Route::get('dated/pdc/checks/reports', [ReportController::class, 'datedpdcchecksreports'])->name('reports.dpdc');
+    Route::get('get_dated_pdc_checks_rep', [ReportController::class, 'get_dated_pdc_checks_rep'])->name('get.dpdc');
+    Route::get('generate_reps_to_excel', [ReportController::class, 'generate_reps_to_excel'])->name('excel.dpdc');
+
+
+
 
     Route::controller(ImportUpdateController::class)->group(function () {
         Route::get('/indeximportupdates', 'indeximportupdates')->name('indeximportupdates');

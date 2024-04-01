@@ -17,189 +17,156 @@ const placement = "bottom";
 </script>
 
 <template>
-    <div class="">
-        <header
-            v-if="$slots.header"
-            style="width: 100%; margin-top: -5px; background: #001529"
-        >
-            <div class="px-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex shrink-0">
-                        <a
-                            aria-current="page"
-                            class="flex items-center"
-                            href="/"
-                        >
-                            <img
-                                class="h-7 w-auto"
-                                src="/Logo/treasury.png"
-                                alt=""
-                            />
-                            <p class="sr-only">Website Title</p>
-                        </a>
-                    </div>
-                    <div
-                        class="hidden md:flex md:items-center md:justify-center md:gap-5"
-                    >
-                        <Link
-                            aria-current="page"
-                            class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-black"
-                            :href="route('admin_dashboard')"
-                            >Dashboard</Link
-                        >
-                        <!-- <a class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-white"
-                                href="#">Reports</a> -->
-                        <a-dropdown arrow :placement="placement">
-                            <a
-                                class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white-100 hover:text-white-900"
-                                href="#"
-                                >Reports</a
-                            >
-                            <template #overlay>
-                                <a-menu class="hovering">
-                                    <a-menu-item>
-                                        <a
-                                            style="color: white"
-                                            href="/datedpdcchecks-reports"
-                                            >Dated/PostDated Checks Reports</a
-                                        >
-                                    </a-menu-item>
-                                </a-menu>
-                            </template>
-                        </a-dropdown>
-                        <a
-                            class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-black"
-                            href="/users"
-                            >Usermaintinance</a
-                        >
-                        <a
-                            class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-black"
-                            href="#"
-                            >Adjustments</a
-                        >
-                        <a
-                            class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-white hover:text-black"
-                            href="#"
-                            >MasterFile</a
-                        >
-                    </div>
-                    <div class="flex items-center justify-end gap-3">
-                        <a-popover
-                            v-model:open="visible"
-                            title="Settings"
-                            trigger="click"
-                        >
-                            <div style="color: white; font-size: 25px">
-                                <UserOutlined />
-                            </div>
-
-                            <template #content>
-                                <div class="max-w-xs bg-white p-4 rounded-md">
-                                    <div
-                                        class="flex items-center justify-center mb-4"
-                                    >
-                                        <img
-                                            src="https://placekitten.com/100/100"
-                                            alt="Profile Picture"
-                                            class="rounded-full w-16 h-16"
-                                        />
-                                    </div>
-                                    <div class="text-center">
-                                        <h2 class="text-lg font-semibold">
-                                            {{ $page.props.auth.user.name }}
-                                        </h2>
-                                        <p class="text-white font-bold">
-                                            Admin
-                                        </p>
-                                    </div>
-                                    <ul class="mt-4">
-                                        <li class="flex items-center space-x-2">
-                                            <svg
-                                                class="w-4 h-4 text-white"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M3 12h18M3 6h18M3 18h18"
-                                                ></path>
-                                            </svg>
-                                            <span class="text-white"
-                                                >Location: New York</span
-                                            >
-                                        </li>
-                                        <li class="flex items-center space-x-2">
-                                            <svg
-                                                class="w-4 h-4 text-white"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                                                ></path>
-                                            </svg>
-                                            <span class="text-white"
-                                                >Username:
-                                                {{
-                                                    $page.props.auth.user
-                                                        .username
-                                                }}
-                                            </span>
-                                        </li>
-                                        <li class="flex items-center space-x-2">
-                                            <svg
-                                                class="w-4 h-4 text-white"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M4 6h16M4 12h16m-7 6h7"
-                                                ></path>
-                                            </svg>
-                                            <span class="text-white">{{
-                                                $page.props.auth.user.ContactNo
-                                            }}</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="text-center">
-                                    <a-button class="mt-2">
-                                        <NavLink
-                                            :href="route('logout')"
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Logout
-                                        </NavLink>
-                                    </a-button>
-                                </div>
-                            </template>
-                        </a-popover>
-                    </div>
+    <a-layout style="min-height: 100vh">
+        <a-layout-sider v-model:collapsed="collapsed" collapsible>
+            <div class="flex p-1 ml-5 mt-1">
+                <img
+                    style="height: 50px; border-radius: 50%"
+                    src="https://preview.redd.it/i-got-bored-so-i-decided-to-draw-a-random-image-on-the-v0-4ig97vv85vjb1.png?width=640&crop=smart&auto=webp&s=22ed6cc79cba3013b84967f32726d087e539b699"
+                    alt="logo"
+                />
+                <div class="ml-2 flex justify-center items-center text-white">
+                    {{ $page.props.auth.user.username }}
                 </div>
             </div>
-        </header>
 
-        <!-- Page Content -->
-        <main>
-            <slot />
-        </main>
-    </div>
+            <a-menu
+                theme="dark"
+                v-model:selectedKeys="selectedKeys"
+                mode="inline"
+            >
+                <a-menu-item
+                    key="1"
+                    :class="{
+                        'bg-gray-200 text-black':
+                            route().current('admin_dashboard'),
+                        'text-black-100': !route().current('admin_dashboard'),
+                    }"
+                >
+                    <DashboardOutlined />
+                    <span
+                        ><Link :href="route('admin_dashboard')"
+                            >Dashboard</Link
+                        ></span
+                    >
+                </a-menu-item>
+                <a-menu-item
+                    key="2"
+                    :class="{
+                        'bg-gray-200 text-black':
+                            route().current('users.index'),
+                        'text-black-100': !route().current('users.index'),
+                    }"
+                >
+                    <UserOutlined />
+                    <span><Link :href="route('users.index')">User</Link></span>
+                </a-menu-item>
+                <a-sub-menu key="sub1">
+                    <template #title>
+                        <span>
+                            <FundProjectionScreenOutlined />
+                            <span>Adjusments</span>
+                        </span>
+                    </template>
+                    <a-menu-item key="2">
+                        <EditOutlined />
+                        <span>Edit Details</span>
+                    </a-menu-item>
+                    <a-menu-item key="2">
+                        <WalletOutlined />
+                        <span>Deposit</span>
+                    </a-menu-item>
+                    <a-menu-item key="2">
+                        <ShakeOutlined />
+                        <span>Bounce</span>
+                    </a-menu-item>
+                    <a-menu-item key="2">
+                        <RollbackOutlined />
+                        <span>Replacement</span>
+                    </a-menu-item>
+                </a-sub-menu>
+                <a-sub-menu key="sub2">
+                    <template #title>
+                        <span>
+                            <FileDoneOutlined />
+                            <span>Master File</span>
+                        </span>
+                    </template>
+                    <a-menu-item key="2">
+                        <AppleOutlined />
+                        <span>App Config</span>
+                    </a-menu-item>
+                </a-sub-menu>
+                <a-sub-menu key="sub3">
+                    <template #title>
+                        <span>
+                            <DingtalkOutlined />
+                            <span>Reports</span>
+                        </span>
+                    </template>
+                    <a-menu-item
+                        key="2"
+                        :class="{
+                            'bg-blue-600 text-white':
+                                route().current('reports.dpdc'),
+                            'text-black-100': !route().current('reports.dpdc'),
+                        }"
+                    >
+                        <CalendarOutlined />
+                        <span
+                            ><Link :href="route('reports.dpdc')"
+                                >Dated / Pdc</Link
+                            ></span
+                        >
+                    </a-menu-item>
+                    <a-menu-item key="2">
+                        <WalletOutlined />
+                        <span>Deposited</span>
+                    </a-menu-item>
+                    <a-menu-item key="2">
+                        <ShakeOutlined />
+                        <span>Bounce</span>
+                    </a-menu-item>
+                    <a-menu-item key="2">
+                        <TagOutlined />
+                        <span>Redeem</span>
+                    </a-menu-item>
+                    <a-menu-item key="2">
+                        <RobotOutlined />
+                        <span>Alta Cita</span>
+                    </a-menu-item>
+                </a-sub-menu>
+            </a-menu>
+        </a-layout-sider>
+        <a-layout>
+            <a-layout-header theme="dark" />
+            <a-layout-content style="margin: 16px">
+                <div
+                    :style="{
+                        padding: '24px',
+                        background: '#fff',
+                        minHeight: '360px',
+                    }"
+                >
+                    <slot />
+                </div>
+            </a-layout-content>
+            <a-layout-footer style="text-align: center">
+                Ant Design ©2018 Created by Ant UED
+            </a-layout-footer>
+        </a-layout>
+    </a-layout>
 </template>
+<script>
+export default {
+    data() {
+        return {
+            collapsed: false,
+        };
+    },
+};
+</script>
+
 <style scoped>
 .icons {
     margin-top: 1px;

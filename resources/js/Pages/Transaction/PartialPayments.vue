@@ -155,7 +155,18 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             placeholder="input with clear icon"
                             allow-clear
                         />
-
+                        <div
+                            v-if="partial_pay_form.errors.parArDs"
+                            class="text-white"
+                            style="
+                                font-size: 12px;
+                                border: 1px solid #ff5c58;
+                                border-radius: 5px;
+                                background: rgba(255, 99, 71, 0.6);
+                            "
+                        >
+                            {{ partial_pay_form.errors.parArDs }}
+                        </div>
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
                                 <CalendarOutlined />
@@ -168,6 +179,18 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             v-model:value="partial_pay_form.parRepDate"
                             style="width: 100%"
                         />
+                        <div
+                            v-if="partial_pay_form.errors.parRepDate"
+                            class="text-white"
+                            style="
+                                font-size: 12px;
+                                border: 1px solid #ff5c58;
+                                border-radius: 5px;
+                                background: rgba(255, 99, 71, 0.6);
+                            "
+                        >
+                            {{ partial_pay_form.errors.parRepDate }}
+                        </div>
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
                                 <home-outlined />
@@ -181,6 +204,18 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             placeholder="Enter here"
                             :rows="4"
                         />
+                        <div
+                            v-if="partial_pay_form.errors.parReason"
+                            class="text-white"
+                            style="
+                                font-size: 12px;
+                                border: 1px solid #ff5c58;
+                                border-radius: 5px;
+                                background: rgba(255, 99, 71, 0.6);
+                            "
+                        >
+                            {{ partial_pay_form.errors.parReason }}
+                        </div>
                         <div class="flex justify-between mt-5">
                             <a-button
                                 style="width: 100%; background-color: gainsboro"
@@ -300,6 +335,18 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             placeholder="input with clear icon"
                             allow-clear
                         />
+                        <div
+                            v-if="par_pay_check_form.errors.rep_ar_ds"
+                            class="text-white"
+                            style="
+                                font-size: 12px;
+                                border: 1px solid #ff5c58;
+                                border-radius: 5px;
+                                background: rgba(255, 99, 71, 0.6);
+                            "
+                        >
+                            {{ par_pay_check_form.errors.rep_ar_ds }}
+                        </div>
 
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
@@ -313,6 +360,18 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             v-model:value="par_pay_check_form.rep_date"
                             style="width: 100%"
                         />
+                        <div
+                            v-if="par_pay_check_form.errors.rep_date"
+                            class="text-white"
+                            style="
+                                font-size: 12px;
+                                border: 1px solid #ff5c58;
+                                border-radius: 5px;
+                                background: rgba(255, 99, 71, 0.6);
+                            "
+                        >
+                            {{ par_pay_check_form.errors.rep_date }}
+                        </div>
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
                                 <home-outlined />
@@ -326,6 +385,18 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             placeholder="Enter here"
                             :rows="4"
                         />
+                        <div
+                            v-if="par_pay_check_form.errors.rep_reason"
+                            class="text-white"
+                            style="
+                                font-size: 12px;
+                                border: 1px solid #ff5c58;
+                                border-radius: 5px;
+                                background: rgba(255, 99, 71, 0.6);
+                            "
+                        >
+                            {{ par_pay_check_form.errors.rep_reason }}
+                        </div>
                     </a-card>
                 </a-card>
             </a-col>
@@ -562,6 +633,18 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                         </a-tooltip>
                                     </template>
                                 </a-input>
+                                <div
+                                    v-if="par_pay_check_form.errors.checkAmount"
+                                    class="text-white"
+                                    style="
+                                        font-size: 12px;
+                                        border: 1px solid #ff5c58;
+                                        border-radius: 5px;
+                                        background: rgba(255, 99, 71, 0.6);
+                                    "
+                                >
+                                    {{ par_pay_check_form.errors.checkAmount }}
+                                </div>
                                 <a-breadcrumb class="mt-2 ml-1">
                                     <a-breadcrumb-item
                                         >Approving Officer</a-breadcrumb-item
