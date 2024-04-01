@@ -1193,6 +1193,20 @@ class AllTransactionController extends Controller
     }
     public function submitPartialPayment(Request $request)
     {
+        // dd($request->all());
+        $request->validate(
+            [
+                'parArDs' => 'required',
+                'parReason' => 'required',
+                'parRepDate' => 'required|date',
+            ],
+            [
+                'parArDs.required' => 'The Ar Ds field is required',
+                'parReason.required' => 'The Reason field is required',
+                'parRepDate.required' => 'The Replacement date field is required',
+                'parRepDate.date' => 'The Replacement date field is required',
+            ]
+        );
         DB::transaction(function () use ($request) {
             if ($request->bouncedId == 0) {
                 $transactions = $request->checkAmount - $request->checkAmountBalance;
