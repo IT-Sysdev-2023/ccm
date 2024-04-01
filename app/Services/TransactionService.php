@@ -155,8 +155,7 @@ class TransactionService extends ExcelWriter
             $subtotal = 0;
 
             $item->each(function ($value, $key) use (&$countTable, &$progressCount, &$subtotal, &$reportCollection, $department, $item, $recordCount, &$excel_row, $recordSearch) {
-
-
+                // dd(1);
                 $statusType = '';
 
                 if (!$this->status) {
@@ -264,7 +263,7 @@ class TransactionService extends ExcelWriter
     {
         $this->executionTime();
 
-        if (!empty($dateRange[0]) && !empty($dateRange[1])) {
+        if (!empty ($dateRange[0]) && !empty ($dateRange[1])) {
             $date = Date::parse($dateRange[0])->toFormattedDateString() . ' To: ' . Date::parse($dateRange[1])->toFormattedDateString();
         } else {
             $date = today()->toFormattedDateString();

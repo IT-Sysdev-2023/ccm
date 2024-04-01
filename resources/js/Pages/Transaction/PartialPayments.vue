@@ -61,9 +61,20 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                     </template>
                                 </a-button>
                                 <a-button
+                                    v-if="record.bounce_id != 0"
                                     size="small"
                                     class="mx-1"
-                                    @click="partialPaymenCheckNotNull(record)"
+                                    @click="partialPaymentCheckNotNull(record)"
+                                >
+                                    <template #icon>
+                                        <CreditCardFilled />
+                                    </template>
+                                </a-button>
+                                <a-button
+                                    v-else
+                                    size="small"
+                                    class="mx-1"
+                                    @click="partialPaymentCheckNull(record)"
                                 >
                                     <template #icon>
                                         <CreditCardFilled />
@@ -94,7 +105,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             <p class="text-gray-600 font-bold">
                                 Bounce check amout:
                             </p>
-                            <p class="font-bold">
+                            <p class="font-bold underline text-blue-600">
                                 {{ selectedPartialData.check_amount }}
                             </p>
                         </div>
@@ -102,13 +113,13 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             <p class="text-gray-600 font-bold">
                                 Bounce check balance:
                             </p>
-                            <p class="font-bold">
+                            <p class="font-bold underline text-blue-600">
                                 {{ grandTotal.toLocaleString() }}
                             </p>
                         </div>
                     </a-card>
                     <a-card class="mt-1">
-                        <h4 class="text-center mb-9 text-blue-800">
+                        <h4 class="text-center mb-9">
                             Please fill the input fields
                         </h4>
                         <a-breadcrumb class="mt-3">
@@ -239,7 +250,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             <p class="text-gray-600 font-bold">
                                 Bounce check amout:
                             </p>
-                            <p class="font-bold">
+                            <p class="font-bold underline text-blue-600">
                                 {{ selectedPartialData.check_amount }}
                             </p>
                         </div>
@@ -247,13 +258,13 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             <p class="text-gray-600 font-bold">
                                 Bounce check balance:
                             </p>
-                            <p class="font-bold">
+                            <p class="font-bold underline text-blue-600">
                                 {{ grandTotal.toLocaleString() }}
                             </p>
                         </div>
                     </a-card>
                     <a-card class="mt-1">
-                        <h4 class="text-center mb-9 text-blue-800">
+                        <h4 class="text-center mb-9">
                             Please fill the input fields
                         </h4>
                         <a-breadcrumb class="mt-3">
@@ -263,7 +274,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             <a-breadcrumb-item>Cash amount</a-breadcrumb-item>
                         </a-breadcrumb>
                         <a-input
-                            v-model:value="partial_pay_form.checkAmount"
+                            v-model:value="par_pay_check_form.rep_check_amount"
                             placeholder="input with clear icon"
                             allow-clear
                         />
@@ -274,7 +285,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             <a-breadcrumb-item>Penalty</a-breadcrumb-item>
                         </a-breadcrumb>
                         <a-input
-                            v-model:value="partial_pay_form.parPenalty"
+                            v-model:value="par_pay_check_form.rep_check_penalty"
                             placeholder="input with clear icon"
                             allow-clear
                         />
@@ -285,7 +296,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             <a-breadcrumb-item>Ar# and Ds#</a-breadcrumb-item>
                         </a-breadcrumb>
                         <a-input
-                            v-model:value="partial_pay_form.parArDs"
+                            v-model:value="par_pay_check_form.rep_ar_ds"
                             placeholder="input with clear icon"
                             allow-clear
                         />
@@ -299,7 +310,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             >
                         </a-breadcrumb>
                         <a-date-picker
-                            v-model:value="partial_pay_form.parRepDate"
+                            v-model:value="par_pay_check_form.rep_date"
                             style="width: 100%"
                         />
                         <a-breadcrumb class="mt-3">
@@ -311,7 +322,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             >
                         </a-breadcrumb>
                         <a-textarea
-                            v-model:value="partial_pay_form.parReason"
+                            v-model:value="par_pay_check_form.rep_reason"
                             placeholder="Enter here"
                             :rows="4"
                         />
@@ -322,7 +333,6 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                 <a-card style="background-color: #f5f7f8">
                     <a-collapse
                         v-model:activeKey="activeKey"
-                        @change="changeActivekey"
                         style="background-color: white"
                     >
                         <a-collapse-panel
@@ -858,9 +868,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                             block
                                             class="mt-2"
                                             type="primary"
-                                            @click="
-                                                submitReplacementCheckPartial
-                                            "
+                                            @click="saveChangesPartialCheck"
                                             :loading="
                                                 par_pay_check_form.processing
                                             "
@@ -887,6 +895,9 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             <a-row :gutter="[16, 16]" class="mt-4">
                                 <a-col :span="8">
                                     <a-select
+                                        v-model:value="
+                                            par_pay_check_form.conType
+                                        "
                                         :disabled="!isValid()"
                                         ref="select"
                                         placeholder="Choose a type "
@@ -905,7 +916,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                     <a-select
                                         placeholder="Please choose a check type"
                                         v-model:value="
-                                            par_pay_check_form.checkType
+                                            par_pay_check_form.conCheckPartial
                                         "
                                         style="width: 100%"
                                         :disabled="dataCheckType.length <= 0"
@@ -913,7 +924,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                         <a-select-option
                                             v-for="(data, key) in dataCheckType"
                                             :key="key"
-                                            v-model:value="data.bounce_id"
+                                            v-model:value="data.checkCred"
                                             >{{ data.customer }} - Check amount:
                                             {{ data.amount }}</a-select-option
                                         ></a-select
@@ -943,10 +954,14 @@ import axios from "axios";
 import { useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
+import debounce from "lodash/debounce";
 export default {
     props: {
-        data: {},
+        data: Object,
         columns: Array,
+        currency: Object,
+        check_class: Object,
+        category: Object,
     },
     data() {
         return {
@@ -958,6 +973,13 @@ export default {
             dataCheckType: [],
             days: 0,
             activeKey: null,
+            allData: [],
+            checkOption: [],
+            bankOption: [],
+            appoffOption: [],
+            customerOption: [],
+            accountOption: [],
+            isRetrieving: false,
             payParColumns: [
                 {
                     title: "No",
@@ -1012,10 +1034,12 @@ export default {
                 checkAmountBalance: null,
             }),
             par_pay_check_form: useForm({
+                conCheckPartial: null,
+                conType: null,
+                parCheckAmount: null,
                 checkAmount: "",
                 checksId: null,
                 bouncedId: null,
-                rep_bounce_id: null,
                 rep_check_id: "",
                 checkFrom_id: null,
                 bank_id: null,
@@ -1033,7 +1057,7 @@ export default {
                 accountname: null,
                 accountnumber: "",
                 checkNumber: "",
-                checkType: null,
+                rep_ar_ds: null,
             }),
         };
     },
@@ -1138,6 +1162,7 @@ export default {
                 .post(route("submit.partials"), {
                     onSuccess: () => {
                         this.openModalPPayment = false;
+                        this.partial_pay_form.reset();
                         message.success({
                             content: "Successfully Save checks!",
                             duration: 3,
@@ -1145,10 +1170,36 @@ export default {
                     },
                 });
         },
-        async partialPaymenCheckNotNull(parPayCheckNotNull) {
+        saveChangesPartialCheck() {
+            this.par_pay_check_form
+                .transform((data) => ({
+                    ...data,
+                    rep_date: dayjs(data.rep_date).format("YYYY-MM-DD"),
+                    rep_check_date: dayjs(data.rep_check_date).format(
+                        "YYYY-MM-DD"
+                    ),
+                    rep_check_received: dayjs(data.rep_check_received).format(
+                        "YYYY-MM-DD"
+                    ),
+                }))
+                .post(route("submitcheck.partials"), {
+                    onSuccess: () => {
+                        this.openModalPPaymentCheck = false;
+                        this.par_pay_check_form.reset();
+                        message.success({
+                            content: "Successfully Save checks!",
+                            duration: 3,
+                        });
+                    },
+                });
+        },
+        async partialPaymentCheckNotNull(parPayCheckNotNull) {
             this.selectedPartialData = parPayCheckNotNull;
             this.par_pay_check_form.checksId = parPayCheckNotNull.checks_id;
             this.par_pay_check_form.bouncedId = parPayCheckNotNull.bounce_id;
+            this.par_pay_check_form.rep_check_id = parPayCheckNotNull.checks_id;
+            this.par_pay_check_form.parCheckAmount =
+                parPayCheckNotNull.check_amount;
 
             await axios
                 .get(route("partialpaynotnull.partials"), {
@@ -1165,7 +1216,7 @@ export default {
                     this.days = days;
                     this.openModalPPaymentCheck = true;
 
-                    this.partial_pay_form.checkAmount = grandTotal;
+                    this.par_pay_check_form.rep_check_amount = grandTotal;
                     this.partial_pay_form.checkAmountBalance = grandTotal;
 
                     if (this.partial_pay_form.bouncedId != 0) {
@@ -1179,7 +1230,48 @@ export default {
                         let newPenalty =
                             parseFloat(penalty) + parseFloat(monthlyPenalty);
 
-                        this.partial_pay_form.parPenalty =
+                        this.par_pay_check_form.rep_check_penalty =
+                            newPenalty.toFixed(2);
+                    }
+                });
+        },
+        async partialPaymentCheckNull(parPayCheckNotNull) {
+            this.selectedPartialData = parPayCheckNotNull;
+            this.par_pay_check_form.checksId = parPayCheckNotNull.checks_id;
+            this.par_pay_check_form.bouncedId = parPayCheckNotNull.bounce_id;
+            this.par_pay_check_form.rep_check_id = parPayCheckNotNull.checks_id;
+            this.par_pay_check_form.parCheckAmount =
+                parPayCheckNotNull.check_amount;
+            await axios
+                .get(route("partialpaynull.partials"), {
+                    params: {
+                        checksId: parPayCheckNotNull.checks_id,
+                        bouncedId: parPayCheckNotNull.bounce_id,
+                    },
+                })
+                .then((response) => {
+                    const { data, grandTotal, days } = response.data;
+
+                    this.selectDataDetails = data;
+                    this.grandTotal = grandTotal;
+                    this.days = days;
+                    this.openModalPPaymentCheck = true;
+
+                    this.par_pay_check_form.rep_check_amount = grandTotal;
+                    this.partial_pay_form.checkAmountBalance = grandTotal;
+
+                    if (days > 0) {
+                        let grandTotalPar = grandTotal;
+                        let penalty =
+                            parseFloat(grandTotalPar) * parseFloat(0.02);
+                        let monthlyPenalty =
+                            parseFloat(grandTotalPar) *
+                            parseFloat(0.02) *
+                            (days / 30);
+                        let newPenalty =
+                            parseFloat(penalty) + parseFloat(monthlyPenalty);
+
+                        this.par_pay_check_form.rep_check_penalty =
                             newPenalty.toFixed(2);
                     }
                 });
@@ -1201,6 +1293,117 @@ export default {
         afterCloseModal() {
             this.partial_pay_form.reset();
         },
+
+        handleSearchCheckFrom: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true;
+                    this.allData = [];
+                    this.checkOption = [];
+                    const { data } = await axios.get(
+                        route("search.checkfrom", { search: query })
+                    );
+                    this.allData = data;
+                    this.checkOption = this.allData.map((checkfrom) => ({
+                        title: checkfrom.department,
+                        value: checkfrom.department_id,
+                        label: checkfrom.department,
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchBank: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true;
+                    this.allData = [];
+                    this.bankOption = [];
+                    const { data } = await axios.get(
+                        route("search.bankName", { search: query })
+                    );
+                    this.allData = data;
+                    this.bankOption = this.allData.map((bank) => ({
+                        title: bank.bankbranchname,
+                        value: bank.bank_id,
+                        label: bank.bankbranchname,
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchCustomer: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true;
+                    this.allData = [];
+                    this.customerOption = [];
+                    const { data } = await axios.get(
+                        route("search.customerName", { search: query })
+                    );
+                    this.allData = data;
+                    this.customerOption = this.allData.map((customer) => ({
+                        title: customer.fullname,
+                        value: customer.customer_id,
+                        label: customer.fullname,
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchAccountName: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true;
+                    this.allData = [];
+                    this.accountOption = [];
+                    const { data } = await axios.get(
+                        route("search.customerName", { search: query })
+                    );
+                    this.allData = data;
+                    this.accountOption = this.allData.map((account) => ({
+                        title: account.fullname,
+                        value: account.fullname,
+                        label: account.fullname,
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
+        handleSearchEmployee: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true;
+                    this.allData = [];
+                    this.appoffOption = [];
+                    const { data } = await axios.get(
+                        route("search.employeeName", { search: query })
+                    );
+                    this.allData = data;
+                    this.appoffOption = this.allData.map((employee) => ({
+                        title: employee.name,
+                        value: employee.name,
+                        label: employee.name,
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000),
     },
 };
 </script>
