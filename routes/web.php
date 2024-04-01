@@ -127,6 +127,7 @@ Route::middleware('auth')->group(function () {
     Route::get('replacement/partial/payment/not/null', [AllTransactionController::class, 'partialPaymentTableNotNull'])->name('partialpaynotnull.partials');
     Route::get('replacement/partial/payment/null', [AllTransactionController::class, 'partialPaymentTableNull'])->name('partialpaynull.partials');
     Route::post('submit/partial/payment', [AllTransactionController::class, 'submitPartialPayment'])->name('submit.partials');
+    Route::post('submit/partial/check/payment', [AllTransactionController::class, 'submitPartialPaymentCheck'])->name('submitcheck.partials');
     Route::get('bounce/check/type', [AllTransactionController::class, 'getBounceCheckType'])->name('bounceCheckType.checks');
 
     Route::post('bounce/cash/replacement', [AllTransactionController::class, 'bouncedCashReplacement'])->name('bounceCash.replace');

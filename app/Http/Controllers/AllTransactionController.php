@@ -1044,6 +1044,11 @@ class AllTransactionController extends Controller
 
     public function getPartialPayment(Request $request)
     {
+
+        $currency = Currency::orderBy('currency_name')->get();
+        $category = Checks::select('check_category')->where('check_category', '!=', '')->groupBy('check_category')->get();
+        $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
+
         $data = NewCheckReplacement::joinCheckReplacementCustomer()
             // ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('checks.check_status', 'PARTIAL')
@@ -1060,9 +1065,10 @@ class AllTransactionController extends Controller
 
             $bounceDate = '';
 
+
             if ($value->bounce_id != 0) {
                 $bounceDateRecord = NewBounceCheck::where('id', $value->bounce_id)->first();
-                $bounceDate = Date::parse($bounceDateRecord->date_time)->toFormattedDateString();
+                $bounceDate = Date::parse($bounceDateRecord->date_time ?? '')->toFormattedDateString();
             } else {
                 $bounceDate = 'REDEEMED ' . Date::parse($value->date_time)->toFormattedDateString();
             }
@@ -1078,10 +1084,15 @@ class AllTransactionController extends Controller
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             return $value;
         });
+        // dd(1);
 
         return Inertia::render('Transaction/PartialPayments', [
             'data' => $data,
             'columns' => ColumnsHelper::$partial_payment_columns,
+            'currency' => $currency,
+            'category' => $category,
+            'check_class' => $check_class
+
         ]);
     }
 
@@ -1253,7 +1264,7 @@ class AllTransactionController extends Controller
             $data->each(function ($value) use (&$result) {
                 $result[] =
                     [
-                        'bounce_id' => $value->id,
+                        'checkCred' => $value->id,
                         'customer' => $value->fullname,
                         'amount' => $value->check_amount,
                     ];
@@ -1276,13 +1287,281 @@ class AllTransactionController extends Controller
             $data->each(function ($value) use (&$result) {
                 $result[] =
                     [
-                        'bounce_id' => $value->id,
+                        'checkCred' => $value->checks_id,
                         'customer' => $value->fullname,
                         'amount' => $value->check_amount,
                     ];
             });
         }
         return response()->json($result);
+    }
+
+    public function submitPartialPaymentCheck(Request $request)
+    {
+        // dd($request->all());
+
+        if ($request->bouncedId == 0) {
+            DB::transaction(function () use ($request) {
+
+                $subTotal = $request->rep_check_amount - NumberHelper::float($request->checkAmount);
+                if ($subTotal <= 0) {
+                    Checks::where('checks_id', $request->rep_check_id)->update(['check_status' => 'CHECK']);
+                }
+                $checkType = '';
+
+                if ($request->rep_check_date > today()->toDateString()) {
+                    $checkType = "POST DATED";
+                } else {
+                    $checkType = "DATED CHECK";
+                }
+                $data = Checks::create([
+                    'is_exist' => 0,
+                    'is_manual_entry' => 0,
+                    'checksreceivingtransaction_id' => 0,
+                    'businessunit_id' => $request->user()->businessunit_id,
+                    'check_bounced_id' => $request->rep_check_id,
+                    'check_type' => $checkType,
+                    'check_status' => 'CLEARED',
+                    'user' => $request->user()->id,
+                    'date_time' => today()->toDateString(),
+
+                    'check_no' => $request->checkNumber,
+                    'customer_id' => $request->customerId,
+                    'bank_id' => $request->bank_id,
+                    'department_from' => $request->checkFrom_id,
+                    'currency_id' => $request->currency_id,
+                    'check_date' => $request->rep_check_date,
+                    'check_amount' => $request->rep_check_amount,
+                    'check_class' => $request->checkClass,
+                    'check_category' => $request->category,
+                    'check_received' => $request->rpe_check_received,
+                    'account_no' => $request->accountnumber,
+                    'account_name' => $request->accountname,
+                    'approving_officer' => $request->approvingOfficer,
+
+                ]);
+
+                NewSavedChecks::create([
+                    'checks_id' => $data->checks_id,
+                    'check_type' => $request->rep_date,
+                    'user' => $request->user()->id,
+                    'date_time' => today()->toDateString(),
+                    'status' => '',
+                    'ds_status' => '',
+                    'receive_status' => '',
+                    'done' => '',
+                ]);
+
+                if (NumberHelper::float($request->checkAmount) <= $request->rep_check_amount) {
+                    NewCheckReplacement::create([
+                        'bounce_id' => 0,
+                        'cash' => 0,
+                        'status' => '',
+                        'checks_id' => $request->rep_check_id,
+                        'rep_check_id' => $data->checks_id,
+                        'reason' => $request->rep_reason,
+                        'penalty' => NumberHelper::float($request->rep_check_penalty),
+                        'check_amount' => NumberHelper::float($request->parCheckAmount),
+                        'check_amount_paid' => NumberHelper::float($request->checkAmount),
+                        'mode' => "PARTIAL",
+                        'user' => $request->user()->id,
+                        'date_time' => $request->rep_date,
+                    ]);
+                } else {
+                    $newCheckAmountPaid = $request->checkAmount - $request->rep_check_amount;
+
+                    NewCheckReplacement::create([
+                        'checks_id' => $request->rep_check_id,
+                        'rep_check_id' => $data->checks_id,
+                        'reason' => $request->rep_reason,
+                        'penalty' => NumberHelper::float($request->rep_check_penalty),
+                        'check_amount' => NumberHelper::float($request->parCheckAmount),
+                        'check_amount_paid' => NumberHelper::float($request->rep_check_amount),
+                        'mode' => "PARTIAL",
+                        'user' => $request->user()->id,
+                        'date_time' => $request->rep_date,
+                        'bounce_id' => 0,
+                        'cash' => 0,
+                        'status' => '',
+                    ]);
+
+                    if ($request->conType == "1") {
+                        $dataBounce = NewBounceCheck::where('id', $request->conCheckPartial)
+                            ->join('checks', 'checks.checks_id', 'new_bounce_check.checks_id')
+                            ->first();
+
+                        NewCheckReplacement::create([
+                            'checks_id' => $dataBounce->checks_id,
+                            'rep_check_id' => $data->checks_id,
+                            'reason' => $request->rep_reason,
+                            'penalty' => NumberHelper::float($request->rep_check_penalty),
+                            'check_amount' => NumberHelper::float($dataBounce->check_amount),
+                            'check_amount_paid' => NumberHelper::float($newCheckAmountPaid),
+                            'status' => "BOUNCED",
+                            'mode' => "PARTIAL",
+                            'user' => $request->user()->id,
+                            'date_time' => $request->rep_date,
+                            'bounce_id' => $request->conCheckPartial,
+                            'cash' => 0,
+                        ]);
+                        Checks::where('checks_id', $dataBounce->checks_id)->update(['check_status' => 'PARTIAL']);
+                        NewBounceCheck::where('id', $request->conCheckPartial)->update(['status' => 'PARTIAL']);
+                    } else {
+                        $conDetails = Checks::where('checks_id', $request->conCheckPartial)->first();
+
+                        NewCheckReplacement::create([
+                            'checks_id' => $request->conCheckPartial,
+                            'rep_check_id' => $data->checks_id,
+                            'reason' => $request->rep_reason,
+                            'penalty' => NumberHelper::float($request->rep_check_penalty),
+                            'check_amount' => NumberHelper::float($conDetails->check_amount),
+                            'check_amount_paid' => NumberHelper::float($newCheckAmountPaid),
+                            'status' => "REDEEMED",
+                            'mode' => "PARTIAL",
+                            'user' => $request->user()->id,
+                            'date_time' => $request->rep_date,
+                            'cash' => 0,
+                            'bounce_id' => 0
+                        ]);
+                        Checks::where('checks_id', $request->conCheckPartial)->update(['check_status' => 'PARTIAL']);
+                        NewBounceCheck::where('id', $request->conCheckPartial)->update(['status' => 'PARTIAL']);
+                    }
+
+                }
+            });
+        } else {
+            DB::transaction(function () use ($request) {
+                $subTotal = $request->rep_check_amount - NumberHelper::float($request->checkAmount);
+                if ($subTotal <= 0) {
+                    Checks::where('checks_id', $request->rep_check_id)->update(['check_status' => 'CHECK']);
+                    NewBounceCheck::where('id', $request->bouncedId)->update(['status' => 'SETTLED CHECK']);
+                }
+                $checkType = '';
+
+                if ($request->rep_check_date > today()->toDateString()) {
+                    $checkType = "POST DATED";
+                } else {
+                    $checkType = "DATED CHECK";
+                }
+
+                $data = Checks::create([
+                    'is_exist' => 0,
+                    'is_manual_entry' => 0,
+                    'checksreceivingtransaction_id' => 0,
+                    'businessunit_id' => $request->user()->businessunit_id,
+                    'check_bounced_id' => $request->rep_check_id,
+                    'check_type' => $checkType,
+                    'check_status' => 'CLEARED',
+                    'user' => $request->user()->id,
+                    'date_time' => today()->toDateString(),
+
+                    'check_no' => $request->checkNumber,
+                    'customer_id' => $request->customerId,
+                    'bank_id' => $request->bank_id,
+                    'department_from' => $request->checkFrom_id,
+                    'currency_id' => $request->currency_id,
+                    'check_date' => $request->rep_check_date,
+                    'check_amount' => NumberHelper::float($request->rep_check_amount),
+                    'check_class' => $request->checkClass,
+                    'check_category' => $request->category,
+                    'check_received' => $request->rpe_check_received,
+                    'account_no' => $request->accountnumber,
+                    'account_name' => $request->accountname,
+                    'approving_officer' => $request->approvingOfficer,
+
+                ]);
+
+                NewSavedChecks::create([
+                    'checks_id' => $data->checks_id,
+                    'check_type' => $request->rep_date,
+                    'user' => $request->user()->id,
+                    'date_time' => today()->toDateString(),
+                    'status' => '',
+                    'ds_status' => '',
+                    'receive_status' => '',
+                    'done' => '',
+                ]);
+
+                if (NumberHelper::float($request->checkAmount) <= $request->rep_check_amount) {
+                    NewCheckReplacement::create([
+                        'bounce_id' => $request->bouncedId,
+                        'cash' => 0,
+                        'status' => '',
+                        'checks_id' => $request->rep_check_id,
+                        'rep_check_id' => $data->checks_id,
+                        'reason' => $request->rep_reason,
+                        'penalty' => NumberHelper::float($request->rep_check_penalty),
+                        'check_amount' => NumberHelper::float($request->parCheckAmount),
+                        'check_amount_paid' => NumberHelper::float($request->checkAmount),
+                        'mode' => "PARTIAL",
+                        'user' => $request->user()->id,
+                        'date_time' => $request->rep_date,
+                    ]);
+                } else {
+                    $newCheckAmountPaid = $request->checkAmount - $request->rep_check_amount;
+
+                    NewCheckReplacement::create([
+                        'checks_id' => $request->rep_check_id,
+                        'rep_check_id' => $data->checks_id,
+                        'reason' => $request->rep_reason,
+                        'penalty' => NumberHelper::float($request->rep_check_penalty),
+                        'check_amount' => NumberHelper::float($request->parCheckAmount),
+                        'check_amount_paid' => NumberHelper::float($request->rep_check_amount),
+                        'mode' => "PARTIAL",
+                        'user' => $request->user()->id,
+                        'date_time' => $request->rep_date,
+                        'cash' => 0,
+                        'status' => '',
+                        'bounce_id' => $request->bouncedId
+                    ]);
+
+                    if ($request->conType == "1") {
+                        $dataBounce = NewBounceCheck::where('id', $request->conCheckPartial)
+                            ->join('checks', 'checks.checks_id', 'new_bounce_check.checks_id')
+                            ->first();
+
+                        NewCheckReplacement::create([
+                            'checks_id' => $dataBounce->checks_id,
+                            'rep_check_id' => $data->checks_id,
+                            'reason' => $request->rep_reason,
+                            'penalty' => NumberHelper::float($request->rep_check_penalty),
+                            'check_amount' => NumberHelper::float($dataBounce->check_amount),
+                            'check_amount_paid' => NumberHelper::float($newCheckAmountPaid),
+                            'status' => 'BOUNCED',
+                            'mode' => 'PARTIAL',
+                            'user' => $request->user()->id,
+                            'date_time' => $request->rep_date,
+                            'bounce_id' => $request->conCheckPartial,
+                            'cash' => 0
+                        ]);
+                        Checks::where('checks_id', $dataBounce->checks_id)->update(['check_status' => 'PARTIAL']);
+                        NewBounceCheck::where('id', $request->conCheckPartial)->update(['status' => 'PARTIAL']);
+                    } else {
+
+                        $conDetails = Checks::where('checks_id', $request->conCheckPartial)->first();
+                        NewCheckReplacement::create([
+                            'checks_id' => $request->conCheckPartial,
+                            'rep_check_id' => $data->checks_id,
+                            'reason' => $request->rep_reason,
+                            'penalty' => NumberHelper::float($request->rep_check_penalty),
+                            'check_amount' => NumberHelper::float($conDetails->check_amount),
+                            'check_amount_paid' => NumberHelper::float($newCheckAmountPaid),
+                            'status' => "REDEEMED",
+                            'mode' => "PARTIAL",
+                            'user' => $request->user()->id,
+                            'date_time' => $request->rep_date,
+                            'cash' => 0,
+                            'bounce_id' => 0,
+                        ]);
+                        Checks::where('checks_id', $request->conCheckPartial)->update(['check_status' => 'PARTIAL']);
+                        NewBounceCheck::where('id', $request->conCheckPartial)->update(['status' => 'PARTIAL']);
+                    }
+
+                }
+
+            });
+        }
+
     }
     public function getDatedPdcReports(Request $request)
     {
@@ -1312,7 +1591,7 @@ class AllTransactionController extends Controller
             'data' => $data,
             'columns' => ColumnsHelper::$datedpdcreportcheck_columns,
             'status' => $request->status,
-            'dateRangeValue' => (!empty ($request->date_from) && !empty ($request->date_to)) ? [$request->date_from, $request->date_to] : '',
+            'dateRangeValue' => (!empty($request->date_from) && !empty($request->date_to)) ? [$request->date_from, $request->date_to] : '',
         ]);
     }
     public function generate_report(Request $request)
