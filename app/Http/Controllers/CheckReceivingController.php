@@ -49,7 +49,7 @@ class CheckReceivingController extends Controller
     }
     public function checkAndUncheck(Request $request)
     {
-        if ($request->is_exist === 'true') {
+        if ($request->is_exist == 'true') {
             $check_data = Checks::findChecks($request->checksId)->first();
 
             $exist = Checks::where('check_no', $check_data->check_no)
