@@ -24,11 +24,25 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                     >
                 </a-breadcrumb>
                 <div v-if="isProgressShowing" style="font-size: 14px">
-                    <p>
-                        {{ progressBar.message }} {{ progressBar.department }}
-                        {{ progressBar.currentRow }} to
-                        {{ progressBar.totalRows }} records
-                    </p>
+                    <div class="flex justify-between">
+                        <div class="flex">
+                            <DoubleRightOutlined class="mr-2" />
+                            <p>
+                                {{ progressBar.message }}
+                                {{ progressBar.department }}
+                                {{ progressBar.currentRow }} to
+                                {{ progressBar.totalRows }} records
+                            </p>
+                        </div>
+                        <div class="flex">
+                            <InfoCircleTwoTone class="mr-2" />
+                            <p>
+                                "Please note: Do not exit the page while
+                                generating or navigate to another link within
+                                this system."
+                            </p>
+                        </div>
+                    </div>
                     <a-progress
                         :stroke-color="{
                             from: '#108ee9',
@@ -60,7 +74,11 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 <template #icon>
                                     <UploadOutlined />
                                 </template>
-                                Generate Due Post Dated Check Report Excel
+                                {{
+                                    isLoading
+                                        ? "Generating due post dated check report..."
+                                        : "Generate Due Post Dated Check Report Excel"
+                                }}
                             </a-button>
                         </div>
                     </div>
@@ -282,6 +300,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import Pagination from "@/Components/Pagination.vue";
+import { InfoCircleTwoTone } from "@ant-design/icons-vue";
 export default {
     props: {
         data: Array,
