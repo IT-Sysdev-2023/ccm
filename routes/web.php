@@ -13,6 +13,7 @@ use App\Http\Controllers\DsBounceTaggingController;
 use App\Http\Controllers\DatedPdcChecksController;
 use App\Http\Controllers\CheckReceivingController;
 use Illuminate\Support\Facades\Storage;
+use San103\Phpholidayapi\HolidayClient;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +36,6 @@ Route::get('/', function () {
     ]);
 });
 
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return Inertia::render('AdminDashboard');
@@ -44,7 +44,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('AccountingDashboard');
     })->name('accounting_dashboard');
     Route::get('/treasury/dashboard', function () {
-        return Inertia::render('TreasuryDashboard');
+        $holiday = new HolidayClient();
+        $va = $holiday
+            ->year((string) today()->year)
+            ->result();
+
+
+        return Inertia::render('TreasuryDashboard', [
+            'holiday' => collect($va)->values()
+        ]);
     })->name('treasury_dashboard');
 });
 
