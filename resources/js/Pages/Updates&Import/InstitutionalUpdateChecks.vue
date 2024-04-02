@@ -23,7 +23,7 @@ const tabPosition = 'right';
                             <a-button style="width: 100%;" class="mb-5" @click="showImportInstutional"
                                 :class="{ 'active': isActive === 'import' }">
                                 <ImportOutlined />
-                                Import Institutional Checks
+                                Import Institutional 
                             </a-button>
                             <a-button style="width: 100%;" @click="showUpdateddatabase"
                                 :class="{ 'active': isActive === 'update' }">
