@@ -54,6 +54,7 @@ class ReportController extends Controller
     }
     public function get_dated_pdc_checks_rep(Request $request)
     {
+
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->reportQuery($request->bu, $request->search)
             ->when($request->ch_type == '1', function (Builder $query) {

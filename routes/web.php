@@ -105,7 +105,7 @@ Route::middleware('auth')->group(function () {
     Route::get('check_for_clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
     Route::get('search_dated', [CheckReceivingController::class, 'searchDatedChecks'])->name('search_dated');
     Route::get('check-uncheck', [CheckReceivingController::class, 'checkAndUncheck'])->name('checkUncheck.checks');
-    Route::post('save_dated_leasing_pdc_checks', [CheckReceivingController::class, 'savedDatedLeasingpPdcChecks'])->name('datedleaspdc.checks');
+    Route::post('save/dated/leasing/pdc/checks', [CheckReceivingController::class, 'savedDatedLeasingpPdcChecks'])->name('datedleaspdc.checks');
     Route::get('pdc_check_clearing', [CheckReceivingController::class, 'pdcChecksCLearing'])->name('pdc_clearing.checks');
     Route::get('leasing_checks', [CheckReceivingController::class, 'getLeasingChecks'])->name('leasing.checks');
 

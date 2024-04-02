@@ -122,6 +122,15 @@ import { Head } from "@inertiajs/vue3";
                                 type="primary"
                                 style="width: 300px"
                                 @click="savedLeasingChecks"
+                                :disabled="
+                                    dataFn.find(
+                                        (item) =>
+                                            item.is_exist === true &&
+                                            item.check_status === 'PENDING'
+                                    )
+                                        ? false
+                                        : true
+                                "
                             >
                                 <template #icon>
                                     <SaveOutlined />
@@ -169,7 +178,7 @@ import { Head } from "@inertiajs/vue3";
                             </template>
                             <template v-if="column.key === 'details'">
                                 <a-button
-                                    size="square"
+                                    size="small"
                                     @click="datedDetails(record)"
                                 >
                                     <template #icon>
@@ -189,7 +198,6 @@ import { Head } from "@inertiajs/vue3";
             style="top: 25px"
             width="1000px"
             title="Details"
-            @ok="handleOk"
             :ok-button-props="{ hidden: true }"
             :cancel-button-props="{ hidden: true }"
             :footer="null"
@@ -379,11 +387,12 @@ import { message } from "ant-design-vue";
 
 export default {
     props: {
-        data: Array,
+        data: Object,
         columns: Array,
-        date: Object,
+        date: String,
         value: Object,
         pagination: Object,
+        dataFn: Object,
     },
     data() {
         return {
@@ -449,7 +458,7 @@ export default {
             );
         },
         savedLeasingChecks() {
-            const selected = this.data.data.filter((value) => value.is_exist);
+            const selected = this.dataFn.filter((value) => value.is_exist);
             this.$inertia.post(
                 route("datedleaspdc.checks"),
                 {
