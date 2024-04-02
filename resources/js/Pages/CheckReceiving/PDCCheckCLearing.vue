@@ -123,6 +123,15 @@ import { Head } from "@inertiajs/vue3";
                                 type="primary"
                                 style="width: 300px"
                                 @click="savedPDcChecks"
+                                :disabled="
+                                    dataFn.find(
+                                        (item) =>
+                                            item.is_exist === true &&
+                                            item.check_status === 'PENDING'
+                                    )
+                                        ? false
+                                        : true
+                                "
                             >
                                 <template #icon>
                                     <SaveOutlined />
@@ -393,11 +402,12 @@ export default {
         };
     },
     props: {
-        data: Array,
+        data: Object,
         columns: Array,
         date: Object,
         value: Object,
         pagination: Object,
+        dataFn: Object,
     },
     methods: {
         handleGenerateTable(obj, str) {
@@ -452,7 +462,7 @@ export default {
             );
         },
         savedPDcChecks() {
-            const selected = this.data.data.filter((value) => value.is_exist);
+            const selected = this.dataFn.filter((value) => value.is_exist);
             this.$inertia.post(
                 route("datedleaspdc.checks"),
                 {

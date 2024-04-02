@@ -122,7 +122,7 @@ const colors = "red";
                                 margin-right: 10px;
                                 width: 200px;
                             "
-                            v-on:click="fetchData"
+                            @click="fetchData"
                         >
                             Fetch Data
                         </a-button>
@@ -303,19 +303,17 @@ export default {
 
             if (!this.dateRange) {
                 try {
-                    const response = await axios.get(
-                        `get_dated_pdc_checks_rep?page=${page}`,
-                        {
-                            params: {
-                                dt_from: "",
-                                dt_to: "",
-                                bu: this.bunitCode,
-                                ch_type: this.pdcdatedChecks,
-                                repporttype: this.repportType,
-                                search: this.searchBar,
-                            },
-                        }
-                    );
+                    const response = await axios.get(route("get.dpdc"), {
+                        params: {
+                            page: page,
+                            dt_from: "",
+                            dt_to: "",
+                            bu: this.bunitCode,
+                            ch_type: this.pdcdatedChecks,
+                            repporttype: this.repportType,
+                            search: this.searchBar,
+                        },
+                    });
 
                     this.showPagination = true;
                     this.showGenerateButton = true;
@@ -333,23 +331,20 @@ export default {
                 }
             } else {
                 try {
-                    const response = await axios.get(
-                        `get_dated_pdc_checks_rep?page=${page}`,
-                        {
-                            params: {
-                                dt_from: dayjs(this.dateRange[0]).format(
-                                    "YYYY-MM-DD"
-                                ),
-                                dt_to: dayjs(this.dateRange[1]).format(
-                                    "YYYY-MM-DD"
-                                ),
-                                bu: this.bunitCode,
-                                ch_type: this.pdcdatedChecks,
-                                repporttype: this.repportType,
-                                search: this.searchBar,
-                            },
-                        }
-                    );
+                    const response = await axios.get(route("get.dpdc"), {
+                        params: {
+                            dt_from: dayjs(this.dateRange[0]).format(
+                                "YYYY-MM-DD"
+                            ),
+                            dt_to: dayjs(this.dateRange[1]).format(
+                                "YYYY-MM-DD"
+                            ),
+                            bu: this.bunitCode,
+                            ch_type: this.pdcdatedChecks,
+                            repporttype: this.repportType,
+                            search: this.searchBar,
+                        },
+                    });
 
                     this.showPagination = true;
                     this.dataSource = response.data.data;

@@ -98,7 +98,7 @@ Route::middleware('auth')->group(function () {
         Route::get('check_for_clearing', 'getCheckForClearing')->name('check_for.clearing');
         Route::get('search_dated', 'searchDatedChecks')->name('search_dated');
         Route::get('check-uncheck', 'checkAndUncheck')->name('checkUncheck.checks');
-        Route::post('save_dated_leasing_pdc_checks', 'savedDatedLeasingpPdcChecks')->name('datedleaspdc.checks');
+        Route::post('save/dated/leasing/pdc/checks', 'savedDatedLeasingpPdcChecks')->name('datedleaspdc.checks');
         Route::get('pdc_check_clearing', 'pdcChecksCLearing')->name('pdc_clearing.checks');
         Route::get('leasing_checks', 'getLeasingChecks')->name('leasing.checks');
     });
