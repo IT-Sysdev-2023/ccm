@@ -86,6 +86,10 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 <div
                                     class="walletBalanceCard"
                                     style="
+                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
+                                                4px,
+                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
                                         background: linear-gradient(
                                             to right,
                                             #378ce7,
@@ -121,6 +125,10 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 <div
                                     class="walletBalanceCard"
                                     style="
+                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
+                                                4px,
+                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
                                         background: linear-gradient(
                                             to right,
                                             #ef4040,
@@ -154,6 +162,10 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 <div
                                     class="walletBalanceCard"
                                     style="
+                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
+                                                4px,
+                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
                                         background: linear-gradient(
                                             to right,
                                             #219c90,
@@ -189,6 +201,10 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 <div
                                     class="walletBalanceCard"
                                     style="
+                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
+                                                4px,
+                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
                                         background: linear-gradient(
                                             to right,
                                             #1d5b79,
@@ -224,6 +240,10 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 <div
                                     class="walletBalanceCard"
                                     style="
+                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
+                                                4px,
+                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
                                         background: linear-gradient(
                                             to right,
                                             black,
@@ -259,6 +279,10 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 <div
                                     class="walletBalanceCard"
                                     style="
+                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
+                                                4px,
+                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
                                         background: linear-gradient(
                                             to right,
                                             red,
@@ -291,12 +315,150 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 </div>
                             </a-col>
                         </a-row>
+                        <!-- <p>{{ holiday }}</p> -->
+                        <a-collapse
+                            v-model:activeKey="activeKey"
+                            class="mt-10"
+                            style="
+                                box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+                                    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+                                    rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+                                background: linear-gradient(
+                                    to right,
+                                    #bdc3c7,
+                                    #2c3e50
+                                );
+                            "
+                        >
+                            <a-collapse-panel
+                                key="1"
+                                header="Click this to see calendar"
+                            >
+                                <a-calendar v-model:value="value">
+                                    <template #dateCellRender="{ current }">
+                                        <div
+                                            :class="
+                                                validateDayOfMonth(current) &&
+                                                someFunction(current)
+                                                    ? 'bg-green-300 text-black'
+                                                    : someFunction(current)
+                                                    ? 'bg-green-600 text-white'
+                                                    : validateDayOfMonth(
+                                                          current
+                                                      ) && isWeekend(current)
+                                                    ? 'bg-red-100'
+                                                    : validateDayOfMonth(
+                                                          current
+                                                      )
+                                                    ? 'bg-blue-200'
+                                                    : isWeekend(current)
+                                                    ? 'bg-red-400'
+                                                    : !someFunction(current)
+                                                    ? 'bg-blue-400'
+                                                    : ''
+                                            "
+                                            style="
+                                                width: 100%;
+                                                height: 100%;
+                                                box-shadow: rgba(0, 0, 0, 0.4)
+                                                        0px 2px 4px,
+                                                    rgba(0, 0, 0, 0.3) 0px 7px
+                                                        13px -3px,
+                                                    rgba(0, 0, 0, 0.2) 0px -3px 0px
+                                                        inset;
+                                                border-radius: 10px;
+                                            "
+                                        >
+                                            <span
+                                                v-if="someFunction(current)"
+                                                class="flex justify-center items-center"
+                                                style="height: inherit"
+                                            >
+                                                {{
+                                                    holiday.find(
+                                                        (item) =>
+                                                            item.date.date ===
+                                                            dayjs(
+                                                                current
+                                                            ).format(
+                                                                "YYYY-MM-DD"
+                                                            )
+                                                    ).title
+                                                }}
+                                            </span>
+                                        </div>
+                                    </template>
+                                    <template #monthCellRender="{ current }">
+                                        <!-- <div
+                                            v-if="getMonthData(current)"
+                                            class="notes-month"
+                                        >
+                                            <section>
+                                                {{ getMonthData(current) }}
+                                            </section>
+                                            <span>Backlog number</span>
+                                        </div> -->
+                                    </template>
+                                </a-calendar>
+                            </a-collapse-panel>
+                        </a-collapse>
                     </a-col>
                 </a-row>
             </div>
         </div>
     </TreasuryLayout>
 </template>
+
+<script>
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+
+export default {
+    data() {
+        return {
+            value: dayjs(),
+            activeKey: null,
+        };
+    },
+    props: {
+        holiday: Object,
+    },
+    methods: {
+        someFunction(current) {
+            return this.holiday.some(
+                (item) => item.date.date === dayjs(current).format("YYYY-MM-DD")
+            );
+        },
+        validateDayOfMonth(current) {
+            const firstDayMonth = this.value.startOf("month");
+            const endDayMonth = this.value.endOf("month");
+            const toDate = dayjs(current);
+
+            if (
+                toDate.isSameOrAfter(firstDayMonth) &&
+                toDate.isSameOrBefore(endDayMonth)
+            ) {
+                return false;
+            }
+
+            return true;
+        },
+        isWeekend(current) {
+            const curr = dayjs(current).day();
+
+            if (curr === 6 || curr === 0) {
+                return true;
+            }
+            return false;
+        },
+    },
+};
+</script>
+
 <style scoped>
 .walletBalanceCard {
     height: 105px;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70ea09adc239945ed78f8b481cb5bfc2",
+    "content-hash": "c436e1a42fa88bac8f32b1b005deec3f",
     "packages": [
         {
             "name": "brick/math",
@@ -3746,6 +3746,46 @@
                 }
             ],
             "time": "2023-11-08T05:53:05+00:00"
+        },
+        {
+            "name": "san103/php-holiday-api",
+            "version": "v1.3.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/San103/holiday-date-library.git",
+                "reference": "77573206dcde1de04859b329b111985531d57b11"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/San103/holiday-date-library/zipball/77573206dcde1de04859b329b111985531d57b11",
+                "reference": "77573206dcde1de04859b329b111985531d57b11",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "San103\\Phpholidayapi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "San103",
+                    "email": "palbanjessan16@gmail.com"
+                }
+            ],
+            "description": "An holiday API for php",
+            "support": {
+                "issues": "https://github.com/San103/holiday-date-library/issues",
+                "source": "https://github.com/San103/holiday-date-library/tree/v1.3.8"
+            },
+            "time": "2023-12-07T07:35:11+00:00"
         },
         {
             "name": "symfony/clock",
