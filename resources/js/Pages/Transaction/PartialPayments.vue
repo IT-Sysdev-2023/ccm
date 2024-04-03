@@ -223,7 +223,6 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                     () =>
                                         partial_pay_form.reset(
                                             'parArDs',
-                                            'parPenalty',
                                             'parReason',
                                             'parRepDate'
                                         )
@@ -933,7 +932,6 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                                         'rep_date',
                                                         'rep_check_date',
                                                         'rep_check_recieved',
-                                                        'rep_check_penalty',
                                                         'accountname',
                                                         'accountnumber',
                                                         'checkNumber'
