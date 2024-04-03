@@ -153,7 +153,7 @@ const colors = "red";
                     <a-table
                         :total="85"
                         :dataSource="dataSource"
-                        size="middle"
+                        size="small"
                         class="components-table-demo-nested"
                         :pagination="false"
                         :columns="columns"
