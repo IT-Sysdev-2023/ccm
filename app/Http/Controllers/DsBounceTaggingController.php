@@ -2,22 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Helper\ColumnsHelper;
-use App\Helper\NumberHelper;
-use App\Models\NewBounceCheck;
-use App\Models\CheckHistory;
-use App\Models\Checks;
-use App\Models\NewDsChecks;
-use App\Models\NewSavedChecks;
 use App\Services\DsBounceTaggingService;
-use Illuminate\Database\Eloquent\Builder;
+
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\LazyCollection;
-use Inertia\Inertia;
+
 
 class DsBounceTaggingController extends Controller
 {
@@ -46,10 +34,10 @@ class DsBounceTaggingController extends Controller
         return $this->dsBounceTaggingService->get_bounce_tagging($request);
     }
 
-    public function tag_check_bounce(Request $request)
+    public function tagCheckBounce(Request $request)
     {
 
-        return $this->dsBounceTaggingService->tag_check_bounce($request);
+        return $this->dsBounceTaggingService->tagCheckBounce($request);
 
     }
 
