@@ -443,13 +443,6 @@ export default {
     width: 100%;
 }
 
-header {
-    width: 96vw;
-    padding: 2vw;
-    /* outline: 1px solid #fff3; */
-    /* background-color: #fff1; */
-}
-
 .clock {
     color: #000000;
     font-size: 30px;
