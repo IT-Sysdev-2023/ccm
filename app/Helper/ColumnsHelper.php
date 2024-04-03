@@ -75,12 +75,6 @@ class ColumnsHelper
             'width' => '8%'
         ],
         [
-            'title' => 'Date Deposit',
-            'dataIndex' => 'date_deposit',
-            'key' => 'check_d',
-            'width' => '8%'
-        ],
-        [
             'title' => 'Customer Name',
             'dataIndex' => 'fullname',
             'key' => 'fname',

@@ -117,7 +117,7 @@ class DsBounceTaggingService
         ]);
     }
 
-    public function tag_check_bounce(Request $request): Builder
+    public function tagCheckBounce(Request $request)
     {
 
         return DB::transaction(function () use ($request) {

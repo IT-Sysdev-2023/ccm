@@ -71,30 +71,36 @@ Route::middleware('auth')->group(function () {
         Route::get('instImport', 'instImportfunction')->name('instImport');
     });
 
-    Route::controller(DsBounceTaggingController::class)->group(function () {
-        Route::get('/bounce_tagging', 'indexBounceTagging')->name('bounce_tagging');
-        Route::get('/ds_tagging', 'indexDsTagging')->name('ds_tagging');
-        Route::get('/get_bounce_tagging', 'get_bounce_tagging')->name('get_bounce_tagging');
-        Route::post('/tag_check_bounce', 'check_for.clearingtag_check_bounce')->name('tag_check_bounce');
-        Route::post('/submit-ds-tagging', 'submiCheckDs')->name('submit.ds.tagging');
-        Route::put('update-switch', 'updateSwitch')->name('update.switch');
-    });
+    Route::get('/bounce_tagging', [DsBounceTaggingController::class, 'indexBounceTagging'])->name('bounce_tagging');
+    Route::get('/ds_tagging', [DsBounceTaggingController::class, 'indexDsTagging'])->name('ds_tagging');
+    Route::get('/get_bounce_tagging', [DsBounceTaggingController::class, 'get_bounce_tagging'])->name('get_bounce_tagging');
+    Route::post('/tag_check_bounce', [DsBounceTaggingController::class, 'tagCheckBounce'])->name('tag_check_bounce');
+    Route::post('/submit-ds-tagging', [DsBounceTaggingController::class, 'submiCheckDs'])->name('submit.ds.tagging');
+    Route::put('update-switch', [DsBounceTaggingController::class, 'updateSwitch'])->name('update.switch');
 
-    Route::controller(DatedPdcChecksController::class)->group(function () {
-        Route::get('pdc_checks', 'pdc_index')->name('pdc.checks');
-        Route::get('dated_checks', 'dated_index')->name('dated.checks');
-    });
+    Route::get('pdc_checks', [DatedPdcChecksController::class, 'pdc_index'])->name('pdc.checks');
+    Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_index'])->name('dated.checks');
+    Route::post('pdc/cash/replacement', [DatedPdcChecksController::class, 'pdc_cash_replacement'])->name('pdc_cash.replacement');
+    Route::post('pdc/check/replacement', [DatedPdcChecksController::class, 'pdc_check_replacement'])->name('pdc_check.replacement');
+    Route::post('pdc/cash/check/replacement', [DatedPdcChecksController::class, 'pdc_check_cash_replacement'])->name('pdc_cash_check.replacement');
+    Route::post('pdc/cash/partial/replacement', [DatedPdcChecksController::class, 'pdc_partial_replacement_cash'])->name('pdc_cash_partial.replacement');
+    Route::post('pdc/check/partial/replacement', [DatedPdcChecksController::class, 'pdc_partial_replacement_check'])->name('pdc_check_partial.replacement');
 
 
-    Route::controller(CheckReceivingController::class)->group(function () {
-        Route::get('check_for_clearing', 'getCheckForClearing')->name('check_for.clearing');
-        Route::get('search_dated', 'searchDatedChecks')->name('search_dated');
-        Route::get('check-uncheck', 'checkAndUncheck')->name('checkUncheck.checks');
-        Route::post('save/dated/leasing/pdc/checks', 'savedDatedLeasingpPdcChecks')->name('datedleaspdc.checks');
-        Route::get('pdc_check_clearing', 'pdcChecksCLearing')->name('pdc_clearing.checks');
-        Route::get('leasing_checks', 'getLeasingChecks')->name('leasing.checks');
-    });
 
+    Route::get('search/checkfrom/', [SearchInputController::class, 'searchCheckFrom'])->name('search.checkfrom');
+    Route::get('search/bank/name', [SearchInputController::class, 'searchBankName'])->name('search.bankName');
+    Route::get('search/customer/name', [SearchInputController::class, 'searchCustomerName'])->name('search.customerName');
+    Route::get('search/employee/name', [SearchInputController::class, 'searchEmployee'])->name('search.employeeName');
+
+
+
+    Route::get('check_for_clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
+    Route::get('search_dated', [CheckReceivingController::class, 'searchDatedChecks'])->name('search_dated');
+    Route::get('check-uncheck', [CheckReceivingController::class, 'checkAndUncheck'])->name('checkUncheck.checks');
+    Route::post('save/dated/leasing/pdc/checks', [CheckReceivingController::class, 'savedDatedLeasingpPdcChecks'])->name('datedleaspdc.checks');
+    Route::get('pdc_check_clearing', [CheckReceivingController::class, 'pdcChecksCLearing'])->name('pdc_clearing.checks');
+    Route::get('leasing_checks', [CheckReceivingController::class, 'getLeasingChecks'])->name('leasing.checks');
 
 
     Route::get('check/manual/entry', [AllTransactionController::class, 'getCheckManualEntry'])->name('manual_entry.checks');
