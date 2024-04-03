@@ -389,7 +389,7 @@ export default {
             activeKey: ["1"],
             series: [
                 {
-                    name: "Cheques",
+                    name: "Count",
                     data: [
                         this.checkCount,
                         this.pdcCount,
