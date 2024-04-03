@@ -323,8 +323,8 @@ import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
                 </a-row>
             </a-card>
         </a-modal>
-        <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details" @ok="handleOk"
-            :ok-button-props="{ hidden: true }" :cancel-button-props="{ hidden: true }" :footer="null">
+        <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details"
+            :footer="null">
             <div class="product-table">
                 <table class="min-w-full divide-y divide-gray-200">
 
