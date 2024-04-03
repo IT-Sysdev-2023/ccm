@@ -17,6 +17,13 @@ class CheckReceivingController extends Controller
     public function getCheckForClearing(Request $request)
     {
 
+        $dataChecksFn = Checks::joinCheckRecCustomerDepartmentBanks()
+            ->whereDateTimeNotZero()
+            ->whereColumn('check_date', '<=', 'check_received')
+            ->where('check_status', 'PENDING')
+            ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
+            ->orderBy('check_date', 'ASC')->cursor();
+
         $q = Checks::joinCheckRecCustomerDepartmentBanks()
             ->whereDateChecks($request->generate_date)
             ->whereCheckNo($request->searchQuery)
@@ -24,8 +31,6 @@ class CheckReceivingController extends Controller
             ->whereColumn('check_date', '<=', 'check_received')
             ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
             ->orderBy('check_date', 'ASC');
-
-        // dd($request->check_status);
 
 
         $q = match ($request->check_status) {
@@ -45,6 +50,7 @@ class CheckReceivingController extends Controller
             'date' => $request->generate_date ?? now(),
             'value' => $request->check_status,
             'search' => $request->searchQuery,
+            'dataFn' => $dataChecksFn,
         ]);
     }
     public function checkAndUncheck(Request $request)
@@ -90,13 +96,16 @@ class CheckReceivingController extends Controller
             DB::transaction(function () use ($check, $request, $formdate) {
 
                 Checks::findChecks($check['checks_id'])->update(['check_status' => 'CLEARED']);
-
                 NewSavedChecks::create([
                     'checks_id' => $check['checks_id'],
                     'remarks' => $request->remarks,
                     'check_type' => $formdate,
                     'user' => $request->user()->id,
                     'date_time' => now(),
+                    'status' => '',
+                    'ds_status' => '',
+                    'receive_status' => '',
+                    'done' => ''
                 ]);
 
             });
@@ -108,6 +117,15 @@ class CheckReceivingController extends Controller
 
     public function pdcChecksCLearing(Request $request)
     {
+
+        // dd(1);
+        $dataChecksFn = Checks::joinCheckRecCustomerDepartmentBanks()
+            ->whereDateTimeNotZero()
+            ->whereColumn('check_date', '>', 'check_received')
+            ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
+            ->where('check_status', 'PENDING')
+            ->orderBy('check_date', 'ASC')->cursor();
+
         $q = Checks::joinCheckRecCustomerDepartmentBanks()
             ->whereDateChecks($request->generate_date)
             ->whereCheckNo($request->searchQuery)
@@ -132,11 +150,19 @@ class CheckReceivingController extends Controller
             'data' => $data,
             'columns' => ColumnsHelper::$pdc_check_clearing_column,
             'date' => $request->generate_date ?? today(),
-            'value' => $request->check_status
+            'value' => $request->check_status,
+            'dataFn' => $dataChecksFn
         ]);
     }
     public function getLeasingChecks(Request $request)
     {
+        $dataChecksFn = Checks::joinCheckRecCustomerDepartmentBanks()
+            ->whereColumn('check_date', '>', 'check_received')
+            ->where('leasing_docno', '!=', '')
+            ->where('check_status', 'PENDING')
+            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->orderBy('check_date', 'ASC')->cursor();
+
         $q = Checks::joinCheckRecCustomerDepartmentBanks()
             ->whereDateChecks($request->generate_date)
             ->whereCheckNo($request->searchQuery)
@@ -162,6 +188,7 @@ class CheckReceivingController extends Controller
             'columns' => ColumnsHelper::$leasing_checks_columns,
             'date' => $request->generate_date ?? today(),
             'value' => $request->check_status,
+            'dataFn' => $dataChecksFn,
         ]);
 
     }

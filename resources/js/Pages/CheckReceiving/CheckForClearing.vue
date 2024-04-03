@@ -11,7 +11,6 @@ import { Head } from "@inertiajs/vue3";
                 This is treasury Dashboard
             </h2>
         </template>
-
         <div class="py-2">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mt-1 mb-3">
@@ -117,19 +116,26 @@ import { Head } from "@inertiajs/vue3";
                                 placeholder="Input Check Number"
                                 style="width: 350px"
                             />
-                            <div v-for="item in data.data" :key="item.id">
-                                <a-button
-                                    :disabled="!item.is_exist"
-                                    style="width: 300px"
-                                    type="primary"
-                                    @click="savedDatedChecks"
-                                >
-                                    <template #icon>
-                                        <SaveOutlined />
-                                    </template>
-                                    save dated checks
-                                </a-button>
-                            </div>
+
+                            <a-button
+                                :disabled="
+                                    dataFn.find(
+                                        (item) =>
+                                            item.is_exist === true &&
+                                            item.check_status === 'PENDING'
+                                    )
+                                        ? false
+                                        : true
+                                "
+                                style="width: 300px"
+                                type="primary"
+                                @click="savedDatedChecks"
+                            >
+                                <template #icon>
+                                    <SaveOutlined />
+                                </template>
+                                save dated checks
+                            </a-button>
                         </div>
                     </div>
                     <a-table
@@ -171,7 +177,7 @@ import { Head } from "@inertiajs/vue3";
                             </template>
                             <template v-if="column.key === 'details'">
                                 <a-button
-                                    size="square"
+                                    size="small"
                                     @click="datedDetails(record)"
                                 >
                                     <template #icon>
@@ -386,6 +392,7 @@ export default {
         pagination: Object,
         date: Object,
         value: Object,
+        dataFn: Object,
     },
 
     data() {
@@ -399,7 +406,7 @@ export default {
             query: {
                 search: "",
             },
-            isExist: "",
+
         };
     },
 
@@ -442,7 +449,7 @@ export default {
             );
         },
         savedDatedChecks() {
-            const selected = this.data.data.filter((value) => value.is_exist);
+            const selected = this.dataFn.filter((value) => value.is_exist);
             this.$inertia.post(
                 route("datedleaspdc.checks"),
                 {

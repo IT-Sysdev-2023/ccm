@@ -9,6 +9,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import Antd from 'ant-design-vue';
 import ToastPlugin from 'vue-toast-notification';
+import VueApexCharts from "vue3-apexcharts";
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -21,7 +22,8 @@ createInertiaApp({
    app.use(plugin);
    app.use(ZiggyVue);
    app.use(Antd);
-   app.use(ToastPlugin);
+   app.use(ToastPlugin)
+   app.use(VueApexCharts);
 
    // Adding global property $ws
    app.config.globalProperties.$ws = ws;

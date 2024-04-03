@@ -1,18 +1,18 @@
 <?php
 
 use App\Http\Controllers\AllTransactionController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Models\User;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ImportUpdateController;
 use App\Http\Controllers\DsBounceTaggingController;
 use App\Http\Controllers\DatedPdcChecksController;
 use App\Http\Controllers\CheckReceivingController;
-use Illuminate\Support\Facades\Storage;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -26,15 +26,8 @@ use Illuminate\Support\Facades\Storage;
 */
 
 Route::get('/', function () {
-    // dd(User::all());
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('Auth/Login');
 });
-
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/dashboard', function () {
@@ -43,9 +36,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/accounting/dashboard', function () {
         return Inertia::render('AccountingDashboard');
     })->name('accounting_dashboard');
-    Route::get('/treasury/dashboard', function () {
-        return Inertia::render('TreasuryDashboard');
-    })->name('treasury_dashboard');
+
+    Route::get('treasury/dashboard', [DashboardController::class, 'treasuryDashboardComponent'])->name('treasury.dashboard');
 });
 
 Route::middleware('auth')->group(function () {
@@ -98,7 +90,7 @@ Route::middleware('auth')->group(function () {
         Route::get('check_for_clearing', 'getCheckForClearing')->name('check_for.clearing');
         Route::get('search_dated', 'searchDatedChecks')->name('search_dated');
         Route::get('check-uncheck', 'checkAndUncheck')->name('checkUncheck.checks');
-        Route::post('save_dated_leasing_pdc_checks', 'savedDatedLeasingpPdcChecks')->name('datedleaspdc.checks');
+        Route::post('save/dated/leasing/pdc/checks', 'savedDatedLeasingpPdcChecks')->name('datedleaspdc.checks');
         Route::get('pdc_check_clearing', 'pdcChecksCLearing')->name('pdc_clearing.checks');
         Route::get('leasing_checks', 'getLeasingChecks')->name('leasing.checks');
     });
