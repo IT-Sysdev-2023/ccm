@@ -21,7 +21,7 @@ const hide = () => {
         <div class="min-h-screen">
             <header
                 v-if="$slots.header"
-                style="width: 100%; background: #092635; margin-top: -7px"
+                style="width: 100%; background: #001529; margin-top: -7px"
                 class="mt-1 bg-white mx-auto w-full w-full border-gray-100 py-3 shadow backdrop-blur-lg md:top-6"
             >
                 <div class="px-4">
@@ -46,19 +46,19 @@ const hide = () => {
                             <Link
                                 class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
                                 :class="{
-                                    'bg-gray-600 text-white':
-                                        route().current('treasury_dashboard'),
+                                    'bg-blue-600 text-white':
+                                        route().current('treasury.dashboard'),
                                     'text-white':
-                                        !route().current('treasury_dashboard'),
+                                        !route().current('treasury.dashboard'),
                                 }"
-                                :href="route('treasury_dashboard')"
+                                :href="route('treasury.dashboard')"
                             >
                                 Dashboard
                             </Link>
                             <Link
                                 class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
                                 :class="{
-                                    'bg-gray-600 text-white':
+                                    'bg-blue-600 text-white':
                                         route().current('indeximportupdates'),
                                     'text-white':
                                         !route().current('indeximportupdates'),
@@ -69,32 +69,86 @@ const hide = () => {
                             </Link>
                             <a-dropdown arrow :placement="placements">
                                 <a
-                                    class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                    :class="{
+                                        'bg-blue-600 text-white':
+                                            route().current(
+                                                'check_for.clearing'
+                                            ) ||
+                                            route().current(
+                                                'pdc_clearing.checks'
+                                            ) ||
+                                            route().current('leasing.checks'),
+                                        'text-white':
+                                            !route().current(
+                                                'check_for.clearing'
+                                            ) ||
+                                            !route().current(
+                                                'pdc_clearing.checks'
+                                            ) ||
+                                            !route().current('leasing.checks'),
+                                    }"
+                                    class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
                                     href="#"
                                     >Check Receiving</a
                                 >
                                 -->
                                 <template #overlay>
-                                    <a-menu>
-                                        <a-menu-item>
-                                            <a
+                                    <a-menu style="background-color: #001529">
+                                        <a-menu-item
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'check_for.clearing'
+                                                    ),
+                                                'text-white':
+                                                    !route().current(
+                                                        'check_for.clearing'
+                                                    ),
+                                            }"
+                                        >
+                                            <Link
+                                                style="color: white"
                                                 :href="
                                                     route('check_for.clearing')
                                                 "
-                                                >Dated Cheques</a
+                                                >Dated Cheques</Link
                                             >
                                         </a-menu-item>
-                                        <a-menu-item>
-                                            <a
+                                        <a-menu-item
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'pdc_clearing.checks'
+                                                    ),
+                                                'text-white': !route().current(
+                                                    'pdc_clearing.checks'
+                                                ),
+                                            }"
+                                        >
+                                            <Link
+                                                style="color: white"
                                                 :href="
                                                     route('pdc_clearing.checks')
                                                 "
-                                                >Post Dated Cheques</a
+                                                >Post Dated Cheques</Link
                                             >
                                         </a-menu-item>
-                                        <a-menu-item>
-                                            <a :href="route('leasing.checks')"
-                                                >Leasing Cheques</a
+                                        <a-menu-item
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'leasing.checks'
+                                                    ),
+                                                'text-white':
+                                                    !route().current(
+                                                        'leasing.checks'
+                                                    ),
+                                            }"
+                                        >
+                                            <Link
+                                                style="color: white"
+                                                :href="route('leasing.checks')"
+                                                >Leasing Cheques</Link
                                             >
                                         </a-menu-item>
                                     </a-menu>
@@ -102,22 +156,54 @@ const hide = () => {
                             </a-dropdown>
                             <a-dropdown arrow :placement="placements">
                                 <a
-                                    class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                    :class="{
+                                        'bg-blue-600 text-white':
+                                            route().current('dated.checks') ||
+                                            route().current('pdc.checks'),
+                                        'text-white':
+                                            !route().current('dated.checks') ||
+                                            !route().current('pdc.checks'),
+                                    }"
+                                    class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
                                     href="#"
                                     >Dated Checks/Pdc</a
                                 >
                                 -->
 
                                 <template #overlay>
-                                    <a-menu>
-                                        <a-menu-item>
+                                    <a-menu style="background-color: #001529">
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'dated.checks'
+                                                    ),
+                                                'text-white':
+                                                    !route().current(
+                                                        'dated.checks'
+                                                    ),
+                                            }"
+                                        >
                                             <Link :href="route('dated.checks')"
                                                 >Dated Checks</Link
                                             >
                                         </a-menu-item>
-                                        <a-menu-item>
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'pdc.checks'
+                                                    ),
+                                                'text-white':
+                                                    !route().current(
+                                                        'pdc.checks'
+                                                    ),
+                                            }"
+                                        >
                                             <Link :href="route('pdc.checks')"
-                                                >Pdc Checks</Link
+                                                >Post Dated Checks</Link
                                             >
                                         </a-menu-item>
                                     </a-menu>
@@ -127,7 +213,7 @@ const hide = () => {
                                 <a
                                     class="inline-block rounded px-2 p-2 text-sm text-white transition-all duration-200"
                                     :class="{
-                                        'bg-gray-600 text-white':
+                                        'bg-blue-600 text-white':
                                             route().current('bounce_tagging') ||
                                             route().current('ds_tagging'),
                                         'text-black-100':
@@ -141,13 +227,37 @@ const hide = () => {
                                 -->
 
                                 <template #overlay>
-                                    <a-menu>
-                                        <a-menu-item>
+                                    <a-menu style="background-color: #001529">
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'ds_tagging'
+                                                    ),
+                                                'text-white':
+                                                    !route().current(
+                                                        'ds_tagging'
+                                                    ),
+                                            }"
+                                        >
                                             <Link :href="route('ds_tagging')"
-                                                >Ds Tagging</Link
+                                                >Deposited Tagging</Link
                                             >
                                         </a-menu-item>
-                                        <a-menu-item>
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'bounce_tagging'
+                                                    ),
+                                                'text-white':
+                                                    !route().current(
+                                                        'bounce_tagging'
+                                                    ),
+                                            }"
+                                        >
                                             <Link
                                                 :href="route('bounce_tagging')"
                                                 >Bounce Tagging</Link
@@ -158,15 +268,62 @@ const hide = () => {
                             </a-dropdown>
                             <a-dropdown arrow :placement="placements">
                                 <a
-                                    class="inline-block rounded-lg px-2 py-1 text-sm text-white transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
+                                    :class="{
+                                        'bg-blue-600 text-white':
+                                            route().current(
+                                                'manual_entry.checks'
+                                            ) ||
+                                            route().current(
+                                                'mergechecks.checks'
+                                            ) ||
+                                            route().current('bounce.checks') ||
+                                            route().current('replace.checks') ||
+                                            route().current(
+                                                'partial_payments.checks'
+                                            ) ||
+                                            route().current('dcpdc.checks') ||
+                                            route().current(
+                                                'duePdcReports.checks'
+                                            ),
+                                        'text-white':
+                                            !route().current(
+                                                'manual_entry.checks'
+                                            ) ||
+                                            !route().current(
+                                                'mergechecks.checks'
+                                            ) ||
+                                            !route().current('bounce.checks') ||
+                                            !route().current(
+                                                'replace.checks'
+                                            ) ||
+                                            !route().current(
+                                                'partial_payments.checks'
+                                            ) ||
+                                            !route().current('dcpdc.checks') ||
+                                            !route().current(
+                                                'duePdcReports.checks'
+                                            ),
+                                    }"
+                                    class="inline-block rounded px-2 p-2 text-sm text-white transition-all duration-200"
                                     href="#"
                                     >Transaction</a
                                 >
                                 -->
 
                                 <template #overlay>
-                                    <a-menu>
-                                        <a-menu-item>
+                                    <a-menu style="background-color: #001529">
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'manual_entry.checks'
+                                                    ),
+                                                'text-white': !route().current(
+                                                    'manual_entry.checks'
+                                                ),
+                                            }"
+                                        >
                                             <Link
                                                 :href="
                                                     route('manual_entry.checks')
@@ -174,7 +331,19 @@ const hide = () => {
                                                 >Check Manual Entry</Link
                                             >
                                         </a-menu-item>
-                                        <a-menu-item>
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'mergechecks.checks'
+                                                    ),
+                                                'text-white':
+                                                    !route().current(
+                                                        'mergechecks.checks'
+                                                    ),
+                                            }"
+                                        >
                                             <Link
                                                 :href="
                                                     route('mergechecks.checks')
@@ -182,18 +351,53 @@ const hide = () => {
                                                 >Merge Checks</Link
                                             >
                                         </a-menu-item>
-                                        <a-menu-item>
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'bounce.checks'
+                                                    ),
+                                                'text-white':
+                                                    !route().current(
+                                                        'bounce.checks'
+                                                    ),
+                                            }"
+                                        >
                                             <Link :href="route('bounce.checks')"
                                                 >Bounced Checks</Link
                                             >
                                         </a-menu-item>
-                                        <a-menu-item>
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'replace.checks'
+                                                    ),
+                                                'text-white':
+                                                    !route().current(
+                                                        'replace.checks'
+                                                    ),
+                                            }"
+                                        >
                                             <Link
                                                 :href="route('replace.checks')"
                                                 >Replacement Checks</Link
                                             >
                                         </a-menu-item>
-                                        <a-menu-item>
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'partial_payments.checks'
+                                                    ),
+                                                'text-white': !route().current(
+                                                    'partial_payments.checks'
+                                                ),
+                                            }"
+                                        >
                                             <Link
                                                 :href="
                                                     route(
@@ -203,19 +407,44 @@ const hide = () => {
                                                 >Partial Payment</Link
                                             >
                                         </a-menu-item>
-                                        <a-menu-item>
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'dcpdc.checks'
+                                                    ),
+                                                'text-white':
+                                                    !route().current(
+                                                        'dcpdc.checks'
+                                                    ),
+                                            }"
+                                        >
                                             <Link :href="route('dcpdc.checks')"
-                                                >Dated/Pdc Reports</Link
+                                                >Dated / Post Dated Checks
+                                                Reports</Link
                                             >
                                         </a-menu-item>
-                                        <a-menu-item>
+                                        <a-menu-item
+                                            style="color: white"
+                                            :class="{
+                                                'bg-blue-600 text-white':
+                                                    route().current(
+                                                        'duePdcReports.checks'
+                                                    ),
+                                                'text-white': !route().current(
+                                                    'duePdcReports.checks'
+                                                ),
+                                            }"
+                                        >
                                             <Link
                                                 :href="
                                                     route(
                                                         'duePdcReports.checks'
                                                     )
                                                 "
-                                                >Due Pdc Reports</Link
+                                                >Due / Post Dated Checks
+                                                Reports</Link
                                             >
                                         </a-menu-item>
                                     </a-menu>
@@ -349,7 +578,7 @@ const hide = () => {
             </header>
 
             <div>
-                <header style="width: auto">
+                <header style="width: 95%; margin: 0 auto" class="py-4">
                     <div class="flex justify-between items-center">
                         <div class="flex items-center">
                             <img
@@ -429,15 +658,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap");
 .icons {
     margin-top: 1px;
     height: 30px;
     background: white;
     border-radius: 10%;
+    /* Optionally, you can also reset background color on hover */
 }
-
 .b-icons {
     height: 16px;
     width: 100%;

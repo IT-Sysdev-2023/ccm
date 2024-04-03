@@ -17,66 +17,13 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                 <a-row :gutter="[16, 16]" class="mt-4">
                     <a-col :span="8">
                         <a-card>
-                            <div class="container">
-                                <div class="skill-box">
-                                    <span class="title">Cheques</span>
-
-                                    <div class="skill-bar">
-                                        <span class="skill-per html">
-                                            <span class="tooltip">80%</span>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="skill-box">
-                                    <span class="title"
-                                        >Post Dated Cheques</span
-                                    >
-
-                                    <div class="skill-bar">
-                                        <span class="skill-per css">
-                                            <span class="tooltip">30%</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="skill-box">
-                                    <span class="title">Dated Cheques</span>
-
-                                    <div class="skill-bar">
-                                        <span class="skill-per javascript">
-                                            <span class="tooltip">40%</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="skill-box">
-                                    <span class="title">Deposited Checks</span>
-
-                                    <div class="skill-bar">
-                                        <span class="skill-per nodejs">
-                                            <span class="tooltip">60%</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="skill-box">
-                                    <span class="title">Bounced Checks</span>
-
-                                    <div class="skill-bar">
-                                        <span class="skill-per nodejs">
-                                            <span class="tooltip">60%</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="skill-box">
-                                    <span class="title"
-                                        >Replacement Cheques</span
-                                    >
-
-                                    <div class="skill-bar">
-                                        <span class="skill-per nodejs">
-                                            <span class="tooltip">60%</span>
-                                        </span>
-                                    </div>
-                                </div>
+                            <div id="chart">
+                                <apexchart
+                                    type="bar"
+                                    height="350"
+                                    :options="chartOptions"
+                                    :series="series"
+                                ></apexchart>
                             </div>
                         </a-card>
                     </a-col>
@@ -112,13 +59,16 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                             <span id="currency"
                                                 ><ScheduleOutlined />
                                                 &nbsp;</span
-                                            >20000
+                                            >{{ checkCount.toLocaleString() }}
                                         </p>
                                     </div>
 
-                                    <button class="addmoney">
-                                        <span class="plussign">+</span>Add Money
-                                    </button>
+                                    <div class="addmoney">
+                                        <img
+                                            src="../../../public/svg/checks.svg"
+                                            alt=""
+                                        />
+                                    </div>
                                 </div>
                             </a-col>
                             <a-col :span="8">
@@ -149,7 +99,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                             <span id="currency"
                                                 ><ScheduleOutlined />
                                                 &nbsp;</span
-                                            >20000
+                                            >{{ pdcCount.toLocaleString() }}
                                         </p>
                                     </div>
 
@@ -188,7 +138,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                             <span id="currency"
                                                 ><ScheduleOutlined />
                                                 &nbsp;</span
-                                            >20000
+                                            >{{ datedCount.toLocaleString() }}
                                         </p>
                                     </div>
 
@@ -227,7 +177,9 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                             <span id="currency"
                                                 ><ScheduleOutlined />
                                                 &nbsp;</span
-                                            >20000
+                                            >{{
+                                                depositedCount.toLocaleString()
+                                            }}
                                         </p>
                                     </div>
 
@@ -266,7 +218,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                             <span id="currency"
                                                 ><ScheduleOutlined />
                                                 &nbsp;</span
-                                            >20000
+                                            >{{ bouncedCount.toLocaleString() }}
                                         </p>
                                     </div>
 
@@ -305,7 +257,9 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                             <span id="currency"
                                                 ><ScheduleOutlined />
                                                 &nbsp;</span
-                                            >20000
+                                            >{{
+                                                replacementCount.toLocaleString()
+                                            }}
                                         </p>
                                     </div>
 
@@ -332,7 +286,11 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                         >
                             <a-collapse-panel
                                 key="1"
-                                header="Click this to see calendar"
+                                :header="
+                                    activeKey == true
+                                        ? 'Click here to hide this calendar...'
+                                        : 'Click here to Open this calendar...'
+                                "
                             >
                                 <a-calendar v-model:value="value">
                                     <template #dateCellRender="{ current }">
@@ -428,11 +386,103 @@ export default {
     data() {
         return {
             value: dayjs(),
-            activeKey: null,
+            activeKey: ["1"],
+            series: [
+                {
+                    name: "Cheques",
+                    data: [
+                        this.checkCount,
+                        this.pdcCount,
+                        this.datedCount,
+                        this.depositedCount,
+                        this.bouncedCount,
+                        this.replacementCount,
+                    ],
+                },
+            ],
+            chartOptions: {
+                annotations: {
+                    points: [
+                        {
+                            x: "Bananas",
+                            seriesIndex: 0,
+                            label: {
+                                borderColor: "#775DD0",
+                                offsetY: 0,
+                                style: {
+                                    color: "#fff",
+                                    background: "#775DD0",
+                                },
+                                text: "Bananas are good",
+                            },
+                        },
+                    ],
+                },
+                chart: {
+                    height: 350,
+                    type: "bar",
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 10,
+                        columnWidth: "50%",
+                    },
+                },
+                dataLabels: {
+                    enabled: false,
+                },
+                stroke: {
+                    width: 2,
+                },
+
+                grid: {
+                    row: {
+                        colors: ["#fff", "#f2f2f2"],
+                    },
+                },
+                xaxis: {
+                    labels: {
+                        rotate: -45,
+                    },
+                    categories: [
+                        "Cheques",
+                        "Post Dated",
+                        "Dated",
+                        "Deposited",
+                        "Bounced",
+                        "Replacement",
+                    ],
+                    tickPlacement: "on",
+                },
+                yaxis: {
+                    title: {
+                        text: "Cheques",
+                    },
+                },
+                fill: {
+                    type: "gradient",
+                    gradient: {
+                        shade: "light",
+                        type: "horizontal",
+                        shadeIntensity: 0.25,
+                        gradientToColors: undefined,
+                        inverseColors: true,
+                        opacityFrom: 0.85,
+                        opacityTo: 0.85,
+                        stops: [50, 0, 100],
+                    },
+                },
+            },
         };
     },
     props: {
         holiday: Object,
+        checkCount: Number,
+        pdcCount: Number,
+        datedCount: Number,
+        depositedCount: Number,
+        bouncedCount: Number,
+        replacementCount: Number,
     },
     methods: {
         someFunction(current) {
@@ -473,7 +523,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 12px;
+    gap: 30px;
     padding: 0px 25px;
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -505,12 +555,15 @@ export default {
     font-size: 13.5px;
     color: white;
     font-weight: 600;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.5px;
+}
+.currency span {
+    letter-spacing: 2px;
 }
 
 .addmoney {
     padding: 1px 15px;
-    border-radius: 20px;
+    border-radius: 5px;
     background-color: #c083eb;
     color: white;
     border: none;
@@ -521,6 +574,7 @@ export default {
     align-items: center;
     justify-content: center;
     gap: 5px;
+    display: none;
 }
 .addmoney:hover {
     background-color: whitesmoke;
