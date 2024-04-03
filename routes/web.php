@@ -27,13 +27,7 @@ use App\Http\Controllers\CheckReceivingController;
 */
 
 Route::get('/', function () {
-    // dd(User::all());
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('Auth/Login');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
