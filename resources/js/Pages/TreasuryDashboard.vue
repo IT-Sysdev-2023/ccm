@@ -340,17 +340,17 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                             :class="
                                                 validateDayOfMonth(current) &&
                                                 someFunction(current)
-                                                    ? 'bg-green-300 text-black'
+                                                    ? 'bg-green-100 text-gray-500'
                                                     : someFunction(current)
                                                     ? 'bg-green-600 text-white'
                                                     : validateDayOfMonth(
                                                           current
                                                       ) && isWeekend(current)
-                                                    ? 'bg-red-100'
+                                                    ? 'bg-red-100 text-gray-500'
                                                     : validateDayOfMonth(
                                                           current
                                                       )
-                                                    ? 'bg-blue-200'
+                                                    ? 'bg-blue-100 text-gray-500'
                                                     : isWeekend(current)
                                                     ? 'bg-red-400'
                                                     : !someFunction(current)
@@ -369,11 +369,18 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                                 border-radius: 10px;
                                             "
                                         >
+                                            <span class="p-2"> </span>
+                                            <div
+                                                class="text-center mt-1 text-xl"
+                                            >
+                                                {{ current.format("ddd") }}
+                                            </div>
                                             <span
                                                 v-if="someFunction(current)"
-                                                class="flex justify-center items-center"
-                                                style="height: inherit"
+                                                class="flex justify-center items-center mt-1"
+                                                style="font-size: 11px"
                                             >
+                                                <a-badge status="warning" />
                                                 {{
                                                     holiday.find(
                                                         (item) =>
