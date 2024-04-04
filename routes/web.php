@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(ImportUpdateController::class)->group(function () {
         Route::get('/indeximportupdates', 'indeximportupdates')->name('indeximportupdates');
         Route::get('instImport', 'instImportfunction')->name('instImport');
+    Route::get('update/atp/database', [ImportUpdateController::class, 'updateAtpDatabase'])->name('updatingAtp.database');
     });
 
     Route::get('/bounce_tagging', [DsBounceTaggingController::class, 'indexBounceTagging'])->name('bounce_tagging');

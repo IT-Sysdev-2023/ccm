@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Events\ImportUpdateEvents;
 use App\Models\AppSetting;
+use App\Models\BusinessUnit;
 use App\Models\CheckRecieved;
 use App\Models\Checks;
 use App\Traits\ImportUpateTraits;
@@ -247,6 +248,63 @@ class ImportUpdateService
         sleep(2);
 
         return Inertia::render('Components/ImportUpdatePartials/ImportUpdateResult');
+
+    }
+
+    public function updateResult()
+    {
+
+        $bunitAtpGetData = BusinessUnit::where('businessunit_id', Auth::user()->businessunit_id)->whereNotNull('b_atpgetdata')->get();
+
+        $bunitEncashStart = BusinessUnit::where('businessunit_id', Auth::user()->businessunit_id)
+            ->whereNotNull('b_encashstart')->first();
+
+        $dateStartAtp = $bunitEncashStart->b_atpgetdata;
+        $dateStartEncash = $bunitEncashStart->b_encashstart;
+
+        $checksOnDatabase = Checks::where('businessunit_id', Auth::user()->businessunit_id)->count();
+
+        $checkpdc = DB::connection('sqlsrv')
+            ->table('chk_dtl')
+            ->join('chk_mst', 'chk_mst.issue_no', '=', 'chk_dtl.issue_no')
+            ->join('customer', 'customer.custid', '=', 'chk_mst.custid')
+            ->where('chk_mst.loc_code', Auth::user()->businessunit->loc_code_atp)
+            ->where('chk_dtl.chkdate', '>=', $dateStartAtp)
+            ->where('chk_mst.atp_date', '<', $dateStartAtp)
+            ->orderBy('entry_no', 'asc')
+            ->select(
+                'chk_mst.issue_no',
+                'chk_mst.atp_date',
+                'chk_dtl.entry_no',
+                'chk_dtl.chkclass',
+                'chk_dtl.chktype',
+                'chk_dtl.chkdate',
+                'chk_dtl.chkno',
+                'chk_dtl.bankname',
+                'chk_dtl.brstn_rtno',
+                'chk_dtl.actno',
+                'chk_dtl.actname',
+                'chk_dtl.chkamt',
+                'chk_dtl.chkexpiry',
+                'chk_dtl.category',
+                'chk_dtl.approvedby',
+                'customer.clastname',
+                'customer.cfirstname',
+                'customer.cmiddname',
+                'customer.extension'
+            )
+            ->get();
+
+        dd($checkpdc);
+
+        // if ($checksOnDatabase == 0) {
+        //     try {
+        //         $checkPostDated = DB::connection('sqlsrv');
+        //     }
+        // }
+
+
+
 
     }
 }
