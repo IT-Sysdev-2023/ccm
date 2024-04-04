@@ -100,6 +100,7 @@ return [
             'prefix' => '',
             'strict' => false,
             'engine' => null,
+            'trust_server_certificate' => true,
         ],
 
     ],

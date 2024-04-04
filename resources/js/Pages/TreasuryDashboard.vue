@@ -342,7 +342,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                                 {{
                                                     holiday.find(
                                                         (item) =>
-                                                            item.date.date ===
+                                                            item.date?.date ===
                                                             dayjs(
                                                                 current
                                                             ).format(
@@ -487,7 +487,7 @@ export default {
     methods: {
         someFunction(current) {
             return this.holiday.some(
-                (item) => item.date.date === dayjs(current).format("YYYY-MM-DD")
+                (item) => item.date?.date === dayjs(current).format("YYYY-MM-DD")
             );
         },
         validateDayOfMonth(current) {
