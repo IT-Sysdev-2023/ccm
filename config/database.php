@@ -64,12 +64,12 @@ return [
         ],
 
         'pis' => [
-            'driver'    => env('DB_CONNECTIONPIS'),
-            'host'      => env('DB_HOSTPIS'),
-            'port'      => env('DB_PORTPIS'),
-            'database'  => env('DB_DATABASEPIS'),
-            'username'  => env('DB_USERNAMEPIS'),
-            'password'  => env('DB_PASSWORDPIS'),
+            'driver' => env('DB_CONNECTIONPIS'),
+            'host' => env('DB_HOSTPIS'),
+            'port' => env('DB_PORTPIS'),
+            'database' => env('DB_DATABASEPIS'),
+            'username' => env('DB_USERNAMEPIS'),
+            'password' => env('DB_PASSWORDPIS'),
         ],
 
         'pgsql' => [
@@ -88,18 +88,18 @@ return [
         ],
 
         'sqlsrv' => [
-            'driver' => 'sqlsrv',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'driver' => env('DB_CONNECTIONMSSQL'),
+            'host' => env('DB_HOSTMSSQL'),
+            'port' => env('DB_PORTMSSQL'),
+            'database' => env('DB_DATABASEMSSQL'),
+            'username' => env('DB_USERNAMEMSSQL'),
+            'password' => env('DB_PASSWORDMSSQL'),
+            'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8',
+            'collation' => 'utf8_general_ci',
             'prefix' => '',
-            'prefix_indexes' => true,
-            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
-            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+            'strict' => false,
+            'engine' => null,
         ],
 
     ],
@@ -134,7 +134,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [

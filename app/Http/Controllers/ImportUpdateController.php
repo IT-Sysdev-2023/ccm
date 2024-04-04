@@ -25,4 +25,9 @@ class ImportUpdateController extends Controller
     {
         return (new ImportUpdateService())->importResult();
     }
+
+    public function updateAtpDatabase()
+    {
+        return (new ImportUpdateService())->updateResult();
+    }
 }

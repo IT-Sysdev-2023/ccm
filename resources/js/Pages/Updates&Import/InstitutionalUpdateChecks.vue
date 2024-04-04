@@ -293,24 +293,14 @@ const tabPosition = "right";
                                     >
                                         <template #extra1> hello </template>
                                         <template #extra>
-                                            <a-upload
-                                                v-model:file-list="fileList"
-                                                name="file"
-                                                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                                :headers="headers"
-                                                @change="handleChange"
+                                            <a-button
+                                            @click="startUpdatingAtpDatabase"
+                                                type="primary"
+                                                style="width: 300px"
                                             >
-                                                <a-button
-                                                    style="
-                                                        width: 300px;
-                                                        background: #0a1d56;
-                                                        color: white;
-                                                    "
-                                                >
-                                                    <UploadOutlined />
-                                                    Start Updating
-                                                </a-button>
-                                            </a-upload>
+                                                <UploadOutlined />
+                                                Start Updating
+                                            </a-button>
                                         </template>
                                     </a-result>
                                 </div>
@@ -454,6 +444,10 @@ export default {
                 }
             );
         },
+        startUpdatingAtpDatabase(){
+            this.$inertia.get(route('updatingAtp.database'));
+        }
+        
     },
     mounted() {
         this.getRandomJoke();
