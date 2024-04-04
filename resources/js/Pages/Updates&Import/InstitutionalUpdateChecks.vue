@@ -1,32 +1,35 @@
 <script setup>
-import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
-const placement = 'top';
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
+const placement = "top";
 
-const tabPosition = 'right';
+const tabPosition = "right";
 </script>
 
 <template>
-
     <Head title="Dashboard" />
 
     <TreasuryLayout>
-        <template #header>
-        </template>
+        <template #header> </template>
 
         <div class="py-5">
-
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-
                 <a-row :gutter="[16, 16]">
                     <a-col :span="5">
-                        <a-card style="height: 100%;">
-                            <a-button style="width: 100%;" class="mb-5" @click="showImportInstutional"
-                                :class="{ 'active': isActive === 'import' }">
+                        <a-card style="height: 100%">
+                            <a-button
+                                style="width: 100%"
+                                class="mb-5"
+                                @click="showImportInstutional"
+                                :class="{ active: isActive === 'import' }"
+                            >
                                 <ImportOutlined />
-                                Import Institutional 
+                                Import Institutional
                             </a-button>
-                            <a-button style="width: 100%;" @click="showUpdateddatabase"
-                                :class="{ 'active': isActive === 'update' }">
+                            <a-button
+                                style="width: 100%"
+                                @click="showUpdateddatabase"
+                                :class="{ active: isActive === 'update' }"
+                            >
                                 <UpSquareOutlined />
                                 Update Atp Database
                             </a-button>
@@ -34,38 +37,74 @@ const tabPosition = 'right';
                     </a-col>
                     <a-col :span="19">
                         <a-card>
-
                             <div v-if="showImport">
                                 <a-row :gutter="[16, 16]">
                                     <a-col :span="6" class="flex justify-end">
-                                        <img src="../../../../public/Logo/ccmpbng.png" alt=""
-                                            style="height: 130px; display: flex; justify-content: center;">
+                                        <img
+                                            src="../../../../public/Logo/ccmpbng.png"
+                                            alt=""
+                                            style="
+                                                height: 130px;
+                                                display: flex;
+                                                justify-content: center;
+                                            "
+                                        />
                                     </a-col>
                                     <a-col :span="18">
                                         <a-card v-if="isNotProgressShowing">
-                                            Hello There! <strong>{{ $page.props.auth.user.name }} </strong> , To proceed
-                                            the
-                                            import instutional checks. Please click the "
+                                            Hello There!
+                                            <strong
+                                                >{{
+                                                    $page.props.auth.user.name
+                                                }}
+                                            </strong>
+                                            , To proceed the import instutional
+                                            checks. Please click the "
                                             <strong>Start Importing</strong> "
                                         </a-card>
                                         <a-card>
-                                            <div v-if="isProgressShowing" style="font-size: 14px;">
+                                            <div
+                                                v-if="isProgressShowing"
+                                                style="font-size: 14px"
+                                            >
                                                 <div>
-                                                    <div v-if="isProgressShowing">
-                                                        <div class="flex justify-between">
+                                                    <div
+                                                        v-if="isProgressShowing"
+                                                    >
+                                                        <div
+                                                            class="flex justify-between"
+                                                        >
                                                             <div>
-                                                                <p> {{ progressBar.message }} {{ progressBar.currentRow
-                                                                    }} to
-                                                                    {{ progressBar.totalRows }}
+                                                                <p>
+                                                                    {{
+                                                                        progressBar.message
+                                                                    }}
+                                                                    {{
+                                                                        progressBar.currentRow
+                                                                    }}
+                                                                    to
+                                                                    {{
+                                                                        progressBar.totalRows
+                                                                    }}
                                                                 </p>
                                                             </div>
 
-                                                            <div>
-                                                            </div>
+                                                            <div></div>
                                                         </div>
-                                                        <a-progress style="width: 98%; margin: 0 auto;" :stroke-color="{
-                    from: '#108ee9', to: '#87d068',
-                }" :percent="progressBar.percentage" status="active" />
+                                                        <a-progress
+                                                            style="
+                                                                width: 98%;
+                                                                margin: 0 auto;
+                                                            "
+                                                            :stroke-color="{
+                                                                from: '#108ee9',
+                                                                to: '#87d068',
+                                                            }"
+                                                            :percent="
+                                                                progressBar.percentage
+                                                            "
+                                                            status="active"
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
@@ -74,49 +113,109 @@ const tabPosition = 'right';
                                 </a-row>
                                 <div class="loader mt-0">
                                     <div class="book-wrapper">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 126 75"
-                                            class="book">
-                                            <rect stroke-width="5" stroke="#e05452" rx="7.5" height="70" width="121"
-                                                y="2.5" x="2.5"></rect>
-                                            <line stroke-width="5" stroke="#e05452" y2="75" x2="63.5" x1="63.5"></line>
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
-                                                d="M25 20H50">
-                                            </path>
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
-                                                d="M101 20H76">
-                                            </path>
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
-                                                d="M16 30L50 30">
-                                            </path>
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
-                                                d="M110 30L76 30">
-                                            </path>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="white"
+                                            viewBox="0 0 126 75"
+                                            class="book"
+                                        >
+                                            <rect
+                                                stroke-width="5"
+                                                stroke="#e05452"
+                                                rx="7.5"
+                                                height="70"
+                                                width="121"
+                                                y="2.5"
+                                                x="2.5"
+                                            ></rect>
+                                            <line
+                                                stroke-width="5"
+                                                stroke="#e05452"
+                                                y2="75"
+                                                x2="63.5"
+                                                x1="63.5"
+                                            ></line>
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-width="4"
+                                                stroke="#c18949"
+                                                d="M25 20H50"
+                                            ></path>
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-width="4"
+                                                stroke="#c18949"
+                                                d="M101 20H76"
+                                            ></path>
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-width="4"
+                                                stroke="#c18949"
+                                                d="M16 30L50 30"
+                                            ></path>
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-width="4"
+                                                stroke="#c18949"
+                                                d="M110 30L76 30"
+                                            ></path>
                                         </svg>
 
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff74" viewBox="0 0 65 75"
-                                            class="book-page">
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
-                                                d="M40 20H15">
-                                            </path>
-                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
-                                                d="M49 30L15 30">
-                                            </path>
-                                            <path stroke-width="5" stroke="#e05452"
-                                                d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z">
-                                            </path>
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="#ffffff74"
+                                            viewBox="0 0 65 75"
+                                            class="book-page"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-width="4"
+                                                stroke="#c18949"
+                                                d="M40 20H15"
+                                            ></path>
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-width="4"
+                                                stroke="#c18949"
+                                                d="M49 30L15 30"
+                                            ></path>
+                                            <path
+                                                stroke-width="5"
+                                                stroke="#e05452"
+                                                d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z"
+                                            ></path>
                                         </svg>
-
                                     </div>
-                                    <a-result status="" title="Import institutional checks!"
-                                        sub-title="Click  the start button, to import the institutional text-file.">
+                                    <a-result
+                                        status=""
+                                        title="Import institutional checks!"
+                                        sub-title="Click  the start button, to import the institutional text-file."
+                                    >
+                                        <div class="text-center">
+                                            <a-tag color="green" v-if="count">
+                                                The instutional textfile is
+                                                importable
+                                            </a-tag>
+                                            <a-tag color="red" v-else>
+                                                Theres no institutional textfile
+                                                for today
+                                            </a-tag>
+                                        </div>
                                         <template #extra>
-                                            <a-button :loading="isLoading" style="width: 300px;" type="primary"
-                                                :disabled="!data.length" @click="startImporting">
+                                            <a-button
+                                                :loading="isLoading"
+                                                style="width: 300px"
+                                                type="primary"
+                                                :disabled="!count"
+                                                @click="startImporting"
+                                            >
                                                 <template #icon>
                                                     <UploadOutlined />
                                                 </template>
-                                                {{ isLoading ? 'importing text file in progress please wait...'
-                    : 'Start Importing institutional text file'
+                                                {{
+                                                    isLoading
+                                                        ? "importing text file in progress please wait..."
+                                                        : "Start Importing institutional text file"
                                                 }}
                                             </a-button>
                                         </template>
@@ -126,25 +225,32 @@ const tabPosition = 'right';
                             <div v-else-if="showUpdate">
                                 <a-row :gutter="[16, 16]">
                                     <a-col :span="6" class="flex justify-end">
-                                        <img src="../../../../public/Logo/ccmpbng.png" alt=""
-                                            style="height: 130px; display: flex; justify-content: center;">
+                                        <img
+                                            src="../../../../public/Logo/ccmpbng.png"
+                                            alt=""
+                                            style="
+                                                height: 130px;
+                                                display: flex;
+                                                justify-content: center;
+                                            "
+                                        />
                                     </a-col>
                                     <a-col :span="18">
                                         <a-card>
-                                            Hello There! <strong>{{ $page.props.auth.user.name }} </strong>, To proceed
-                                            the
-                                            atp
-                                            update
+                                            Hello There!
+                                            <strong
+                                                >{{
+                                                    $page.props.auth.user.name
+                                                }} </strong
+                                            >, To proceed the atp update
                                             database. Please click the "
                                             <strong>Start Updating</strong> "
                                         </a-card>
                                     </a-col>
                                 </a-row>
 
-
                                 <div class="loader mt-0">
                                     <div class="book-wrapper">
-
                                         <div class="gearbox">
                                             <div class="overlay"></div>
                                             <div class="gear one">
@@ -179,18 +285,28 @@ const tabPosition = 'right';
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
-                                    <a-result status="" title="Update Atp Database!"
-                                        sub-title="Click  the start button, to update the atp database.">
-                                        <template #extra1>
-                                            hello
-                                        </template>
+                                    <a-result
+                                        status=""
+                                        title="Update Atp Database!"
+                                        sub-title="Click  the start button, to update the atp database."
+                                    >
+                                        <template #extra1> hello </template>
                                         <template #extra>
-                                            <a-upload v-model:file-list="fileList" name="file"
+                                            <a-upload
+                                                v-model:file-list="fileList"
+                                                name="file"
                                                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                                :headers="headers" @change="handleChange">
-                                                <a-button style="width: 300px; background: #0A1D56; color: white;">
+                                                :headers="headers"
+                                                @change="handleChange"
+                                            >
+                                                <a-button
+                                                    style="
+                                                        width: 300px;
+                                                        background: #0a1d56;
+                                                        color: white;
+                                                    "
+                                                >
                                                     <UploadOutlined />
                                                     Start Updating
                                                 </a-button>
@@ -200,39 +316,57 @@ const tabPosition = 'right';
                                 </div>
                             </div>
                             <div class="mt-0 loader" v-else>
-                                <img src="../../../../public/Logo/ccmpbng.png" alt=""
-                                    style="height: 350px; display: flex; justify-content: center;">
+                                <img
+                                    src="../../../../public/Logo/ccmpbng.png"
+                                    alt=""
+                                    style="
+                                        height: 350px;
+                                        display: flex;
+                                        justify-content: center;
+                                    "
+                                />
                                 <a-card>
-                                    Hi There! <strong>{{ $page.props.auth.user.name }} </strong> I'm
+                                    Hi There!
+                                    <strong
+                                        >{{ $page.props.auth.user.name }}
+                                    </strong>
+                                    I'm
                                     <strong>Ccmbot</strong>
-                                    We're thrilled to have you
-                                    here. Explore our platform to discover a world of
-                                    information, services, and resources tailored just for you. Whether you're seeking
-                                    solutions, entertainment, or simply looking to learn something new, we've got you
-                                    covered. Let's embark on this journey together! <br>
+                                    We're thrilled to have you here. Explore our
+                                    platform to discover a world of information,
+                                    services, and resources tailored just for
+                                    you. Whether you're seeking solutions,
+                                    entertainment, or simply looking to learn
+                                    something new, we've got you covered. Let's
+                                    embark on this journey together! <br />
 
-                                    <br>
-                                    Please click the button "<strong>Import institutional checks</strong>" &
-                                    "<strong>Update
-                                        atp
-                                        database</strong>" to proceed
-                                    the in the page
+                                    <br />
+                                    Please click the button "<strong
+                                        >Import institutional checks</strong
+                                    >" & "<strong>Update atp database</strong>"
+                                    to proceed the in the page
                                 </a-card>
-
                             </div>
                         </a-card>
                     </a-col>
                 </a-row>
             </div>
         </div>
-        <div class="" style="display: flex; justify-content: start;" @click="getRandomJoke()">
+        <div
+            class=""
+            style="display: flex; justify-content: start"
+            @click="getRandomJoke()"
+        >
             <a-tooltip placement="top">
                 <template #title>
                     <span>Click this to view the tour guide</span>
                 </template>
-                <a-float-button type="primary" :style="{
-                    right: '100px',
-                }">
+                <a-float-button
+                    type="primary"
+                    :style="{
+                        right: '100px',
+                    }"
+                >
                     <template #icon>
                         <QuestionOutlined />
                     </template>
@@ -240,10 +374,12 @@ const tabPosition = 'right';
             </a-tooltip>
 
             <a-dropdown :placement="placement" :arrow="{ pointAtCenter: true }">
-
-                <a-float-button type="primary" :style="{
-                    right: '150px',
-                }">
+                <a-float-button
+                    type="primary"
+                    :style="{
+                        right: '150px',
+                    }"
+                >
                     <template #icon>
                         <SmileOutlined />
                     </template>
@@ -251,9 +387,7 @@ const tabPosition = 'right';
                 <template #overlay>
                     <a-menu>
                         <div class="p-6">
-                            <p>
-                                <QuestionOutlined /> {{ jokes.setup }}
-                            </p>
+                            <p><QuestionOutlined /> {{ jokes.setup }}</p>
                             <p class="font-bold">
                                 <SmileOutlined /> {{ jokes.punchline }}
                             </p>
@@ -261,18 +395,15 @@ const tabPosition = 'right';
                     </a-menu>
                 </template>
             </a-dropdown>
-
         </div>
-
     </TreasuryLayout>
 </template>
 
 <script>
 export default {
-
     data() {
         return {
-            jokes: '',
+            jokes: "",
             showUpdate: false,
             showImport: false,
             isActive: null,
@@ -281,21 +412,20 @@ export default {
                 percentage: 0,
                 message: "",
                 totalRows: 0,
-
             },
             isProgressShowing: false,
             isNotProgressShowing: true,
             isLoading: false,
-
-        }
+        };
     },
     methods: {
         async getRandomJoke() {
             try {
-                const response = await fetch("https://official-joke-api.appspot.com/random_joke/");
+                const response = await fetch(
+                    "https://official-joke-api.appspot.com/random_joke/"
+                );
                 const data = await response.json();
                 this.jokes = data;
-
             } catch (error) {
                 console.error("Error fetching joke:", error);
             }
@@ -303,23 +433,27 @@ export default {
         showImportInstutional() {
             this.showImport = true;
             this.showUpdate = false;
-            this.isActive = 'import';
+            this.isActive = "import";
         },
         showUpdateddatabase() {
             this.showImport = false;
             this.showUpdate = true;
-            this.isActive = 'update';
+            this.isActive = "update";
         },
         startImporting() {
             this.isProgressShowing = true;
             this.isNotProgressShowing = false;
             this.isLoading = true;
 
-            this.$inertia.get(route('start.importing.checks'), {}, {
-                preserveScroll: true,
-                preserveState: true
-            });
-        }
+            this.$inertia.get(
+                route("start.importing.checks"),
+                {},
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                }
+            );
+        },
     },
     mounted() {
         this.getRandomJoke();
@@ -328,23 +462,20 @@ export default {
             .private(`importing-progress.${this.$page.props.auth.user.id}`)
             .listen(".importing-database", (e) => {
                 this.progressBar = e;
-
             });
     },
 
     props: {
-        qoute_api: Array,
-        data: Array,
-    }
-}
+        qoute_api: Object,
+        count: Number,
+    },
+};
 </script>
 
 <style scoped>
 .active {
-
     background-color: rgb(10, 79, 143);
     color: white;
-
 }
 
 .loader {
@@ -411,16 +542,12 @@ export default {
 }
 
 .gearbox {
-
     height: 170px;
     width: 280px;
     position: relative;
 
     border-radius: 6px;
-
 }
-
-
 
 .gearbox .overlay {
     background: transparent;
@@ -480,7 +607,9 @@ export default {
     margin-left: -18px;
     margin-top: -18px;
     z-index: 3;
-    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1), inset 0px 0px 10px rgba(0, 0, 0, 0.1), inset 0px 2px 0px 0px #090909, inset 0px -1px 0px 0px #888888;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1),
+        inset 0px 0px 10px rgba(0, 0, 0, 0.1), inset 0px 2px 0px 0px #090909,
+        inset 0px -1px 0px 0px #888888;
 }
 
 .gear-inner {

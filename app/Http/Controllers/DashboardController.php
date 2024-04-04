@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use San103\Phpholidayapi\HolidayClient;
+use San103\Phpholidayapi\HolidayClientLaravel;
 
 class DashboardController extends Controller
 {
@@ -18,7 +19,7 @@ class DashboardController extends Controller
     }
     public function treasuryDashboardComponent()
     {
-        $holiday = new HolidayClient();
+        $holiday = new HolidayClientLaravel();
 
         $va = $holiday
             ->year((string) today()->year)
