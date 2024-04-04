@@ -310,7 +310,7 @@ form.sign-in-form {
             rgba(0, 0, 0, 0.6),
             rgba(0, 0, 0, 0.6)
         ),
-        url("ccmimages/ccmoffice.jpg");
+        url('ccmimages/ccmoffice.jpg');
     transition: 1.8s ease-in-out;
     border-radius: 50%;
     z-index: 6;

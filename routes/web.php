@@ -47,13 +47,13 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('users', [UserController::class, 'index'])->name('users.index');
-    Route::post('update_user/{id}', [UserController::class, 'updateUser'])->name('users.update');
+    Route::post('update/user/{id}', [UserController::class, 'updateUser'])->name('users.update');
     Route::post('create/user', [UserController::class, 'createUser'])->name('users.store');
     Route::get('user/details/{id}', [UserController::class, 'userDetails'])->name('users.details');
-    Route::get('autoc_users/search', [UserController::class, 'searchUsers'])->name('users.search');
-    Route::get('autoc_company/search', [UserController::class, 'searchCompany'])->name('company.search');
-    Route::get('autoc_bunit/search', [UserController::class, 'searchBunit'])->name('bunit.search');
-    Route::get('autoc_department/search', [UserController::class, 'searchDepartment'])->name('department.search');
+    Route::get('auto/complete/users/search', [UserController::class, 'searchUsers'])->name('users.search');
+    Route::get('auto/complete/company/search', [UserController::class, 'searchCompany'])->name('company.search');
+    Route::get('auto/complete/bunit/search', [UserController::class, 'searchBunit'])->name('bunit.search');
+    Route::get('auto/completedepartment/search', [UserController::class, 'searchDepartment'])->name('department.search');
     Route::get('export-excel/users', [UserController::class, 'exportExcel'])->name('users.excel');
     Route::post('resign-reactive/{id}', [UserController::class, 'resignReactive'])->name('users.resrec');
     Route::get('search_an_employee', [UserController::class, 'searchAnEmployeeName'])->name('searchAnEmployeeName');

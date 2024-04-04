@@ -7,6 +7,7 @@ use App\Models\Bank;
 use App\Models\CheckRecieved;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 trait ImportUpateTraits
 {
@@ -98,6 +99,28 @@ trait ImportUpateTraits
         }
 
 
+    }
+    public function importInstitutionalIpAddress()
+    {
+        $texFileIp = AppSetting::where('app_key', 'sample_inst_ip')->first()->app_value;
+
+        $textFileIpInNewFolder = $texFileIp . '\\New\\' . strtoupper(Auth::user()->businessunit->loc_code_atp) . '\\';
+        $textFileIpInUploadedFolder = $texFileIp . '\\Uploaded\\' . strtoupper(Auth::user()->businessunit->loc_code_atp) . '\\';
+        $user = 'public';
+        $password = 'public';
+
+        exec('net use \\\172.16.161.30\\Institutional /user:' . $user . ' ' . $password . ' /persistent:no');
+
+        $files = File::files($textFileIpInNewFolder);
+
+        $tfCounts = count($files);
+
+        return (object) [
+            'textFileIpInUploadedFolder' => $textFileIpInUploadedFolder,
+            'textFileIpInNewFolder' => $textFileIpInNewFolder,
+            'tfCounts' => $tfCounts,
+            'files' => $files,
+        ];
     }
 
 }

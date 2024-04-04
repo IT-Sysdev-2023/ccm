@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\ImportUpdateEvents;
+use App\Models\AppSetting;
 use App\Models\CheckRecieved;
 use App\Models\Checks;
 use App\Traits\ImportUpateTraits;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ImportUpdateService
@@ -28,9 +30,30 @@ class ImportUpdateService
         return $this;
 
     }
-    public function importResult($tfCounts)
+    public function importResult()
     {
         $ch = collect() ?? nullOrEmptyString();
+
+        // $texFileIp = AppSetting::where('app_key', 'sample_inst_ip')->first()->app_value;
+
+        // $textFileIpInNewFolder = $texFileIp . '\\New\\' . strtoupper(Auth::user()->businessunit->loc_code_atp) . '\\';
+        // $textFileIpInUploadedFolder = $texFileIp . '\\Uploaded\\' . strtoupper(Auth::user()->businessunit->loc_code_atp) . '\\';
+        // $user = 'public';
+        // $password = 'public';
+
+        // exec('net use \\\172.16.161.30\\Institutional /user:' . $user . ' ' . $password . ' /persistent:no');
+
+        // $files = File::files($textFileIpInNewFolder);
+
+        // $tfCounts = count($files);
+        $textFileIpInUploadedFolder = $this->importInstitutionalIpAddress()->textFileIpInUploadedFolder;
+        $textFileIpInNewFolder = $this->importInstitutionalIpAddress()->textFileIpInNewFolder;
+        $files = $this->importInstitutionalIpAddress()->files;
+        $tfCounts = $this->importInstitutionalIpAddress()->tfCounts;
+
+
+
+
 
         $checkReceived = CheckRecieved::create([
             'checksreceivingtransaction_ctrlno' => $this->getControlNumber(),
@@ -44,12 +67,14 @@ class ImportUpdateService
         $dbtransaction = array();
         $counting = 1;
 
-        ImportUpdateEvents::dispatch('Importing Textfile...', '0', $tfCounts, Auth::user());
+        ImportUpdateEvents::dispatch('Importing Textfile...', 0, $tfCounts, Auth::user());
 
         sleep(1);
 
-        foreach ($this->record as $file) {
+
+        foreach ($files as $file) {
             $contents = File::get($file);
+            // dd($contents);
             $exp = explode("\n", $contents);
 
             $array = array_map(function ($element) {
@@ -129,7 +154,7 @@ class ImportUpdateService
             $checkdate = trim($cdateArray[2]) . '-' . trim($cdateArray[0]) . '-' . trim($cdateArray[1]);
 
             // Check this if the expire dont have a value date
-            if (empty ($cleaned_expire) || empty (trim($expire))) {
+            if (empty($cleaned_expire) || empty(trim($expire))) {
                 $expire = NULL;
             } else {
                 $expire = trim($cdateArray[2]) . '-' . trim($cdateArray[0]) . '-' . trim($cdateArray[1]);
@@ -210,8 +235,8 @@ class ImportUpdateService
         if ($dbtransaction) {
             foreach ($ch as $c) {
 
-                $sourceFilePath = 'C:\Users\Programming\Documents\CCM_Textfile\files\\' . trim($c['checkno']) . '.TXT'; // Fixing the variable interpolation
-                $destinationFilePath = 'C:\Users\Programming\Documents\CCM_Textfile\uploaded\\' . trim($c['checkno']) . '.TXT';
+                $sourceFilePath = $textFileIpInNewFolder . trim($c['checkno']) . '.TXT'; // Fixing the variable interpolation
+                $destinationFilePath = $textFileIpInUploadedFolder . trim($c['checkno']) . '.TXT';
 
                 File::move($sourceFilePath, $destinationFilePath);
             }
