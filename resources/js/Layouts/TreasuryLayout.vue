@@ -295,6 +295,7 @@ const hide = () => {
                                     class="inline-block px-3 mt-2 p-4 text-sm text-white transition-all duration-200"
                                     href="#"
                                     ><ContactsOutlined /> Transaction</a
+
                                 >
                                 -->
 

@@ -29,7 +29,7 @@ class UserController extends Controller
             ->join('usertype', 'usertype.usertype_id', '=', 'users.usertype_id')
             ->select('users.*', 'company.*', 'department.*', 'businessunit.*', 'usertype.*')
             ->orderBy('users.created_at', 'desc')
-            ->get();
+            ->paginate(12)->withQueryString();
 
         $userType = UserType::all();
 
