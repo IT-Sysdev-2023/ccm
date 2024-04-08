@@ -22,7 +22,6 @@ const hide = () => {
             <header
                 v-if="$slots.header"
                 style="width: 100%; background: #001529; margin-top: -7px"
-                class="mt-1 bg-white mx-auto w-full w-full border-gray-100 py-3 shadow backdrop-blur-lg md:top-6"
             >
                 <div class="px-4">
                     <div class="flex items-center justify-between">
@@ -41,10 +40,10 @@ const hide = () => {
                             </a>
                         </div>
                         <div
-                            class="hidden md:flex md:items-center md:justify-center md:gap-5"
+                            class="hidden md:flex md:items-center md:justify-center md:gap-3"
                         >
                             <Link
-                                class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
+                                class="inline-block px-3 p-4  mt-2 text-sm text-gray-900 transition-all duration-200"
                                 :class="{
                                     'bg-blue-600 text-white':
                                         route().current('treasury.dashboard'),
@@ -56,7 +55,7 @@ const hide = () => {
                                 Dashboard
                             </Link>
                             <Link
-                                class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
+                                class="inline-block px-3 p-4  mt-2 text-sm text-gray-900 transition-all duration-200"
                                 :class="{
                                     'bg-blue-600 text-white':
                                         route().current('indeximportupdates'),
@@ -87,7 +86,7 @@ const hide = () => {
                                             ) ||
                                             !route().current('leasing.checks'),
                                     }"
-                                    class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
+                                    class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
                                     href="#"
                                     >Check Receiving</a
                                 >
@@ -164,7 +163,7 @@ const hide = () => {
                                             !route().current('dated.checks') ||
                                             !route().current('pdc.checks'),
                                     }"
-                                    class="inline-block rounded px-2 p-2 text-sm text-gray-900 transition-all duration-200"
+                                    class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
                                     href="#"
                                     >Dated Checks/Pdc</a
                                 >
@@ -211,7 +210,7 @@ const hide = () => {
                             </a-dropdown>
                             <a-dropdown arrow :placement="placements">
                                 <a
-                                    class="inline-block rounded px-2 p-2 text-sm text-white transition-all duration-200"
+                                    class="inline-block px-3 mt-2 p-4 text-sm text-white transition-all duration-200"
                                     :class="{
                                         'bg-blue-600 text-white':
                                             route().current('bounce_tagging') ||
@@ -229,17 +228,7 @@ const hide = () => {
                                 <template #overlay>
                                     <a-menu style="background-color: #001529">
                                         <a-menu-item
-                                            style="color: white"
-                                            :class="{
-                                                'bg-blue-600 text-white':
-                                                    route().current(
-                                                        'ds_tagging'
-                                                    ),
-                                                'text-white':
-                                                    !route().current(
-                                                        'ds_tagging'
-                                                    ),
-                                            }"
+                                           style="color: white"
                                         >
                                             <Link :href="route('ds_tagging')"
                                                 >Deposited Tagging</Link
@@ -304,7 +293,7 @@ const hide = () => {
                                                 'duePdcReports.checks'
                                             ),
                                     }"
-                                    class="inline-block rounded px-2 p-2 text-sm text-white transition-all duration-200"
+                                    class="inline-block  px-3 mt-2 p-4 text-sm text-white transition-all duration-200"
                                     href="#"
                                     >Transaction</a
                                 >
