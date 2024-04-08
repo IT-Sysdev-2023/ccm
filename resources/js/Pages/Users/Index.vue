@@ -85,6 +85,9 @@ const handleOpen = (val) => {
                                             class="card human-resources"
                                             href="#"
                                         >
+                                      <span style="margin-left:100px ; position: relative ; top: 30px; z-index: 99;">
+                                        <img style="height: 30px;" src="svg/onlinestatus.svg" alt="">
+                                      </span>
                                             <div class="overlay"></div>
                                             <div class="circle">
                                                 <svg
