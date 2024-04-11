@@ -80,14 +80,28 @@ const handleOpen = (val) => {
                                     v-for="(item, key) in get_users.data"
                                     :key="key"
                                 >
-                                    <div class="body">
+                                    <div
+                                        class="body"
+                                        @click="settDetails(item.id)"
+                                    >
                                         <a
                                             class="card human-resources"
                                             href="#"
                                         >
-                                      <span style="margin-left:100px ; position: relative ; top: 30px; z-index: 99;">
-                                        <img style="height: 30px;" src="svg/onlinestatus.svg" alt="">
-                                      </span>
+                                            <span
+                                                style="
+                                                    margin-left: 100px;
+                                                    position: relative;
+                                                    top: 30px;
+                                                    z-index: 99;
+                                                "
+                                            >
+                                                <img
+                                                    style="height: 30px"
+                                                    src="svg/onlinestatus.svg"
+                                                    alt=""
+                                                />
+                                            </span>
                                             <div class="overlay"></div>
                                             <div class="circle">
                                                 <svg
@@ -139,6 +153,33 @@ const handleOpen = (val) => {
                                                 {{ item.user_status }}
                                             </div>
                                         </a>
+                                    </div>
+                                    <div class="flex justify-between mt-1">
+                                        <a-popconfirm
+                                            :title="
+                                                item.user_status == 'active'
+                                                    ? 'tag user as resign?'
+                                                    : 're-active this user?'
+                                            "
+                                            :footer="null"
+                                            ok-text="Yes"
+                                            cancel-text="No"
+                                            @confirm="resignReactive(item)"
+                                            @cancel="cancel"
+                                        >
+                                            <a-button block>
+                                                <template #icon>
+                                                    <TagsOutlined />
+                                                </template>
+                                                tag
+                                            </a-button>
+                                        </a-popconfirm>
+                                        <a-button block>
+                                            <template #icon>
+                                                <FormOutlined />
+                                            </template>
+                                            edit
+                                        </a-button>
                                     </div>
                                 </a-col>
                             </a-row>
@@ -687,6 +728,7 @@ import axios from "axios";
 import { Modal } from "ant-design-vue";
 // import _ from 'lodash';
 import debounce from "lodash/debounce";
+import { message } from "ant-design-vue";
 
 export default {
     data() {
@@ -957,54 +999,38 @@ export default {
             }, 2500);
         },
         resignReactive(data) {
-            if (data.user_status === "active") {
-                // Show confirmation modal
-                Modal.confirm({
-                    title: "Confirmation",
-                    icon: createVNode(ExclamationCircleOutlined),
-                    content: data.name + ": Tag this user as Resigned? ",
-                    okText: "Confirm",
-                    cancelText: "Cancel",
-                    onOk() {
-                        // If the user clicks "Confirm," make the Axios request
-                        axios
-                            .post(`/resign-reactive/${data.id}`)
-                            .then((response) => {
-                                // Reload the page after successful request
-                                window.location.reload();
-                            })
-                            .catch((error) => {
-                                console.error(error);
-                            });
+            this.$inertia.post(
+                route("users.resrec"),
+                {
+                    userId: data.id,
+                },
+                {
+                    onSuccess: () => {
+                        if (data.user_status == "active") {
+                            message.success("Successfully tag as resign");
+                        } else {
+                            message.success("Successfully re-active user");
+                        }
                     },
-                    onCancel() {
-                        // If the user clicks "Cancel," do nothing or provide additional actions
-                    },
-                });
-            } else {
-                Modal.confirm({
-                    title: "Confirmation",
-                    icon: createVNode(ExclamationCircleOutlined),
-                    content: "Reactive this user?",
-                    okText: "Confirm",
-                    cancelText: "Cancel",
-                    onOk() {
-                        // If the user clicks "Confirm," make the Axios request
-                        axios
-                            .post(`/resign-reactive/${data.id}`)
-                            .then((response) => {
-                                // Reload the page after successful request
-                                window.location.reload();
-                            })
-                            .catch((error) => {
-                                console.error(error);
-                            });
-                    },
-                    onCancel() {
-                        // If the user clicks "Cancel," do nothing or provide additional actions
-                    },
-                });
-            }
+                }
+            );
+            // .then((response) => {
+            //     // window.location.reload();
+            //     if (response.user_status == "active") {
+            //         window.location.reload();
+            //         setTimeout(() => {
+            //             message.success("Successfully tag as resign");
+            //         }, 1000);
+            //     } else {
+            //         window.location.reload();
+            //         setTimeout(() => {
+            //             message.success("Successfully re-active user");
+            //         }, 1000);
+            //     }
+            // })
+            // .catch((error) => {
+            //     console.error(error);
+            // });
         },
     },
 };
@@ -1019,7 +1045,7 @@ export default {
 
 .card {
     width: 100%;
-    height: 321px;
+    height: 310px;
     background: #fff;
     border-top-right-radius: 10px;
     overflow: hidden;
@@ -1028,7 +1054,9 @@ export default {
     justify-content: center;
     align-items: center;
     position: relative;
-    box-shadow: 0 14px 26px rgba(0, 0, 0, 0.04);
+    /* box-shadow: 0 14px 26px rgba(0, 0, 0, 0.04); */
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+        rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     transition: all 0.3s ease-out;
     text-decoration: none;
 }

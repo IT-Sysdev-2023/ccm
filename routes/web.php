@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::get('auto/complete/bunit/search', [UserController::class, 'searchBunit'])->name('bunit.search');
     Route::get('auto/completedepartment/search', [UserController::class, 'searchDepartment'])->name('department.search');
     Route::get('export-excel/users', [UserController::class, 'exportExcel'])->name('users.excel');
-    Route::post('resign-reactive/{id}', [UserController::class, 'resignReactive'])->name('users.resrec');
+    Route::post('resign-reactive/', [UserController::class, 'resignReactive'])->name('users.resrec');
     Route::get('search_an_employee', [UserController::class, 'searchAnEmployeeName'])->name('searchAnEmployeeName');
 
 

@@ -250,9 +250,10 @@ class UserController extends Controller
     }
 
 
-    public function resignReactive(Request $request, $id)
+    public function resignReactive(Request $request)
     {
-        $user = User::findOrFail($id);
+        // dd($request->user);
+        $user = User::findOrFail($request->userId);
 
         // dd($user->toArray());
 
