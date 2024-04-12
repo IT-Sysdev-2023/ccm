@@ -69,7 +69,7 @@ class UserController extends Controller
 
         return redirect()->back();
     }
-    public function updateUser(Request $request, $id): RedirectResponse
+    public function updateUser(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required',
@@ -81,23 +81,19 @@ class UserController extends Controller
             'businessunit_id' => 'required',
         ]);
 
-        $user = User::findOrFail($id);
-
-        $user->name = $request->name;
-        $user->username = $request->username;
-        $user->ContactNo = $request->ContactNo;
-        $user->company_id = $request->company_id;
-        $user->department_id = $request->department_id;
-        $user->usertype_id = $request->usertype_id;
-        $user->businessunit_id = $request->businessunit_id;
-
-
-        $user->update();
+        User::where('id', $request->userId)->update([
+            'name' => $request->name,
+            'empid' => $request->empid,
+            'username' => $request->username,
+            'ContactNo' => $request->ContactNo,
+            'company_id' => $request->company_id,
+            'department_id' => $request->department_id,
+            'usertype_id' => $request->usertype_id,
+            'businessunit_id' => $request->businessunit_id,
+        ]);
 
         return redirect()->back();
     }
-
-
 
     public function searchCompany(Request $request): Response
     {

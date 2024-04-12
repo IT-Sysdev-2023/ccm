@@ -149,7 +149,14 @@ const handleOpen = (val) => {
                                             </div>
                                             <p>{{ item.username }}</p>
                                             <span>{{ item.name }}</span>
-                                            <div class="font-bold text-black">
+                                            <div
+                                                class="font-bold text-black"
+                                                :class="
+                                                    item.user_status == 'active'
+                                                        ? 'text-green-600'
+                                                        : 'text-red-600'
+                                                "
+                                            >
                                                 {{ item.user_status }}
                                             </div>
                                         </a>
@@ -173,7 +180,10 @@ const handleOpen = (val) => {
                                                 tag
                                             </a-button>
                                         </a-popconfirm>
-                                        <a-button block>
+                                        <a-button
+                                            block
+                                            @click="edituserModal(item)"
+                                        >
                                             <template #icon>
                                                 <FormOutlined />
                                             </template>
@@ -431,17 +441,11 @@ const handleOpen = (val) => {
                                             </template>
                                         </a-input>
                                         <div
-                                            v-if="
-                                                createUsers.errors
-                                                    .ContactNo
-                                            "
+                                            v-if="createUsers.errors.ContactNo"
                                             class="text-red-600 ml-2"
                                             style="font-size: 12px"
                                         >
-                                            *{{
-                                                createUsers.errors
-                                                    .ContactNo
-                                            }}
+                                            *{{ createUsers.errors.ContactNo }}
                                         </div>
 
                                         <a-input
@@ -552,19 +556,24 @@ const handleOpen = (val) => {
                 title="Edit User"
                 :footer="null"
             >
-                <a-form @submit.prevent="editFormSubmit">
+                <a-form>
                     <div class="flex">
                         <p class="mt-3">Employee Name</p>
                         <p class="mt-2" style="color: red">*search</p>
                     </div>
-                    <a-auto-complete
+                    <a-select
+                        show-search
+                        placeholder="Search Employee name"
+                        :default-active-first-option="false"
                         v-model:value="selectedData.name"
-                        v-model="searchName"
-                        :options="optionsUser"
                         style="width: 100%"
-                        placeholder="input here"
-                        @search="handleSearchUsers"
-                    />
+                        :show-arrow="false"
+                        :filter-option="false"
+                        :not-found-content="isRetrieving ? undefined : null"
+                        :options="optionsUser"
+                        @search="debouncedSearchUsers"
+                        @select="(_, val) => (createUsers.empid = val.value1)"
+                    ></a-select>
                     <div class="flex">
                         <p class="mt-3">Username</p>
                     </div>
@@ -588,14 +597,31 @@ const handleOpen = (val) => {
                         <p class="mt-2" style="color: red">*search</p>
                     </div>
 
-                    <a-auto-complete
+                    <a-select
+                        show-search
+                        placeholder="Search business unit"
+                        :default-active-first-option="false"
                         v-model:value="selectedData.bname"
-                        :options="optionsBunit"
                         style="width: 100%"
-                        placeholder="input here"
-                        @search="handleSearchBunit"
-                        @select="handleSelectBunit"
-                    />
+                        :show-arrow="false"
+                        :filter-option="false"
+                        :not-found-content="isRetrieving ? undefined : null"
+                        :options="optionsBunit"
+                        @search="debouncedBunitName"
+                        @select="
+                            (_, val) =>
+                                (selectedData.businessunit_id = val.value)
+                        "
+                    >
+                        <template v-if="isRetrieving" #notFoundContent>
+                            <a-spin size="small" />
+                        </template>
+                    </a-select>
+                    <a-input
+                        class="hidden"
+                        :value="selectedData.businessunit_id"
+                    >
+                    </a-input>
 
                     <div class="flex">
                         <p class="mt-3">Contact Number</p>
@@ -619,29 +645,53 @@ const handleOpen = (val) => {
                         <p class="mt-3">Department</p>
                         <p class="mt-2" style="color: red">*search</p>
                     </div>
-                    <a-auto-complete
+                    <a-select
+                        show-search
+                        placeholder="Search Department"
+                        :default-active-first-option="false"
                         v-model:value="selectedData.department"
-                        :options="optionsDepartment"
                         style="width: 100%"
-                        placeholder="input here"
-                        @search="handleSearchDepartment"
-                        @select="handleSelectDepartment"
-                    />
+                        :show-arrow="false"
+                        :filter-option="false"
+                        :not-found-content="isRetrieving ? undefined : null"
+                        :options="optionsDepartment"
+                        @search="debouncedDepartment"
+                        @select="
+                            (_, val) => (selectedData.department_id = val.value)
+                        "
+                    >
+                        <template v-if="isRetrieving" #notFoundContent>
+                            <a-spin size="small" />
+                        </template>
+                    </a-select>
+                    <a-input class="hidden" :value="selectedData.department_id">
+                    </a-input>
                     <div class="flex">
                         <p class="mt-3">Company</p>
                         <p class="mt-2" style="color: red">*search</p>
                     </div>
 
-                    <a-auto-complete
+                    <a-select
+                        show-search
+                        placeholder="Search Department"
+                        :default-active-first-option="false"
                         v-model:value="selectedData.company"
-                        v-model="searchCompany"
-                        :options="optionsCompany"
                         style="width: 100%"
-                        placeholder="input here"
-                        @search="handleSearchCompany"
-                        @select="handleSelect"
-                    />
-
+                        :show-arrow="false"
+                        :filter-option="false"
+                        :not-found-content="isRetrieving ? undefined : null"
+                        :options="optionsCompany"
+                        @search="debouncedCompany"
+                        @select="
+                            (_, val) => (selectedData.company_id = val.value)
+                        "
+                    >
+                        <template v-if="isRetrieving" #notFoundContent>
+                            <a-spin size="small" />
+                        </template>
+                    </a-select>
+                    <a-input :value="selectedData.company_id" class="hidden">
+                    </a-input>
                     <div class="flex">
                         <p class="mt-3">Usertype</p>
                     </div>
@@ -659,16 +709,25 @@ const handleOpen = (val) => {
                     </a-select>
 
                     <div
-                        class="flex mt-5"
+                        class="flex mt-10"
                         style="display: flex; justify-content: center"
                     >
-                        <button
-                            class="btn-submit mt-5"
-                            type="submit"
-                            style="width: 400px"
+                        <a-button
+                        class="mb-5"
+                            block
+                            type="primary"
+                            :loading="selectedData.processing"
+                            @click="updateUsers"
                         >
-                            Submit
-                        </button>
+                            <template #icon>
+                                <SaveFilled />
+                            </template>
+                            {{
+                                selectedData.processing
+                                    ? "updating credentials please wait..."
+                                    : "update users credentials?"
+                            }}
+                        </a-button>
                     </div>
                 </a-form>
             </a-modal>
@@ -683,6 +742,7 @@ import { Modal } from "ant-design-vue";
 import debounce from "lodash/debounce";
 import { message } from "ant-design-vue";
 import { useForm } from "@inertiajs/vue3";
+import { SaveOutlined } from "@ant-design/icons-vue";
 
 export default {
     data() {
@@ -699,7 +759,7 @@ export default {
             allData: [],
             isRetrieving: false,
 
-            selectedData: {
+            selectedData: useForm({
                 name: "",
                 username: "",
                 businessunit_id: "",
@@ -707,7 +767,9 @@ export default {
                 usertype_id: "",
                 department_id: "",
                 ContactNo: "",
-            },
+                userId: null,
+            }),
+
             createUsers: useForm({
                 empid: "",
                 name: null,
@@ -729,7 +791,8 @@ export default {
     methods: {
         edituserModal(data) {
             this.openModal = true;
-            this.selectedData = data;
+            this.selectedData = useForm(data);
+            // this.selectedData.userId = useForm(data.id);
         },
         createuserModal() {
             this.openModalCreate = true;
@@ -738,20 +801,19 @@ export default {
             // window.alert('helklo world');
             this.createUsers.post(route("users.store"), {});
         },
-        editFormSubmit() {
-            axios
-                .post(
-                    route(`users.update`, this.selectedData.id),
-                    this.selectedData
-                )
-                .then((response) => {
-                    this.openModal = false;
-
-                    window.location.reload();
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+        updateUsers() {
+            this.selectedData
+                .transform((data) => ({
+                    name: data.name,
+                    username: data.username,
+                    businessunit_id: data.businessunit_id,
+                    company_id: data.company_id,
+                    usertype_id: data.usertype_id,
+                    department_id: data.department_id,
+                    ContactNo: data.ContactNo,
+                    userId: data.id,
+                }))
+                .post(route("users.update"), {});
         },
         settDetails(id) {
             window.location.href = "/user/details/" + id;
