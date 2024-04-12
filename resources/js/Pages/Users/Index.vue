@@ -165,7 +165,7 @@ const handleOpen = (val) => {
                                             ok-text="Yes"
                                             cancel-text="No"
                                             @confirm="resignReactive(item)"
-                                            @cancel="cancel"
+                                            
                                         >
                                             <a-button block>
                                                 <template #icon>
@@ -189,147 +189,30 @@ const handleOpen = (val) => {
                                     :datarecords="get_users"
                                 />
                             </div>
-
-                            <!-- <a-table
-                                :data-source="get_users.data"
-                                :columns="columns"
-                                size="small"
-                                class="components-table-demo-nested"
-                                bordered
-                            >
-                                <template #bodyCell="{ column, record }">
-                                    <template v-if="column.key === 'operation'">
-                                        <div class="flex">
-                                            <a-tooltip placement="top">
-                                                <template #title>
-                                                    <span>Tag?</span>
-                                                </template>
-                                                <a-button
-                                                    class="mx-1"
-                                                    size="small"
-                                                    ref="ref3"
-                                                    v-on:click="
-                                                        resignReactive(record)
-                                                    "
-                                                >
-                                                    <template #icon>
-                                                        <TagOutlined />
-                                                    </template>
-                                                </a-button>
-                                            </a-tooltip>
-                                            <a-tooltip placement="top">
-                                                <template #title>
-                                                    <span>Edit?</span>
-                                                </template>
-                                                <a-button
-                                                    class="mx-1"
-                                                    size="small"
-                                                    ref="ref4"
-                                                    v-on:click="
-                                                        edituserModal(record)
-                                                    "
-                                                >
-                                                    <template #icon>
-                                                        <EditOutlined />
-                                                    </template>
-                                                </a-button>
-                                            </a-tooltip>
-                                            <a-tooltip placement="top">
-                                                <template #title>
-                                                    <span>Details?</span>
-                                                </template>
-                                                <a-button
-                                                    class="mx-1"
-                                                    size="small"
-                                                    ref="ref4"
-                                                    v-on:click="
-                                                        settDetails(record.id)
-                                                    "
-                                                >
-                                                    <template #icon>
-                                                        <SettingOutlined></SettingOutlined>
-                                                    </template>
-                                                </a-button>
-                                            </a-tooltip>
-                                        </div>
-                                    </template>
-                                    <template
-                                        v-else-if="
-                                            column.key === 'usertype_name'
-                                        "
-                                    >
-                                        <span>
-                                            <a-tag
-                                                v-if="
-                                                    record.usertype_name ===
-                                                    'Treasury'
-                                                "
-                                                color="green"
-                                            >
-                                                {{ record.usertype_name }}
-                                            </a-tag>
-                                            <a-tag
-                                                v-else-if="
-                                                    record.usertype_name ===
-                                                    'Admin'
-                                                "
-                                                color="geekblue"
-                                            >
-                                                {{ record.usertype_name }}
-                                            </a-tag>
-                                            <a-tag v-else color="purple">
-                                                {{ record.usertype_name }}
-                                            </a-tag>
-                                        </span>
-                                    </template>
-                                    <template
-                                        v-else-if="column.key === 'user_status'"
-                                    >
-                                        <span>
-                                            <a-tag
-                                                v-if="
-                                                    record.user_status ===
-                                                    'active'
-                                                "
-                                                color="green"
-                                            >
-                                                {{ record.user_status }}
-                                            </a-tag>
-                                            <a-tag
-                                                v-else-if="
-                                                    record.user_status ===
-                                                    'resigned'
-                                                "
-                                                color="red"
-                                            >
-                                                {{ record.user_status }}
-                                            </a-tag>
-                                        </span>
-                                    </template>
-                                </template>
-                            </a-table> -->
                         </a-tab-pane>
                         <a-tab-pane key="2" tab="Add Users">
-                            <form @submit.prevent="createFormSubmit">
+                            <form>
                                 <div class="flex flex-wrap -mx-4">
                                     <!-- First Column -->
                                     <div class="w-full md:w-1/2 px-4 mb-4">
                                         <p class="mt-3">Employee Name</p>
                                         <a-select
                                             show-search
-                                            :not-found-content="
-                                                isloading ? undefined : null
-                                            "
-                                            :filter-option="false"
+                                            placeholder="Search Employee name"
+                                            :default-active-first-option="false"
                                             v-model:value="createUsers.name"
-                                            placeholder="Search Employee"
                                             style="width: 100%"
+                                            :show-arrow="false"
+                                            :filter-option="false"
+                                            :not-found-content="
+                                                isRetrieving ? undefined : null
+                                            "
                                             :options="optionsUser"
-                                            @search="handleSearchUsers"
-                                            @select="handleSelectUser1"
+                                            @search="debouncedSearchUsers"
+                                            @select="(_,val) => createUsers.empid = val.value1"
                                         >
                                             <template
-                                                v-if="isloading"
+                                                v-if="isRetrieving"
                                                 #notFoundContent
                                             >
                                                 <a-spin size="small" />
@@ -339,21 +222,22 @@ const handleOpen = (val) => {
                                         <p class="mt-3">Business Unit Name</p>
                                         <a-select
                                             show-search
-                                            :not-found-content="
-                                                isloading ? undefined : null
-                                            "
-                                            :filter-option="false"
+                                            placeholder="Search business unit"
+                                            :default-active-first-option="false"
                                             v-model:value="
                                                 createUsers.businessunit_id
                                             "
-                                            placeholder="Search Business Name"
                                             style="width: 100%"
+                                            :show-arrow="false"
+                                            :filter-option="false"
+                                            :not-found-content="
+                                                isRetrieving ? undefined : null
+                                            "
                                             :options="optionsBunit"
-                                            @search="handleSearchBunit"
-                                            @select="handleSelectBunit1"
+                                            @search="debouncedBunitName"
                                         >
                                             <template
-                                                v-if="isloading"
+                                                v-if="isRetrieving"
                                                 #notFoundContent
                                             >
                                                 <a-spin size="small" />
@@ -361,26 +245,56 @@ const handleOpen = (val) => {
                                         </a-select>
 
                                         <p class="mt-3">Department</p>
-                                        <a-auto-complete
-                                            v-model="createUsers.department_id"
+                                        <a-select
+                                            show-search
+                                            placeholder="Search Department"
+                                            :default-active-first-option="false"
+                                            v-model:value="
+                                                createUsers.department_id
+                                            "
+                                            style="width: 100%"
+                                            :show-arrow="false"
+                                            :filter-option="false"
+                                            :not-found-content="
+                                                isRetrieving ? undefined : null
+                                            "
                                             :options="optionsDepartment"
-                                            style="width: 100%"
-                                            placeholder="input here"
-                                            @search="handleSearchDepartment"
-                                            @select="handleSelectDepartment1"
-                                        />
+                                            @search="debouncedDepartment"
+                                        >
+                                            <template
+                                                v-if="isRetrieving"
+                                                #notFoundContent
+                                            >
+                                                <a-spin size="small" />
+                                            </template>
+                                        </a-select>
                                         <p class="mt-3">Company</p>
-                                        <a-auto-complete
-                                            class=""
-                                            v-model="createUsers.company_id"
-                                            :options="optionsCompany"
+                                        <a-select
+                                            show-search
+                                            placeholder="Search Department"
+                                            :default-active-first-option="false"
+                                            v-model:value="
+                                                createUsers.company_id
+                                            "
                                             style="width: 100%"
-                                            placeholder="search company"
-                                            @search="handleSearchCompany"
-                                            @select="handleSelect1"
-                                        />
+                                            :show-arrow="false"
+                                            :filter-option="false"
+                                            :not-found-content="
+                                                isRetrieving ? undefined : null
+                                            "
+                                            :options="optionsCompany"
+                                            @search="debouncedCompany"
+                                        >
+                                            <template
+                                                v-if="isRetrieving"
+                                                #notFoundContent
+                                            >
+                                                <a-spin size="small" />
+                                            </template>
+                                        </a-select>
                                         <p class="mt-3">Select Usertype</p>
                                         <a-select
+                                            placeholder="Select user type"
                                             ref="select"
                                             v-model:value="
                                                 createUsers.usertype_id
@@ -454,59 +368,9 @@ const handleOpen = (val) => {
                                                 </a-tooltip>
                                             </template>
                                         </a-input>
-                                        <p class="mt-3">Password</p>
                                         <a-input
-                                            v-model:value="createUsers.password"
-                                            placeholder="Password"
-                                            type="password"
-                                        >
-                                            <template #prefix>
-                                                <UserOutlined />
-                                            </template>
-                                            <template #suffix>
-                                                <a-tooltip title="Username">
-                                                    <InfoCircleOutlined
-                                                        style="
-                                                            color: rgba(
-                                                                0,
-                                                                0,
-                                                                0,
-                                                                0.45
-                                                            );
-                                                        "
-                                                    />
-                                                </a-tooltip>
-                                            </template>
-                                        </a-input>
-                                        <p class="mt-3">Confirm Password</p>
-                                        <a-input
-                                            v-model:value="
-                                                createUsers.password_confirmation
-                                            "
-                                            type="password"
-                                            placeholder="Confirm Password"
-                                        >
-                                            <template #prefix>
-                                                <UserOutlined />
-                                            </template>
-                                            <template #suffix>
-                                                <a-tooltip title="Username">
-                                                    <InfoCircleOutlined
-                                                        style="
-                                                            color: rgba(
-                                                                0,
-                                                                0,
-                                                                0,
-                                                                0.45
-                                                            );
-                                                        "
-                                                    />
-                                                </a-tooltip>
-                                            </template>
-                                        </a-input>
-                                        <a-input
-                                            v-model="createUsers.empid"
-                                            hidden
+                                            v-model:value="createUsers.empid" class="hidden"
+                                           
                                         >
                                             <template #prefix>
                                                 <UserOutlined />
@@ -528,7 +392,13 @@ const handleOpen = (val) => {
                                         </a-input>
 
                                         <p class="mt-6"></p>
-                                        <button
+                                        <a-button block type="primary" :loading="createUsers.processing" @click="saveUsers">
+                                            <template #icon>
+                                                <SaveOutlined />
+                                            </template>
+                                            {{  createUsers.processing ? 'saving users please wait...' : 'continue saving user'}}
+                                        </a-button>
+                                        <!-- <button
                                             style="
                                                 width: 100%;
                                                 background: #3ec28d;
@@ -540,7 +410,7 @@ const handleOpen = (val) => {
                                             type="submit"
                                         >
                                             Create And Submit Users
-                                        </button>
+                                        </button> -->
                                     </div>
 
                                     <!-- Repeat the above pattern for the rest of your form fields -->
@@ -595,10 +465,9 @@ const handleOpen = (val) => {
                 v-model:open="openModal"
                 width="1000px"
                 title="Edit User"
-                :ok-button-props="{ hidden: true }"
-                :cancel-button-props="{ hidden: true }"
                 :footer="null"
             >
+      
                 <a-form @submit.prevent="editFormSubmit">
                     <div class="flex">
                         <p class="mt-3">Employee Name</p>
@@ -729,6 +598,7 @@ import { Modal } from "ant-design-vue";
 // import _ from 'lodash';
 import debounce from "lodash/debounce";
 import { message } from "ant-design-vue";
+import { useForm } from "@inertiajs/vue3";
 
 export default {
     data() {
@@ -742,6 +612,8 @@ export default {
             password: "",
             isloading: false,
             data0: [],
+            allData: [],
+            isRetrieving: false,
 
             selectedData: {
                 name: "",
@@ -752,65 +624,23 @@ export default {
                 department_id: "",
                 ContactNo: "",
             },
-            createUsers: {
+            createUsers: useForm({
                 empid: "",
                 name: null,
                 username: "",
                 businessunit_id: null,
-                company_id: "",
-                usertype_id: "",
-                department_id: "",
+                company_id: null,
+                usertype_id: null,
+                department_id: null,
                 ContactNo: "",
                 password: "",
                 password_confirmation: "",
-            },
-
-            columns: [
-                {
-                    title: "Name",
-                    dataIndex: "name",
-                    key: "name",
-                },
-                {
-                    title: "Username",
-                    dataIndex: "username",
-                    key: "username",
-                },
-                {
-                    title: "Contact No.",
-                    dataIndex: "ContactNo",
-                    key: "contac_no",
-                },
-
-                {
-                    title: "Department",
-                    dataIndex: "department",
-                    key: "department",
-                },
-                {
-                    title: "Usertype",
-                    dataIndex: "usertype_name",
-                    key: "usertype_name",
-                    align: "center",
-                },
-                {
-                    title: "Status",
-                    dataIndex: "user_status",
-                    key: "user_status",
-                    align: "center",
-                },
-                {
-                    title: "Action",
-                    key: "operation",
-                    fixed: "right",
-                    width: 100,
-                },
-            ],
+            }),
         };
     },
     props: {
-        get_users: Array,
-        userType: Array,
+        get_users: Object,
+        userType: Object,
     },
     methods: {
         edituserModal(data) {
@@ -820,20 +650,10 @@ export default {
         createuserModal() {
             this.openModalCreate = true;
         },
-        handleChange(value) {
-            console.log(`selected ${value}`);
-        },
-        createFormSubmit() {
-            axios
-                .post(route("users.store"), this.createUsers)
-                .then((response) => {
-                    this.openModalCreate = false;
-
-                    window.location.reload();
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+        saveUsers(){
+            // window.alert('helklo world');
+            this.createUsers.post(route('users.store'), {
+            });
         },
         editFormSubmit() {
             axios
@@ -857,134 +677,111 @@ export default {
         debouncedSearchUsers: debounce(async function (query) {
             try {
                 if (query.trim().length) {
-                    this.isloading = true;
-
+                    this.isRetrieving = true;
+                    this.allData = [];
                     this.optionsUser = [];
 
-                    const response = await axios.get(
-                        `/autoc_users/search?query=${query}`
+                    const { data } = await axios.get(
+                        route("search.employeeName", { search: query })
                     );
 
-                    const data = response.data;
+                    this.allData = data;
 
-                    this.optionsUser = data.map((item) => ({
-                        value: item.name,
-                        value1: item.emp_no,
-                        label: item.name,
+                    this.optionsUser = this.allData.map((userOption) => ({
+                        title: userOption.name,
+                        value: userOption.name,
+                        label: userOption.name,
+                        value1: userOption.emp_no,
                     }));
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
-                this.isloading = false;
+                this.isRetrieving = false;
             }
-        }, 1000), // Adjust the debounce time (in milliseconds) as needed
+        }, 1000),
 
         debouncedBunitName: debounce(async function (query) {
             try {
                 if (query.trim().length) {
-                    this.isloading = true;
-
+                    this.isRetrieving = true;
+                    this.allData = [];
                     this.optionsBunit = [];
 
-                    const response = await axios.get(
-                        `/autoc_bunit/search?query=${query}`
+                    const { data } = await axios.get(
+                        route("search.bunit", { search: query })
                     );
 
-                    const data = response.data;
+                    this.allData = data;
 
-                    this.optionsBunit = data.map((item) => ({
-                        value: item.bname,
-                        value1: item.businessunit_id,
-                        label: item.bname,
+                    this.optionsBunit = this.allData.map((bunitOption) => ({
+                        title: bunitOption.bname,
+                        value: bunitOption.businessunit_id,
+                        label: bunitOption.bname,
                     }));
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
-                this.isloading = false;
+                this.isRetrieving = false;
             }
         }, 1000), // Adjust the debounce time (in milliseconds) as needed
-
-        // Original function calling the debounced version
-        handleSearchUsers(query) {
-            this.debouncedSearchUsers(query);
-        },
-        handleSearchBunit(query) {
-            this.debouncedBunitName(query);
-        },
-        handleSelectUser(value, option) {
-            this.selectedData.name = value;
-            this.selectedData.name = option.label;
-        },
-        handleSelectUser1(value, option) {
-            this.createUsers.name = value;
-            this.createUsers.empid = option.value1;
-            this.createUsers.name = option.label;
-        },
-
-        async handleSearchCompany(query) {
+        debouncedDepartment: debounce(async function (query) {
             try {
-                const response = await axios.get(
-                    `/autoc_company/search?query=${query}`
-                );
-                const data = response.data;
+                if (query.trim().length) {
+                    this.isRetrieving = true;
+                    this.allData = [];
+                    this.optionsDepartment = [];
 
-                this.optionsCompany = data.map((item) => ({
-                    value: item.company,
-                    value1: item.company_id,
-                    label: item.company,
-                }));
+                    const { data } = await axios.get(
+                        route("search.checkfrom", { search: query })
+                    );
+
+                    this.allData = data;
+
+                    this.optionsDepartment = this.allData.map(
+                        (departOption) => ({
+                            title: departOption.department,
+                            value: departOption.department_id,
+                            label: departOption.department,
+                        })
+                    );
+                }
             } catch (error) {
                 console.error("Error fetching data:", error);
+            } finally {
+                this.isRetrieving = false;
             }
-        },
-        handleSelect(value, option) {
-            this.selectedData.company_id = option.value1;
-            this.selectedData.company = option.label;
-        },
-        handleSelect1(value, option) {
-            this.createUsers.company_id = option.value1;
-            this.createUsers.company = option.label;
-        },
+        }, 1000), // Adjust the debounce time (in milliseconds) as needed
+        debouncedCompany: debounce(async function (query) {
+            try {
+                if (query.trim().length) {
+                    this.isRetrieving = true;
+                    this.allData = [];
+                    this.optionsCompany = [];
 
-        handleSelectBunit(value, option) {
-            this.selectedData.businessunit_id = option.value1;
-            this.selectedData.bname = option.label;
-        },
-        handleSelectBunit1(value, option) {
-            this.createUsers.bname = option.value;
-            this.createUsers.businessunit_id = option.value1;
-            this.selectedData.bname = option.label;
-        },
+                    const { data } = await axios.get(
+                        route("search.company", { search: query })
+                    );
+
+                    this.allData = data;
+
+                    this.optionsCompany = this.allData.map((companyOption) => ({
+                        title: companyOption.company,
+                        value: companyOption.company_id,
+                        label: companyOption.company,
+                    }));
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                this.isRetrieving = false;
+            }
+        }, 1000), // Adjust the debounce time (in milliseconds) as needed
         filterMethod(value, option) {
             return (
                 option.label.toLowerCase().indexOf(value.toLowerCase()) !== -1
             );
-        },
-        async handleSearchDepartment(query) {
-            try {
-                const response = await axios.get(
-                    `/autoc_department/search?q=${query}`
-                );
-                const data = response.data;
-
-                this.optionsDepartment = data.map((item) => ({
-                    value: item.department,
-                    value1: item.department_id,
-                    label: item.department,
-                }));
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        },
-        handleSelectDepartment(value, option) {
-            this.selectedData.department_id = option.value1;
-            this.selectedData.department = option.label;
-        },
-        handleSelectDepartment1(value, option) {
-            this.createUsers.department_id = option.value1;
-            this.createUsers.department = option.label;
         },
 
         generateButtonExcel() {
@@ -1014,23 +811,6 @@ export default {
                     },
                 }
             );
-            // .then((response) => {
-            //     // window.location.reload();
-            //     if (response.user_status == "active") {
-            //         window.location.reload();
-            //         setTimeout(() => {
-            //             message.success("Successfully tag as resign");
-            //         }, 1000);
-            //     } else {
-            //         window.location.reload();
-            //         setTimeout(() => {
-            //             message.success("Successfully re-active user");
-            //         }, 1000);
-            //     }
-            // })
-            // .catch((error) => {
-            //     console.error(error);
-            // });
         },
     },
 };

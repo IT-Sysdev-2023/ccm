@@ -3,6 +3,7 @@
 use App\Http\Controllers\AllTransactionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchInputController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -93,6 +94,8 @@ Route::middleware('auth')->group(function () {
     Route::get('search/bank/name', [SearchInputController::class, 'searchBankName'])->name('search.bankName');
     Route::get('search/customer/name', [SearchInputController::class, 'searchCustomerName'])->name('search.customerName');
     Route::get('search/employee/name', [SearchInputController::class, 'searchEmployee'])->name('search.employeeName');
+    Route::get('search/bunit/name', [SearchInputController::class, 'searchBunit'])->name('search.bunit');
+    Route::get('search/company/name', [SearchInputController::class, 'searchCompany'])->name('search.company');
 
 
 

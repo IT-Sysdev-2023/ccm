@@ -32,7 +32,7 @@ const placement = "bottom";
 
             <a-menu
                 theme="dark"
-                v-model:selectedKeys="selectedKeys"
+               
                 mode="inline"
             >
                 <a-menu-item
