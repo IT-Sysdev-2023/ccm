@@ -165,7 +165,6 @@ const handleOpen = (val) => {
                                             ok-text="Yes"
                                             cancel-text="No"
                                             @confirm="resignReactive(item)"
-                                            
                                         >
                                             <a-button block>
                                                 <template #icon>
@@ -209,7 +208,11 @@ const handleOpen = (val) => {
                                             "
                                             :options="optionsUser"
                                             @search="debouncedSearchUsers"
-                                            @select="(_,val) => createUsers.empid = val.value1"
+                                            @select="
+                                                (_, val) =>
+                                                    (createUsers.empid =
+                                                        val.value1)
+                                            "
                                         >
                                             <template
                                                 v-if="isRetrieving"
@@ -218,6 +221,13 @@ const handleOpen = (val) => {
                                                 <a-spin size="small" />
                                             </template>
                                         </a-select>
+                                        <div
+                                            v-if="createUsers.errors.name"
+                                            class="text-red-600 ml-2"
+                                            style="font-size: 12px"
+                                        >
+                                            *{{ createUsers.errors.name }}
+                                        </div>
 
                                         <p class="mt-3">Business Unit Name</p>
                                         <a-select
@@ -243,6 +253,19 @@ const handleOpen = (val) => {
                                                 <a-spin size="small" />
                                             </template>
                                         </a-select>
+                                        <div
+                                            v-if="
+                                                createUsers.errors
+                                                    .businessunit_id
+                                            "
+                                            class="text-red-600 ml-2"
+                                            style="font-size: 12px"
+                                        >
+                                            *{{
+                                                createUsers.errors
+                                                    .businessunit_id
+                                            }}
+                                        </div>
 
                                         <p class="mt-3">Department</p>
                                         <a-select
@@ -268,6 +291,18 @@ const handleOpen = (val) => {
                                                 <a-spin size="small" />
                                             </template>
                                         </a-select>
+                                        <div
+                                            v-if="
+                                                createUsers.errors.department_id
+                                            "
+                                            class="text-red-600 ml-2"
+                                            style="font-size: 12px"
+                                        >
+                                            *{{
+                                                createUsers.errors.department_id
+                                            }}
+                                        </div>
+
                                         <p class="mt-3">Company</p>
                                         <a-select
                                             show-search
@@ -292,6 +327,14 @@ const handleOpen = (val) => {
                                                 <a-spin size="small" />
                                             </template>
                                         </a-select>
+                                        <div
+                                            v-if="createUsers.errors.company_id"
+                                            class="text-red-600 ml-2"
+                                            style="font-size: 12px"
+                                        >
+                                            *{{ createUsers.errors.company_id }}
+                                        </div>
+
                                         <p class="mt-3">Select Usertype</p>
                                         <a-select
                                             placeholder="Select user type"
@@ -314,6 +357,17 @@ const handleOpen = (val) => {
                                                 }}</a-select-option
                                             >
                                         </a-select>
+                                        <div
+                                            v-if="
+                                                createUsers.errors.usertype_id
+                                            "
+                                            class="text-red-600 ml-2"
+                                            style="font-size: 12px"
+                                        >
+                                            *{{
+                                                createUsers.errors.usertype_id
+                                            }}
+                                        </div>
                                     </div>
 
                                     <!-- Second Column -->
@@ -341,6 +395,14 @@ const handleOpen = (val) => {
                                                 </a-tooltip>
                                             </template>
                                         </a-input>
+                                        <div
+                                            v-if="createUsers.errors.username"
+                                            class="text-red-600 ml-2"
+                                            style="font-size: 12px"
+                                        >
+                                            *{{ createUsers.errors.username }}
+                                        </div>
+
                                         <p class="mt-3">Conact number</p>
                                         <a-input
                                             v-model:value="
@@ -368,9 +430,23 @@ const handleOpen = (val) => {
                                                 </a-tooltip>
                                             </template>
                                         </a-input>
+                                        <div
+                                            v-if="
+                                                createUsers.errors
+                                                    .ContactNo
+                                            "
+                                            class="text-red-600 ml-2"
+                                            style="font-size: 12px"
+                                        >
+                                            *{{
+                                                createUsers.errors
+                                                    .ContactNo
+                                            }}
+                                        </div>
+
                                         <a-input
-                                            v-model:value="createUsers.empid" class="hidden"
-                                           
+                                            v-model:value="createUsers.empid"
+                                            class="hidden"
                                         >
                                             <template #prefix>
                                                 <UserOutlined />
@@ -392,11 +468,20 @@ const handleOpen = (val) => {
                                         </a-input>
 
                                         <p class="mt-6"></p>
-                                        <a-button block type="primary" :loading="createUsers.processing" @click="saveUsers">
+                                        <a-button
+                                            block
+                                            type="primary"
+                                            :loading="createUsers.processing"
+                                            @click="saveUsers"
+                                        >
                                             <template #icon>
                                                 <SaveOutlined />
                                             </template>
-                                            {{  createUsers.processing ? 'saving users please wait...' : 'continue saving user'}}
+                                            {{
+                                                createUsers.processing
+                                                    ? "saving users please wait..."
+                                                    : "continue saving user"
+                                            }}
                                         </a-button>
                                         <!-- <button
                                             style="
@@ -467,7 +552,6 @@ const handleOpen = (val) => {
                 title="Edit User"
                 :footer="null"
             >
-      
                 <a-form @submit.prevent="editFormSubmit">
                     <div class="flex">
                         <p class="mt-3">Employee Name</p>
@@ -650,10 +734,9 @@ export default {
         createuserModal() {
             this.openModalCreate = true;
         },
-        saveUsers(){
+        saveUsers() {
             // window.alert('helklo world');
-            this.createUsers.post(route('users.store'), {
-            });
+            this.createUsers.post(route("users.store"), {});
         },
         editFormSubmit() {
             axios
