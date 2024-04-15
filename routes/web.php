@@ -3,6 +3,7 @@
 use App\Http\Controllers\AllTransactionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchInputController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,7 +48,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('users', [UserController::class, 'index'])->name('users.index');
-    Route::post('update/user/{id}', [UserController::class, 'updateUser'])->name('users.update');
+    Route::post('update/user/', [UserController::class, 'updateUser'])->name('users.update');
     Route::post('create/user', [UserController::class, 'createUser'])->name('users.store');
     Route::get('user/details/{id}', [UserController::class, 'userDetails'])->name('users.details');
     Route::get('auto/complete/users/search', [UserController::class, 'searchUsers'])->name('users.search');
@@ -55,7 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::get('auto/complete/bunit/search', [UserController::class, 'searchBunit'])->name('bunit.search');
     Route::get('auto/completedepartment/search', [UserController::class, 'searchDepartment'])->name('department.search');
     Route::get('export-excel/users', [UserController::class, 'exportExcel'])->name('users.excel');
-    Route::post('resign-reactive/{id}', [UserController::class, 'resignReactive'])->name('users.resrec');
+    Route::post('resign-reactive/', [UserController::class, 'resignReactive'])->name('users.resrec');
     Route::get('search_an_employee', [UserController::class, 'searchAnEmployeeName'])->name('searchAnEmployeeName');
 
 
@@ -93,6 +94,8 @@ Route::middleware('auth')->group(function () {
     Route::get('search/bank/name', [SearchInputController::class, 'searchBankName'])->name('search.bankName');
     Route::get('search/customer/name', [SearchInputController::class, 'searchCustomerName'])->name('search.customerName');
     Route::get('search/employee/name', [SearchInputController::class, 'searchEmployee'])->name('search.employeeName');
+    Route::get('search/bunit/name', [SearchInputController::class, 'searchBunit'])->name('search.bunit');
+    Route::get('search/company/name', [SearchInputController::class, 'searchCompany'])->name('search.company');
 
 
 

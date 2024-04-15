@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="0 0 14 14"  xmlns="http://www.w3.org/2000/svg">
+
+<g fill-rule="evenodd" style="background: green;">
+
+<path d="M0 7a7 7 0 1 1 14 0A7 7 0 0 1 0 7z" fill="green" />
+
+<path d="M13 7A6 6 0 1 0 1 7a6 6 0 0 0 12 0z" fill="#FFF" style="fill: var(--svg-status-bg, #fff);" />
+
+<circle cx="7" cy="7" r="3.25" fill="green"/>
+
+</g>
+
+</svg>
