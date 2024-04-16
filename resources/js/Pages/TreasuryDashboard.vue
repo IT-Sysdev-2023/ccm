@@ -3,6 +3,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -18,166 +19,116 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                     <a-col :span="8">
                         <a-card>
                             <div id="chart">
-                                <apexchart
-                                    type="bar"
-                                    height="350"
-                                    :options="chartOptions"
-                                    :series="series"
-                                ></apexchart>
+                                <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
                             </div>
                         </a-card>
                     </a-col>
                     <a-col :span="16">
                         <a-row :gutter="[16, 16]" class="mt-4">
                             <a-col :span="8">
-                                <div
-                                    class="walletBalanceCard"
-                                    style="
-                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
-                                                4px,
-                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
-                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+                                <div class="walletBalanceCard" style="
+                                
                                         background: linear-gradient(
                                             to right,
                                             #378ce7,
                                             violet
                                         );
-                                    "
-                                >
+                                    ">
                                     <div class="svgwrapper">
-                                        <img
-                                            src="../../../public/svg/checks.svg"
-                                            alt=""
-                                        />
+                                        <img src="../../../public/svg/checks.svg" alt="" />
                                     </div>
 
                                     <div class="balancewrapper">
-                                        <span class="balanceHeading"
-                                            >Cheques</span
-                                        >
+                                        <span class="balanceHeading">Cheques</span>
                                         <p class="balance">
-                                            <span id="currency"
-                                                ><ScheduleOutlined />
-                                                &nbsp;</span
-                                            >{{ checkCount.toLocaleString() }}
+                                            <span id="currency">
+                                                <ScheduleOutlined />
+                                                &nbsp;
+                                            </span>{{ checkCount.toLocaleString() }}
                                         </p>
                                     </div>
 
                                     <div class="addmoney">
-                                        <img
-                                            src="../../../public/svg/checks.svg"
-                                            alt=""
-                                        />
+                                        <img src="../../../public/svg/checks.svg" alt="" />
                                     </div>
                                 </div>
                             </a-col>
                             <a-col :span="8">
-                                <div
-                                    class="walletBalanceCard"
-                                    style="
-                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
-                                                4px,
-                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
-                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+                                <div class="walletBalanceCard" style="
+                                
                                         background: linear-gradient(
                                             to right,
                                             #ef4040,
                                             orange
                                         );
-                                    "
-                                >
+                                    ">
                                     <div class="svgwrapper">
-                                        <img
-                                            src="../../../public/svg/pdc.svg"
-                                            alt=""
-                                        />
+                                        <img src="../../../public/svg/pdc.svg" alt="" />
                                     </div>
 
                                     <div class="balancewrapper">
                                         <span class="balanceHeading">PDC</span>
                                         <p class="balance">
-                                            <span id="currency"
-                                                ><ScheduleOutlined />
-                                                &nbsp;</span
-                                            >{{ pdcCount.toLocaleString() }}
+                                            <span id="currency">
+                                                <ScheduleOutlined />
+                                                &nbsp;
+                                            </span>{{ pdcCount.toLocaleString() }}
                                         </p>
                                     </div>
 
                                     <button class="addmoney">
                                         <span class="plussign">+</span>Add Money
                                     </button>
-                                </div></a-col
-                            >
+                                </div>
+                            </a-col>
                             <a-col :span="8">
-                                <div
-                                    class="walletBalanceCard"
-                                    style="
-                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
-                                                4px,
-                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
-                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+                                <div class="walletBalanceCard" style="
+                                
                                         background: linear-gradient(
                                             to right,
                                             #219c90,
                                             skyblue
                                         );
-                                    "
-                                >
+                                    ">
                                     <div class="svgwrapper">
-                                        <img
-                                            src="../../../public/svg/dated.svg"
-                                            alt=""
-                                        />
+                                        <img src="../../../public/svg/dated.svg" alt="" />
                                     </div>
 
                                     <div class="balancewrapper">
-                                        <span class="balanceHeading"
-                                            >Dated</span
-                                        >
+                                        <span class="balanceHeading">Dated</span>
                                         <p class="balance">
-                                            <span id="currency"
-                                                ><ScheduleOutlined />
-                                                &nbsp;</span
-                                            >{{ datedCount.toLocaleString() }}
+                                            <span id="currency">
+                                                <ScheduleOutlined />
+                                                &nbsp;
+                                            </span>{{ datedCount.toLocaleString() }}
                                         </p>
                                     </div>
 
                                     <button class="addmoney">
                                         <span class="plussign">+</span>Add Money
                                     </button>
-                                </div></a-col
-                            >
+                                </div>
+                            </a-col>
                             <a-col :span="8">
-                                <div
-                                    class="walletBalanceCard"
-                                    style="
-                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
-                                                4px,
-                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
-                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+                                <div class="walletBalanceCard" style="
+                                
                                         background: linear-gradient(
                                             to right,
                                             #1d5b79,
                                             pink
                                         );
-                                    "
-                                >
+                                    ">
                                     <div class="svgwrapper">
-                                        <img
-                                            src="../../../public/svg/deposited.svg"
-                                            alt=""
-                                        />
+                                        <img src="../../../public/svg/deposited.svg" alt="" />
                                     </div>
 
                                     <div class="balancewrapper">
-                                        <span class="balanceHeading"
-                                            >Deposited</span
-                                        >
+                                        <span class="balanceHeading">Deposited</span>
                                         <p class="balance">
-                                            <span id="currency"
-                                                ><ScheduleOutlined />
-                                                &nbsp;</span
-                                            >{{
+                                            <span id="currency">
+                                                <ScheduleOutlined />
+                                                &nbsp;
+                                            </span>{{
                                                 depositedCount.toLocaleString()
                                             }}
                                         </p>
@@ -186,78 +137,56 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                     <button class="addmoney">
                                         <span class="plussign">+</span>Add Money
                                     </button>
-                                </div></a-col
-                            >
+                                </div>
+                            </a-col>
                             <a-col :span="8">
-                                <div
-                                    class="walletBalanceCard"
-                                    style="
-                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
-                                                4px,
-                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
-                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+                                <div class="walletBalanceCard" style="
+                                
                                         background: linear-gradient(
                                             to right,
                                             black,
                                             skyblue
                                         );
-                                    "
-                                >
+                                    ">
                                     <div class="svgwrapper">
-                                        <img
-                                            src="../../../public/svg/bounced.svg"
-                                            alt=""
-                                        />
+                                        <img src="../../../public/svg/bounced.svg" alt="" />
                                     </div>
 
                                     <div class="balancewrapper">
-                                        <span class="balanceHeading"
-                                            >Bounced</span
-                                        >
+                                        <span class="balanceHeading">Bounced</span>
                                         <p class="balance">
-                                            <span id="currency"
-                                                ><ScheduleOutlined />
-                                                &nbsp;</span
-                                            >{{ bouncedCount.toLocaleString() }}
+                                            <span id="currency">
+                                                <ScheduleOutlined />
+                                                &nbsp;
+                                            </span>{{ bouncedCount.toLocaleString() }}
                                         </p>
                                     </div>
 
                                     <button class="addmoney">
                                         <span class="plussign">+</span>Add Money
                                     </button>
-                                </div></a-col
-                            >
+                                </div>
+                            </a-col>
                             <a-col :span="8">
-                                <div
-                                    class="walletBalanceCard"
-                                    style="
-                                        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px
-                                                4px,
-                                            rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
-                                            rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+                                <div class="walletBalanceCard" style="
+                                
                                         background: linear-gradient(
                                             to right,
                                             red,
                                             blue
                                         );
-                                    "
-                                >
+                                    ">
                                     <div class="svgwrapper">
-                                        <img
-                                            src="../../../public/svg/replacement.svg"
-                                            alt=""
-                                        />
+                                        <img src="../../../public/svg/replacement.svg" alt="" />
                                     </div>
 
                                     <div class="balancewrapper">
-                                        <span class="balanceHeading"
-                                            >Replacement</span
-                                        >
+                                        <span class="balanceHeading">Replacement</span>
                                         <p class="balance">
-                                            <span id="currency"
-                                                ><ScheduleOutlined />
-                                                &nbsp;</span
-                                            >{{
+                                            <span id="currency">
+                                                <ScheduleOutlined />
+                                                &nbsp;
+                                            </span>{{
                                                 replacementCount.toLocaleString()
                                             }}
                                         </p>
@@ -270,52 +199,35 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             </a-col>
                         </a-row>
                         <!-- <p>{{ holiday }}</p> -->
-                        <a-collapse
-                            v-model:activeKey="activeKey"
-                            class="mt-10"
-                            style="
-                                box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
-                                    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
-                                    rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
-                                background: linear-gradient(
-                                    to right,
-                                    #bdc3c7,
-                                    #2c3e50
-                                );
-                            "
-                        >
-                            <a-collapse-panel
-                                key="1"
-                                :header="
-                                    activeKey == true
-                                        ? 'Click here to hide this calendar...'
-                                        : 'Click here to Open this calendar...'
-                                "
-                            >
+                        <a-collapse v-model:activeKey="activeKey" class="mt-10" style="
+                     
+                               
+                            ">
+                            <a-collapse-panel key="1" :header="activeKey == true
+                                    ? 'Click here to hide this calendar...'
+                                    : 'Click here to Open this calendar...'
+                                ">
                                 <a-calendar v-model:value="value">
                                     <template #dateCellRender="{ current }">
-                                        <div
-                                            :class="
-                                                validateDayOfMonth(current) &&
+                                        <div :class="validateDayOfMonth(current) &&
                                                 someFunction(current)
-                                                    ? 'bg-green-100 text-gray-500'
-                                                    : someFunction(current)
+                                                ? 'bg-green-100 text-gray-500'
+                                                : someFunction(current)
                                                     ? 'bg-green-600 text-white'
                                                     : validateDayOfMonth(
-                                                          current
-                                                      ) && isWeekend(current)
-                                                    ? 'bg-red-100 text-gray-500'
-                                                    : validateDayOfMonth(
-                                                          current
-                                                      )
-                                                    ? 'bg-blue-100 text-gray-500'
-                                                    : isWeekend(current)
-                                                    ? 'bg-red-400'
-                                                    : !someFunction(current)
-                                                    ? 'bg-blue-400'
-                                                    : ''
-                                            "
-                                            style="
+                                                        current
+                                                    ) && isWeekend(current)
+                                                        ? 'bg-red-100 text-gray-500'
+                                                        : validateDayOfMonth(
+                                                            current
+                                                        )
+                                                            ? 'bg-blue-100 text-gray-500'
+                                                            : isWeekend(current)
+                                                                ? 'bg-red-400'
+                                                                : !someFunction(current)
+                                                                    ? 'bg-blue-400'
+                                                                    : ''
+                                            " style="
                                                 width: 100%;
                                                 height: 100%;
                                                 box-shadow: rgba(0, 0, 0, 0.4)
@@ -325,19 +237,13 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                                     rgba(0, 0, 0, 0.2) 0px -3px 0px
                                                         inset;
                                                 border-radius: 10px;
-                                            "
-                                        >
+                                            ">
                                             <span class="p-2"> </span>
-                                            <div
-                                                class="text-center mt-1 text-xl"
-                                            >
+                                            <div class="text-center mt-1 text-xl">
                                                 {{ current.format("ddd") }}
                                             </div>
-                                            <span
-                                                v-if="someFunction(current)"
-                                                class="flex justify-center items-center mt-1"
-                                                style="font-size: 11px"
-                                            >
+                                            <span v-if="someFunction(current)"
+                                                class="flex justify-center items-center mt-1" style="font-size: 11px">
                                                 <a-badge status="warning" />
                                                 {{
                                                     holiday.find(
@@ -519,23 +425,27 @@ export default {
 <style scoped>
 .walletBalanceCard {
     height: 105px;
-    border-radius: 15px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 30px;
     padding: 0px 25px;
     font-family: Arial, Helvetica, sans-serif;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 }
+
 .svgwrapper {
     width: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .svgwrapper img {
     width: 100%;
 }
+
 .balancewrapper {
     display: flex;
     align-items: flex-start;
@@ -543,13 +453,16 @@ export default {
     flex-direction: column;
     width: 120px;
     gap: 0px;
+
 }
+
 .balanceHeading {
     font-size: 16px;
     color: rgb(214, 214, 214);
     font-weight: 100;
     letter-spacing: 0.6px;
 }
+
 .balance {
     margin-top: 5px;
     font-size: 13.5px;
@@ -557,6 +470,7 @@ export default {
     font-weight: 600;
     letter-spacing: 1.5px;
 }
+
 .currency span {
     letter-spacing: 2px;
 }
@@ -576,10 +490,12 @@ export default {
     gap: 5px;
     display: none;
 }
+
 .addmoney:hover {
     background-color: whitesmoke;
     color: #9c59cc;
 }
+
 .plussign {
     font-size: 20px;
     display: flex;

@@ -15,8 +15,8 @@ const tabPosition = "right";
         <div class="py-5">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-row :gutter="[16, 16]">
-                    <a-col :span="5">
-                        <a-card style="height: 100%">
+                    <a-col :span="5" class="mt-2">
+                     
                             <a-button
                                 style="width: 100%; padding:  15px 0 35px 0; border-right: none; border-radius: 10px 0 0 0;"
                                 class="mb-5" @click="showImportInstutional" :class="{ active: isActive === 'import' }">
@@ -29,10 +29,10 @@ const tabPosition = "right";
                                 <UpSquareOutlined />
                                 Update Atp Database
                             </a-button>
-                        </a-card>
+                        
                     </a-col>
                     <a-col :span="19">
-                        <a-card>
+                  
                             <div v-if="showImport">
                                 <a-row :gutter="[16, 16]">
                                     <a-col :span="6" class="flex justify-end">
@@ -177,6 +177,13 @@ const tabPosition = "right";
                                                                     {{
                                                                         progressBar.message
                                                                     }}
+                                                                    {{
+                                                                        progressBar.currentRow
+                                                                    }}
+                                                                    to
+                                                                    {{
+                                                                        progressBar.totalRows
+                                                                    }}
 
                                                                 </p>
                                                             </div>
@@ -184,13 +191,7 @@ const tabPosition = "right";
                                                             <div></div>
 
                                                         </div>
-                                                        {{
-                                                            progressBar.currentRow
-                                                        }}
-                                                        to
-                                                        {{
-                                                            progressBar.totalRows
-                                                        }}
+
                                                         <a-progress style="
                                                                 width: 98%;
                                                                 margin: 0 auto;
@@ -210,19 +211,22 @@ const tabPosition = "right";
                                                                     progressBarAll.message
                                                                 }}
 
+                                                                {{
+                                                                    progressBarAll.currentRow
+                                                                }}
+                                                                to
+                                                                {{
+                                                                    progressBarAll.totalRows
+                                                                }}
+
+
                                                             </p>
                                                         </div>
 
                                                         <div></div>
 
                                                     </div>
-                                                    {{
-                                                        progressBarAll.currentRow
-                                                    }}
-                                                    to
-                                                    {{
-                                                        progressBarAll.totalRows
-                                                    }}
+
 
                                                     <a-progress style="
                                                                 width: 98%;
@@ -287,7 +291,8 @@ const tabPosition = "right";
                                                 <template #icon>
                                                     <UploadOutlined />
                                                 </template>
-                                                {{ isLoading ? 'updating atp in database please wait...' : ' Start Updating atp ' }}
+                                                {{ isLoading ? 'updating atp in database please wait...' :
+                                                    ' Start Updating atp ' }}
                                             </a-button>
                                         </template>
                                     </a-result>
@@ -320,7 +325,7 @@ const tabPosition = "right";
                                     to proceed the in the page
                                 </a-card>
                             </div>
-                        </a-card>
+                       
                     </a-col>
                 </a-row>
             </div>
