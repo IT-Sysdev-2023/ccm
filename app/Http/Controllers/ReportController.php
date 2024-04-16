@@ -67,7 +67,11 @@ class ReportController extends Controller
                 $query->whereBetween('check_received', [$request->dt_from, $request->dt_to]);
             })
             ->when($request->repporttype == '1', function (Builder $query) {
-                $query->doesntHave('dsCheck.check');
+                $query->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('new_ds_checks')
+                        ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+                });
             })
             ->when($request->repporttype == '2', function (Builder $query) {
                 $query->has('dsCheck.check');

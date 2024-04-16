@@ -236,7 +236,7 @@ const tabPosition = "right";
                                         />
                                     </a-col>
                                     <a-col :span="18">
-                                        <a-card>
+                                        <a-card v-if="isNotProgressShowing">
                                             Hello There!
                                             <strong
                                                 >{{
@@ -246,6 +246,54 @@ const tabPosition = "right";
                                             database. Please click the "
                                             <strong>Start Updating</strong> "
                                         </a-card>
+                                        <a-card>
+                                            <div
+                                                v-if="isProgressShowing"
+                                                style="font-size: 14px"
+                                            >
+                                                <div>
+                                                    <div
+                                                        v-if="isProgressShowing"
+                                                    >
+                                                        <div
+                                                            class="flex justify-between"
+                                                        >
+                                                            <div>
+                                                                <p>
+                                                                    {{
+                                                                        progressBar.message
+                                                                    }}
+                                                                    {{
+                                                                        progressBar.currentRow
+                                                                    }}
+                                                                    to
+                                                                    {{
+                                                                        progressBar.totalRows
+                                                                    }}
+                                                                </p>
+                                                            </div>
+
+                                                            <div></div>
+                                                        </div>
+                                                        <a-progress
+                                                            style="
+                                                                width: 98%;
+                                                                margin: 0 auto;
+                                                            "
+                                                            :stroke-color="{
+                                                                from: '#108ee9',
+                                                                to: '#87d068',
+                                                            }"
+                                                            :percent="
+                                                                progressBar.percentage
+                                                            "
+                                                            status="active"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a-card>
+                                        
                                     </a-col>
                                 </a-row>
 
@@ -455,6 +503,12 @@ export default {
         this.$ws
             .private(`importing-progress.${this.$page.props.auth.user.id}`)
             .listen(".importing-database", (e) => {
+                this.progressBar = e;
+            });
+
+        this.$ws
+            .private(`updating-progress.${this.$page.props.auth.user.id}`)
+            .listen(".updating-database", (e) => {
                 this.progressBar = e;
             });
     },

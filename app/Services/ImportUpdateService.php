@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\ImportUpdateEvents;
+use App\Events\ImportUpdateAtpEvent;
 use App\Models\BusinessUnit;
 use App\Models\CheckRecieved;
 use App\Models\Checks;
@@ -252,6 +253,10 @@ class ImportUpdateService
         $dateStartEncash = $bunitEncashStart->b_encashstart;
 
         $checksOnDatabase = Checks::where('businessunit_id', Auth::user()->businessunit_id)->count();
+        // dd($checksOnDatabase);
+
+        $checkPostDatedCheck = [];
+        $checkDatedCheck = [];
 
         if ($checksOnDatabase == 0) {
             try {
@@ -285,44 +290,47 @@ class ImportUpdateService
                         'customer.extension'
                     )
                     ->get();
+
             } catch (\Exception $e) {
                 exit();
             }
-        }
+        } else {
+            try {
+                $checkDatedCheck = DB::connection('sqlsrv')
+                    ->table('chk_dtl')
+                    ->join('chk_mst', 'chk_mst.issue_no', '=', 'chk_dtl.issue_no')
+                    ->join('customer', 'customer.custid', '=', 'chk_mst.custid')
+                    ->where('chk_mst.loc_code', Auth::user()->businessunit->loc_code_atp)
+                    ->where('chk_dtl.issue_no', '>', $this->getATPLastIssueNo())
+                    ->where('chk_mst.atp_date', '>=', $dateStartAtp . ' 00:00:00')
+                    ->orderBy('entry_no', 'asc')
+                    ->select(
+                        'chk_mst.issue_no',
+                        'chk_mst.atp_date',
+                        'chk_dtl.entry_no',
+                        'chk_dtl.chkclass',
+                        'chk_dtl.chktype',
+                        'chk_dtl.chkdate',
+                        'chk_dtl.chkno',
+                        'chk_dtl.bankname',
+                        'chk_dtl.brstn_rtno',
+                        'chk_dtl.actno',
+                        'chk_dtl.actname',
+                        'chk_dtl.chkamt',
+                        'chk_dtl.chkexpiry',
+                        'chk_dtl.category',
+                        'chk_dtl.approvedby',
+                        'customer.clastname',
+                        'customer.cfirstname',
+                        'customer.cmiddname',
+                        'customer.extension'
+                    )
+                    ->get();
+                    // dd($checkDatedCheck);
+            } catch (\Exception $e) {
 
-        try {
-            $checkDatedCheck = DB::connection('sqlsrv')
-                ->table('chk_dtl')
-                ->join('chk_mst', 'chk_mst.issue_no', '=', 'chk_dtl.issue_no')
-                ->join('customer', 'customer.custid', '=', 'chk_mst.custid')
-                ->where('chk_mst.loc_code', Auth::user()->businessunit->loc_code_atp)
-                ->where('chk_dtl.issue_no', '>', $this->getATPLastIssueNo())
-                ->where('chk_mst.atp_date', '>=', $datestartatp . ' 00:00:00')
-                ->orderBy('entry_no', 'asc')
-                ->select(
-                    'chk_mst.issue_no',
-                    'chk_mst.atp_date',
-                    'chk_dtl.entry_no',
-                    'chk_dtl.chkclass',
-                    'chk_dtl.chktype',
-                    'chk_dtl.chkdate',
-                    'chk_dtl.chkno',
-                    'chk_dtl.bankname',
-                    'chk_dtl.brstn_rtno',
-                    'chk_dtl.actno',
-                    'chk_dtl.actname',
-                    'chk_dtl.chkamt',
-                    'chk_dtl.chkexpiry',
-                    'chk_dtl.category',
-                    'chk_dtl.approvedby',
-                    'customer.clastname',
-                    'customer.cfirstname',
-                    'customer.cmiddname',
-                    'customer.extension'
-                )
-                ->get();
-        } catch (\Exception $e) {
-            exit();
+                exit();
+            }
         }
 
         if ($checksOnDatabase == 0) {
@@ -330,6 +338,7 @@ class ImportUpdateService
                 $checks = $checkDatedCheck->merge($checkPostDatedCheck);
             }
         } else {
+            // dd($checkDatedCheck);
             $checks = $checkDatedCheck;
         }
 
@@ -340,7 +349,7 @@ class ImportUpdateService
                 ->join('customer', 'customer.custid', '=', 'vip_mst.custid')
                 ->where('loc_code', Auth::user()->businessunit->loc_code_atp)
                 ->where('vip_dtl.entry_no', '>', $this->getEncashLastEntryNo())
-                ->where('vip_mst.encash_date', '>=', $datestartencash)
+                ->where('vip_mst.encash_date', '>=', $dateStartEncash)
                 ->orderBy('entry_no', 'asc')
                 ->select(
                     'vip_dtl.*',
@@ -356,16 +365,17 @@ class ImportUpdateService
         }
 
         $noChecks = intval(count($checks)) + intval(count($checkEnCash));
-
+      
         $count = 1;
-
         $issueNumber = null;
 
         $noChecksDc = count($checkDatedCheck);
 
+
         if ($noChecksDc > 0) {
             $issueNumber = $checkDatedCheck[$noChecksDc - 1]->issue_no;
         }
+
         $lastCheckEncashNumber = null;
         $noCheckEncash = count($checkEnCash);
 
@@ -373,7 +383,9 @@ class ImportUpdateService
             $lastCheckEncashNumber = $checkEnCash[$noCheckEncash - 1]->Entry_No;
         }
 
-        DB::transaction(function () use (&$count) {
+        ImportUpdateEvents::dispatch('Importing Textfile...', 0, count($checks), Auth::user());
+
+        DB::transaction(function () use (&$count, &$checks, &$issueNumber, &$lastCheckEncashNumber, &$checkEnCash, &$noChecks, &$noCheckEncash) {
             $checkReceived = CheckRecieved::create([
                 'checksreceivingtransaction_ctrlno' => $this->getControlNumber(),
                 'id' => Auth::user()->id,
@@ -384,9 +396,11 @@ class ImportUpdateService
             ]);
 
             $recID = $checkReceived->checksreceivingtransaction_id;
+            // dd($recID);
 
-            foreach ($check as $checks) {
-
+            foreach ($checks as $check) {
+        
+                // dd($noChecks);
                 $customer = "";
                 $customerid = "";
                 $bankname = "";
@@ -398,24 +412,28 @@ class ImportUpdateService
                 $checkclass = "";
                 $checkno = "";
 
-                if (str_replace(' ', '', $checks[$check]->chkexpiry) == '//' || trim($checks[$check]->chkexpiry) == '') {
+                if (str_replace(' ', '', $check->chkexpiry) == '//' || trim($check->chkexpiry) == '') {
                     $checkexpiry = null;
                 } else {
-                    $checkexpiry = $checks[$check]->chkexpiry;
+                    $checkexpiry = $check->chkexpiry;
                     $old_date_timestamp = strtotime($checkexpiry);
                     $checkexpiry = date('Y-m-d', $old_date_timestamp);
                 }
 
-                if (trim($checks[$check]->cmiddname) != '.') {
-                    $midname = trim($checks[$check]->cmiddname);
+                if (trim($check->cmiddname) != '.') {
+                    $midname = trim($check->cmiddname);
                 }
-                $customer = preg_replace('!\s+!', ' ', $checks[$check]->cfirstname . ' ' . $midname . ' ' . $checks[$check]->clastname . '' . $checks[$check]->extension);
+                // dd($check->extension);
+
+                $customer = preg_replace('!\s+!', ' ', $check->cfirstname . ' ' . $midname . ' ' . $check->clastname . '' . $check->extension);
                 $customer = trim($customer);
+                // dd($customer);
 
-                $daex = explode(" ", $checks[$check]->chkdate);
+                $daex = explode(" ", $check->chkdate);
                 $datex = $daex[0];
+                // dd(today()->toDateString(), $datex);
 
-                if ($datex > date('Y-m-d')) {
+                if ($datex > today()->toDateString()) {
                     $ctype = "POST DATED";
                 } else {
                     $ctype = "DATED CHECK";
@@ -428,39 +446,156 @@ class ImportUpdateService
 
                 }
 
-                $bankname = trim($checks[$xcheck]->bankname);
+                $bankname = trim($check->bankname);
+
                 if ($bid = $this->isBankExist($bankname)) {
-                    $bankid = $bid;
+                    $bankid = $bid; // result for bank name is exist
                 } else {
+                    // otherwise auto increment bank id
                     $bankid = $this->autoCreateNewBank($bankname);
                 }
 
-                $checkRecs = explode("", $checks[$check]->atp_date);
+                $checkRecs = explode(" ", $check->atp_date);
                 $checkRecs = $checkRecs[0];
 
-                if (strpos($checks[$check]->chkclass, 'PERSONAL') !== false) {
+                if (strpos($check->chkclass, 'PERSONAL') !== false) {
                     $checkclass = 'PERSONAL';
                 } else {
-                    $checkclass = $checks[$check]->chkclass;
+                    $checkclass = $check->chkclass;
                 }
 
-                $checkNumber = trim(preg_replace("/\./", "", $checks[$check]->chkno));
+                $checkNumber = trim(preg_replace("/\./", "", $check->chkno));
 
                 $checkNumber = ltrim($checkNumber, '0');
 
                 Checks::create([
-
+                    'check_bounced_id' => 0,
+                    'is_exist' => 0,
+                    'is_manual_entry' => 0,
+                    'checksreceivingtransaction_id' => $recID,
+                    'customer_id' => $customerid,
+                    'check_no' => $checkNumber,
+                    'check_class' => trim($checkclass),
+                    'check_date' => trim($datex),
+                    'check_received' => trim($checkRecs),
+                    'check_type' => trim($ctype),
+                    'account_no' => trim($check->actno),
+                    'account_name' => trim($check->actname),
+                    'bank_id' => $bankid,
+                    'businessunit_id' => Auth::user()->businessunit_id,
+                    'check_amount' => trim(str_replace(',', '', $check->chkamt)),
+                    'check_expiry' => $checkexpiry,
+                    'check_category' => trim($check->category),
+                    'check_status' => 'PENDING',
+                    'approving_officer' => trim($check->approvedby) == '' ? null : trim($check->approvedby),
+                    'currency_id' => 1,
+                    'department_from' => 15,
+                    'user' => Auth::user()->id,
+                    'date_time' => today()->toDateString(),
                 ]);
+
+                ImportUpdateAtpEvent::dispatch('Updating atp database...', $count++, $noChecks, Auth::user());
+
 
             }
 
-        });
+            foreach ($checkEnCash as $check) {
+                $customer = "";
+                $customerid = "";
+                $bankname = "";
+                $bankid = "";
+                $ctype = "";
+                $midname = "";
+                $checkrec = "";
+                $checkexpiry = "";
+                $checkclass = "";
+                $checkno = "";
+
+                if (str_replace(' ', '', $check->ChkExpiry) == '//' || trim($check->ChkExpiry) == '') {
+                    $checkexpiry = null;
+                } else {
+                    $checkexpiry = $check->ChkExpiry;
+                }
+                if ($check->ChkType == 'PD') {
+                    $ctype = "POST DATED";
+                } else {
+                    $ctype = "DATED CHECK";
+                }
+
+                if (trim($check->cmiddname) != '.') {
+                    $midname = trim($check->cmiddname);
+                }
+
+                $customer = preg_replace('!\s+!', ' ', $check->cfirstname . ' ' . $midname . ' ' . $check->clastname . '' . $check->extension);
+                $customer = trim($customer);
+
+                $daex = explode(" ", $check->ChkDate);
+                $datex = $daex[0];
+
+                if ($id = $this->isCustomerNameExist($customer)) {
+                    $customerid = $id;
+                } else {
+                    $customerid = $this->autoCreateCustomer($customer);
+
+                }
+
+                $bankname = trim($check->BankName);
+
+                if ($bid = $this->isBankExist($bankname)) {
+                    $bankid = $bid; // result for bank name is exist
+                } else {
+                    // otherwise auto increment bank id
+                    $bankid = $this->autoCreateNewBank($bankname);
+                }
+
+                $checkRecs = explode(" ", $check->Encash_Date);
+                $checkRecs = $checkRecs[0];
+
+                if (strpos($check->ChkClass, 'PERSONAL') !== false) {
+                    $checkclass = 'PERSONAL';
+                } else {
+                    $checkclass = $check->ChkClass;
+                }
+
+                $checkNumber = trim(preg_replace("/\./", "", $check->ChkNo));
+
+                $checkNumber = ltrim($checkNumber, '0');
+
+                Checks::create([
+                    'check_bounced_id' => 0,
+                    'is_exist' => 0,
+                    'is_manual_entry' => 0,
+                    'checksreceivingtransaction_id' => $recID,
+                    'customer_id' => $customerid,
+                    'check_no' => $checkNumber,
+                    'check_class' => trim($checkclass),
+                    'check_date' => trim($datex),
+                    'check_received' => trim($checkRecs),
+                    'check_type' => trim($ctype),
+                    'account_no' => trim($check->ActNo),
+                    'account_name' => trim($check->ActName),
+                    'bank_id' => $bankid,
+                    'businessunit_id' => Auth::user()->businessunit_id,
+                    'check_amount' => trim(str_replace(',', '', $check->ChkAmt)),
+                    'check_expiry' => $checkexpiry,
+                    'check_category' => trim($check->Category),
+                    'check_status' => 'PENDING',
+                    'approving_officer' => trim($check->ApprovedBy) == '' ? null : trim($check->ApprovedBy),
+                    'currency_id' => 1,
+                    'department_from' => 13,
+                    'user' => Auth::user()->id,
+                    'date_time' => today()->toDateString(),
+                ]);
+
+                ImportUpdateAtpEvent::dispatch('Updating atp check encash database...', $count++, $noCheckEncash, Auth::user());
+            }
+
+        }); 
 
     }
 
     public function getATPLastIssueNo()
     {
-        ini_set('memory_limit', '-1');
         $issueno = DB::table('checksreceivingtransaction')
             ->join('businessunit', 'businessunit.businessunit_id', '=', 'checksreceivingtransaction.businessunit_id')
             ->where('businessunit.loc_code_atp', Auth::user()->businessunit->loc_code_atp)
@@ -469,11 +604,27 @@ class ImportUpdateService
             ->orderBy('checksreceivingtransaction.checksreceivingtransaction_id', 'desc')
             ->first();
 
-        //dd($issueno);
         if (is_null($issueno)) {
             return 0;
         }
         return $issueno->atp_issueno;
+
+    }
+
+    public function getEncashLastEntryNo()
+    {
+        $encashno = DB::table('checksreceivingtransaction')
+            ->join('businessunit', 'businessunit.businessunit_id', '=', 'checksreceivingtransaction.businessunit_id')
+            ->where('businessunit.loc_code_atp', Auth::user()->businessunit->loc_code_atp)
+            ->whereNotNull('encash_entrynum')
+            ->select('encash_entrynum')
+            ->orderBy('checksreceivingtransaction.checksreceivingtransaction_id', 'desc')
+            ->first();
+
+        if (is_null($encashno)) {
+            return 0;
+        }
+        return $encashno->encash_entrynum;
 
     }
 }

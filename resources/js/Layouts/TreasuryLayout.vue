@@ -91,7 +91,7 @@ const hide = () => {
                                 >
                                     <CheckCircleOutlined /> Check Receiving</a
                                 >
-                                -->
+                 
                                 <template #overlay>
                                     <a-menu style="background-color: #001529">
                                         <a-menu-item
@@ -168,7 +168,7 @@ const hide = () => {
                                     href="#"
                                     ><CalendarOutlined /> Dated Checks/Pdc</a
                                 >
-                                -->
+                         
 
                                 <template #overlay>
                                     <a-menu style="background-color: #001529">
@@ -210,7 +210,7 @@ const hide = () => {
                                 </template>
                             </a-dropdown>
                             <a-dropdown arrow :placement="placements">
-                                <a
+                                <Link
                                     class="inline-block px-3 mt-2 p-4 text-sm text-white transition-all duration-200"
                                     :class="{
                                         'bg-blue-600 text-white':
@@ -222,9 +222,9 @@ const hide = () => {
                                             ) && !route().current('ds_tagging'),
                                     }"
                                     href="#"
-                                    ><FundOutlined /> Ds/Bounce Tagging</a
+                                    ><FundOutlined /> Ds/Bounce Tagging</Link
                                 >
-                                -->
+                              
 
                                 <template #overlay>
                                     <a-menu style="background-color: #001529">
@@ -297,7 +297,7 @@ const hide = () => {
                                     ><ContactsOutlined /> Transaction</a
 
                                 >
-                                -->
+                           
 
                                 <template #overlay>
                                     <a-menu style="background-color: #001529">
