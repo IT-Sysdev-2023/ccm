@@ -29,7 +29,7 @@ class UserController extends Controller
             ->join('usertype', 'usertype.usertype_id', '=', 'users.usertype_id')
             ->select('users.*', 'company.*', 'department.*', 'businessunit.*', 'usertype.*')
             ->orderBy('users.created_at', 'desc')
-            ->get();
+            ->paginate(12)->withQueryString();
 
         $userType = UserType::all();
 
@@ -38,8 +38,11 @@ class UserController extends Controller
             'userType' => $userType,
         ]);
     }
-    public function createUser(Request $request): RedirectResponse
+    public function createUser(Request $request)
     {
+
+        // dd($request->name);
+
         $request->validate([
             'name' => 'required',
             'empid' => 'required',
@@ -49,28 +52,24 @@ class UserController extends Controller
             'department_id' => 'required',
             'usertype_id' => 'required',
             'businessunit_id' => 'required',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = new User();
-
-        $user->name = $request->name;
-        $user->empid = $request->empid;
-        $user->username = $request->username;
-        $user->ContactNo = $request->ContactNo;
-        $user->company_id = $request->company_id;
-        $user->department_id = $request->department_id;
-        $user->usertype_id = $request->usertype_id;
-        $user->businessunit_id = $request->businessunit_id;
-        $user->password = Hash::make($request->password);
-        $user->user_status = 'active';
-
-
-        $user->save();
+        User::create([
+            'name' => $request->name,
+            'empid' => $request->empid,
+            'username' => $request->username,
+            'ContactNo' => $request->ContactNo,
+            'company_id' => $request->company_id,
+            'department_id' => $request->department_id,
+            'usertype_id' => $request->usertype_id,
+            'businessunit_id' => $request->businessunit_id,
+            'password' => Hash::make('123456'),
+            'user_status' => 'active',
+        ]);
 
         return redirect()->back();
     }
-    public function updateUser(Request $request, $id): RedirectResponse
+    public function updateUser(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required',
@@ -82,56 +81,21 @@ class UserController extends Controller
             'businessunit_id' => 'required',
         ]);
 
-        $user = User::findOrFail($id);
-
-        $user->name = $request->name;
-        $user->username = $request->username;
-        $user->ContactNo = $request->ContactNo;
-        $user->company_id = $request->company_id;
-        $user->department_id = $request->department_id;
-        $user->usertype_id = $request->usertype_id;
-        $user->businessunit_id = $request->businessunit_id;
-
-
-        $user->update();
+        User::where('id', $request->userId)->update([
+            'name' => $request->name,
+            'empid' => $request->empid,
+            'username' => $request->username,
+            'ContactNo' => $request->ContactNo,
+            'company_id' => $request->company_id,
+            'department_id' => $request->department_id,
+            'usertype_id' => $request->usertype_id,
+            'businessunit_id' => $request->businessunit_id,
+        ]);
 
         return redirect()->back();
     }
 
-    public function searchUsers(Request $request): Response
-    {
-        $query = $request->input('query');
-
-        if ($query !== null) {
-
-            $results = DB::connection('pis')
-                ->table('employee3')
-                ->where('name', 'like', "%$query%")
-                ->limit(5)
-                ->get();
-        } else {
-            $results = [];
-        }
-
-
-        return response()->json($results);
-    }
-    public function searchAnEmployeeName(Request $request): Response
-    {
-        $query = $request->input('query');
-
-        $results = DB::connection('pis')
-            ->table('employee3')
-            // ->join('applicant', 'employee3.emp_id', '=', 'applicant.app_id')
-            ->where('name', 'like', '%' . $query . '%')
-            // ->whereIn('name', ['Cadutdut, Jelarry Maestre', 'Baay, Rey Joseph Tubo', 'LUMOD, HELEN ARAIZ'])
-            ->limit(10)
-            ->get();
-
-
-        return response()->json($results);
-    }
-    public function searchCompany(Request $request) : Response
+    public function searchCompany(Request $request): Response
     {
         $query = $request->input('query');
 
@@ -250,9 +214,10 @@ class UserController extends Controller
     }
 
 
-    public function resignReactive(Request $request, $id)
+    public function resignReactive(Request $request)
     {
-        $user = User::findOrFail($id);
+        // dd($request->user);
+        $user = User::findOrFail($request->userId);
 
         // dd($user->toArray());
 

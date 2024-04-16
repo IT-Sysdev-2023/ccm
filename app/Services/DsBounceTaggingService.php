@@ -56,7 +56,7 @@ class DsBounceTaggingService
 
         $ds_checks_table = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
             ->orderBy('checks.check_received', 'DESC')
-            ->paginate(550);
+            ->paginate(300);
 
         $ds_checks_table->transform(function ($value) {
             $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST-DATED';
@@ -117,7 +117,7 @@ class DsBounceTaggingService
         ]);
     }
 
-    public function tag_check_bounce(Request $request): Builder
+    public function tagCheckBounce(Request $request)
     {
 
         return DB::transaction(function () use ($request) {

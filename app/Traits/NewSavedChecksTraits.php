@@ -23,10 +23,14 @@ trait NewSavedChecksTraits
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('new_saved_checks.status', '')
             ->where('checks.businessunit_id', $id)
-            ->doesntHave('dsCheck.check');
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('new_ds_checks')
+                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+            });
     }
 
-    public function scopeJoinChecksCustomerBanksDepartment(Builder $builder): Builder
+    public function scopeJoinChecksCustomerBanksDepartment(Builder $builder)
     {
         return $builder->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
@@ -34,10 +38,14 @@ trait NewSavedChecksTraits
             ->join('department', 'department.department_id', '=', 'checks.department_from');
     }
 
-    public function scopeEmptyStatusNoCheckWhereBu(Builder $builder, $id): Builder
+    public function scopeEmptyStatusNoCheckWhereBu(Builder $builder, $id)
     {
         return $builder->where('new_saved_checks.status', "")
-            ->doesntHave('dsCheck.check')
+        ->whereNotExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('new_ds_checks')
+                ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+        })
             ->where('checks.businessunit_id', $id);
     }
 

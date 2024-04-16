@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\NewSavedChecksTraits;
 
-class NewSavedChecks extends Model
+class SavedCheck extends Model
 {
+
+    use NewSavedChecksTraits;
     use HasFactory;
     protected $table = 'new_saved_checks';
     protected $primaryKey = 'id';
@@ -20,7 +23,11 @@ class NewSavedChecks extends Model
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('new_saved_checks.status', '')
             ->where('checks.businessunit_id', $id)
-            ->doesntHave('dsCheck.check');
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('new_ds_checks')
+                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+            });
     }
     public function check()
     {
