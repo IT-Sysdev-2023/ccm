@@ -1,5 +1,5 @@
 <template>
-    <a-result status="success" title="Successfully imported the textfile"
+    <a-result status="success" title="Successfully Updated atp database"
         sub-title="Dont have a good day have a great day!">
         <template #extra>
             <a-button key="console" class="mt-2" @click="returnBack">
@@ -21,8 +21,6 @@
 <script>
 export default {
     props: {
-        downloadExcel: Object,
-        dataRecord: Array,
     },
     methods: {
         returnBack() {

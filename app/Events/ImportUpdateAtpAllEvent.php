@@ -13,7 +13,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ImportUpdateAtpEvent implements ShouldBroadcastNow
+class ImportUpdateAtpAllEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     protected $percentage;
@@ -34,13 +34,13 @@ class ImportUpdateAtpEvent implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('updating-progress.' . $this->user->id),
+            new PrivateChannel('updating-progress-all.' . $this->user->id),
         ];
     }
 
     public function broadcastAs()
     {
-        return 'updating-database';
+        return 'updating-database-all';
     }
 
     public function broadcastWith()

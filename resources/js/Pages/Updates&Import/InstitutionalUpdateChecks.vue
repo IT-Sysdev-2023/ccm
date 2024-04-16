@@ -6,6 +6,7 @@ const tabPosition = "right";
 </script>
 
 <template>
+
     <Head title="Dashboard" />
 
     <TreasuryLayout>
@@ -17,19 +18,14 @@ const tabPosition = "right";
                     <a-col :span="5">
                         <a-card style="height: 100%">
                             <a-button
-                                style="width: 100%"
-                                class="mb-5"
-                                @click="showImportInstutional"
-                                :class="{ active: isActive === 'import' }"
-                            >
+                                style="width: 100%; padding:  15px 0 35px 0; border-right: none; border-radius: 10px 0 0 0;"
+                                class="mb-5" @click="showImportInstutional" :class="{ active: isActive === 'import' }">
                                 <ImportOutlined />
                                 Import Institutional
                             </a-button>
                             <a-button
-                                style="width: 100%"
-                                @click="showUpdateddatabase"
-                                :class="{ active: isActive === 'update' }"
-                            >
+                                style="width: 100%  ; padding:  15px 0 35px 0; border-right: none; border-radius: 0 0  0 10px;"
+                                @click="showUpdateddatabase" :class="{ active: isActive === 'update' }">
                                 <UpSquareOutlined />
                                 Update Atp Database
                             </a-button>
@@ -40,40 +36,28 @@ const tabPosition = "right";
                             <div v-if="showImport">
                                 <a-row :gutter="[16, 16]">
                                     <a-col :span="6" class="flex justify-end">
-                                        <img
-                                            src="../../../../public/Logo/ccmpbng.png"
-                                            alt=""
-                                            style="
+                                        <img src="../../../../public/Logo/ccmpbng.png" alt="" style="
                                                 height: 130px;
                                                 display: flex;
                                                 justify-content: center;
-                                            "
-                                        />
+                                            " />
                                     </a-col>
                                     <a-col :span="18">
                                         <a-card v-if="isNotProgressShowing">
                                             Hello There!
-                                            <strong
-                                                >{{
-                                                    $page.props.auth.user.name
-                                                }}
+                                            <strong>{{
+                                                $page.props.auth.user.name
+                                            }}
                                             </strong>
                                             , To proceed the import instutional
                                             checks. Please click the "
                                             <strong>Start Importing</strong> "
                                         </a-card>
                                         <a-card>
-                                            <div
-                                                v-if="isProgressShowing"
-                                                style="font-size: 14px"
-                                            >
+                                            <div v-if="isProgressShowing" style="font-size: 14px">
                                                 <div>
-                                                    <div
-                                                        v-if="isProgressShowing"
-                                                    >
-                                                        <div
-                                                            class="flex justify-between"
-                                                        >
+                                                    <div v-if="isProgressShowing">
+                                                        <div class="flex justify-between">
                                                             <div>
                                                                 <p>
                                                                     {{
@@ -91,20 +75,14 @@ const tabPosition = "right";
 
                                                             <div></div>
                                                         </div>
-                                                        <a-progress
-                                                            style="
+                                                        <a-progress style="
                                                                 width: 98%;
                                                                 margin: 0 auto;
-                                                            "
-                                                            :stroke-color="{
+                                                            " :stroke-color="{
                                                                 from: '#108ee9',
                                                                 to: '#87d068',
-                                                            }"
-                                                            :percent="
-                                                                progressBar.percentage
-                                                            "
-                                                            status="active"
-                                                        />
+                                                            }" :percent="progressBar.percentage
+                                                                " status="active" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -113,84 +91,38 @@ const tabPosition = "right";
                                 </a-row>
                                 <div class="loader mt-0">
                                     <div class="book-wrapper">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="white"
-                                            viewBox="0 0 126 75"
-                                            class="book"
-                                        >
-                                            <rect
-                                                stroke-width="5"
-                                                stroke="#e05452"
-                                                rx="7.5"
-                                                height="70"
-                                                width="121"
-                                                y="2.5"
-                                                x="2.5"
-                                            ></rect>
-                                            <line
-                                                stroke-width="5"
-                                                stroke="#e05452"
-                                                y2="75"
-                                                x2="63.5"
-                                                x1="63.5"
-                                            ></line>
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-width="4"
-                                                stroke="#c18949"
-                                                d="M25 20H50"
-                                            ></path>
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-width="4"
-                                                stroke="#c18949"
-                                                d="M101 20H76"
-                                            ></path>
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-width="4"
-                                                stroke="#c18949"
-                                                d="M16 30L50 30"
-                                            ></path>
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-width="4"
-                                                stroke="#c18949"
-                                                d="M110 30L76 30"
-                                            ></path>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 126 75"
+                                            class="book">
+                                            <rect stroke-width="5" stroke="#e05452" rx="7.5" height="70" width="121"
+                                                y="2.5" x="2.5"></rect>
+                                            <line stroke-width="5" stroke="#e05452" y2="75" x2="63.5" x1="63.5"></line>
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M25 20H50"></path>
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M101 20H76">
+                                            </path>
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M16 30L50 30">
+                                            </path>
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M110 30L76 30">
+                                            </path>
                                         </svg>
 
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="#ffffff74"
-                                            viewBox="0 0 65 75"
-                                            class="book-page"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-width="4"
-                                                stroke="#c18949"
-                                                d="M40 20H15"
-                                            ></path>
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-width="4"
-                                                stroke="#c18949"
-                                                d="M49 30L15 30"
-                                            ></path>
-                                            <path
-                                                stroke-width="5"
-                                                stroke="#e05452"
-                                                d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z"
-                                            ></path>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff74" viewBox="0 0 65 75"
+                                            class="book-page">
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M40 20H15"></path>
+                                            <path stroke-linecap="round" stroke-width="4" stroke="#c18949"
+                                                d="M49 30L15 30">
+                                            </path>
+                                            <path stroke-width="5" stroke="#e05452"
+                                                d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z">
+                                            </path>
                                         </svg>
                                     </div>
-                                    <a-result
-                                        status=""
-                                        title="Import institutional checks!"
-                                        sub-title="Click  the start button, to import the institutional text-file."
-                                    >
+                                    <a-result status="" title="Import institutional checks!"
+                                        sub-title="Click  the start button, to import the institutional text-file.">
                                         <div class="text-center">
                                             <a-tag color="green" v-if="count">
                                                 The instutional textfile is
@@ -202,13 +134,8 @@ const tabPosition = "right";
                                             </a-tag>
                                         </div>
                                         <template #extra>
-                                            <a-button
-                                                :loading="isLoading"
-                                                style="width: 300px"
-                                                type="primary"
-                                                :disabled="!count"
-                                                @click="startImporting"
-                                            >
+                                            <a-button :loading="isLoading" style="width: 300px" type="primary"
+                                                :disabled="!count" @click="startImporting">
                                                 <template #icon>
                                                     <UploadOutlined />
                                                 </template>
@@ -225,75 +152,92 @@ const tabPosition = "right";
                             <div v-else-if="showUpdate">
                                 <a-row :gutter="[16, 16]">
                                     <a-col :span="6" class="flex justify-end">
-                                        <img
-                                            src="../../../../public/Logo/ccmpbng.png"
-                                            alt=""
-                                            style="
+                                        <img src="../../../../public/Logo/ccmpbng.png" alt="" style="
                                                 height: 130px;
                                                 display: flex;
                                                 justify-content: center;
-                                            "
-                                        />
+                                            " />
                                     </a-col>
                                     <a-col :span="18">
                                         <a-card v-if="isNotProgressShowing">
                                             Hello There!
-                                            <strong
-                                                >{{
-                                                    $page.props.auth.user.name
-                                                }} </strong
-                                            >, To proceed the atp update
+                                            <strong>{{
+                                                $page.props.auth.user.name
+                                            }} </strong>, To proceed the atp update
                                             database. Please click the "
                                             <strong>Start Updating</strong> "
                                         </a-card>
                                         <a-card>
-                                            <div
-                                                v-if="isProgressShowing"
-                                                style="font-size: 14px"
-                                            >
+                                            <div v-if="isProgressShowing" style="font-size: 14px">
                                                 <div>
-                                                    <div
-                                                        v-if="isProgressShowing"
-                                                    >
-                                                        <div
-                                                            class="flex justify-between"
-                                                        >
+                                                    <div v-if="isProgressShowing">
+                                                        <div class="flex justify-between">
                                                             <div>
                                                                 <p>
                                                                     {{
                                                                         progressBar.message
                                                                     }}
-                                                                    {{
-                                                                        progressBar.currentRow
-                                                                    }}
-                                                                    to
-                                                                    {{
-                                                                        progressBar.totalRows
-                                                                    }}
+
                                                                 </p>
                                                             </div>
 
                                                             <div></div>
+
                                                         </div>
-                                                        <a-progress
-                                                            style="
+                                                        {{
+                                                            progressBar.currentRow
+                                                        }}
+                                                        to
+                                                        {{
+                                                            progressBar.totalRows
+                                                        }}
+                                                        <a-progress style="
                                                                 width: 98%;
                                                                 margin: 0 auto;
-                                                            "
-                                                            :stroke-color="{
+                                                            " :stroke-color="{
                                                                 from: '#108ee9',
                                                                 to: '#87d068',
-                                                            }"
-                                                            :percent="
-                                                                progressBar.percentage
-                                                            "
-                                                            status="active"
-                                                        />
+                                                            }" :percent="progressBar.percentage
+                                                                " status="active" />
                                                     </div>
+                                                </div>
+                                                <div>
+
+                                                    <div class="flex justify-between">
+                                                        <div>
+                                                            <p>
+                                                                {{
+                                                                    progressBarAll.message
+                                                                }}
+
+                                                            </p>
+                                                        </div>
+
+                                                        <div></div>
+
+                                                    </div>
+                                                    {{
+                                                        progressBarAll.currentRow
+                                                    }}
+                                                    to
+                                                    {{
+                                                        progressBarAll.totalRows
+                                                    }}
+
+                                                    <a-progress style="
+                                                                width: 98%;
+                                                                margin: 0 auto;
+                                                            " :stroke-color="{
+                                                                from: '#108ee9',
+                                                                to: '#87d068',
+                                                            }" :percent="progressBarAll.percentage
+                                                                " status="active" />
+
+
                                                 </div>
                                             </div>
                                         </a-card>
-                                        
+
                                     </a-col>
                                 </a-row>
 
@@ -334,39 +278,30 @@ const tabPosition = "right";
                                             </div>
                                         </div>
                                     </div>
-                                    <a-result
-                                        status=""
-                                        title="Update Atp Database!"
-                                        sub-title="Click  the start button, to update the atp database."
-                                    >
+                                    <a-result status="" title="Update Atp Database!"
+                                        sub-title="Click  the start button, to update the atp database.">
                                         <template #extra1> hello </template>
                                         <template #extra>
-                                            <a-button
-                                            @click="startUpdatingAtpDatabase"
-                                                type="primary"
-                                                style="width: 300px"
-                                            >
-                                                <UploadOutlined />
-                                                Start Updating
+                                            <a-button :loading="isLoading" @click="startUpdatingAtpDatabase"
+                                                type="primary" style="width: 300px">
+                                                <template #icon>
+                                                    <UploadOutlined />
+                                                </template>
+                                                {{ isLoading ? 'updating atp in database please wait...' : ' Start Updating atp ' }}
                                             </a-button>
                                         </template>
                                     </a-result>
                                 </div>
                             </div>
                             <div class="mt-0 loader" v-else>
-                                <img
-                                    src="../../../../public/Logo/ccmpbng.png"
-                                    alt=""
-                                    style="
+                                <img src="../../../../public/Logo/ccmpbng.png" alt="" style="
                                         height: 350px;
                                         display: flex;
                                         justify-content: center;
-                                    "
-                                />
+                                    " />
                                 <a-card>
                                     Hi There!
-                                    <strong
-                                        >{{ $page.props.auth.user.name }}
+                                    <strong>{{ $page.props.auth.user.name }}
                                     </strong>
                                     I'm
                                     <strong>Ccmbot</strong>
@@ -379,9 +314,9 @@ const tabPosition = "right";
                                     embark on this journey together! <br />
 
                                     <br />
-                                    Please click the button "<strong
-                                        >Import institutional checks</strong
-                                    >" & "<strong>Update atp database</strong>"
+                                    Please click the button "<strong>Import institutional checks</strong>" &
+                                    "<strong>Update atp
+                                        database</strong>"
                                     to proceed the in the page
                                 </a-card>
                             </div>
@@ -390,21 +325,14 @@ const tabPosition = "right";
                 </a-row>
             </div>
         </div>
-        <div
-            class=""
-            style="display: flex; justify-content: start"
-            @click="getRandomJoke()"
-        >
+        <div class="" style="display: flex; justify-content: start" @click="getRandomJoke()">
             <a-tooltip placement="top">
                 <template #title>
                     <span>Click this to view the tour guide</span>
                 </template>
-                <a-float-button
-                    type="primary"
-                    :style="{
-                        right: '100px',
-                    }"
-                >
+                <a-float-button type="primary" :style="{
+                    right: '100px',
+                }">
                     <template #icon>
                         <QuestionOutlined />
                     </template>
@@ -412,12 +340,9 @@ const tabPosition = "right";
             </a-tooltip>
 
             <a-dropdown :placement="placement" :arrow="{ pointAtCenter: true }">
-                <a-float-button
-                    type="primary"
-                    :style="{
-                        right: '150px',
-                    }"
-                >
+                <a-float-button type="primary" :style="{
+                    right: '150px',
+                }">
                     <template #icon>
                         <SmileOutlined />
                     </template>
@@ -425,7 +350,9 @@ const tabPosition = "right";
                 <template #overlay>
                     <a-menu>
                         <div class="p-6">
-                            <p><QuestionOutlined /> {{ jokes.setup }}</p>
+                            <p>
+                                <QuestionOutlined /> {{ jokes.setup }}
+                            </p>
                             <p class="font-bold">
                                 <SmileOutlined /> {{ jokes.punchline }}
                             </p>
@@ -446,6 +373,12 @@ export default {
             showImport: false,
             isActive: null,
             progressBar: {
+                currentRow: 0,
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+            },
+            progressBarAll: {
                 currentRow: 0,
                 percentage: 0,
                 message: "",
@@ -492,10 +425,18 @@ export default {
                 }
             );
         },
-        startUpdatingAtpDatabase(){
-            this.$inertia.get(route('updatingAtp.database'));
+        startUpdatingAtpDatabase() {
+            this.isProgressShowing = true;
+            this.isNotProgressShowing = false;
+            this.isLoading = true;
+
+            this.$inertia.get(route('updatingAtp.database'), {},
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                });
         }
-        
+
     },
     mounted() {
         this.getRandomJoke();
@@ -503,13 +444,22 @@ export default {
         this.$ws
             .private(`importing-progress.${this.$page.props.auth.user.id}`)
             .listen(".importing-database", (e) => {
+                // console.log(e);
                 this.progressBar = e;
             });
 
         this.$ws
             .private(`updating-progress.${this.$page.props.auth.user.id}`)
             .listen(".updating-database", (e) => {
+                // console.log(e);
                 this.progressBar = e;
+            });
+
+        this.$ws
+            .private(`updating-progress-all.${this.$page.props.auth.user.id}`)
+            .listen(".updating-database-all", (e) => {
+                console.log(e);
+                this.progressBarAll = e;
             });
     },
 
@@ -522,8 +472,9 @@ export default {
 
 <style scoped>
 .active {
-    background-color: rgb(10, 79, 143);
-    color: white;
+    border-right: none;
+    box-shadow: rgb(104, 106, 109) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+    color: rgb(0, 0, 0);
 }
 
 .loader {
