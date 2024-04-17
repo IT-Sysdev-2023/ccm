@@ -17,10 +17,54 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-row :gutter="[16, 16]" class="mt-4">
                     <a-col :span="8">
-                        <a-card>
-                            <div id="chart">
-                                <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
+                   
+                        <a-card class="mt-4">
+                            <div class="flex mb-1">
+                                <p class="font-bold">
+                                    <InfoCircleTwoTone class="mr-3" />
+                                    If you have concerns please look for luisa -
+                                    <PhoneOutlined /> 1815<br>
+                                </p>
                             </div>
+                            <div class="flex mb-10">
+
+                                <p class="font-bold">
+                                    <InfoCircleTwoTone class="mr-3" />
+                                    Or contact this ip phones below !
+
+                                </p>
+                            </div>
+                            <a-timeline>
+                                <a-timeline-item><PhoneOutlined /> 1951</a-timeline-item>
+                                <a-timeline-item>
+                                    <PhoneOutlined /> 1815
+                                </a-timeline-item>
+                                <a-timeline-item>
+                                    <PhoneOutlined /> 1821
+                                </a-timeline-item>
+                                <a-timeline-item>
+                                    <PhoneOutlined /> 1844
+                                </a-timeline-item>
+                                <a-timeline-item>
+                                    <PhoneOutlined /> 1847
+                                </a-timeline-item>
+                                <a-timeline-item>
+                                    <PhoneOutlined /> 1953
+                                </a-timeline-item>
+                                <a-timeline-item>
+                                    <PhoneOutlined /> 1819
+                                </a-timeline-item>
+                                <a-timeline-item>
+                                    <PhoneOutlined /> 1822
+                                </a-timeline-item>
+                                <a-timeline-item>
+                                    <PhoneOutlined /> 1854
+                                </a-timeline-item>
+                                <a-timeline-item>
+                                    <PhoneOutlined /> 1850
+                                </a-timeline-item>
+                            </a-timeline>
+
                         </a-card>
                     </a-col>
                     <a-col :span="16">
@@ -198,45 +242,47 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 </div>
                             </a-col>
                         </a-row>
+
+                        <a-card class="mt-5">
+                            <div id="chart">
+                                <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
+                            </div>
+
+                        </a-card>
                         <!-- <p>{{ holiday }}</p> -->
                         <a-collapse v-model:activeKey="activeKey" class="mt-10" style="
                      
                                
                             ">
                             <a-collapse-panel key="1" :header="activeKey == true
-                                    ? 'Click here to hide this calendar...'
-                                    : 'Click here to Open this calendar...'
+                                ? 'Click here to hide this calendar...'
+                                : 'Click here to Open this calendar...'
                                 ">
                                 <a-calendar v-model:value="value">
                                     <template #dateCellRender="{ current }">
                                         <div :class="validateDayOfMonth(current) &&
-                                                someFunction(current)
-                                                ? 'bg-green-100 text-gray-500'
-                                                : someFunction(current)
-                                                    ? 'bg-green-600 text-white'
+                                            someFunction(current)
+                                            ? 'bg-green-100 text-gray-500'
+                                            : someFunction(current)
+                                                ? 'bg-green-600 text-white'
+                                                : validateDayOfMonth(
+                                                    current
+                                                ) && isWeekend(current)
+                                                    ? 'bg-red-100 text-gray-500'
                                                     : validateDayOfMonth(
                                                         current
-                                                    ) && isWeekend(current)
-                                                        ? 'bg-red-100 text-gray-500'
-                                                        : validateDayOfMonth(
-                                                            current
-                                                        )
-                                                            ? 'bg-blue-100 text-gray-500'
-                                                            : isWeekend(current)
-                                                                ? 'bg-red-400'
-                                                                : !someFunction(current)
-                                                                    ? 'bg-blue-400'
-                                                                    : ''
+                                                    )
+                                                        ? 'bg-blue-100 text-gray-500'
+                                                        : isWeekend(current)
+                                                            ? 'bg-red-400'
+                                                            : !someFunction(current)
+                                                                ? 'bg-blue-400'
+                                                                : ''
                                             " style="
                                                 width: 100%;
                                                 height: 100%;
-                                                box-shadow: rgba(0, 0, 0, 0.4)
-                                                        0px 2px 4px,
-                                                    rgba(0, 0, 0, 0.3) 0px 7px
-                                                        13px -3px,
-                                                    rgba(0, 0, 0, 0.2) 0px -3px 0px
-                                                        inset;
-                                                border-radius: 10px;
+                                                box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+                                                border-radius: 4px;
                                             ">
                                             <span class="p-2"> </span>
                                             <div class="text-center mt-1 text-xl">

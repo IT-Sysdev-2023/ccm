@@ -42,11 +42,23 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
+
+    // protected $connection = 'pis';
+    // protected $primaryKey = 'id';
+
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
+    public function employee3(){
+        return $this->hasOne(Employee3::class, 'emp_no', 'empid');
+    }
+
+    public function applicant()
+    {
+        return $this->hasOne(Applicant::class, 'app_id', 'emp_id');
+    }
 
     public function company()
     {
