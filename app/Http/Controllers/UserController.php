@@ -31,7 +31,6 @@ class UserController extends Controller
             ->orderBy('users.created_at', 'desc')
             ->paginate(12)->withQueryString();
 
-            // dd($users);
 
         $userType = UserType::all();
 
