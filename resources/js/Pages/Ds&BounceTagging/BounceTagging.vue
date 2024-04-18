@@ -66,11 +66,11 @@ const colors = "red";
                     >
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
-                                <a-button
+                                <a-button type="primary"
                                     class="mx-1"
                                     size="small"
                                     ref="ref4"
-                                    style="background: #1a5d1a; color: white"
+                           
                                     v-on:click="
                                         confirmBounceTagg(record.checks_id)
                                     "

@@ -152,7 +152,7 @@ const placement = "bottom";
                                 </div>
                                 <template #overlay>
                                     <div class="max-w-xs p-4 rounded-md mr-2"
-                                        style="background: #001529; width: 500px;">
+                                        style="background: #001529;width: 500px;">
                                         <div class="flex items-center justify-center mb-4">
                                             <img :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
                                                 alt="Profile Picture" class="rounded-full w-16 h-16" />

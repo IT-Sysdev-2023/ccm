@@ -27,7 +27,9 @@ const submit = () => {
 <template>
 
     <div class="bg-ccm" :style="{'background-image': 'linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent), url(' + selectedImage + ')' }">
-        <a-row :gutter="[16, 16]">
+        <div class="example-box">
+  <div class="background-shapes"></div>
+  <a-row :gutter="[16, 16]">
             <a-col :span="12" style="height: 100vh;">
 
                 <div class="flex justify-center items-center" style="height: 100%;">
@@ -59,7 +61,7 @@ const submit = () => {
                             </div>
                             <div id="input-area">
                                 <div class="form-inp flex">
-                                    <UserOutlined class="mr-2" />
+                                    <UserOutlined class="mr-2 text-black" />
                                     <input v-model="form.username" placeholder="Username" type="text">
                                 </div>
                                 <div v-if="form.errors.username" class="text-white" style="
@@ -72,7 +74,7 @@ const submit = () => {
                                     *{{ form.errors.username }}
                                 </div>
                                 <div class="form-inp flex">
-                                    <KeyOutlined class="mr-2" />
+                                    <KeyOutlined class="mr-2 text-black" />
                                     <input v-model="form.password" placeholder="Password" type="password">
                                 </div>
                                 <div v-if="form.errors.password" class="text-white mb-3" style="
@@ -105,6 +107,8 @@ const submit = () => {
             </a-col>
 
         </a-row>
+</div>
+    
     </div>
 </template>
 <script>
@@ -291,4 +295,72 @@ export default {
 #bar:after {
     right: -38px;
 }
+
+
+.example-box * {
+  z-index: 2;
+}
+
+h1 {
+  font-family: Montserrat, sans-serif;
+  color: white;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.example-box {
+  width: 100%;
+  height: 100vh;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background-size: cover;
+  color: white;
+  font-family: sans-serif;
+  font-weight: 200;
+  z-index: 1;
+}
+
+.example-box * {
+  z-index: 2;
+}
+.background-shapes {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 5076px;
+  overflow: hidden;
+  background-size: 100%;
+  animation: 70s infiniteScroll linear infinite;
+
+  background-image: url(https://cdn2.hubspot.net/hubfs/53/Pricing%202017%20Assets/marketing/Header_Circles-1.svg);
+}
+
+@-webkit-keyframes infiniteScroll {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    -webkit-transform: translate3d(0, -1692px, 0);
+    transform: translate3d(0, -1692px, 0);
+  }
+}
+
+@keyframes infiniteScroll {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    -webkit-transform: translate3d(0, -1692px, 0);
+    transform: translate3d(0, -1692px, 0);
+  }
+}
+
 </style>

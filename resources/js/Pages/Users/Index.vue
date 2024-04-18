@@ -65,9 +65,9 @@ const handleOpen = (val) => {
                     <!-- <p>{{ get_users.data }}</p> -->
                     <a-tabs v-model:activeKey="activeKey" type="card" class="mt-4">
                         <a-tab-pane key="1" tab="Users List">
-                            <a-card>
-                                <a-row :gutter="[16, 16]" class="mt-4 flex justify-center">
-                                    <a-col :span="5" v-for="(item, key) in get_users.data" :key="key">
+              
+                                <a-row :gutter="[16, 16]" class="mt-4 flex justify-between" style="width: 100%">
+                                    <a-col :span="6" v-for="(item, key) in get_users.data" :key="key">
                                         <div class="body" @click="settDetails(item.id)">
                                             <a class="card human-resources" href="#">
                                                 <span style="
@@ -140,7 +140,7 @@ const handleOpen = (val) => {
                                 <div>
                                     <pagination class="mt-10" :datarecords="get_users" />
                                 </div>
-                            </a-card>
+                     
                         </a-tab-pane>
                         <a-tab-pane key="2" tab="Add Users">
                             <a-card style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
