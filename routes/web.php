@@ -31,13 +31,14 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return Inertia::render('AdminDashboard');
-    })->name('admin_dashboard');
+    // Route::get('/admin/dashboard', function () {
+    //     return Inertia::render('AdminDashboard');
+    // })->name('admin_dashboard');
     Route::get('/accounting/dashboard', function () {
         return Inertia::render('AccountingDashboard');
     })->name('accounting_dashboard');
 
+    Route::get('admin/dashboard', [DashboardController::class, 'adminDashboardComponent'])->name('admin.dashboard');
     Route::get('treasury/dashboard', [DashboardController::class, 'treasuryDashboardComponent'])->name('treasury.dashboard');
 });
 

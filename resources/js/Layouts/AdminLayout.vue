@@ -18,11 +18,11 @@ const placement = "bottom";
 </script>
 
 <template>
-    <a-layout style="min-height: 100vh">
+    <a-layout style="min-height: 100vh; background-color: green;">
         <a-layout-sider v-model:collapsed="collapsed" collapsible>
             <div class="flex p-1 ml-3 mt-10">
                 <img style="height: 50px; border-radius: 50%"
-                    src="https://preview.redd.it/i-got-bored-so-i-decided-to-draw-a-random-image-on-the-v0-4ig97vv85vjb1.png?width=640&crop=smart&auto=webp&s=22ed6cc79cba3013b84967f32726d087e539b699"
+                    :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
                     alt="logo" />
                 <div class="ml-2 flex justify-center items-center text-white ">
                     {{ !collapsed ? $page.props.auth.user.username : '' }}
@@ -31,17 +31,17 @@ const placement = "bottom";
 
             <a-menu theme="dark" mode="inline">
                 <a-menu-item key="1" :class="{
-                    'bg-gray-200 text-black':
-                        route().current('admin_dashboard'),
-                    'text-black-100': !route().current('admin_dashboard'),
+                    'bg-blue-500 text-white':
+                        route().current('admin.dashboard'),
+                    'text-black-100': !route().current('admin.dashboard'),
                 }">
                     <DashboardOutlined />
                     <span>
-                        <Link :href="route('admin_dashboard')">Dashboard</Link>
+                        <Link :href="route('admin.dashboard')">Dashboard</Link>
                     </span>
                 </a-menu-item>
                 <a-menu-item :class="{
-                    'bg-gray-200 text-black':
+                    'bg-blue-500 text-white':
                         route().current('users.index'),
                     'text-black-100': !route().current('users.index'),
                 }">
@@ -140,9 +140,9 @@ const placement = "bottom";
                                         color: white;
                                         cursor: pointer;
                                     ">
-                                  <span class="mr-2">
-                                    Howdy! {{  $page.props.auth.user.username }}
-                                  </span>
+                                    <span class="mr-2">
+                                        Howdy! {{ $page.props.auth.user.username }}
+                                    </span>
                                     <img style=" 
                                         height: 30px;
                                         width: 30px;
@@ -151,7 +151,8 @@ const placement = "bottom";
                                         alt="">
                                 </div>
                                 <template #overlay>
-                                    <div class="max-w-xs p-4 rounded-md mr-2" style="background: #001529; width: 500px;">
+                                    <div class="max-w-xs p-4 rounded-md mr-2"
+                                        style="background: #001529; width: 500px;">
                                         <div class="flex items-center justify-center mb-4">
                                             <img :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
                                                 alt="Profile Picture" class="rounded-full w-16 h-16" />
@@ -164,7 +165,7 @@ const placement = "bottom";
 
                                             </p>
                                         </div>
-                                        <ul class="mt-10" >
+                                        <ul class="mt-10">
                                             <li class="flex items-center space-x-2">
                                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -199,20 +200,11 @@ const placement = "bottom";
                                 </template>
                             </a-dropdown>
                         </div>
-                        <!-- <img
-                            style="width: 35px; height: 35px"
-                            src="../../../public/ccmimages/user.png"
-                            alt="alt"
-                        /> -->
                     </div>
                 </div>
             </div>
-            <a-layout-content style="margin: 16px">
-                <div :style="{
-                    padding: '24px',
-                    background: '#fff',
-                    minHeight: '360px',
-                }">
+            <a-layout-content style="background-color: white;">
+                <div style="padding: 25px">
                     <slot />
                 </div>
             </a-layout-content>
@@ -231,7 +223,7 @@ export default {
         };
     },
     methods: {
-        logoutUser(){
+        logoutUser() {
             this.$inertia.post(route('logout'));
         },
     }
