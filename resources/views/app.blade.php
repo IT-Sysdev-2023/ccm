@@ -17,8 +17,7 @@
     @inertiaHead
 </head>
 
-<body class="antialiased">
-
+<body class="antialiased" style=" background-color: white">
     @inertia
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Oswald&family=Poppins&family=Roboto+Condensed:wght@300&display=swap');
@@ -32,11 +31,7 @@
             padding: 0;
         }
 
-        .antialiased {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
+  
         .btn-submit {
             background-color: #4CAF50;
             /* Green */
@@ -60,7 +55,6 @@
             background-color: #45a049;
             /* Darker green on hover */
             box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
-            /* Hover effect *
         }
     </style>
 </body>
