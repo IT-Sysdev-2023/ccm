@@ -73,13 +73,6 @@ class DashboardController extends Controller
         ->where('new_saved_checks.status', '=', '')
         ->count();
 
-        // $currentYearQuery = Dtr::findBankAccount($bankAccount)
-        // ->select(DB::raw('COUNT(*) as y , DATE_FORMAT(trans_date, "%Y-%b") as x'))
-        // ->orderBy('trans_date', 'desc')
-        // ->limit(5)
-        // ->groupBy('x')->get(); 
-
-
         
         $dataPlazaMarcela =  Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
         ->select(DB::raw('COUNT(*) as y , check_received as x'))
