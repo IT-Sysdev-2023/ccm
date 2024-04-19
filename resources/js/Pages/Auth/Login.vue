@@ -117,10 +117,13 @@ export default {
         return {
             imageList: [
                 '/ccmbg/logo1.jpg',
-                '/ccmbg/bg1.jpg',
                 '/ccmbg/bg2.jpg',
                 '/ccmbg/bg4.jpg',
                 '/ccmbg/bg5.jpg',
+                '/ccmbg/bg6.jpg',
+                '/ccmbg/bg7.jpg',
+                '/ccmbg/bg7.jpg',
+                '/ccmbg/bg8.jpg',
             ],
             selectedImage: ''
         }
@@ -170,9 +173,9 @@ export default {
     margin: auto
 }
 
-#form-body {
+/* #form-body {
     background-image: url('ccmbg/logo.jpg');
-}
+} */
 
 #welcome-lines {
     text-align: center;

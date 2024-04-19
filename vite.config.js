@@ -6,6 +6,8 @@ import {
     AntDesignVueResolver,
 } from "unplugin-vue-components/resolvers";
 
+const host = 'ccmonitoring.com';
+
 export default defineConfig({
     plugins: [
         laravel({
@@ -36,4 +38,8 @@ export default defineConfig({
 			]
         })
     ],
+    server: {
+		host,
+		hmr: { host },
+	},
 });

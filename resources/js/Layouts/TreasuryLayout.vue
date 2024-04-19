@@ -340,10 +340,11 @@ const hide = () => {
                                     <UserOutlined />
                                 </div>
                                 <template #overlay >
-                                    <div class="max-w-xs p-4 rounded-md mr-2" style="background: #001529; width: 500px;">
+                                    <div class="max-w-xs p-4 rounded-md mr-2"
+                                        style="background: #001529;width: 500px;">
                                         <div class="flex items-center justify-center mb-4">
-                                            <img :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo" alt="Profile Picture"
-                                                class="rounded-full w-16 h-16" />
+                                            <img :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
+                                                alt="Profile Picture" class="rounded-full w-16 h-16" />
                                         </div>
                                         <div class="text-center">
                                             <h2 class="text-lg font-semibold text-white">
@@ -353,7 +354,7 @@ const hide = () => {
 
                                             </p>
                                         </div>
-                                        <ul class="mt-10" style="width: 500px;">
+                                        <ul class="mt-10">
                                             <li class="flex items-center space-x-2">
                                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -386,6 +387,7 @@ const hide = () => {
                                     </div>
 
                                 </template>
+                                    
                             </a-dropdown>
                         </div>
                     </div>

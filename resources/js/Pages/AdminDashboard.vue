@@ -136,9 +136,7 @@ export default {
                 markers: {
                     size: 0
                 },
-                // xaxis: {
-                //     type: 'datetime'
-                // },
+        
                 yaxis: {
                     title: {
                         text: 'Weekly Cheques',

@@ -532,8 +532,14 @@ export default {
             this.openModalCreate = true;
         },
         saveUsers() {
-            // window.alert('helklo world');
-            this.createUsers.post(route("users.store"), {});
+            this.createUsers.post(route("users.store"), {
+                onSuccess: () => 
+                {
+                    this.createUsers.reset();
+                
+                    message.success('Added user sucessfully')
+                }
+            });
         },
         updateUsers() {
             this.selectedData
@@ -547,7 +553,12 @@ export default {
                     ContactNo: data.ContactNo,
                     userId: data.id,
                 }))
-                .post(route("users.update"), {});
+                .post(route("users.update"), { onSuccess: () => 
+                {
+                    this.selectedData.reset();
+                    this.openModal = false;
+                    message.success('Updated user sucessfully')
+                }});
         },
         settDetails(id) {
             window.location.href = "/user/details/" + id;
