@@ -39,6 +39,18 @@ class UserController extends Controller
             'userType' => $userType,
         ]);
     }
+    public function settings()
+    {
+        return Inertia::render("Users/Setting");
+    }
+
+    public function updateUsername(Request $request)
+    {
+        // dd($request->all());
+        User::where('id', $request->user()->id)->update(['username' => $request->username]);
+
+        return redirect()->back();
+    }
     public function createUser(Request $request)
     {
 

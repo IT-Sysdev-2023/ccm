@@ -321,7 +321,6 @@ class TransactionService extends ExcelWriter
                     ->first();
 
                 if ($bounce_status->status === 'SETTLE CHECK') {
-
                     $replacement_type = NewCheckReplacement::where('bounce_id', $bounce_status->id)
                         ->first();
 

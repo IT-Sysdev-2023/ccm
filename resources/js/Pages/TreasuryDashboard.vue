@@ -16,7 +16,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
         <div class="py-4">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-row :gutter="[16, 16]" class="mt-4">
-                    <a-col :span="8">
+                    <a-col :span="9">
                    
                         <a-card class="mt-4">
                             <div class="flex mb-1">
@@ -67,7 +67,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 
                         </a-card>
                     </a-col>
-                    <a-col :span="16">
+                    <a-col :span="15">
                         <a-row :gutter="[16, 16]" class="mt-4">
                             <a-col :span="8">
                                 <div class="walletBalanceCard" style="

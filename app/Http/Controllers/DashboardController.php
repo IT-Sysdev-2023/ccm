@@ -14,48 +14,6 @@ use San103\Phpholidayapi\HolidayClientLaravel;
 
 class DashboardController extends Controller
 {
-
-    //  private function balanceTransactions($bankAccount)
-    // {
-    //     $data = Dtr::findBankAccount($bankAccount)->select('trans_date as x', 'balance_amount as y')
-    //         ->orderBy('trans_date', 'desc')
-    //         ->groupBy('trans_date')
-    //         ->limit(15)
-    //         ->get();
-
-    //       $data =  Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
-    //     ->where('checks.businessunit_id', '=', '21')
-    //     ->where('new_saved_checks.status', '=', '')
-    //     ->orderBy('check_received', 'desc')
-    //     ->limit(7)->get();
-
-    //     $endDate = Date: arse($data->first()->x); //defined as end Date cause of the order by desc in the $data query
-    //     $startDate = Date: arse($data->last()->x);
-
-    //     $dates = $startDate->toPeriod($endDate)->toArray();
-
-    //     $filled_records = collect();
-
-    //     foreach ($dates as $date) {
-    //         $formatted_date = $date->format('Y-m-d');
-    //         $record = $data->firstWhere('x', $formatted_date);
-
-    //         if ($record) {
-    //             $filled_records->push($record);
-    //         } else {
-    //             $filled_records->push(new Dtr(['x' => $formatted_date, 'y' => null])); // Thanks To Chat GPT  
-    //         }
-    //     }
-
-    //     $record = $filled_records->transform(function ($item) {
-    //         $item->y = $item->y ? (float) $item->y : null;
-    //         $item->x = Date: arse($item->x)->format('d M');
-    //         return $item;
-    //     });
-
-    //     return $record;
-    // } 
-    //
     public function adminDashboardComponent()
     {
         $plazaMarcelaCounts = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
@@ -97,6 +55,8 @@ class DashboardController extends Controller
         ->orderBy('x', 'desc')
         ->groupBy('x')
         ->limit(7)->get();
+
+
 
         // dd($data->toArray());
 

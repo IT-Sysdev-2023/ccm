@@ -329,6 +329,15 @@ const hide = () => {
                                     </a-menu>
                                 </template>
                             </a-dropdown>
+                            <Link class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
+                                :class="{
+                                    'bg-blue-600 text-white':
+                                        route().current('settings'),
+                                    'text-white':
+                                        !route().current('settings'),
+                                }" :href="route('settings')">
+                            <SettingOutlined /> Settings
+                            </Link>
                         </div>
                         <div class="flex items-center justify-end gap-3 mt-2">
                             <a-dropdown placement="bottom" arrow>
@@ -339,9 +348,8 @@ const hide = () => {
                                     ">
                                     <UserOutlined />
                                 </div>
-                                <template #overlay >
-                                    <div class="max-w-xs p-4 rounded-md mr-2"
-                                        style="background: #001529;width: 500px;">
+                                <template #overlay>
+                                    <div class="max-w-xs p-4 rounded-md mr-2" style="background: #001529;width: 500px;">
                                         <div class="flex items-center justify-center mb-4">
                                             <img :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
                                                 alt="Profile Picture" class="rounded-full w-16 h-16" />
@@ -387,7 +395,7 @@ const hide = () => {
                                     </div>
 
                                 </template>
-                                    
+
                             </a-dropdown>
                         </div>
                     </div>
@@ -437,7 +445,7 @@ export default {
         };
     },
     methods: {
-        logoutUser(){
+        logoutUser() {
             this.$inertia.post(route('logout'));
         },
         showTime() {
