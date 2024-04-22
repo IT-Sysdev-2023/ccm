@@ -4,19 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Helper\ColumnsHelper;
 use App\Helper\NumberHelper;
+use App\Models\BusinessUnit;
+use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\DB;
-use App\Models\BusinessUnit;
-use Carbon\Carbon;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Illuminate\Support\Facades\Date;
-
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ReportController extends Controller
 {
@@ -93,7 +93,6 @@ class ReportController extends Controller
         ]);
     }
 
-
     public function generate_reps_to_excel(Request $request)
     {
 
@@ -169,8 +168,6 @@ class ReportController extends Controller
             $title = 'PENDINGDATEDCHECKS';
         }
 
-
-
         if ($request->ch_type === '1') {
             $spreadsheet->getActiveSheet()->getStyle('A5:P5')->applyFromArray([
                 'font' => [
@@ -224,7 +221,6 @@ class ReportController extends Controller
                 'vertical' => Alignment::VERTICAL_CENTER,
             ],
         ]);
-
 
         $row = 6;
         $column = 6;
@@ -297,8 +293,6 @@ class ReportController extends Controller
                 $days = '';
             }
 
-
-
             $reportData = [
                 date('F-d-Y', strtotime($report->check_date)),
                 date('F-d-Y', strtotime($report->check_received)),
@@ -361,11 +355,6 @@ class ReportController extends Controller
 
         }
 
-
-
-
-
-
         $spreadsheet->getActiveSheet()->fromArray($this->headerRow->all(), null, 'A5');
         $spreadsheet->getActiveSheet()->getCell('E3')->setValue('BUSINESS UNIT : ' . ' ' . $bname->bname);
         $spreadsheet->getActiveSheet()->getCell('E1')->setValue('REPORT TYPE : ' . ' ' . $h_type);
@@ -375,12 +364,9 @@ class ReportController extends Controller
             $spreadsheet->getActiveSheet()->getCell('E2')->setValue('FROM: ' . strtoupper(date('F-d-Y', strtotime($request->dt_from))) . '  TO: ' . strtoupper(date('F-d-Y', strtotime($request->dt_to))) . ' AS OF:  ' . strtoupper(date('F-d-Y')));
         }
 
-
-
         $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
         $writer = new Xlsx($spreadsheet);
         $writer->save($tempFilePath);
-
 
         if (!$request->dt_from && !$request->dt_to) {
             $filename = $bname->bname . $title . '-All -' . $title . now()->format('M, d Y') . '.xlsx';
@@ -391,5 +377,43 @@ class ReportController extends Controller
 
         // Download the file
         return response()->download($tempFilePath, $filename, [], 'inline');
+    }
+
+    public function depositedCheckReports(Request $request)
+    {
+        // dd($request->dateRange , $request->bunitId);
+
+        if ($request->user()->usertype_id == 2) {
+            $buId = BusinessUnit::whereNotNull('loc_code_atp')
+                ->whereNotNull('b_atpgetdata')
+                ->whereNotNull('b_encashstart')
+                ->where('businessunit_id', Auth::user()->businessunit_id)
+                ->get();
+        } else {
+            $buId = BusinessUnit::whereNotNull('loc_code_atp')
+                ->whereNotNull('b_atpgetdata')
+                ->whereNotNull('b_encashstart')
+                ->where('businessunit_id', '!=', 61)
+                ->get();
+        }
+
+        $data = NewDsChecks::select('new_ds_checks.date_deposit', 'ds_no', (DB::raw('sum(check_amount) as sum')), 'name')
+
+            ->join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
+            ->join('users', 'users.id', '=', 'new_ds_checks.user')
+            ->whereBetween('new_ds_checks.date_deposit', is_null($request->dateRange) ? [today(), today()]: [$request->dateRange[0],$request->dateRange[1]])
+            ->where('checks.businessunit_id', $request->bunitId)
+            ->where('status', '=', '')
+            ->groupBy('date_deposit', 'ds_no', 'name')
+            ->paginate(10)->withQueryString();
+
+        // dd($data->toArray());
+
+        return Inertia::render('Reports/DepositedCheckReports', [
+            'data' => $data,
+            'buData' => $buId,
+            'columns' => ColumnsHelper::$deposited_checks_column,
+            'dateRangeBackend' => is_null($request->dateRange) ? [today(), today()]: [$request->dateRange[0],$request->dateRange[1]]
+        ]);
     }
 }

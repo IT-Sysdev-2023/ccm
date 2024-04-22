@@ -60,25 +60,25 @@ class ColumnsHelper
             'title' => 'Check receive',
             'dataIndex' => 'check_received',
             'key' => 'checks_r',
-            'width' => '8%'
+            'width' => '8%',
         ],
         [
             'title' => 'Check Date',
             'dataIndex' => 'check_date',
             'key' => 'check_date',
-            'width' => '8%'
+            'width' => '8%',
         ],
         [
             'title' => 'Date Deposit',
             'dataIndex' => 'date_deposit',
             'key' => 'check_d',
-            'width' => '8%'
+            'width' => '8%',
         ],
         [
             'title' => 'Customer Name',
             'dataIndex' => 'fullname',
             'key' => 'fname',
-            'width' => '30%'
+            'width' => '30%',
         ],
         [
             'title' => 'Check Number',
@@ -182,7 +182,7 @@ class ColumnsHelper
             'key' => 'check_box',
             'ellipsis' => true,
             'width' => '6%',
-            'align' => 'center'
+            'align' => 'center',
         ],
         [
             'title' => 'Check Received',
@@ -234,7 +234,7 @@ class ColumnsHelper
             'key' => 'check_box',
             'ellipsis' => true,
             'width' => '6%',
-            'align' => 'center'
+            'align' => 'center',
         ],
         [
             'title' => 'Check Received',
@@ -286,7 +286,7 @@ class ColumnsHelper
             'key' => 'check_box',
             'ellipsis' => true,
             'width' => '6%',
-            'align' => 'center'
+            'align' => 'center',
         ],
         [
             'title' => 'Check Received',
@@ -416,7 +416,7 @@ class ColumnsHelper
             'title' => "",
             'key' => "check_box",
             'align' => "center",
-            'width' => '5%'
+            'width' => '5%',
         ],
         [
             'title' => "Checkreceived",
@@ -498,7 +498,7 @@ class ColumnsHelper
             'title' => "Actions",
             'key' => "action",
             'align' => "center",
-            'width' => "9%"
+            'width' => "9%",
         ],
     ];
     public static $check_replace_columns = [
@@ -506,59 +506,58 @@ class ColumnsHelper
             'title' => "Replacement date",
             'dataIndex' => "check_received",
             'key' => "checks_r",
-            'width' => "10%"
+            'width' => "10%",
         ],
         [
             'title' => "Checkreceived",
             'dataIndex' => "check_received",
             'key' => "checks_r",
-            'width' => "10%"
+            'width' => "10%",
         ],
         [
             'title' => "Checkdate",
             'dataIndex' => "check_date",
             'key' => "check_date",
-            'width' => "10%"
+            'width' => "10%",
         ],
 
         [
             'title' => "Customer Name",
             'dataIndex' => "fullname",
             'key' => "address",
-            'width' => "20%"
+            'width' => "20%",
         ],
 
         [
             'title' => "Check Number",
             'dataIndex' => "check_no",
             'key' => "check_no",
-            'width' => "10%"
+            'width' => "10%",
         ],
         [
             'title' => "Amount",
             'dataIndex' => "check_amount",
             'key' => "check_a",
-            'width' => "8%"
+            'width' => "8%",
         ],
         [
             'title' => "Mode",
             'dataIndex' => "mode",
             'key' => "mode",
-            'width' => "7%"
+            'width' => "7%",
         ],
         [
             'title' => "User",
             'dataIndex' => "name",
             'key' => "check_a",
-            'width' => "15%"
+            'width' => "15%",
         ],
-
 
         [
             'title' => "Actions",
             'key' => "action",
             'align' => "center",
-            'width' => "9%"
+            'width' => "9%",
         ],
     ];
     public static $partial_payment_columns = [
@@ -566,59 +565,58 @@ class ColumnsHelper
             'title' => "Bounced date",
             'dataIndex' => "bounce_date",
             'key' => "checks_r",
-            'width' => "15%"
+            'width' => "15%",
         ],
         [
             'title' => "Checkdate",
             'dataIndex' => "check_date",
             'key' => "check_date",
-            'width' => "10%"
+            'width' => "10%",
         ],
 
         [
             'title' => "Customer Name",
             'dataIndex' => "fullname",
             'key' => "address",
-            'width' => "20%"
+            'width' => "20%",
         ],
 
         [
             'title' => "Check Number",
             'dataIndex' => "check_no",
             'key' => "check_no",
-            'width' => "10%"
+            'width' => "10%",
         ],
         [
             'title' => "Amount",
             'dataIndex' => "check_amount",
             'key' => "check_a",
-            'width' => "8%"
+            'width' => "8%",
         ],
         [
             'title' => "Cash Paid",
             'dataIndex' => "paid_cash",
             'key' => "mode",
-            'width' => "8%"
+            'width' => "8%",
         ],
         [
             'title' => "Check Paid",
             'dataIndex' => "paid_check",
             'key' => "check_a",
-            'width' => "8%"
+            'width' => "8%",
         ],
         [
             'title' => 'Amount balance',
             'dataIndex' => "amount_balance",
             'key' => "check_a",
-            'width' => "7%"
+            'width' => "7%",
         ],
-
 
         [
             'title' => "Actions",
             'key' => "action",
             'align' => "center",
-            'width' => "10%"
+            'width' => "10%",
         ],
     ];
 
@@ -709,6 +707,29 @@ class ColumnsHelper
             'ellipsis' => true,
             'width' => '10%',
             'align' => 'center',
+        ],
+    ];
+
+    public static $deposited_checks_column = [
+        [
+            'title' => 'Deposit date',
+            'dataIndex' => 'date_deposit',
+        ],
+        [
+            'title' => 'Ds Number',
+            'dataIndex' => 'ds_no',
+        ],
+        [
+            'title' => 'Deposit Amount',
+            'dataIndex' => 'sum',
+        ],
+        [
+            'title' => 'User',
+            'dataIndex' => 'name',
+        ],
+        [
+            'title' => 'Details',
+            'key' => 'details',
         ],
     ];
 

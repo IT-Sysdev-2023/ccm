@@ -17,7 +17,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-row :gutter="[16, 16]" class="mt-4">
                     <a-col :span="9">
-                   
+
                         <a-card class="mt-4">
                             <div class="flex mb-1">
                                 <p class="font-bold">
@@ -35,7 +35,9 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                 </p>
                             </div>
                             <a-timeline>
-                                <a-timeline-item><PhoneOutlined /> 1951</a-timeline-item>
+                                <a-timeline-item>
+                                    <PhoneOutlined /> 1951
+                                </a-timeline-item>
                                 <a-timeline-item>
                                     <PhoneOutlined /> 1815
                                 </a-timeline-item>
@@ -78,6 +80,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                                             violet
                                         );
                                     ">
+
                                     <div class="svgwrapper">
                                         <img src="../../../public/svg/checks.svg" alt="" />
                                     </div>

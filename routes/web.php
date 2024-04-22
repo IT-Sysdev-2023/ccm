@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('dated/pdc/checks/reports', [ReportController::class, 'datedpdcchecksreports'])->name('reports.dpdc');
+    Route::get('deposited/checks/reports', [ReportController::class, 'depositedCheckReports'])->name('deposited.checks');
     Route::get('get_dated_pdc_checks_rep', [ReportController::class, 'get_dated_pdc_checks_rep'])->name('get.dpdc');
     Route::get('generate_reps_to_excel', [ReportController::class, 'generate_reps_to_excel'])->name('excel.dpdc');
 

@@ -41,8 +41,7 @@ const placement = "bottom";
                     </span>
                 </a-menu-item>
                 <a-menu-item :class="{
-                    'bg-blue-500 text-white':
-                        route().current('users.index'),
+                    'bg-blue-500 text-white': route().current('users.index'),
                     'text-black-100': !route().current('users.index'),
                 }">
                     <UserOutlined />
@@ -50,7 +49,7 @@ const placement = "bottom";
                         <Link :href="route('users.index')">User</Link>
                     </span>
                 </a-menu-item>
-                <a-sub-menu key="sub1">
+                <a-sub-menu >
                     <template #title>
                         <span>
                             <FundProjectionScreenOutlined />
@@ -74,7 +73,7 @@ const placement = "bottom";
                         <span>Replacement</span>
                     </a-menu-item>
                 </a-sub-menu>
-                <a-sub-menu key="sub2">
+                <a-sub-menu >
                     <template #title>
                         <span>
                             <FileDoneOutlined />
@@ -86,7 +85,7 @@ const placement = "bottom";
                         <span>App Config</span>
                     </a-menu-item>
                 </a-sub-menu>
-                <a-sub-menu key="sub3">
+                <a-sub-menu>
                     <template #title>
                         <span>
                             <DingtalkOutlined />
@@ -96,16 +95,24 @@ const placement = "bottom";
                     <a-menu-item :class="{
                         'bg-blue-600 text-white':
                             route().current('reports.dpdc'),
-                        'text-black-100': !route().current('reports.dpdc'),
+                        'text-black-100':
+                            !route().current('reports.dpdc')
                     }">
                         <CalendarOutlined />
                         <span>
                             <Link :href="route('reports.dpdc')">Dated / Pdc</Link>
                         </span>
                     </a-menu-item>
-                    <a-menu-item>
+                    <a-menu-item :class="{
+                        'bg-blue-600 text-white':
+                            route().current('deposited.checks'),
+                        'text-black-100':
+                            !route().current('deposited.checks'),
+                    }">
                         <WalletOutlined />
-                        <span>Deposited</span>
+                        <span>
+                            <Link :href="route('deposited.checks')">Deposited</Link>
+                        </span>
                     </a-menu-item>
                     <a-menu-item>
                         <ShakeOutlined />
@@ -151,8 +158,7 @@ const placement = "bottom";
                                         alt="">
                                 </div>
                                 <template #overlay>
-                                    <div class="max-w-xs p-4 rounded-md mr-2"
-                                        style="background: #001529;width: 500px;">
+                                    <div class="max-w-xs p-4 rounded-md mr-2" style="background: #001529;width: 500px;">
                                         <div class="flex items-center justify-center mb-4">
                                             <img :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
                                                 alt="Profile Picture" class="rounded-full w-16 h-16" />
