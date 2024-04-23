@@ -20,12 +20,13 @@ const placement = "bottom";
 <template>
     <a-layout style="min-height: 100vh; background-color: green;">
         <a-layout-sider v-model:collapsed="collapsed" collapsible>
-            <div class="flex p-1 ml-3 mt-10">
-                <img style="height: 50px; border-radius: 50%"
+            <div class="flex  mt-10 justify-center mb-5" >
+
+                <img v-if="!collapsed" style="height: 50px; border-radius: 50%"
                     :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
                     alt="logo" />
-                <div class="ml-2 flex justify-center items-center text-white ">
-                    {{ !collapsed ? $page.props.auth.user.username : '' }}
+                <div class="flex justify-center items-center text-white" >
+                    <img style="height: 50px;" src="../../../public/ccmlogo/lgremove.png" alt=""  />
                 </div>
             </div>
 
@@ -138,8 +139,9 @@ const placement = "bottom";
                         color: white;
                     ">
                     <div>
-                        <img src="../../../public/Logo/treasury.png" alt="" />
+
                     </div>
+
                     <div>
                         <div class="flex items-center justify-end gap-3">
                             <a-dropdown placement="bottom" arrow>
@@ -150,7 +152,7 @@ const placement = "bottom";
                                     <span class="mr-2">
                                         Howdy! {{ $page.props.auth.user.username }}
                                     </span>
-                                    <img style=" 
+                                    <img style="
                                         height: 30px;
                                         width: 30px;
                                         border-radius: 50%;"

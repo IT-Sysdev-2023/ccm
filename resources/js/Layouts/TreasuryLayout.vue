@@ -336,7 +336,7 @@ const hide = () => {
                                     'text-white':
                                         !route().current('settings'),
                                 }" :href="route('settings')">
-                            <SettingOutlined /> Settings
+                            <SettingOutlined /> My Settings
                             </Link>
                         </div>
                         <div class="flex items-center justify-end gap-3 mt-2">

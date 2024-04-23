@@ -17,17 +17,32 @@ const colors = "red";
             </a-breadcrumb-item>
             <a-breadcrumb-item>Deposited Check Reports</a-breadcrumb-item>
         </a-breadcrumb>
-        <a-range-picker v-model:value="dateRangeValue" class="mb-5 mr-2" />
-        <a-select placeholder="Select Business Unit " ref="select" v-model:value="selectBunit" style="width: 200px"
-            @change="handleSelectBunitChange">
-            <a-select-option v-for="(item, key) in buData" :key="key" v-model:value="item.businessunit_id">{{ item.bname
-                }}</a-select-option>
-        </a-select>
-        <a-button @click="fetchData">
-            fetch data
-        </a-button>
+        <div class="flex justify-between">
+            <div>
+                <a-range-picker v-model:value="dateRangeValue" class="mb-5 mr-2" />
+                <a-select placeholder="Select Business Unit " ref="select" v-model:value="selectBunit"
+                    style="width: 200px" @change="handleSelectBunitChange">
+                    <a-select-option v-for="(item, key) in buData" :key="key" v-model:value="item.businessunit_id">{{
+                        item.bname
+                        }}</a-select-option>
+                </a-select>
+                <a-button @click="fetchData" class="ml-5" style="width: 200px;" type="primary" ghost :loading="loadingbutton">
+                    <template #icon>
+                        <LoginOutlined />
+                    </template>
+                    fetch data
+                </a-button>
+            </div>
+            <div>
+                <a-button style="width: 200px;" type="dashed">
+                    <template #icon>
+                        <FileExcelOutlined />
+                    </template>
+                    generate excel
+                </a-button>
+            </div>
+        </div>
         <a-table :data-source="data.data" :columns="columns" size="small" bordered :pagination="false">
-
         </a-table>
 
     </AdminLayout>
@@ -45,6 +60,7 @@ export default {
     },
     data() {
         return {
+            loadingbutton: false,
             dateRangeArray0: null,
             dateRangeArray1: null,
             selectBunit: this.buniIdType,
@@ -61,6 +77,7 @@ export default {
             this.selectBunit = value;
         },
         fetchData() {
+            this.loadingbutton = true;
             this.$inertia.get(route('deposited.checks'), {
                 dateRangeArr0: dayjs(this.dateRangeValue[0]).format(
                     "YYYY-MM-DD"
@@ -70,6 +87,10 @@ export default {
                 ),
 
                 bunitId: this.selectBunit,
+            }, {
+                onSuccess: () => {
+                    this.loadingbutton = false;
+                }
             });
         }
     }
