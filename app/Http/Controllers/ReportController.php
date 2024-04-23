@@ -382,6 +382,8 @@ class ReportController extends Controller
     public function depositedCheckReports(Request $request)
     {
         // dd($request->dateRange , $request->bunitId);
+        // dd($request->all());
+       $dateRange = [$request->dateRangeArr0, $request->dateRangeArr1];
 
         if ($request->user()->usertype_id == 2) {
             $buId = BusinessUnit::whereNotNull('loc_code_atp')
@@ -401,7 +403,7 @@ class ReportController extends Controller
 
             ->join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
             ->join('users', 'users.id', '=', 'new_ds_checks.user')
-            ->whereBetween('new_ds_checks.date_deposit', is_null($request->dateRange) ? [today(), today()]: [$request->dateRange[0],$request->dateRange[1]])
+            ->whereBetween('new_ds_checks.date_deposit', [$request->dateRangeArr0, $request->dateRangeArr1])
             ->where('checks.businessunit_id', $request->bunitId)
             ->where('status', '=', '')
             ->groupBy('date_deposit', 'ds_no', 'name')
@@ -409,11 +411,15 @@ class ReportController extends Controller
 
         // dd($data->toArray());
 
+        // dd( is_null($request->dateRange) ? [today(), today()]: [$request->dateRange[0],$request->dateRange[1]]);
+
+
         return Inertia::render('Reports/DepositedCheckReports', [
             'data' => $data,
             'buData' => $buId,
             'columns' => ColumnsHelper::$deposited_checks_column,
-            'dateRangeBackend' => is_null($request->dateRange) ? [today(), today()]: [$request->dateRange[0],$request->dateRange[1]]
+            'dateRangeBackend' =>  $dateRange[0] == null ? null : $dateRange,
+            'buniIdType' => $request->bunitId == '' ? null : intval($request->bunitId) ,
         ]);
     }
 }

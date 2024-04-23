@@ -311,8 +311,7 @@ export default {
     data() {
         return {
             statusValue: this.status,
-            dateRange:
-                this.dateRangeValue?.length > 0
+            dateRange: this.dateRangeValue?.length > 0
                     ? [
                           dayjs(this.dateRangeValue[0]),
                           dayjs(this.dateRangeValue[1]),
