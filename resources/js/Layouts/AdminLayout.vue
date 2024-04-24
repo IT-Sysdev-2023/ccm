@@ -20,13 +20,13 @@ const placement = "bottom";
 <template>
     <a-layout style="min-height: 100vh; background-color: green;">
         <a-layout-sider v-model:collapsed="collapsed" collapsible>
-            <div class="flex  mt-10 justify-center mb-5" >
+            <div class="flex  mt-10 justify-center mb-5">
 
                 <img v-if="!collapsed" style="height: 50px; border-radius: 50%"
                     :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
                     alt="logo" />
-                <div class="flex justify-center items-center text-white" >
-                    <img style="height: 50px;" src="../../../public/ccmlogo/lgremove.png" alt=""  />
+                <div class="flex justify-center items-center text-white">
+                    <img style="height: 50px;" src="../../../public/ccmlogo/lgremove.png" alt="" />
                 </div>
             </div>
 
@@ -50,7 +50,7 @@ const placement = "bottom";
                         <Link :href="route('users.index')">User</Link>
                     </span>
                 </a-menu-item>
-                <a-sub-menu >
+                <a-sub-menu>
                     <template #title>
                         <span>
                             <FundProjectionScreenOutlined />
@@ -74,7 +74,7 @@ const placement = "bottom";
                         <span>Replacement</span>
                     </a-menu-item>
                 </a-sub-menu>
-                <a-sub-menu >
+                <a-sub-menu>
                     <template #title>
                         <span>
                             <FileDoneOutlined />
@@ -133,13 +133,17 @@ const placement = "bottom";
         <a-layout>
             <div style="height: 50px; background: #001529">
                 <div class="flex items-center justify-between" style="
-                        width: 95%;
+                        width: 99%;
                         height: 50px;
-                        margin: 0 auto;
                         color: white;
                     ">
                     <div>
-
+                        <a-input-search v-model:value="value" class="mr-3"  placeholder="input search text" style="width: 300px"
+                            @search="onSearch" />
+                                <MessageOutlined  style="font-size: 25px; " class="mt-1 mr-3"/>
+                                <NotificationOutlined class="mr-3" style="font-size: 25px;"/>
+                                <BellOutlined class="mr-3" style="font-size: 25px;"/>
+                                <!-- <SettingOutlined class="mr-3" style="font-size: 25px;"/> -->
                     </div>
 
                     <div>
