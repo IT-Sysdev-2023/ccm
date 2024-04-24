@@ -16,7 +16,7 @@ class ExcelWriter
     {
 
         $this->spreadsheet = new Spreadsheet();
-        
+
     }
 
     function executionTime() : void {
@@ -55,6 +55,30 @@ class ExcelWriter
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ];
+    }
+    function initializedBorderFontBoldNone(): array
+    {
+        return [
+            'font' => [
+                'color' => ['rgb' => '454545'], // Specify the color in RGB format
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ];
+    }
+    function singleBorderWithBgColor(): array
+    {
+        return [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'], // Border color (black)
                 ],
             ],
         ];

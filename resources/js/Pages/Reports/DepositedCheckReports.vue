@@ -7,53 +7,66 @@ const colors = "red";
 <template>
     <AdminLayout>
         <template #header> </template>
-        <a-breadcrumb class="mb-5">
-            <a-breadcrumb-item href="">
-                <home-outlined />
-            </a-breadcrumb-item>
-            <a-breadcrumb-item href="">
-                <DingtalkOutlined />
-                <span>Reports</span>
-            </a-breadcrumb-item>
-            <a-breadcrumb-item>Deposited Check Reports</a-breadcrumb-item>
-        </a-breadcrumb>
-        <div class="flex justify-between">
-            <div>
-                <a-range-picker v-model:value="dateRangeValue" class="mb-5 mr-2" />
-                <a-select placeholder="Select Business Unit " ref="select" v-model:value="selectBunit"
-                    style="width: 200px" @change="handleSelectBunitChange">
-                    <a-select-option v-for="(item, key) in buData" :key="key" v-model:value="item.businessunit_id">{{
-                        item.bname
-                        }}</a-select-option>
-                </a-select>
-                <a-button @click="fetchData" class="ml-5" style="width: 200px;" type="primary" ghost :loading="loadingbutton">
-                    <template #icon>
-                        <LoginOutlined />
-                    </template>
-                    fetch data
-                </a-button>
-            </div>
-            <div>
-                <a-button style="width: 200px;" type="dashed">
-                    <template #icon>
-                        <FileExcelOutlined />
-                    </template>
-                    generate excel
-                </a-button>
+        <div class="py-4">
+            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+                <a-breadcrumb class="mb-5">
+                    <a-breadcrumb-item href="">
+                        <home-outlined />
+                    </a-breadcrumb-item>
+                    <a-breadcrumb-item href="">
+                        <DingtalkOutlined />
+                        <span>Reports</span>
+                    </a-breadcrumb-item>
+                    <a-breadcrumb-item>Deposited Check Reports</a-breadcrumb-item>
+                </a-breadcrumb>
+
+
+                <div class="flex justify-between">
+                    <div>
+                        <a-range-picker v-model:value="dateRangeValue" class="mb-5 mr-2" />
+                        <a-select placeholder="Select Business Unit " ref="select" v-model:value="selectBunit"
+                            style="width: 200px" @change="handleSelectBunitChange">
+                            <a-select-option v-for="(item, key) in buData" :key="key"
+                                v-model:value="item.businessunit_id">{{
+                                    item.bname
+                                }}</a-select-option>
+                        </a-select>
+                        <a-button @click="fetchData" class="ml-5" style="width: 200px;" type="primary" ghost
+                            :loading="loadingbutton">
+                            <template #icon>
+                                <LoginOutlined />
+                            </template>
+                            fetch data
+                        </a-button>
+                    </div>
+                    <div>
+                        <a-button :disabled="data.data.length <= 0" style="width: 230px;" type="primary" @click="startGenerating" :loading="loadingGenButton">
+                            <template #icon>
+                                <FileExcelOutlined />
+                            </template>
+                            {{  loadingGenButton ? 'Generating Excel...' : 'Start Generating' }}
+                        </a-button>
+                    </div>
+                </div>
+                <a-table :data-source="data.data" :columns="columns" size="small" bordered :pagination="false">
+                </a-table>
+                <pagination class="mt-6" :datarecords="data" />
             </div>
         </div>
-        <a-table :data-source="data.data" :columns="columns" size="small" bordered :pagination="false">
-        </a-table>
+
+
+
 
     </AdminLayout>
 </template>
 <script>
+import Pagination from "@/Components/Pagination.vue";
 import dayjs from "dayjs";
 
 export default {
     props: {
         buData: Object,
-        data: Object,
+        data: Array,
         columns: Array,
         dateRangeBackend: Array,
         buniIdType: Number,
@@ -61,6 +74,7 @@ export default {
     data() {
         return {
             loadingbutton: false,
+            loadingGenButton: false,
             dateRangeArray0: null,
             dateRangeArray1: null,
             selectBunit: this.buniIdType,
@@ -91,6 +105,19 @@ export default {
                 onSuccess: () => {
                     this.loadingbutton = false;
                 }
+            });
+        },
+        startGenerating() {
+            this.loadingGenButton = true;
+            this.$inertia.get(route('startgenerate.depchecks'), {
+                dateRangeArr0: dayjs(this.dateRangeValue[0]).format(
+                    "YYYY-MM-DD"
+                ),
+                dateRangeArr1: dayjs(this.dateRangeValue[1]).format(
+                    "YYYY-MM-DD"
+                ),
+
+                bunitId: this.selectBunit,
             });
         }
     }

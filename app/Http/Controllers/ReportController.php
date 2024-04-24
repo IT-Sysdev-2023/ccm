@@ -7,6 +7,7 @@ use App\Helper\NumberHelper;
 use App\Models\BusinessUnit;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
+use App\Services\ReportDepositedCheckService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -381,9 +382,8 @@ class ReportController extends Controller
 
     public function depositedCheckReports(Request $request)
     {
-        // dd($request->dateRange , $request->bunitId);
-        // dd($request->all());
-       $dateRange = [$request->dateRangeArr0, $request->dateRangeArr1];
+
+        $dateRange = [$request->dateRangeArr0, $request->dateRangeArr1];
 
         if ($request->user()->usertype_id == 2) {
             $buId = BusinessUnit::whereNotNull('loc_code_atp')
@@ -409,17 +409,30 @@ class ReportController extends Controller
             ->groupBy('date_deposit', 'ds_no', 'name')
             ->paginate(10)->withQueryString();
 
-        // dd($data->toArray());
-
-        // dd( is_null($request->dateRange) ? [today(), today()]: [$request->dateRange[0],$request->dateRange[1]]);
-
-
         return Inertia::render('Reports/DepositedCheckReports', [
             'data' => $data,
             'buData' => $buId,
             'columns' => ColumnsHelper::$deposited_checks_column,
-            'dateRangeBackend' =>  $dateRange[0] == null ? null : $dateRange,
-            'buniIdType' => $request->bunitId == '' ? null : intval($request->bunitId) ,
+            'dateRangeBackend' => $dateRange[0] == null ? null : $dateRange,
+            'buniIdType' => $request->bunitId == '' ? null : intval($request->bunitId),
         ]);
     }
+    public function startGeneratingDepositedChecks(Request $request)
+    {
+        $dateRange = [$request->dateRangeArr0, $request->dateRangeArr1];
+        $buId = $request->bunitId;
+
+        $data = NewDsChecks::select('new_ds_checks.date_deposit', 'ds_no', (DB::raw('sum(check_amount) as sum')), 'name')
+            ->join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
+            ->join('users', 'users.id', '=', 'new_ds_checks.user')
+            ->whereBetween('new_ds_checks.date_deposit', [$request->dateRangeArr0, $request->dateRangeArr1])
+            ->where('checks.businessunit_id', $request->bunitId)
+            ->where('status', '=', '')
+            ->groupBy('date_deposit', 'ds_no', 'name')
+            ->cursor();
+            // dd($data->toArray());
+
+        return (new ReportDepositedCheckService())->record($data)->writeResult($buId);
+    }
+
 }
