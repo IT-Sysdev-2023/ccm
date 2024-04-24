@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
+use App\Events\GenerateDepositedChecks;
 use App\Helper\Excel\ExcelWriter;
+use App\Models\NewDsChecks;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\LazyCollection;
 use Inertia\Inertia;
-use App\Models\NewDsChecks;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use Illuminate\Support\Facades\Date;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ReportDepositedCheckService extends ExcelWriter
 {
@@ -48,7 +48,7 @@ class ReportDepositedCheckService extends ExcelWriter
                 "BANK NAME",
                 "APPROVING OFFICER",
                 "CUSTOMER",
-                "CHECK AMOUNT - (PHP)"
+                "CHECK AMOUNT - (PHP)",
             ],
         );
         $this->border = $this->initializedBorder();
@@ -64,18 +64,64 @@ class ReportDepositedCheckService extends ExcelWriter
         return $this;
     }
 
-    public function writeResult($buId)
+    public function writeResult($buId, $dateRange)
     {
         $this->executionTime();
 
         $spreadsheet = new Spreadsheet();
         $num = 0;
         $excelRow = 5;
+        $bunitRow = 2;
         $count = 1;
         $header = $this->generateUserHeader;
         $headerBelow = $this->generateReportHeader;
+        $progressCount = 1;
+        $itemCount = count($this->record);
 
-        $this->record->each(function ($item) use ($buId, &$num, &$excelRow, &$header, &$count, &$headerBelow) {
+        if ($buId == 2) {
+            $bunitHeader = 'ASC-MAIN';
+        } elseif ($buId == 4) {
+            $bunitHeader = 'ISLAND CITY MALL';
+        } else {
+            $bunitHeader = 'PLAZA MARCELA';
+        }
+
+        $this->getActiveSheetExcel()->setCellValue('B' . $bunitRow, $bunitHeader);
+        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFont()->setBold(true);
+        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        // $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('0B60B0');
+        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFont()->getColor()->setRGB('0B60B0');
+        $bunitRow++;
+
+
+        $this->getActiveSheetExcel()->setCellValue('B' . $bunitRow, 'DEPOSITED CHECKS');
+        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFont()->setBold(true);
+        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        // $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('0B60B0');
+        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFont()->getColor()->setRGB('0B60B0');
+        $bunitRow++;
+
+        // Set cell value for "Date From" in bold font and center align horizontally
+        $this->getActiveSheetExcel()->setCellValue('B' . $bunitRow, 'Date From: ' . date('F j Y', strtotime($dateRange[0])));
+        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFont()->setBold(true);
+        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        // $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('0B60B0');
+        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFont()->getColor()->setRGB('0B60B0');
+        // Set cell value for "to" and "Date To" in bold font and center align horizontally
+        $this->getActiveSheetExcel()->setCellValue('C' . $bunitRow, 'to');
+        $this->getActiveSheetExcel()->getStyle('C' . $bunitRow)->getFont()->getColor()->setRGB('0B60B0');
+        $this->getActiveSheetExcel()->getStyle('C' . $bunitRow)->getFont()->setBold(true);
+        $this->getActiveSheetExcel()->getStyle('C' . $bunitRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        // $this->getActiveSheetExcel()->getStyle('C' . $bunitRow)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('0B60B0');
+        $this->getActiveSheetExcel()->setCellValue('D' . $bunitRow, 'Date To: ' . date('F j Y', strtotime($dateRange[1])));
+        $this->getActiveSheetExcel()->getStyle('D' . $bunitRow)->getFont()->setBold(true);
+        $this->getActiveSheetExcel()->getStyle('D' . $bunitRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        // $this->getActiveSheetExcel()->getStyle('D' . $bunitRow)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('0B60B0');
+        $this->getActiveSheetExcel()->getStyle('D' . $bunitRow)->getFont()->getColor()->setRGB('0B60B0');
+        $bunitRow++;
+
+        $this->record->each(function ($item) use ($itemCount, $buId, &$num, &$excelRow, &$header, &$count, &$headerBelow, &$progressCount) {
+
             $data = NewDsChecks::select('new_ds_checks.*',
                 'customers.*',
                 'checks.check_received',
@@ -100,23 +146,20 @@ class ReportDepositedCheckService extends ExcelWriter
                 ->limit(10)->get();
 
             $reportData[] = [
-               $count++,
-               date('F j Y', strtotime($item->date_deposit)),
-               $item->ds_no,
-               $item->name,
+                $count++,
+                date('F j Y', strtotime($item->date_deposit)),
+                $item->ds_no,
+                $item->name,
             ];
 
             $this->getActiveSheetExcel()->fromArray($header, null, 'E' . $excelRow);
-
-
 
             foreach (range('E', 'H') as $col) {
                 $cell = $col . $excelRow;
                 $this->getActiveSheetExcel()->getStyle($col . $excelRow)->applyFromArray($this->border);
                 $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             }
-            $excelRow ++;
-
+            $excelRow++;
 
             $this->spreadsheet->getActiveSheet()->fromArray($reportData, null, "E$excelRow");
 
@@ -139,7 +182,7 @@ class ReportDepositedCheckService extends ExcelWriter
 
             $innerCount = 1;
 
-            $data->each(function ($item) use (&$excelRow, &$innerCount){
+            $data->each(function ($item) use (&$excelRow, &$innerCount) {
                 $reportDataCollection[] = [
                     $innerCount++,
                     $item->check_no,
@@ -152,12 +195,10 @@ class ReportDepositedCheckService extends ExcelWriter
                     $item->bankbranchname,
                     $item->approving_officer,
                     $item->fullname,
-                    number_format($item->check_amount, 2)
+                    number_format($item->check_amount, 2),
                 ];
 
                 $this->spreadsheet->getActiveSheet()->fromArray($reportDataCollection, null, "A$excelRow");
-
-
 
                 foreach (range('A', 'L') as $col) {
                     $cell = $col . $excelRow;
@@ -167,17 +208,15 @@ class ReportDepositedCheckService extends ExcelWriter
 
                 $excelRow++;
 
-
             });
             $this->getActiveSheetExcel()->getStyle('L' . $excelRow)->applyFromArray($this->borderFBN);
             $this->getActiveSheetExcel()->getStyle('L' . $excelRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $this->getActiveSheetExcel()->getStyle('L' . $excelRow)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('C4E4FF');
             $this->spreadsheet->getActiveSheet()->setCellValue('L' . $excelRow, 'TOTAL:     ' . number_format($item->sum, 2));
 
-            $excelRow+= 3;
+            $excelRow += 3;
 
-
-
+            GenerateDepositedChecks::dispatch('Generating Deposited Checks ', ++$progressCount, $itemCount, Auth::user());
         });
         foreach (range('A', 'L') as $col) {
             $this->getActiveSheetExcel()->getColumnDimension($col)->setAutoSize(true);
@@ -191,7 +230,7 @@ class ReportDepositedCheckService extends ExcelWriter
         $writer = new Xlsx($this->spreadsheet);
         $writer->save($tempFilePath);
 
-        $filename = 'sample' . '.xlsx';
+        $filename = $bunitHeader . ' Report from '. date('F j Y', strtotime($dateRange[0])) . ' to '. date('F j Y', strtotime($dateRange[1])) .'.xlsx';
         $filePath = storage_path('app/' . $filename);
 
         $writer->save($filePath);

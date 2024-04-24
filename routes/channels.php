@@ -22,3 +22,4 @@ Broadcast::channel('excel-progress.{id}', fn(User $user, $id) => (int) $user->id
 Broadcast::channel('importing-progress.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);
 Broadcast::channel('updating-progress.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);
 Broadcast::channel('updating-progress-all.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);
+Broadcast::channel('generating-deposited-checks.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);

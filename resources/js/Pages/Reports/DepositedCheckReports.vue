@@ -21,6 +21,24 @@ const colors = "red";
                 </a-breadcrumb>
 
 
+                <div v-if="progressBarShowing" class="mb-5">
+
+                        <div class="flex justify-between">
+                            <div>
+                                <p> {{ progressBar.message }}{{ progressBar.currentRow
+                                    }}
+                                    to
+                                    {{
+                                    progressBar.totalRows }}</p>
+                            </div>
+                        </div>
+                        <a-progress :stroke-color="{
+                            from: '#108ee9', to: '#87d068',
+                        }" :percent="progressBar.percentage" status="active" />
+
+                </div>
+
+
                 <div class="flex justify-between">
                     <div>
                         <a-range-picker v-model:value="dateRangeValue" class="mb-5 mr-2" />
@@ -40,11 +58,12 @@ const colors = "red";
                         </a-button>
                     </div>
                     <div>
-                        <a-button :disabled="data.data.length <= 0" style="width: 230px;" type="primary" @click="startGenerating" :loading="loadingGenButton">
+                        <a-button :disabled="data.data.length <= 0" style="width: 230px;" type="primary"
+                            @click="startGenerating" :loading="loadingGenButton">
                             <template #icon>
                                 <FileExcelOutlined />
                             </template>
-                            {{  loadingGenButton ? 'Generating Excel...' : 'Start Generating' }}
+                            {{ loadingGenButton ? 'Generating Excel...' : 'Start Generating' }}
                         </a-button>
                     </div>
                 </div>
@@ -73,6 +92,14 @@ export default {
     },
     data() {
         return {
+            progressBarShowing: false,
+            progressBar: {
+                percentage: 0,
+                department: "",
+                message: "",
+                totalRows: 0,
+                currentRow: 0,
+            },
             loadingbutton: false,
             loadingGenButton: false,
             dateRangeArray0: null,
@@ -108,6 +135,7 @@ export default {
             });
         },
         startGenerating() {
+            this.progressBarShowing = true;
             this.loadingGenButton = true;
             this.$inertia.get(route('startgenerate.depchecks'), {
                 dateRangeArr0: dayjs(this.dateRangeValue[0]).format(
@@ -120,6 +148,13 @@ export default {
                 bunitId: this.selectBunit,
             });
         }
+    },
+    mounted(){
+        this.$ws
+            .private(`generating-deposited-checks.${this.$page.props.auth.user.id}`)
+            .listen(".generating-deposited", (e) => {
+                this.progressBar = e;
+            });
     }
 }
 </script>

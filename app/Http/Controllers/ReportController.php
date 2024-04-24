@@ -430,9 +430,8 @@ class ReportController extends Controller
             ->where('status', '=', '')
             ->groupBy('date_deposit', 'ds_no', 'name')
             ->cursor();
-            // dd($data->toArray());
 
-        return (new ReportDepositedCheckService())->record($data)->writeResult($buId);
+        return (new ReportDepositedCheckService())->record($data)->writeResult($buId, $dateRange );
     }
 
 }
