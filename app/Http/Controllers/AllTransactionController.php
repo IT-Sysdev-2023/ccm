@@ -3,6 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Events\ExcelGenerateEvents;
+use App\Http\Requests\CashReplacementRequest;
+use App\Http\Requests\CheckCashReplacementRequest;
+use App\Http\Requests\CheckReDepositRequest;
+use App\Http\Requests\CheckReplacementRequest;
+use App\Http\Requests\ManualEntryStoreRequest;
+use App\Http\Requests\MergeCheckStoreRequest;
+use App\Http\Requests\PartialPaymentCashRequest;
+use App\Http\Requests\PartialPaymentCheckRequest;
+use App\Http\Requests\PartialPaymentRequest;
+use App\Http\Requests\PartialReplaymentCheckRequest;
 use App\Models\BusinessUnit;
 use App\Models\Checks;
 use App\Models\Currency;
@@ -51,45 +61,9 @@ class AllTransactionController extends Controller
             'check_class' => $check_class,
         ]);
     }
-    public function checkManualEntryStore(Request $request)
+    public function checkManualEntryStore(ManualEntryStoreRequest $request)
     {
-        // dd($request->all());
-
-        $request->validate(
-            [
-                'accountnumber' => 'required',
-                'checkdate' => 'required|date',
-                'currency' => 'required',
-                'checkfrom' => 'required',
-                'accountname' => 'required',
-                'customer' => 'required',
-                'checkamount' => 'required|numeric',
-                'checkclass' => 'required',
-                'checknumber' => 'required',
-                'bankname' => 'required',
-                'checkreceived' => 'required|date',
-                'checkcategory' => 'required',
-                'approvingOfficer' => 'required',
-            ],
-            [
-                'accountnumber.required' => 'The account number field is required.',
-                'checkdate.required' => 'The check date field is required.',
-                'checkdate.date' => 'The check date must be a valid date format.',
-                'currency.required' => 'The currency field is required.',
-                'checkfrom.required' => 'The check from field is required.',
-                'accountname.required' => 'The account name field is required.',
-                'customer.required' => 'The customer field is required.',
-                'checkamount.required' => 'The check amount field is required.',
-                'checkamount.numeric' => 'The check amount must be a numeric value.',
-                'checkclass.required' => 'The check class field is required.',
-                'checknumber.required' => 'The check number field is required.',
-                'bankname.required' => 'The bank name field is required.',
-                'checkreceived.required' => 'The check received field is required.',
-                'checkreceived.date' => 'The check received is required.',
-                'checkcategory.required' => 'The check category field is required.',
-                'approvingOfficer.required' => 'The approving officer field is required.',
-            ]
-        );
+        $request->validated();
         $checkType = "";
 
         if ($request->checkdate > today()->toDateString()) {
@@ -153,51 +127,9 @@ class AllTransactionController extends Controller
             'check_class' => $check_class,
         ]);
     }
-    public function getMergeCheckStore(Request $request)
+    public function getMergeCheckStore(MergeCheckStoreRequest $request)
     {
-        // dd($request->all());
-
-
-        $request->validate(
-            [
-                'accountnumber' => 'required',
-                'checkdate' => 'required|date',
-                'currency' => 'required',
-                'checkfrom' => 'required',
-                'accountname' => 'required',
-                'customer' => 'required',
-                'checkamount' => 'required|numeric',
-                'checkclass' => 'required',
-                'checknumber' => 'required',
-                'bankname' => 'required',
-                'checkreceived' => 'required|date',
-                'checkcategory' => 'required',
-                'approvingOfficer' => 'required',
-                'penalty' => 'required|numeric',
-                'reason' => 'required',
-            ],
-            [
-                'accountnumber.required' => 'The account number field is required.',
-                'checkdate.required' => 'The check date field is required.',
-                'checkdate.date' => 'The check date must be a valid date format.',
-                'currency.required' => 'The currency field is required.',
-                'checkfrom.required' => 'The check from field is required.',
-                'accountname.required' => 'The account name field is required.',
-                'customer.required' => 'The customer field is required.',
-                'checkamount.required' => 'The check amount field is required.',
-                'checkamount.numeric' => 'The check amount must be a numeric value.',
-                'checkclass.required' => 'The check class field is required.',
-                'checknumber.required' => 'The check number field is required.',
-                'bankname.required' => 'The bank name field is required.',
-                'checkreceived.required' => 'The check received field is required.',
-                'checkreceived.date' => 'The check received is required.',
-                'checkcategory.required' => 'The check category field is required.',
-                'approvingOfficer.required' => 'The approving officer field is required.',
-                'penalty.required' => 'The penalty field is required.',
-                'penalty.numeric' => 'The penalty should be a number',
-                'reason.required' => 'The reason field is required.',
-            ]
-        );
+        $request->validated();
 
         $checkType = '';
 
@@ -297,28 +229,10 @@ class AllTransactionController extends Controller
         ]);
     }
 
-    public function bouncedCashReplacement(Request $request)
+    public function bouncedCashReplacement(CashReplacementRequest $request)
     {
-
-        $request->validate([
-            'rep_cash_penalty' => 'required|numeric',
-            'rep_ar_ds' => 'required|string',
-            'rep_reason' => 'required|string',
-            'rep_date' => 'required|date'
-        ], [
-            'rep_cash_penalty.required' => 'The cash penalty field is required.',
-            'rep_cash_penalty.numeric' => 'The cash penalty must be a number.',
-            'rep_ar_ds.required' => 'The AR DS field is required.',
-            'rep_ar_ds.string' => 'The AR DS must be a string.',
-            'rep_reason.required' => 'The reason field is required.',
-            'rep_reason.string' => 'The reason must be a string.',
-            'rep_date.required' => 'The date field is required.',
-            'rep_date.date' => 'The date must be a valid date format.'
-        ]);
-
-
+        $request->validated();
         $data = Checks::where('checks_id', $request->rep_check_id)->first();
-
 
         DB::transaction(function () use ($request, $data) {
             NewCheckReplacement::create([
@@ -343,56 +257,15 @@ class AllTransactionController extends Controller
 
         return redirect()->back();
     }
-    public function bouncedCheckReplacement(Request $request)
+    public function bouncedCheckReplacement(CheckReplacementRequest $request)
     {
-        // dd($request->all());
-        $request->validate(
-            [
-                'checkFrom_id' => 'required',
-                'bank_id' => 'required',
-                'customerId' => 'required',
-                'approvingOfficer' => 'required',
-                'currency_id' => 'required',
-                'category' => 'required',
-                'rep_reason' => 'required',
-                'checkClass' => 'required',
-                'rep_date' => 'required|date',
-                'rep_check_date' => 'required|date',
-                'rep_check_received' => 'required|date',
-                'rep_check_penalty' => 'required',
-                'accountname' => 'required',
-                'accountnumber' => 'required',
-                'checkNumber' => 'required',
-            ],
-            [
-                'checkFrom_id.required' => 'The check from field is required.',
-                'bank_id.required' => 'The bank name field is required.',
-                'customerId.required' => 'The customer name field is required.',
-                'approvingOfficer.required' => 'The approving officer field is required.',
-                'currency_id.required' => 'The currency field is required.',
-                'category.required' => 'The category field is required.',
-                'rep_reason.required' => 'The reason field is required.',
-                'checkClass.required' => 'The check class field is required.',
-                'rep_date.required' => 'The replace date field is required.',
-                'rep_date.date' => 'The replace date field is required.',
-                'rep_check_date.required' => 'The check date field is required.',
-                'rep_check_date.date' => 'The check date field must be a valid date format.',
-                'rep_check_received.required' => 'The check recieved field is required.',
-                'rep_check_received.date' => 'The check recieved field must be a valid date format.',
-                'rep_check_penalty.required' => 'The penalty field is required.',
-                'rep_check_penalty.numeric' => 'The penalty field must be a number.',
-                'accountname.required' => 'The account name field is required.',
-                'accountnumber.required' => 'The account number field is required.',
-                'checkNumber.required' => 'The check number field is required.',
-            ]
-        );
+        $request->validated();
         $check_type = "";
 
         if ($request->rep_check_date > today()->toDateString()) {
             $check_type = "POST DATED";
         } else {
             $check_type = "DATED CHECK";
-
         }
 
         DB::transaction(function () use ($request, $check_type) {
@@ -454,54 +327,9 @@ class AllTransactionController extends Controller
 
     }
 
-    public function bouncedCheckCashReplacement(Request $request)
+    public function bouncedCheckCashReplacement(CheckCashReplacementRequest $request)
     {
-        // dd($request->all());
-        $request->validate(
-            [
-                'checkFrom_id' => 'required',
-                'bank_id' => 'required',
-                'customerId' => 'required',
-                'approvingOfficer' => 'required',
-                'currency_id' => 'required',
-                'category' => 'required',
-                'rep_reason' => 'required',
-                'checkClass' => 'required',
-                'rep_date' => 'required|date',
-                'rep_check_date' => 'required|date',
-                'rep_check_received' => 'required|date',
-                'rep_check_penalty' => 'required',
-                'accountname' => 'required',
-                'accountnumber' => 'required',
-                'checkNumber' => 'required',
-                'rep_ar_ds' => 'required',
-                'rep_cash_amount' => 'required|numeric',
-            ],
-            [
-                'checkFrom_id.required' => 'The check from field is required.',
-                'bank_id.required' => 'The bank name field is required.',
-                'customerId.required' => 'The customer name field is required.',
-                'approvingOfficer.required' => 'The approving officer field is required.',
-                'currency_id.required' => 'The currency field is required.',
-                'category.required' => 'The category field is required.',
-                'rep_reason.required' => 'The reason field is required.',
-                'checkClass.required' => 'The check class field is required.',
-                'rep_date.required' => 'The replace date field is required.',
-                'rep_date.date' => 'The replace date field is required.',
-                'rep_check_date.required' => 'The check date field is required.',
-                'rep_check_date.date' => 'The check date field must be a valid date format.',
-                'rep_check_received.required' => 'The check recieved field is required.',
-                'rep_check_received.date' => 'The check recieved field must be a valid date format.',
-                'rep_check_penalty.required' => 'The penalty field is required.',
-                'rep_check_penalty.numeric' => 'The penalty field must be a number.',
-                'accountname.required' => 'The account name field is required.',
-                'accountnumber.required' => 'The account number field is required.',
-                'checkNumber.required' => 'The check number field is required.',
-                'rep_ar_ds.required' => 'The Ar and Ds number field is required.',
-                'rep_cash_amount.numeric' => 'The cash amount field is required.',
-                'rep_cash_amount.required' => 'The cash amount  field is required.',
-            ]
-        );
+        $request->validated();
 
         $check_type = "";
 
@@ -569,21 +397,9 @@ class AllTransactionController extends Controller
         return redirect()->back();
 
     }
-    public function bounceCheckReDeposit(Request $request)
+    public function bounceCheckReDeposit(CheckReDepositRequest $request)
     {
-        // dd($request->all());
-
-        $request->validate([
-            'rep_date' => 'required|date',
-            'rep_penalty' => 'required|numeric',
-            'rep_reason' => 'required|string',
-        ], [
-            'rep_date.required' => 'The replacement date is required',
-            'rep_date.date' => 'The replacement date must ba a valid date',
-            'rep_penalty.required' => 'The penalty is required',
-            'rep_penalty.numeric' => 'The penalty must be a number',
-            'rep_reason.required' => 'The reason is required',
-        ]);
+        $request->validated();
 
         $is_exist = NewCheckReplacement::where('checks_id', $request->rep_check_id)->where('mode', 'RE-DEPOSIT')->exists();
 
@@ -625,27 +441,9 @@ class AllTransactionController extends Controller
             return redirect()->back();
         }
     }
-    public function bouncePartialPaymentCash(Request $request)
+    public function bouncePartialPaymentCash(PartialPaymentCashRequest $request)
     {
-
-        // dd($request->all());
-
-
-        $request->validate([
-            'rep_cash_penalty' => 'required|numeric',
-            'rep_ar_ds' => 'required|string',
-            'rep_reason' => 'required|string',
-            'rep_date' => 'required|date'
-        ], [
-            'rep_cash_penalty.required' => 'The cash penalty field is required.',
-            'rep_cash_penalty.numeric' => 'The cash penalty must be a number.',
-            'rep_ar_ds.required' => 'The AR DS field is required.',
-            'rep_ar_ds.string' => 'The AR DS must be a string.',
-            'rep_reason.required' => 'The reason field is required.',
-            'rep_reason.string' => 'The reason must be a string.',
-            'rep_date.required' => 'The date field is required.',
-            'rep_date.date' => 'The date field is required.'
-        ]);
+        $request->validated();
 
         DB::transaction(function () use ($request) {
             NewCheckReplacement::create([
@@ -672,50 +470,9 @@ class AllTransactionController extends Controller
         return redirect()->back();
 
     }
-    public function bouncePartialReplaymentCheck(Request $request)
+    public function bouncePartialReplaymentCheck(PartialReplaymentCheckRequest $request)
     {
-        // dd($request->all());
-
-        $request->validate(
-            [
-                'checkFrom_id' => 'required',
-                'bank_id' => 'required',
-                'customerId' => 'required',
-                'approvingOfficer' => 'required',
-                'currency_id' => 'required',
-                'category' => 'required',
-                'rep_reason' => 'required',
-                'checkClass' => 'required',
-                'rep_date' => 'required|date',
-                'rep_check_date' => 'required|date',
-                'rep_check_received' => 'required|date',
-                'rep_check_penalty' => 'required',
-                'accountname' => 'required',
-                'accountnumber' => 'required',
-                'checkNumber' => 'required',
-            ],
-            [
-                'checkFrom_id.required' => 'The check from field is required.',
-                'bank_id.required' => 'The bank name field is required.',
-                'customerId.required' => 'The customer name field is required.',
-                'approvingOfficer.required' => 'The approving officer field is required.',
-                'currency_id.required' => 'The currency field is required.',
-                'category.required' => 'The category field is required.',
-                'rep_reason.required' => 'The reason field is required.',
-                'checkClass.required' => 'The check class field is required.',
-                'rep_date.required' => 'The replace date field is required.',
-                'rep_date.date' => 'The replace date field is required.',
-                'rep_check_date.required' => 'The check date field is required.',
-                'rep_check_date.date' => 'The check date field must be a valid date format.',
-                'rep_check_received.required' => 'The check recieved field is required.',
-                'rep_check_received.date' => 'The check recieved field must be a valid date format.',
-                'rep_check_penalty.required' => 'The penalty field is required.',
-                'rep_check_penalty.numeric' => 'The penalty field must be a number.',
-                'accountname.required' => 'The account name field is required.',
-                'accountnumber.required' => 'The account number field is required.',
-                'checkNumber.required' => 'The check number field is required.',
-            ]
-        );
+        $request->validated();
         $check_type = "";
 
         if ($request->rep_check_date > today()->toDateString()) {
@@ -1191,22 +948,9 @@ class AllTransactionController extends Controller
             'days' => $days,
         ]);
     }
-    public function submitPartialPayment(Request $request)
+    public function submitPartialPayment(PartialPaymentRequest $request)
     {
-        // dd($request->all());
-        $request->validate(
-            [
-                'parArDs' => 'required',
-                'parReason' => 'required',
-                'parRepDate' => 'required|date',
-            ],
-            [
-                'parArDs.required' => 'The Ar Ds field is required',
-                'parReason.required' => 'The Reason field is required',
-                'parRepDate.required' => 'The Replacement date field is required',
-                'parRepDate.date' => 'The Replacement date field is required',
-            ]
-        );
+        $request->validated();
         DB::transaction(function () use ($request) {
             if ($request->bouncedId == 0) {
                 $transactions = $request->checkAmount - $request->checkAmountBalance;
@@ -1310,56 +1054,9 @@ class AllTransactionController extends Controller
         return response()->json($result);
     }
 
-    public function submitPartialPaymentCheck(Request $request)
+    public function submitPartialPaymentCheck(PartialPaymentCheckRequest $request)
     {
-        // dd($request->all());
-
-        $request->validate(
-            [
-                'checkFrom_id' => 'required',
-                'bank_id' => 'required',
-                'customerId' => 'required',
-                'approvingOfficer' => 'required',
-                'currency_id' => 'required',
-                'category' => 'required',
-                'rep_reason' => 'required',
-                'checkClass' => 'required',
-                'rep_date' => 'required|date',
-                'rep_check_date' => 'required|date',
-                'rep_check_received' => 'required|date',
-                'rep_check_penalty' => 'required',
-                'accountname' => 'required',
-                'accountnumber' => 'required',
-                'checkNumber' => 'required',
-                'checkAmount' => 'required|numeric',
-                'rep_ar_ds' => 'required',
-            ],
-            [
-                'checkFrom_id.required' => 'The check from field is required.',
-                'bank_id.required' => 'The bank name field is required.',
-                'customerId.required' => 'The customer name field is required.',
-                'approvingOfficer.required' => 'The approving officer field is required.',
-                'currency_id.required' => 'The currency field is required.',
-                'category.required' => 'The category field is required.',
-                'rep_reason.required' => 'The reason field is required.',
-                'checkClass.required' => 'The check class field is required.',
-                'rep_date.required' => 'The replace date field is required.',
-                'rep_date.date' => 'The replace date field is required.',
-                'rep_check_date.required' => 'The check date field is required.',
-                'rep_check_date.date' => 'The check date field must be a valid date format.',
-                'rep_check_received.required' => 'The check recieved field is required.',
-                'rep_check_received.date' => 'The check recieved field must be a valid date format.',
-                'rep_check_penalty.required' => 'The penalty field is required.',
-                'rep_check_penalty.numeric' => 'The penalty field must be a number.',
-                'accountname.required' => 'The account name field is required.',
-                'accountnumber.required' => 'The account number field is required.',
-                'checkNumber.required' => 'The check number field is required.',
-                'checkAmount.required' => 'The check amount field is required.',
-                'checkAmount.numeric' => 'The check amount should be an number',
-                'rep_ar_ds.required' => 'The ar and the ds field is required.',
-                // 'rep_ar_ds.numeric' => 'The ar amount should be an number',
-            ]
-        );
+        $request->validated();
 
         if ($request->bouncedId == 0) {
             DB::transaction(function () use ($request) {
