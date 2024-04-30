@@ -30,6 +30,13 @@ Route::get('/', function () {
     return Inertia::render('Auth/Login');
 });
 
+Route::fallback(function () {
+    $previousUrl = url()->previous();
+    return Inertia::render('NotFoundPage/NotFound', [
+        'previousUrl' =>  $previousUrl
+    ]);
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     // Route::get('/admin/dashboard', function () {
     //     return Inertia::render('AdminDashboard');
