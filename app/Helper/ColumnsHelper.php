@@ -732,5 +732,43 @@ class ColumnsHelper
             'key' => 'details',
         ],
     ];
+    public static $bounceCheckReportColumn = [
+        [
+            'title' => 'Bounce date',
+            'dataIndex' => 'date_time',
+        ],
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'check_received',
+        ],
+        [
+            'title' => 'Check date',
+            'dataIndex' => 'check_date',
+        ],
+        [
+            'title' => 'Bank',
+            'dataIndex' => 'bankbranchname',
+        ],
+        [
+            'title' => 'Customer',
+            'dataIndex' => 'fullname',
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_no',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+        ],
+        [
+            'title' => 'Status',
+            'dataIndex' => 'status',
+        ],
+        [
+            'title' => 'Details',
+            'key' => 'details'
+        ],
+    ];
 
 }
