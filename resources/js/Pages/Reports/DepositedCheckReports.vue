@@ -49,7 +49,7 @@ const colors = "red";
                                     item.bname
                                 }}</a-select-option>
                         </a-select>
-                        <a-button @click="fetchData" class="ml-5" style="width: 200px;" type="primary" ghost
+                        <a-button  @click="fetchData" class="ml-5" style="width: 200px;" type="primary" ghost
                             :loading="loadingbutton">
                             <template #icon>
                                 <LoginOutlined />
