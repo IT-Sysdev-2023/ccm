@@ -23,18 +23,18 @@ const colors = "red";
 
                 <div v-if="progressBarShowing" class="mb-5">
 
-                        <div class="flex justify-between">
-                            <div>
-                                <p> {{ progressBar.message }}{{ progressBar.currentRow
-                                    }}
-                                    to
-                                    {{
+                    <div class="flex justify-between">
+                        <div>
+                            <p> {{ progressBar.message }}{{ progressBar.currentRow
+                                }}
+                                to
+                                {{
                                     progressBar.totalRows }}</p>
-                            </div>
                         </div>
-                        <a-progress :stroke-color="{
-                            from: '#108ee9', to: '#87d068',
-                        }" :percent="progressBar.percentage" status="active" />
+                    </div>
+                    <a-progress :stroke-color="{
+                        from: '#108ee9', to: '#87d068',
+                    }" :percent="progressBar.percentage" status="active" />
 
                 </div>
 
@@ -49,7 +49,7 @@ const colors = "red";
                                     item.bname
                                 }}</a-select-option>
                         </a-select>
-                        <a-button  @click="fetchData" class="ml-5" style="width: 200px;" type="primary" ghost
+                        <a-button @click="fetchData" class="ml-5" style="width: 200px;" type="primary" ghost
                             :loading="loadingbutton">
                             <template #icon>
                                 <LoginOutlined />
@@ -61,9 +61,9 @@ const colors = "red";
                         <a-button :disabled="data.data.length <= 0" style="width: 230px;" type="primary"
                             @click="startGenerating" :loading="loadingGenButton">
                             <template #icon>
-                                <FileExcelOutlined />
+                                <ExportOutlined />
                             </template>
-                            {{ loadingGenButton ? 'Generating Excel...' : 'Start Generating' }}
+                            {{ loadingGenButton ? 'Generating Excel...' : 'start generating' }}
                         </a-button>
                     </div>
                 </div>
@@ -149,7 +149,7 @@ export default {
             });
         }
     },
-    mounted(){
+    mounted() {
         this.$ws
             .private(`generating-deposited-checks.${this.$page.props.auth.user.id}`)
             .listen(".generating-deposited", (e) => {

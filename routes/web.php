@@ -13,6 +13,7 @@ use App\Http\Controllers\ImportUpdateController;
 use App\Http\Controllers\DsBounceTaggingController;
 use App\Http\Controllers\DatedPdcChecksController;
 use App\Http\Controllers\CheckReceivingController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 
 /*
@@ -26,9 +27,11 @@ use App\Http\Controllers\CheckReceivingController;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Auth/Login');
-});
+// Route::get('/', function () {
+//     return Inertia::render('Auth/Login');
+// });
+
+Route::middleware('guest')->get('/', [AuthenticatedSessionController::class, 'create'])->name('index');
 
 Route::fallback(function () {
     $previousUrl = url()->previous();
@@ -38,9 +41,6 @@ Route::fallback(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Route::get('/admin/dashboard', function () {
-    //     return Inertia::render('AdminDashboard');
-    // })->name('admin_dashboard');
     Route::get('/accounting/dashboard', function () {
         return Inertia::render('AccountingDashboard');
     })->name('accounting_dashboard');
@@ -72,9 +72,11 @@ Route::middleware('auth')->group(function () {
 
     Route::get('dated/pdc/checks/reports', [ReportController::class, 'datedpdcchecksreports'])->name('reports.dpdc');
     Route::get('deposited/checks/reports', [ReportController::class, 'depositedCheckReports'])->name('deposited.checks');
+    Route::get('bounce/checks/reports', [ReportController::class, 'bounceCheckReports'])->name('bounce.checks.report');
     Route::get('get_dated_pdc_checks_rep', [ReportController::class, 'get_dated_pdc_checks_rep'])->name('get.dpdc');
     Route::get('generate_reps_to_excel', [ReportController::class, 'generate_reps_to_excel'])->name('excel.dpdc');
     Route::get('start/generating/depositedchecks', [ReportController::class, 'startGeneratingDepositedChecks'])->name('startgenerate.depchecks');
+    Route::get('start/generating/bouncechecks', [ReportController::class, 'startGeneratingBounceCheckReport'])->name('startgenerate.bounceChecks');
 
 
 

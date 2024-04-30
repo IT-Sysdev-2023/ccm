@@ -222,10 +222,6 @@ class ReportDepositedCheckService extends ExcelWriter
             $this->getActiveSheetExcel()->getColumnDimension($col)->setAutoSize(true);
         }
 
-        // dd($data1->toArray());
-
-        // dd(1);
-
         $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
         $writer = new Xlsx($this->spreadsheet);
         $writer->save($tempFilePath);

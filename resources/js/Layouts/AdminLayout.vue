@@ -117,7 +117,7 @@ const placement = "bottom";
                     </a-menu-item>
                     <a-menu-item>
                         <ShakeOutlined />
-                        <span>Bounce</span>
+                        <span>  <Link :href="route('bounce.checks.report')">Bounce</Link></span>
                     </a-menu-item>
                     <a-menu-item>
                         <TagOutlined />
