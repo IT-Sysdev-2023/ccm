@@ -13,6 +13,8 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Events\GenerateBounceCheckEvents;
+use Illuminate\Support\Facades\Auth;
 
 class ReportBounceCheckService extends ExcelWriter
 {
@@ -220,10 +222,15 @@ class ReportBounceCheckService extends ExcelWriter
         $bunitRow++;
 
         $num = 1;
+        $startCount = 1;
 
         // dd($this->record->toArray());
 
-        $this->record->each(function ($item) use (&$excelRow, $header, &$num, &$replacementHeader, &$bunitCode) {
+        $itemCount = count($this->record);
+
+        // dd($itemCount);
+
+        $this->record->each(function ($item) use (&$excelRow, $header, &$num, &$startCount, &$replacementHeader, &$bunitCode, $itemCount) {
 
             if ($item->status != 'SETTLED CHECK') {
                 $status = 'PENDING';
@@ -712,6 +719,8 @@ class ReportBounceCheckService extends ExcelWriter
                     $excelRow += 2;
                 }
             }
+
+            GenerateBounceCheckEvents::dispatch('Generating Bounce Checks ', $startCount++, $itemCount, Auth::user());
 
         });
 
