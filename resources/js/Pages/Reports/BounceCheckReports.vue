@@ -12,7 +12,7 @@ const colors = "red";
             <a-breadcrumb>
                 <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
                 <a-breadcrumb-item><a href="">Reports</a></a-breadcrumb-item>
-                <a-breadcrumb-item>Dated & Post Dated Checks</a-breadcrumb-item>
+                <a-breadcrumb-item>Bounce Check Report</a-breadcrumb-item>
             </a-breadcrumb>
             <div class="flex justify-between">
                 <div>
@@ -25,6 +25,7 @@ const colors = "red";
                     </a-select>
                     <a-select ref="select" style="width: 200px" v-model:value="bounceStatus" placeholder="Bounce Status"
                         class="mr-2">
+                        <a-select-option value="0">All Checks</a-select-option>
                         <a-select-option value="1">Pending Checks</a-select-option>
                         <a-select-option value="2">Settled Checks</a-select-option>
                     </a-select>
@@ -76,13 +77,14 @@ export default {
     },
     methods: {
         fetchBounceData() {
-            // window.alert('hello');
-            console.log(this.dateRangeValue[0]);
+            if (!this.dateRangeValue) {
+                this.dateRangeValue = false;
+            }
             this.$inertia.get(route('bounce.checks.report'), {
                 dateRangeArr0: this.dateRangeValue[0] === undefined ? null : dayjs(this.dateRangeValue[0]).format(
                     "YYYY-MM-DD"
                 ),
-                dateRangeArr1: dayjs(this.dateRangeValue[1]).format(
+                dateRangeArr1: this.dateRangeValue[1] === undefined ? null : dayjs(this.dateRangeValue[1]).format(
                     "YYYY-MM-DD"
                 ),
                 bunitCode: this.bunitCode,
