@@ -14,7 +14,24 @@ const colors = "red";
                 <a-breadcrumb-item><a href="">Reports</a></a-breadcrumb-item>
                 <a-breadcrumb-item>Bounce Check Report</a-breadcrumb-item>
             </a-breadcrumb>
+            <div v-if="isGeneratingShow">
+                <div class="flex justify-between mt-5">
+                    <div>
+                        <p> {{ progressBar.message }}{{ progressBar.currentRow
+                            }}
+                            to
+                            {{
+                                progressBar.totalRows }}</p>
+                    </div>
+                </div>
+                <a-progress :stroke-color="{
+                    from: '#108ee9', to: '#87d068',
+                }" :percent="progressBar.percentage" status="active" />
+            </div>
+
             <div class="flex justify-between">
+
+
                 <div>
                     <a-range-picker class="mt-5 mr-2" v-model:value="dateRangeValue" />
                     <!-- {{ bunit }} -->
@@ -65,6 +82,7 @@ export default {
     },
     data() {
         return {
+            isGeneratingShow: false,
             bunitCode: this.bunitCodeBackend,
             bounceStatus: this.bounceValue,
             dateRangeValue: this.dateRangeBackend?.length > 0 ?
@@ -73,6 +91,14 @@ export default {
                     dayjs(this.dateRangeBackend[1]),
                 ]
                 : false,
+
+            progressBar: {
+                percentage: 0,
+                department: "",
+                message: "",
+                totalRows: 0,
+                currentRow: 0,
+            },
         };
     },
     methods: {
@@ -92,6 +118,7 @@ export default {
             });
         },
         startGeneratingBounceChecks() {
+            this.isGeneratingShow = true;
             this.$inertia.get(route('startgenerate.bounceChecks'), {
                 dateRangeArr0: this.dateRangeValue[0] === undefined ? null : dayjs(this.dateRangeValue[0]).format(
                     "YYYY-MM-DD"
@@ -103,6 +130,13 @@ export default {
                 bounceStatus: this.bounceStatus,
             });
         }
+    },
+    mounted() {
+        this.$ws
+            .private(`generating-bounce-checks.${this.$page.props.auth.user.id}`)
+            .listen(".generating-bounced", (e) => {
+                this.progressBar = e;
+            });
     }
 };
 </script>
