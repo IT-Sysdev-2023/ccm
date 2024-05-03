@@ -15,6 +15,7 @@ class QuoteHelper
 
     public static function get(int $timeout = 3): string|array
     {
+        // dd(1);
 
         $now = now();
         $userID = auth()->id();
@@ -23,47 +24,37 @@ class QuoteHelper
             try {
 
                 $options = ['verify' => false];
-
                 // $proxy = config('app.proxy');
-
                 $quoteApi = config('app.quote_api');
-                // dd($quoteApi);
-
                 // $options = $proxy ? [...$options, 'proxy' => $proxy] : $options;
-
                 $response = Http::timeout($timeout)->get($quoteApi);
-
-                $quote = $response->json() ?? self::getLocalQuote($now);
+                $quote = $response->json()[0] ?? self::getLocalQuote($now);
+                 return self::format(self::getLocalQuote($now));
             } catch (Exception) {
                 return self::format(self::getLocalQuote($now));
             }
-
             return self::format($quote);
         });
     }
 
     private static function getLocalQuote(Carbon $now)
     {
+        // dd(2);
         [$content, $author] = explode(' - ', Inspiring::quotes()->random());
 
         return [
-            '_id' => $now->timestamp,
-            'tags' => [],
-            'content' => $content,
-            'author' => $author,
-            'authorSlug' => Str::slug($author),
-            'length' => Str::length($content),
-            'dateAdded' => $now->format('Y-m-d'),
-            'dateModified' => $now->format('Y-m-d'),
+            'q' => $content,
+            'a' => $author,
         ];
     }
 
     private static function format(array $quote): string|array
     {
+        // dd($quote);
 
         return [
-            'author' => $quote[0]['a'],
-            'quote' => $quote[0]['q']
+            'author' => $quote['a'],
+            'quote' => $quote['q']
         ];
 
     }

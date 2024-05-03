@@ -53,14 +53,14 @@ class ReportController extends Controller
 
         $data = [];
 
-        if ($dateRange[0] == null && $request->bounceStatus == null) {
+        if ($dateRange[0] == null && $request->bounceStatus == 0 || $request->bounceStatus == null) {
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                 ->where('businessunit_id', $request->bunitCode)
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->paginate(10)->withQueryString();
-        } elseif ($dateRange[0] != null && $request->bounceStatus == null) {
+        } elseif ($dateRange[0] != null && $request->bounceStatus == 0 || $request->bounceStatus == null ) {
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
@@ -538,7 +538,7 @@ class ReportController extends Controller
 
         $data = [];
 
-        if ($dateRange[0] == null && $request->bounceStatus == null) {
+        if ($dateRange[0] == null && $request->bounceStatus == 0 || $request->bounceStatus == null) {
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                 ->join('department', 'department.department_id', '=', 'checks.department_from')
@@ -546,7 +546,7 @@ class ReportController extends Controller
                 ->where('businessunit_id', $request->bunitCode)
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->cursor();
-        } elseif ($dateRange[0] != null && $request->bounceStatus == null) {
+        } elseif ($dateRange[0] != null && $request->bounceStatus == 0 || $request->bounceStatus == null) {
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
