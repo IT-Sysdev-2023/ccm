@@ -21,10 +21,16 @@ class AccountingReportController extends Controller
     {
         // dd($request->all());
 
-        $department_from = Checks::join('department', 'department.department_id', '=', 'checks.department_from')
+        // $department_from = Checks::leftJoin('department', 'department.department_id', '=', 'checks.department_from')
+        //     ->where('businessunit_id', $request->user()->businessunit_id)
+        //     ->orderBy('department')
+        //     ->get()
+        //     ->groupBy('department_from');
+        $department_from = Checks::select('department_from', 'department')
+            ->leftJoin('department', 'department.department_id', '=', 'checks.department_from')
             ->where('businessunit_id', $request->user()->businessunit_id)
             ->orderBy('department')
-            ->cursor()
+            ->get()
             ->groupBy('department_from');
 
         $bunit = BusinessUnit::whereNotNull('loc_code_atp')
@@ -33,19 +39,19 @@ class AccountingReportController extends Controller
             ->where('businessunit_id', $request->user()->businessunit_id)
             ->cursor();
 
-
         $data = NewSavedChecks::join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
             ->join('department', 'department.department_id', '=', 'checks.department_from')
             ->leftJoin('new_ds_checks', 'checks.checks_id', '=', 'new_ds_checks.checks_id')
             ->where('checks.department_from', 'like', '%' . $request->dataFrom . '%')
+            ->where('businessunit_id', $request->user()->businessunit_id)
             ->where(function ($query) use ($request) {
                 if ($request->dataType == 1) {
                     $query->where('check_date', '<=', DB::raw('check_received'));
-                } elseif ($request->type == 2) {
+                } elseif ($request->dataType == 2) {
                     $query->where('check_date', '>', DB::raw('check_received'));
-                }else{
+                } else {
 
                 }
             })
@@ -56,10 +62,16 @@ class AccountingReportController extends Controller
                     $query->whereNotNull('new_ds_checks.checks_id');
                 }
             })
-            ->where('businessunit_id', $request->user()->businessunit_id)
+            ->where(function ($query) use ($request) {
+                if ($request->dateRange[0] !== null) {
+                    $query->whereBetween('checks.check_received', [$request->dateRange[0], $request->dateRange[1]]);
+                } elseif($request->dateRange[0] === ''){
+                    $query;
+                }
+            })
             ->paginate(10)->withQueryString();
 
-            // dd($data);
+        // dd($data);
 
         return Inertia::render('AccountingReports/InnerReports/DatedPostDatedChecks', [
             'data' => empty($request->all()) ? [] : $data,
@@ -68,6 +80,8 @@ class AccountingReportController extends Controller
             'bunit' => $bunit,
             'dataTypeBackend' => $request->dataType,
             'dataStatusBackend' => $request->dataStatus,
+            'dataFromBackend' => empty(intval($request->dataFrom)) ? '' : intval($request->dataFrom),
+            'dataRangeBackend' => empty($request->dateRange) ? null : $request->dateRange,
         ]);
     }
 }

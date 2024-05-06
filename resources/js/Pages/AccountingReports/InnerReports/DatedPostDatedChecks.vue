@@ -17,20 +17,21 @@ import dayjs from 'dayjs';
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex justify-between mb-2">
                     <div>
-                        <a-select  placeholder="Select type" @change="handleChangeDataType"
-                            v-model:value="fetch.dataType" style="width: 210px">
+                        <a-select placeholder="Select type" @change="handleChangeDataType"
+                            v-model:value="fetch.dataType" style="width: 210px" :loading="isFetching"
+                            :disabled="isFetching">
                             <a-select-option value="0">View All</a-select-option>
                             <a-select-option value="1">Dated Cheque</a-select-option>
                             <a-select-option value="2">Post Dated Cheques</a-select-option>
                         </a-select>
-                        <a-select  placeholder="Select type" v-model:value="fetch.dataStatus"
+                        <a-select placeholder="Select type" v-model:value="fetch.dataStatus"
                             @change="handleChangeDataStatus" style="width: 210px">
                             <a-select-option value="0">View All</a-select-option>
                             <a-select-option value="1">Pending Deposit Cheques</a-select-option>
                             <a-select-option value="2">Deposited Cheques</a-select-option>
                         </a-select>
 
-                        <a-select  placeholder="Select type" @change="handleChangeDataFrom"
+                        <a-select placeholder="Select type" @change="handleChangeDataFrom"
                             v-model:value="fetch.dataFrom" style="width: 210px">
                             <a-select-option value="">View All</a-select-option>
                             <a-select-option v-for="(item, key) in Object.keys(department_from)" :key="key"
@@ -63,20 +64,25 @@ export default {
         department_from: Object,
         dataTypeBackend: Number,
         dataStatusBackend: Number,
+        dataFromBackend: Number,
+        dataRangeBackend: Array,
     },
     data() {
         return {
+            // num: 0,
+            isFetching: false,
             fetch: {
                 dataType: this.dataTypeBackend,
                 dataStatus: this.dataStatusBackend,
-                dataFrom: null,
-                dateRange: null,
+                dataFrom: this.dataFromBackend,
+                dateRange: this.dataRangeBackend ? [ this.dataRangeBackend[0] ? dayjs(this.dataRangeBackend[0]) : null,  this.dataRangeBackend[1] ? dayjs(this.dataRangeBackend[1]) : null ] : null,
             }
         };
     },
 
     methods: {
         handleChangeDataType(value) {
+            this.isFetching = true;
             this.$inertia.get(route('datedpcchecks.accounting'), {
                 dataType: value,
                 dataFrom: this.fetch.dataFrom,
@@ -85,7 +91,7 @@ export default {
             })
         },
         handleChangeDateRange(value, valueStr) {
-
+            console.log(valueStr)
             this.$inertia.get(route('datedpcchecks.accounting'), {
                 dataType: this.fetch.dataType,
                 dataFrom: this.fetch.dataFrom,
