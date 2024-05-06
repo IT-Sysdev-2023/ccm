@@ -33,19 +33,6 @@ class ImportUpdateService
     public function importResult()
     {
         $ch = collect() ?? nullOrEmptyString();
-
-        // $texFileIp = AppSetting::where('app_key', 'sample_inst_ip')->first()->app_value;
-
-        // $textFileIpInNewFolder = $texFileIp . '\\New\\' . strtoupper(Auth::user()->businessunit->loc_code_atp) . '\\';
-        // $textFileIpInUploadedFolder = $texFileIp . '\\Uploaded\\' . strtoupper(Auth::user()->businessunit->loc_code_atp) . '\\';
-        // $user = 'public';
-        // $password = 'public';
-
-        // exec('net use \\\172.16.161.30\\Institutional /user:' . $user . ' ' . $password . ' /persistent:no');
-
-        // $files = File::files($textFileIpInNewFolder);
-
-        // $tfCounts = count($files);
         $textFileIpInUploadedFolder = $this->importInstitutionalIpAddress()->textFileIpInUploadedFolder;
         $textFileIpInNewFolder = $this->importInstitutionalIpAddress()->textFileIpInNewFolder;
         $files = $this->importInstitutionalIpAddress()->files;
@@ -244,7 +231,7 @@ class ImportUpdateService
 
     public function updateResult()
     {
-        
+
 
         $bunitAtpGetData = BusinessUnit::where('businessunit_id', Auth::user()->businessunit_id)->whereNotNull('b_atpgetdata')->get();
 
@@ -255,7 +242,7 @@ class ImportUpdateService
         $dateStartEncash = $bunitEncashStart->b_encashstart;
 
         $checksOnDatabase = Checks::where('businessunit_id', Auth::user()->businessunit_id)->count();
-     
+
 
         $checkPostDatedCheck = [];
         $checkDatedCheck = [];
@@ -332,7 +319,7 @@ class ImportUpdateService
 
                 exit();
             }
-        
+
 
         if ($checksOnDatabase == 0) {
             if (count($checkPostDatedCheck) > 0 && count($checkDatedCheck) > 0) {
@@ -470,42 +457,42 @@ class ImportUpdateService
 
                 $checkNumber = ltrim($checkNumber, '0');
 
-                // Checks::create([
-                //     'check_bounced_id' => 0,
-                //     'is_exist' => 0,
-                //     'is_manual_entry' => 0,
-                //     'checksreceivingtransaction_id' => $recID,
-                //     'customer_id' => $customerid,
-                //     'check_no' => $checkNumber,
-                //     'check_class' => trim($checkclass),
-                //     'check_date' => trim($datex),
-                //     'check_received' => trim($checkRecs),
-                //     'check_type' => trim($ctype),
-                //     'account_no' => trim($check->actno),
-                //     'account_name' => trim($check->actname),
-                //     'bank_id' => $bankid,
-                //     'businessunit_id' => Auth::user()->businessunit_id,
-                //     'check_amount' => trim(str_replace(',', '', $check->chkamt)),
-                //     'check_expiry' => $checkexpiry,
-                //     'check_category' => trim($check->category),
-                //     'check_status' => 'PENDING',
-                //     'approving_officer' => trim($check->approvedby) == '' ? null : trim($check->approvedby),
-                //     'currency_id' => 1,
-                //     'department_from' => 15,
-                //     'user' => Auth::user()->id,
-                //     'date_time' => today()->toDateString(),
-                // ]);
-                // dd('Updating atp database...', $count++, $noChecks, Auth::user()->id);
-                // $countPersistent++;
+                Checks::create([
+                    'check_bounced_id' => 0,
+                    'is_exist' => 0,
+                    'is_manual_entry' => 0,
+                    'checksreceivingtransaction_id' => $recID,
+                    'customer_id' => $customerid,
+                    'check_no' => $checkNumber,
+                    'check_class' => trim($checkclass),
+                    'check_date' => trim($datex),
+                    'check_received' => trim($checkRecs),
+                    'check_type' => trim($ctype),
+                    'account_no' => trim($check->actno),
+                    'account_name' => trim($check->actname),
+                    'bank_id' => $bankid,
+                    'businessunit_id' => Auth::user()->businessunit_id,
+                    'check_amount' => trim(str_replace(',', '', $check->chkamt)),
+                    'check_expiry' => $checkexpiry,
+                    'check_category' => trim($check->category),
+                    'check_status' => 'PENDING',
+                    'approving_officer' => trim($check->approvedby) == '' ? null : trim($check->approvedby),
+                    'currency_id' => 1,
+                    'department_from' => 15,
+                    'user' => Auth::user()->id,
+                    'date_time' => today()->toDateString(),
+                ]);
+                dd('Updating atp database...', $count++, $noChecks, Auth::user()->id);
+                $countPersistent++;
                 ImportUpdateAtpAllEvent::dispatch('Updating all checks...', $countPersistent++, $noChecks, Auth::user());
                 ImportUpdateAtpEvent::dispatch('Updating Atp Database..', $count++, $noChecksDc, Auth::user());
 
             }
-            
-            $count = 1 ; 
+
+            $count = 1 ;
             sleep(1);
             foreach ($checkEnCash as $check) {
-              
+
                 $customer = "";
                 $customerid = "";
                 $bankname = "";

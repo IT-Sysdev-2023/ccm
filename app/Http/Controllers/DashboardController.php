@@ -31,7 +31,7 @@ class DashboardController extends Controller
         ->where('new_saved_checks.status', '=', '')
         ->count();
 
-        
+
         $dataPlazaMarcela =  Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
         ->select(DB::raw('COUNT(*) as y , check_received as x'))
         ->where('checks.businessunit_id', '=', '21')
@@ -124,5 +124,10 @@ class DashboardController extends Controller
             'bouncedCount' => $bouncedCount,
             'replacementCount' => $replacementCount,
         ]);
+    }
+
+    public function accountingDashboard()
+    {
+        return Inertia::render('AccountingDashboard');
     }
 }

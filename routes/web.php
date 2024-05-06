@@ -13,6 +13,7 @@ use App\Http\Controllers\ImportUpdateController;
 use App\Http\Controllers\DsBounceTaggingController;
 use App\Http\Controllers\DatedPdcChecksController;
 use App\Http\Controllers\CheckReceivingController;
+use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 
@@ -41,11 +42,8 @@ Route::fallback(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/accounting/dashboard', function () {
-        return Inertia::render('AccountingDashboard');
-    })->name('accounting_dashboard');
-
     Route::get('admin/dashboard', [DashboardController::class, 'adminDashboardComponent'])->name('admin.dashboard');
+    Route::get('accounting/dashboard', [DashboardController::class, 'accountingDashboard'])->name('accounting.dashboard');
     Route::get('treasury/dashboard', [DashboardController::class, 'treasuryDashboardComponent'])->name('treasury.dashboard');
 });
 
@@ -147,6 +145,9 @@ Route::middleware('auth')->group(function () {
     Route::post('bounce/redeposit/replacement', [AllTransactionController::class, 'bounceCheckReDeposit'])->name('bounceReDeposit.replace');
     Route::post('bounce/partial/cash', [AllTransactionController::class, 'bouncePartialPaymentCash'])->name('bouncePartialCash.replace');
     Route::post('bounce/partial/check', [AllTransactionController::class, 'bouncePartialReplaymentCheck'])->name('bouncePartialCheck.replace');
+
+    Route::get('reports/accounting', [AccountingReportController::class, 'reportIndex'])->name('reports.accounting');
+    Route::get('reports/datedpdcchecks', [AccountingReportController::class, 'innerReportDatedPdcCheques'])->name('datedpcchecks.accounting');
 
     Route::get('/download/excel/{filename}', function ($filename) {
         $filePath = storage_path('app/' . $filename);

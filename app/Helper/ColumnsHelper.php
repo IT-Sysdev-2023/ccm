@@ -770,5 +770,35 @@ class ColumnsHelper
             'key' => 'details'
         ],
     ];
+    public static $acc_dated_pdc_reports = [
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'check_received',
+        ],
+        [
+            'title' => 'Check date',
+            'dataIndex' => 'check_date',
+        ],
+        [
+            'title' => 'Bank Name',
+            'dataIndex' => 'bankbranchname',
+        ],
+        [
+            'title' => 'Payeee / Endorser',
+            'dataIndex' => 'fullname',
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_no',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+        ],
+        [
+            'title' => 'Details',
+            'key' => 'details'
+        ],
+    ];
 
 }

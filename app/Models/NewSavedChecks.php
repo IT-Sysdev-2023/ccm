@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 class NewSavedChecks extends Model
 {
     use NewSavedChecksTraits;
+    
     use HasFactory;
     protected $table = 'new_saved_checks';
     public $timestamps = false;
