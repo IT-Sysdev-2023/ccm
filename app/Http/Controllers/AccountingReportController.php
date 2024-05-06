@@ -63,9 +63,9 @@ class AccountingReportController extends Controller
                 }
             })
             ->where(function ($query) use ($request) {
-                if ($request->dateRange[0] !== null) {
+                if ($request->dateRange && $request->dateRange[0] != null ) {
                     $query->whereBetween('checks.check_received', [$request->dateRange[0], $request->dateRange[1]]);
-                } elseif($request->dateRange[0] === ''){
+                } else{
                     $query;
                 }
             })
