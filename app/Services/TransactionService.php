@@ -27,11 +27,13 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class TransactionService extends ExcelWriter
 {
     protected LazyCollection $record;
+    
     protected bool $status;
 
     private array $border;
 
     protected \Illuminate\Support\Collection $generateReportHeader;
+
     protected array $table_columnsHeader;
     public function __construct()
     {

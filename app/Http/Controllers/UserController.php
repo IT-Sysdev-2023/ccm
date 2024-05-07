@@ -96,7 +96,6 @@ class UserController extends Controller
 
         User::where('id', $request->userId)->update([
             'name' => $request->name,
-            'empid' => $request->empid,
             'username' => $request->username,
             'ContactNo' => $request->ContactNo,
             'company_id' => $request->company_id,

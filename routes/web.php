@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::get('settings', [UserController::class, 'settings'])->name('settings');
     Route::put('update/username', [UserController::class, 'updateUsername'])->name('username.edit');
-    Route::post('update/user/', [UserController::class, 'updateUser'])->name('users.update');
+    Route::put('update/user/', [UserController::class, 'updateUser'])->name('users.update');
     Route::post('create/user', [UserController::class, 'createUser'])->name('users.store');
     Route::get('user/details/{id}', [UserController::class, 'userDetails'])->name('users.details');
     Route::get('auto/complete/users/search', [UserController::class, 'searchUsers'])->name('users.search');
@@ -148,6 +148,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('reports/accounting', [AccountingReportController::class, 'reportIndex'])->name('reports.accounting');
     Route::get('reports/datedpdcchecks', [AccountingReportController::class, 'innerReportDatedPdcCheques'])->name('datedpcchecks.accounting');
+    Route::get('start/generatng/report/accounting', [AccountingReportController::class, 'startGeneratingAccountingReports'])->name('start.generate.rep.accouting');
 
     Route::get('/download/excel/{filename}', function ($filename) {
         $filePath = storage_path('app/' . $filename);

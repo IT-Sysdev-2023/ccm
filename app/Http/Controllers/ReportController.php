@@ -333,7 +333,7 @@ class ReportController extends Controller
                         $deposited_status = 'REPLACED TO ' . $replacement_type->mode;
                     }
                 } else {
-                    $deposited_status = 'BOUNCE PENDING CHECK';
+
                 }
             } else {
                 $ds_number = $deposited_status->ds_no;
@@ -359,7 +359,7 @@ class ReportController extends Controller
 
                 $secs = $datetime1 - $datetime2;
                 $days = $secs / 86400;
-            } else if ($request->ch_type === '1') {
+            } else if ($request->ch_type === '2') {
                 $days = '';
             }
 

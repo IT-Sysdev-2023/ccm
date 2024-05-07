@@ -6,6 +6,7 @@ use App\Helper\ColumnsHelper;
 use App\Models\BusinessUnit;
 use App\Models\Checks;
 use App\Models\NewSavedChecks;
+use App\Services\DatedPdcCheckServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -19,13 +20,6 @@ class AccountingReportController extends Controller
     }
     public function innerReportDatedPdcCheques(Request $request)
     {
-        // dd($request->all());
-
-        // $department_from = Checks::leftJoin('department', 'department.department_id', '=', 'checks.department_from')
-        //     ->where('businessunit_id', $request->user()->businessunit_id)
-        //     ->orderBy('department')
-        //     ->get()
-        //     ->groupBy('department_from');
         $department_from = Checks::select('department_from', 'department')
             ->leftJoin('department', 'department.department_id', '=', 'checks.department_from')
             ->where('businessunit_id', $request->user()->businessunit_id)
@@ -44,7 +38,7 @@ class AccountingReportController extends Controller
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
             ->join('department', 'department.department_id', '=', 'checks.department_from')
             ->leftJoin('new_ds_checks', 'checks.checks_id', '=', 'new_ds_checks.checks_id')
-            ->where('checks.department_from', 'like', '%' . $request->dataFrom . '%')
+            ->where('department', 'like', '%' . $request->dataFrom . '%')
             ->where('businessunit_id', $request->user()->businessunit_id)
             ->where(function ($query) use ($request) {
                 if ($request->dataType == 1) {
@@ -63,15 +57,13 @@ class AccountingReportController extends Controller
                 }
             })
             ->where(function ($query) use ($request) {
-                if ($request->dateRange && $request->dateRange[0] != null ) {
+                if ($request->dateRange && $request->dateRange[0] != null) {
                     $query->whereBetween('checks.check_received', [$request->dateRange[0], $request->dateRange[1]]);
-                } else{
+                } else {
                     $query;
                 }
             })
             ->paginate(10)->withQueryString();
-
-        // dd($data);
 
         return Inertia::render('AccountingReports/InnerReports/DatedPostDatedChecks', [
             'data' => empty($request->all()) ? [] : $data,
@@ -80,8 +72,47 @@ class AccountingReportController extends Controller
             'bunit' => $bunit,
             'dataTypeBackend' => $request->dataType,
             'dataStatusBackend' => $request->dataStatus,
-            'dataFromBackend' => empty(intval($request->dataFrom)) ? '' : intval($request->dataFrom),
+            'dataFromBackend' => $request->dataFrom,
             'dataRangeBackend' => empty($request->dateRange) ? null : $request->dateRange,
         ]);
+
+    }
+    public function startGeneratingAccountingReports(Request $request)
+    {
+        $data = NewSavedChecks::join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->join('department', 'department.department_id', '=', 'checks.department_from')
+            ->leftJoin('new_ds_checks', 'checks.checks_id', '=', 'new_ds_checks.checks_id')
+            ->where('department', 'like', '%' . $request->dataFrom . '%')
+            ->where('businessunit_id', $request->user()->businessunit_id)
+            ->where(function ($query) use ($request) {
+                if ($request->dataType == 1) {
+                    $query->where('check_date', '<=', DB::raw('check_received'));
+                } elseif ($request->dataType == 2) {
+                    $query->where('check_date', '>', DB::raw('check_received'));
+                } else {
+
+                }
+            })
+            ->where(function ($query) use ($request) {
+                if ($request->dataStatus == 1) {
+                    $query->whereNull('new_ds_checks.checks_id');
+                } elseif ($request->dataStatus == 2) {
+                    $query->whereNotNull('new_ds_checks.checks_id');
+                }
+            })
+            ->where(function ($query) use ($request) {
+                if ($request->dateRange && $request->dateRange[0] != null) {
+                    $query->whereBetween('checks.check_received', [$request->dateRange[0], $request->dateRange[1]]);
+                } else {
+                    $query;
+                }
+            })
+            ->cursor();
+
+
+
+        return (new DatedPdcCheckServices())->record($data)->writeResult($request->dataFrom, $request->dataStatus, $request->dateRange, $request->dataType);
     }
 }

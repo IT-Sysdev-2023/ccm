@@ -728,7 +728,7 @@ class ReportBounceCheckService extends ExcelWriter
         $writer = new Xlsx($this->spreadsheet);
         $writer->save($tempFilePath);
 
-        $filename = 'samplebounce';
+        $filename = 'samplebounce'. '.xlsx';
         $filePath = storage_path('app/' . $filename);
 
         $writer->save($filePath);
