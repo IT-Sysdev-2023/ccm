@@ -15,6 +15,26 @@ import dayjs from 'dayjs';
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div v-if="isProgressing">
+                    <div class="flex justify-between">
+                        <div class="flex" >
+                            <DoubleRightOutlined class="mr-1" />
+                            <DoubleRightOutlined class="mr-2" />
+                            <p>
+                                {{ progressBar.message }}
+                                {{ progressBar.currentRow }} to
+                                {{ progressBar.totalRows }} records
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                            <a-progress class="mt-2" :stroke-color="{
+                                from: '#108ee9',
+                                to: '#87d068',
+                            }" :percent="progressBar.percentage" status="active" />
+
+                    </div>
+                </div>
                 <div class="flex justify-between mb-2">
                     <div>
                         <a-select placeholder="Select type" @change="handleChangeDataType"
@@ -45,7 +65,8 @@ import dayjs from 'dayjs';
                             @change="handleChangeDateRange" />
                     </div>
                     <div>
-                        <a-button style="width: 200px" type="primary" @click="startGeneratingExcel">
+                        <a-button style="width: 200px" type="primary" @click="startGeneratingExcel"
+                            :disabled="data.length <= 0">
                             <CloudUploadOutlined />
                             generate excel
                         </a-button>
@@ -59,12 +80,12 @@ import dayjs from 'dayjs';
         </div>
     </AccountingLayout>
 </template>
-
+<!-- generating-bounced -->
 <script>
 export default {
     props: {
         columns: Array,
-        data: Object,
+        data: Array,
         department_from: Object,
         dataTypeBackend: Number,
         dataStatusBackend: Number,
@@ -75,13 +96,28 @@ export default {
         return {
             // num: 0,
             isFetching: false,
+            isProgressing: false,
             fetch: {
                 dataType: this.dataTypeBackend,
                 dataStatus: this.dataStatusBackend,
                 dataFrom: this.dataFromBackend,
                 dateRange: this.dataRangeBackend ? [this.dataRangeBackend[0] ? dayjs(this.dataRangeBackend[0]) : null, this.dataRangeBackend[1] ? dayjs(this.dataRangeBackend[1]) : null] : null,
-            }
+            },
+            progressBar: {
+                currentRow: 0,
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+            },
         };
+    },
+
+    mounted() {
+        this.$ws
+            .private(`generating-dated-pdc-reports-accounting.${this.$page.props.auth.user.id}`)
+            .listen(".generating-pdc-reports", (e) => {
+                this.progressBar = e;
+            });
     },
 
     methods: {
@@ -123,6 +159,7 @@ export default {
         },
 
         startGeneratingExcel() {
+            this.isProgressing = true;
             this.$inertia.get(route('start.generate.rep.accouting'), {
                 dataType: this.fetch.dataType,
                 dataFrom: this.fetch.dataFrom,

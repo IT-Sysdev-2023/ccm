@@ -113,6 +113,7 @@ class AccountingReportController extends Controller
 
 
 
+
         return (new DatedPdcCheckServices())->record($data)->writeResult($request->dataFrom, $request->dataStatus, $request->dateRange, $request->dataType);
     }
 }

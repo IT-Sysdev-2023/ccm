@@ -12,6 +12,8 @@ use Inertia\Inertia;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Events\AccountingDatedPdcReportEvents;
+use Illuminate\Support\Facades\Auth;
 
 class DatedPdcCheckServices extends ExcelWriter
 {
@@ -103,8 +105,10 @@ class DatedPdcCheckServices extends ExcelWriter
         }
 
         $header++;
+        $startCount = 1;
+        $itemCount = count($this->record);
 
-        $this->record->each(function ($item) use (&$dataType, &$header) {
+        $this->record->each(function ($item) use (&$dataType, &$header, &$startCount, $itemCount) {
 
             $depositedStatus = NewDsChecks::where('checks_id', '=', $item->checks_id)
                 ->select('ds_no', 'status', 'date_deposit')
@@ -205,6 +209,8 @@ class DatedPdcCheckServices extends ExcelWriter
 
             }
             $header++;
+
+            AccountingDatedPdcReportEvents::dispatch('Generating Dated and Post Dated Check Reports.. ', $startCount++, $itemCount, Auth::user());
 
         });
 

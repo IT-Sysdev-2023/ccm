@@ -11,7 +11,7 @@ const showingNavigationDropdown = ref(false);
 
 <template>
     <div>
-        <div x-data="{ open: false }" class="w-full text-gray-700 bg-cream">
+        <div class="w-full text-gray-700 bg">
             <div class="flex flex-col max-w-screen-xl px-8 mx-auto md:items-center md:justify-between md:flex-row">
                 <div class="flex flex-row items-center justify-between py-6">
                     <div class="relative md:mt-8">
@@ -38,12 +38,21 @@ const showingNavigationDropdown = ref(false);
                 </div>
                 <nav
                     class="h-0 md:h-auto flex flex-col flex-grow md:items-center pb-4 md:pb-0 md:flex md:justify-end md:flex-row origin-top duration-300 scale-y-0">
-                    <Link class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline"
-                        :href="route('accounting.dashboard')">Dashboard</Link>
-                    <Link class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline"
-                    :href="route('reports.accounting')">Reports</Link>
-                    <a class="px-4 py-2 mt-2 text-sm bg-transparent rounded-lg md:mt-8 md:ml-4 hover:text-gray-900 focus:outline-none focus:shadow-outline"
-                        href="#">About Us</a>
+                    <Link style="border: solid gray 1px;"
+                        class=" rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
+                        :href="route('accounting.dashboard')" :class="{
+                            'bg-nav':
+                                route().current('accounting.dashboard'),
+                        }">Dashboard</Link>
+                    <Link class="px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black rounded "
+                        style="border: solid gray 1px;" :href="route('reports.accounting')" :class="{
+                            'bg-nav':
+                                route().current('reports.accounting') ||
+                                route().current('datedpcchecks.accounting'),
+                        }">Reports</Link>
+                    <Link style="border: solid gray 1px;"
+                        class="rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
+                        href="#">About Us</Link>
 
                 </nav>
             </div>
@@ -51,9 +60,9 @@ const showingNavigationDropdown = ref(false);
         <div class="bg-cream">
             <div class="">
 
-                    <div>
-                        <slot/>
-                    </div>
+                <div>
+                    <slot />
+                </div>
 
             </div>
             <div class="text-white -mt-14 sm:-mt-24 lg:-mt-36">
@@ -72,7 +81,7 @@ const showingNavigationDropdown = ref(false);
 </template>
 <style scoped>
 .bg-cream {
-    background-color: #b5cddad0;
+    background-color: white;
 }
 
 /*font*/
@@ -80,34 +89,61 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
+.bg-nav {
+    background: #309c8a;
+    color: white;
+}
+
 .bg-yellow-500 {
     background-color: #F48C06;
 }
+
 .text-yellow-500 {
     color: #F48C06;
 }
+
 .floating {
     animation-name: floating;
     animation-duration: 3s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
 }
+
 @keyframes floating {
-    0% { transform: translate(0, 0px); }
-    50% { transform: translate(0, 8px); }
-    100% { transform: translate(0, -0px); }
+    0% {
+        transform: translate(0, 0px);
+    }
+
+    50% {
+        transform: translate(0, 8px);
+    }
+
+    100% {
+        transform: translate(0, -0px);
+    }
 }
+
 .floating-4 {
     animation-name: floating;
     animation-duration: 4s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
 }
+
 @keyframes floating-4 {
-    0% { transform: translate(0, 0px); }
-    50% { transform: translate(0, 8px); }
-    100% { transform: translate(0, -0px); }
+    0% {
+        transform: translate(0, 0px);
+    }
+
+    50% {
+        transform: translate(0, 8px);
+    }
+
+    100% {
+        transform: translate(0, -0px);
+    }
 }
+
 .text-darken {
     color: #2F327D;
 }
