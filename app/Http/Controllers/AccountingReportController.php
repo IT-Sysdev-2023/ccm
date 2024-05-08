@@ -73,7 +73,7 @@ class AccountingReportController extends Controller
             'dataTypeBackend' => $request->dataType,
             'dataStatusBackend' => $request->dataStatus,
             'dataFromBackend' => $request->dataFrom,
-            'dataRangeBackend' => empty($request->dateRange) ? null : $request->dateRange,
+            'dataRangeBackend' => empty($request->dateRange) || $request->dateRange[0] == 'Invalid Date' ? null : $request->dateRange,
         ]);
 
     }
@@ -87,19 +87,21 @@ class AccountingReportController extends Controller
             ->where('department', 'like', '%' . $request->dataFrom . '%')
             ->where('businessunit_id', $request->user()->businessunit_id)
             ->where(function ($query) use ($request) {
-                if ($request->dataType == 1) {
+                if ($request->dataType == '1') {
                     $query->where('check_date', '<=', DB::raw('check_received'));
-                } elseif ($request->dataType == 2) {
+                } elseif ($request->dataType == '2') {
                     $query->where('check_date', '>', DB::raw('check_received'));
                 } else {
 
                 }
             })
             ->where(function ($query) use ($request) {
-                if ($request->dataStatus == 1) {
+                if ($request->dataStatus == "1") {
                     $query->whereNull('new_ds_checks.checks_id');
-                } elseif ($request->dataStatus == 2) {
+                } elseif ($request->dataStatus == "2") {
                     $query->whereNotNull('new_ds_checks.checks_id');
+                }else{
+                    $query;
                 }
             })
             ->where(function ($query) use ($request) {
@@ -108,7 +110,7 @@ class AccountingReportController extends Controller
                 } else {
                     $query;
                 }
-            })
+            })->limit(10)
             ->cursor();
 
 
