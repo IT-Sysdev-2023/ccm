@@ -77,7 +77,6 @@ trait NewSavedChecksTraits
     public function scopeFilterDPdcReports($query, $dateRange, $buid)
     {
 
-        // dd(today());
         return $query->join('checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('checks.businessunit_id', $buid)
@@ -86,8 +85,12 @@ trait NewSavedChecksTraits
             ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
             ->where('check_date', '>', DB::raw('check_received'))
             ->where('check_date', '<=', today())
-            ->when($dateRange[0] && $dateRange[1] ?? null, function ($query) use ($dateRange) {
-                $query->whereBetween('checks.check_received', $dateRange);
+            ->where(function ($query) use ($dateRange) {
+                if ($dateRange && $dateRange[0] != null) {
+                    $query->whereBetween('checks.check_received', [$dateRange[0], $dateRange[1]]);
+                } else {
+                    $query;
+                }
             });
 
     }

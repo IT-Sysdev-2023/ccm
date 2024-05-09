@@ -40,7 +40,6 @@ import dayjs from 'dayjs';
                         <a-select placeholder="Select type" @change="handleChangeDataType"
                             v-model:value="fetch.dataType" style="width: 210px" :loading="isFetching"
                             :disabled="isFetching">
-                            <a-select-option value="0">View All</a-select-option>
                             <a-select-option value="1">Dated Cheque</a-select-option>
                             <a-select-option value="2">Post Dated Cheques</a-select-option>
                         </a-select>
@@ -73,19 +72,18 @@ import dayjs from 'dayjs';
                     </div>
                 </div>
 
-                <a-table size="small" bordered :dataSource="data.data" :columns="columns" :pagination="false" />
+                <a-table size="small" bordered :data-source="data.data" :columns="columns" :pagination="false" />
                 <pagination class="mt-6 " :datarecords="data" />
 
             </div>
         </div>
     </AccountingLayout>
 </template>
-<!-- generating-bounced -->
 <script>
 export default {
     props: {
         columns: Array,
-        data: Array,
+        data: Object,
         department_from: Object,
         dataTypeBackend: Number,
         dataStatusBackend: Number,
@@ -94,7 +92,6 @@ export default {
     },
     data() {
         return {
-            // num: 0,
             isFetching: false,
             isProgressing: false,
             fetch: {
@@ -145,7 +142,11 @@ export default {
                 dataType: this.fetch.dataType,
                 dataFrom: this.fetch.dataFrom,
                 dataStatus: value,
-                dateRange: this.fetch.dateRange !== null ? [dayjs(this.fetch.dateRange[0]).format('YYYY-MM-DD'), dayjs(this.fetch.dateRange[1]).format('YYYY-MM-DD')] : null
+                dateRange:this.fetch.dateRange !== null ?
+                [
+                    dayjs(this.fetch.dateRange[0]).format('YYYY-MM-DD'),
+                    dayjs(this.fetch.dateRange[1]).format('YYYY-MM-DD')
+                ] : null
             })
         },
         handleChangeDataFrom(value) {

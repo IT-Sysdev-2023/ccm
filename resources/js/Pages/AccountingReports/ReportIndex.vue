@@ -31,6 +31,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                         </p>
                                     </div>
                                 </div>
+
                                 <a-button block @click="() => $inertia.get(route('datedpcchecks.accounting'))">
                                     <template #icon>
                                         <SwapRightOutlined />

@@ -57,10 +57,6 @@ class DashboardController extends Controller
         ->limit(7)->get();
 
 
-
-        // dd($data->toArray());
-
-
         return Inertia::render('AdminDashboard', [
             'pmCounts' => $plazaMarcelaCounts,
             'icm' => $islandCityMall,
@@ -72,8 +68,6 @@ class DashboardController extends Controller
     }
     public function treasuryDashboardComponent()
     {
-
-
 
         $holiday = new HolidayClientLaravel();
 

@@ -2,18 +2,19 @@
 
 namespace App\Services;
 
+use App\Events\AccountingDatedPdcReportEvents;
 use App\Helper\Excel\ExcelWriter;
 use App\Helper\NumberHelper;
 use App\Models\NewBounceCheck;
 use App\Models\NewCheckReplacement;
 use App\Models\NewDsChecks;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\LazyCollection;
 use Inertia\Inertia;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use App\Events\AccountingDatedPdcReportEvents;
-use Illuminate\Support\Facades\Auth;
 
 class DatedPdcCheckServices extends ExcelWriter
 {
@@ -59,6 +60,45 @@ class DatedPdcCheckServices extends ExcelWriter
     {
 
         $header = 7;
+        $masterHeader = 2;
+        $bStatusHeader = '';
+        $dateHeader = [];
+        // dd($dataFrom, $dataStatus, $dateRange, $dataType);
+
+        $dateRangeCondition = ($dateRange == null || $dateRange == 'Invalid Date');
+
+        if (($dataStatus == '0' || $dataStatus == null) && $dataType == '1' && ($dateRange == null || $dateRange == 'Invalid Date')) {
+            $bStatusHeader = 'ALL DATED CHECKS';
+        } else if (($dataStatus == '0' || $dataStatus == null) && $dataType == '2' && ($dateRange == null || $dateRange == 'Invalid Date') && $dataFrom == '') {
+            $bStatusHeader = 'ALL PENDING CHECKS';
+        } else if ($dataStatus == '1' && $dataType == '1' && $dateRangeCondition) {
+
+            $bStatusHeader = 'DEPOSITED DATED CHECKS';
+        } else if ($dataStatus == '2' && $dataType == '1' && $dateRangeCondition) {
+
+            $bStatusHeader = 'PENDING DATED CHECKS';
+        } else if ($dataStatus == '1' && $dataType == '2' && $dateRangeCondition) {
+
+            $bStatusHeader = 'PENDING POST DATED CHECKS';
+        } else if ($dataStatus == '2' && $dataType == '2' && $dateRangeCondition) {
+            $bStatusHeader = 'DEPOSITED POST DATED CHECKS';
+        }
+
+        $this->getActiveSheetExcel()->setCellValue('A' . $masterHeader, $bStatusHeader);
+        $this->getActiveSheetExcel()->mergeCells('A' . $masterHeader . ':O' . $masterHeader);
+        $style = $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader);
+        $font = $style->getFont();
+        $font->setBold(true);
+        $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $masterHeader++;
+
+        // $this->getActiveSheetExcel()->setCellValue('A' . $masterHeader, $dateHeader);
+        // $this->getActiveSheetExcel()->mergeCells('A' . $masterHeader . ':O' . $masterHeader);
+        // $style = $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader);
+        // $font = $style->getFont();
+        // $font->setBold(true);
+        // $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        // $masterHeader++;
 
         if ($dataType == '2') {
             array_push($this->headerRow[0], "PDC GAP(DAYS)");
@@ -198,7 +238,7 @@ class DatedPdcCheckServices extends ExcelWriter
                     $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setName('Arial');
                 }
 
-            }else{
+            } else {
                 foreach (range('A', 'O') as $col) {
                     $cell = $col . $header;
                     $this->getActiveSheetExcel()->getStyle($col . $header)->applyFromArray($this->borderFBN);

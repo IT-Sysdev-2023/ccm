@@ -4,9 +4,11 @@ namespace App\Traits;
 
 use App\Models\AppSetting;
 use App\Models\Bank;
+use App\Models\BusinessUnit;
 use App\Models\CheckRecieved;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 trait ImportUpateTraits
@@ -98,7 +100,6 @@ trait ImportUpateTraits
             return $data[0]['app_value'];
         }
 
-
     }
     public function importInstitutionalIpAddress()
     {
@@ -121,6 +122,49 @@ trait ImportUpateTraits
             'tfCounts' => $tfCounts,
             'files' => $files,
         ];
+    }
+
+    public function checkEncashData()
+    {
+        $bunitEncashStart = BusinessUnit::where('businessunit_id', Auth::user()->businessunit_id)
+            ->whereNotNull('b_encashstart')->first()->b_encashstart;
+
+        $checkEnCash = DB::connection('sqlsrv')
+            ->table('vip_dtl')
+            ->join('vip_mst', 'vip_mst.encash_id', '=', 'vip_dtl.encash_id')
+            ->join('customer', 'customer.custid', '=', 'vip_mst.custid')
+            ->where('loc_code', Auth::user()->businessunit->loc_code_atp)
+            ->where('vip_dtl.entry_no', '>', $this->getEncashLastEntryNo())
+            ->where('vip_mst.encash_date', '>=', $bunitEncashStart)
+            ->orderBy('entry_no', 'asc')
+            ->select(
+                'vip_dtl.*',
+                'vip_mst.*',
+                'customer.clastname',
+                'customer.cfirstname',
+                'customer.cmiddname',
+                'customer.extension'
+            )
+            ->get();
+
+        return $checkEnCash;
+    }
+
+    public function getEncashLastEntryNo()
+    {
+        $encashno = DB::table('checksreceivingtransaction')
+            ->join('businessunit', 'businessunit.businessunit_id', '=', 'checksreceivingtransaction.businessunit_id')
+            ->where('businessunit.loc_code_atp', Auth::user()->businessunit->loc_code_atp)
+            ->whereNotNull('encash_entrynum')
+            ->select('encash_entrynum')
+            ->orderBy('checksreceivingtransaction.checksreceivingtransaction_id', 'desc')
+            ->first();
+
+        if (is_null($encashno)) {
+            return 0;
+        }
+        return $encashno->encash_entrynum;
+
     }
 
 }

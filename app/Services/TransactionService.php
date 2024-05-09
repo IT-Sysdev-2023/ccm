@@ -26,8 +26,8 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class TransactionService extends ExcelWriter
 {
-    protected LazyCollection $record;
-    
+    protected $record;
+
     protected bool $status;
 
     private array $border;
@@ -77,7 +77,7 @@ class TransactionService extends ExcelWriter
 
     }
 
-    function record(LazyCollection $data): self
+    function record($data): self
     {
         $this->record = $data;
 
@@ -261,15 +261,17 @@ class TransactionService extends ExcelWriter
 
     }
 
-    public function writeResultDuePdc(array $dateRange, $businessUnit)
+    public function writeResultDuePdc($dateRange, $businessUnit)
     {
         $this->executionTime();
 
-        if (!empty ($dateRange[0]) && !empty ($dateRange[1])) {
+
+        if ($dateRange && $dateRange[0] != null) {
             $date = Date::parse($dateRange[0])->toFormattedDateString() . ' To: ' . Date::parse($dateRange[1])->toFormattedDateString();
         } else {
             $date = today()->toFormattedDateString();
         }
+
         $this->getCellSetValue('B2', 'From : ' . $date);
         $this->getCellSetValue('B1', 'Status Type : ' . ' ' . $businessUnit->bname);
         $this->getStyleGetFontSetBold('E1');
@@ -293,12 +295,7 @@ class TransactionService extends ExcelWriter
         $progressCount = 0;
         $row = 6;
 
-        ExcelGenerateEvents::dispatch('', 'Generating Excel to', 0, $this->record->count(), Auth::user(), 12, 12);
-
-        sleep(2);
-        // dd($this->record->take(10)->all());
-
-        $this->record->each(function ($item) use (&$businessUnit, &$progressCount, &$dueReportData, &$reportCollection, &$spreadsheet, &$row, &$countTable) {
+        $this->record->each(function ($item) use ($businessUnit, &$progressCount, &$reportCollection, &$spreadsheet, &$row, &$countTable) {
             $deposited_status = NewDsChecks::where('checks_id', $item->checks_id)
                 ->select('ds_no', 'status', 'date_deposit')
                 ->first();

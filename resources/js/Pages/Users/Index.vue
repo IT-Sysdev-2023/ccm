@@ -59,7 +59,7 @@ const handleOpen = (val) => {
                 <a-breadcrumb>
                     <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
                     <a-breadcrumb-item><a href="">User</a></a-breadcrumb-item>
-                    <a-breadcrumb-item>Table</a-breadcrumb-item>
+                    <a-breadcrumb-item>Tables</a-breadcrumb-item>
                 </a-breadcrumb>
                 <div class="">
                     <!-- <p>{{ get_users.data }}</p> -->
@@ -506,6 +506,7 @@ export default {
 
             createUsers: useForm({
                 name: null,
+                empid: null,
                 username: "",
                 businessunit_id: null,
                 company_id: null,

@@ -29,27 +29,29 @@ import dayjs from "dayjs";
             <a-row :gutter="[16, 16]">
 
                 <a-col :span="12">
-                    <a-card style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
+                    <div
+                        style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 1rem; box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;">
                         <div id="chart">
-                            <p class="font-bold underline">
-                                All cheque counts
+                            <p class="font-bold mb-20 text-center">
+                                ALL CHECQUE COUNTS
                             </p>
                             <apexchart style="height: 100px;" type="polarArea" width="600" :options="chartOptions"
                                 :series="series">
                             </apexchart>
                         </div>
-                    </a-card>
+                    </div>
                 </a-col>
                 <a-col :span="12">
-                    <a-card style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
-
+                    <div
+                        style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 1rem; box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;">
                         <div id="chart">
-                            <p class="font-bold  underline">
-                                Weekly Activities
+                            <p class="font-bold text-center mb-20">
+                                WEEKLY ACTIVITIES
                             </p>
                             <apexchart type="line" height="390" :options="chartOptions2" :series="series2"></apexchart>
                         </div>
-                    </a-card>
+
+                    </div>
                 </a-col>
             </a-row>
         </div>
@@ -136,7 +138,7 @@ export default {
                 markers: {
                     size: 0
                 },
-        
+
                 yaxis: {
                     title: {
                         text: 'Weekly Cheques',

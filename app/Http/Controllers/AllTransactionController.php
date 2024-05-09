@@ -1374,8 +1374,6 @@ class AllTransactionController extends Controller
         $dateRange = [$request->date_from, $request->date_to];
         $buname = BusinessUnit::where('businessunit_id', $request->user()->businessunit_id)->first();
 
-
-
         $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)->paginate(10)->withQueryString();
 
         return Inertia::render('Transaction/DuePostDatedCheckReport', [
@@ -1387,9 +1385,11 @@ class AllTransactionController extends Controller
     }
     public function generateExcelDuePdcReports(Request $request)
     {
+        // dd(1);
         $buname = BusinessUnit::where('businessunit_id', $request->user()->businessunit_id)->first();
         $dateRange = [$request->date_from, $request->date_to];
-        $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)->cursor();
+
+        $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)->get();
 
         return (new TransactionService())
             ->record($data)

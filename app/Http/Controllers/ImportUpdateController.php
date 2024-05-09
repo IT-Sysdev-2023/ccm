@@ -16,9 +16,14 @@ class ImportUpdateController extends Controller
 
         $tfCounts = $this->importInstitutionalIpAddress()->tfCounts;
 
+        $atpCountData = count($this->checkEncashData());
+
+        // dd($atpCountData);
+
         return Inertia::render('Updates&Import/InstitutionalUpdateChecks', [
             'qoute_api' => $quoteApi,
-            'count' => $tfCounts
+            'count' => $tfCounts,
+            'countAtp' =>  $atpCountData
         ]);
     }
     public function startImportChecks()
@@ -28,6 +33,7 @@ class ImportUpdateController extends Controller
 
     public function updateAtpDatabase()
     {
+
         return (new ImportUpdateService())->updateResult();
     }
 }
