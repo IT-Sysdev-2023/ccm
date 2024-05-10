@@ -122,7 +122,7 @@ const tabPosition = "right";
                                     sub-title="Click  the start button, to import the institutional text-file.">
                                     <div class="text-center">
                                         <a-tag color="green" v-if="count">
-                                            The instutional textfile is
+                                            There are {{ count }} text file that can be
                                             importable
                                         </a-tag>
                                         <a-tag color="red" v-else>
@@ -283,7 +283,7 @@ const tabPosition = "right";
                                     sub-title="Click  the start button, to update the atp database.">
                                     <div class="text-center">
                                         <a-tag color="green" v-if="countAtp">
-                                            Atp needs to be update! Update now?
+                                            There are {{ countAtp }} needs to be update
                                         </a-tag>
                                         <a-tag color="red" v-else>
                                             Atp database is already up to date

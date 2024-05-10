@@ -70,6 +70,12 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+
+        'md5' => [
+            'driver' => 'md5',
+            'model' => App\Models\User::class,
+            'password' => 'password'
+        ],
     ],
 
     /*

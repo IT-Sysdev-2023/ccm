@@ -10,7 +10,6 @@ use App\Models\NewCheckReplacement;
 use App\Models\NewDsChecks;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\LazyCollection;
 use Inertia\Inertia;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -18,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class DatedPdcCheckServices extends ExcelWriter
 {
-    protected LazyCollection $record;
+    protected $record;
     protected $border;
     protected $borderFBN;
 
@@ -49,14 +48,14 @@ class DatedPdcCheckServices extends ExcelWriter
 
     }
 
-    public function record(LazyCollection $data)
+    public function record($data)
     {
         $this->record = $data;
 
         return $this;
     }
 
-    public function writeResult($dataFrom, $dataStatus, $dateRange, $dataType)
+    public function writeResult($dataFrom, $dataStatus, $dateRange, $dataType, $bunit)
     {
 
         $header = 7;
@@ -65,24 +64,70 @@ class DatedPdcCheckServices extends ExcelWriter
         $dateHeader = [];
         // dd($dataFrom, $dataStatus, $dateRange, $dataType);
 
-        $dateRangeCondition = ($dateRange == null || $dateRange == 'Invalid Date');
+        if (($dataStatus == '0' || $dataStatus == null) && $dataType == '1' && ($dateRange == null || $dateRange[0] == 'Invalid Date')) {
 
-        if (($dataStatus == '0' || $dataStatus == null) && $dataType == '1' && ($dateRange == null || $dateRange == 'Invalid Date')) {
             $bStatusHeader = 'ALL DATED CHECKS';
-        } else if (($dataStatus == '0' || $dataStatus == null) && $dataType == '2' && ($dateRange == null || $dateRange == 'Invalid Date') && $dataFrom == '') {
-            $bStatusHeader = 'ALL PENDING CHECKS';
-        } else if ($dataStatus == '1' && $dataType == '1' && $dateRangeCondition) {
 
-            $bStatusHeader = 'DEPOSITED DATED CHECKS';
-        } else if ($dataStatus == '2' && $dataType == '1' && $dateRangeCondition) {
+            $dateHeader = " As of . " . today()->toFormattedDateString();
+
+        } else if (($dataStatus == '0' || $dataStatus == null) && $dataType == '2' && ($dateRange == null || $dateRange[0] == 'Invalid Date') && $dataFrom == '') {
+
+            $bStatusHeader = 'ALL PENDING CHECKS';
+
+            $dateHeader = " As of . " . today()->toFormattedDateString();
+
+        } else if ($dataStatus == '1' && $dataType == '1' && ($dateRange == null || $dateRange[0] == 'Invalid Date')) {
 
             $bStatusHeader = 'PENDING DATED CHECKS';
-        } else if ($dataStatus == '1' && $dataType == '2' && $dateRangeCondition) {
 
-            $bStatusHeader = 'PENDING POST DATED CHECKS';
-        } else if ($dataStatus == '2' && $dataType == '2' && $dateRangeCondition) {
-            $bStatusHeader = 'DEPOSITED POST DATED CHECKS';
+            $dateHeader = " As of . " . today()->toFormattedDateString();
+
+        } else if ($dataStatus == '2' && $dataType == '1' && ($dateRange == null || $dateRange[0] == 'Invalid Date')) {
+
+            $bStatusHeader = 'POST DATED PENDING CHECKS';
+
+            $dateHeader = " As of . " . today()->toFormattedDateString();
+
+        } else if ($dataStatus == '1' && $dataType == '2' && ($dateRange == null || $dateRange[0] == 'Invalid Date')) {
+
+            $bStatusHeader = 'DEPOSITED DATED CHECKS';
+
+            $dateHeader = " As of . " . today()->toFormattedDateString();
+
+        } else if ($dataStatus == '2' && $dataType == '2' && ($dateRange == null || $dateRange[0] == 'Invalid Date')) {
+            $bStatusHeader = 'POST DATED DEPOSITED CHECKS';
+
+            $dateHeader = " As of . " . today()->toFormattedDateString();
+
+        } else if (($dataStatus == '0' || $dataStatus == null) && $dataType == '1' && ($dateRange != null || $dateRange != 'Invalid Date')) {
+            $bStatusHeader = 'ALL DATED CHECKS';
+            $dateHeader = "From " . Date::parse($dateRange[0])->toFormattedDateString() . " to " . Date::parse($dateRange[1])->toFormattedDateString();
+        } else if (($dataStatus == '0' || $dataStatus == null) && $dataType == '1' && ($dateRange != null || $dateRange != 'Invalid Date')) {
+            $bStatusHeader = 'ALL PENDING CHECKS';
+            $dateHeader = "From " . Date::parse($dateRange[0])->toFormattedDateString() . " to " . Date::parse($dateRange[1])->toFormattedDateString();
+        } else if ($dataStatus == '1' && $dataType == '1' && $dateRange != null && $dateRange != 'Invalid Date') {
+            $bStatusHeader = 'PENDING DATED CHECKS';
+            $dateHeader = "From " . Date::parse($dateRange[0])->toFormattedDateString() . " to " . Date::parse($dateRange[1])->toFormattedDateString();
+
+        } else if ($dataStatus == '2' && $dataType == '1' && ($dateRange != null || $dateRange != 'Invalid Date')) {
+            $bStatusHeader = 'POST DATED PENDING CHECKS';
+            $dateHeader = "From " . Date::parse($dateRange[0])->toFormattedDateString() . " to " . Date::parse($dateRange[1])->toFormattedDateString();
+        } else if ($dataStatus == '1' && $dataType == '2' && ($dateRange != null || $dateRange != 'Invalid Date')) {
+            $bStatusHeader = 'DEPOSITED DATED CHECKS';
+            $dateHeader = "From " . Date::parse($dateRange[0])->toFormattedDateString() . " to " . Date::parse($dateRange[1])->toFormattedDateString();
+
+        } else if ($dataStatus == '2' && $dataType == '2' && ($dateRange != null || $dateRange != 'Invalid Date')) {
+            $bStatusHeader = 'POST DATED DEPOSITED CHECKS';
+            $dateHeader = "From " . Date::parse($dateRange[0])->toFormattedDateString() . " to " . Date::parse($dateRange[1])->toFormattedDateString();
         }
+
+        $this->getActiveSheetExcel()->setCellValue('A' . $masterHeader, $bunit[0]->bname);
+        $this->getActiveSheetExcel()->mergeCells('A' . $masterHeader . ':O' . $masterHeader);
+        $style = $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader);
+        $font = $style->getFont();
+        $font->setBold(true);
+        $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $masterHeader++;
 
         $this->getActiveSheetExcel()->setCellValue('A' . $masterHeader, $bStatusHeader);
         $this->getActiveSheetExcel()->mergeCells('A' . $masterHeader . ':O' . $masterHeader);
@@ -92,13 +137,13 @@ class DatedPdcCheckServices extends ExcelWriter
         $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $masterHeader++;
 
-        // $this->getActiveSheetExcel()->setCellValue('A' . $masterHeader, $dateHeader);
-        // $this->getActiveSheetExcel()->mergeCells('A' . $masterHeader . ':O' . $masterHeader);
-        // $style = $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader);
-        // $font = $style->getFont();
-        // $font->setBold(true);
-        // $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        // $masterHeader++;
+        $this->getActiveSheetExcel()->setCellValue('A' . $masterHeader, $dateHeader);
+        $this->getActiveSheetExcel()->mergeCells('A' . $masterHeader . ':O' . $masterHeader);
+        $style = $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader);
+        $font = $style->getFont();
+        $font->setBold(true);
+        $this->getActiveSheetExcel()->getStyle('A' . $masterHeader . ':O' . $masterHeader)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $masterHeader++;
 
         if ($dataType == '2') {
             array_push($this->headerRow[0], "PDC GAP(DAYS)");
@@ -254,7 +299,9 @@ class DatedPdcCheckServices extends ExcelWriter
 
         });
 
-        $filename = 'sample' . '.xlsx';
+
+
+        $filename = $bunit[0]->bname . '-' . $bStatusHeader . $dateHeader . '.xlsx';
 
         $filePath = storage_path('app/' . $filename);
 
@@ -263,7 +310,7 @@ class DatedPdcCheckServices extends ExcelWriter
 
         $downloadExcel = route('download.excel', ['filename' => $filename]);
 
-        return Inertia::render('Components/AccountingReportPartials/ResultDatedPdcCheckResult', [
+        return Inertia::render('Components/AccountingReportPartials/DatedPdcCheckResult', [
             'downloadExcel' => $downloadExcel,
         ]);
 

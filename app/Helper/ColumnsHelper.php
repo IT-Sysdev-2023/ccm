@@ -767,7 +767,7 @@ class ColumnsHelper
         ],
         [
             'title' => 'Details',
-            'key' => 'details'
+            'key' => 'details',
         ],
     ];
     public static $acc_dated_pdc_reports = [
@@ -797,7 +797,30 @@ class ColumnsHelper
         ],
         [
             'title' => 'Details',
-            'key' => 'details'
+            'key' => 'details',
+        ],
+    ];
+
+    public static $innertDepReportsColumns = [
+        [
+            'title' => 'Date Deposit',
+            'dataIndex' => 'date_deposit',
+        ],
+        [
+            'title' => 'Ds Number',
+            'dataIndex' => 'ds_no',
+        ],
+        [
+            'title' => 'Deposit Amount',
+            'dataIndex' => 'sum',
+        ],
+        [
+            'title' => 'User',
+            'dataIndex' => 'name',
+        ],
+        [
+            'title' => 'Details',
+            'key' => 'details',
         ],
     ];
 

@@ -25,3 +25,4 @@ Broadcast::channel('updating-progress-all.{id}', fn(User $user, $id) => (int) $u
 Broadcast::channel('generating-deposited-checks.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);
 Broadcast::channel('generating-bounce-checks.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);
 Broadcast::channel('generating-dated-pdc-reports-accounting.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);
+Broadcast::channel('generating-deposited-checks-accounting.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);

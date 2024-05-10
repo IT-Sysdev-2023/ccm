@@ -62,10 +62,10 @@ const submit = () => {
                             <div id="input-area">
                                 <div class="form-inp flex">
                                     <UserOutlined class="mr-2 text-black" />
-                                    <input v-model="form.username" placeholder="Username" type="text">
+                                    <input v-model="form.username" placeholder="Username" type="text" >
                                 </div>
                                 <div v-if="form.errors.username" class="text-white" style="
-                           
+
                             color: #ff6262;
                             font-size: 11px;
                             border-radius: 5px;
@@ -75,10 +75,10 @@ const submit = () => {
                                 </div>
                                 <div class="form-inp flex">
                                     <KeyOutlined class="mr-2 text-black" />
-                                    <input v-model="form.password" placeholder="Password" type="password">
+                                    <input v-model="form.password" placeholder="Password" type="password" @keyup.enter="submit">
                                 </div>
                                 <div v-if="form.errors.password" class="text-white mb-3" style="
-                           
+
                             color: #ff6262;
                             font-size: 11px;
                             border-radius: 5px;
@@ -108,7 +108,7 @@ const submit = () => {
 
         </a-row>
 </div>
-    
+
     </div>
 </template>
 <script>
@@ -147,9 +147,9 @@ export default {
     height: 550px;
     padding: 70px;
     background: rgba(0, 0, 0, 0.13);
-    /*     
+    /*
     background: -webkit-linear-gradient(to left, #283E51, #4B79A1);
-  
+
     background: linear-gradient(to left, #283E51, #4B79A1); */
 
 

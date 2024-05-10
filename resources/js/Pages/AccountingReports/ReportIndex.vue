@@ -60,7 +60,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                         </p>
                                     </div>
                                 </div>
-                                <a-button block>
+                                <a-button block @click="() => $inertia.get(route('deposited.reports.accounting'))">
                                     <template #icon>
                                         <SwapRightOutlined />
                                     </template>
@@ -87,7 +87,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                         </p>
                                     </div>
                                 </div>
-                                <a-button block>
+                                <a-button block >
                                     <template #icon>
                                         <SwapRightOutlined />
                                     </template>

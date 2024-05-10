@@ -15,9 +15,12 @@ import dayjs from 'dayjs';
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="text-center font-bold mb-10">
+                    <HomeOutlined /> {{ bunit[0].bname }}
+                </div>
                 <div v-if="isProgressing">
                     <div class="flex justify-between">
-                        <div class="flex" >
+                        <div class="flex">
                             <DoubleRightOutlined class="mr-1" />
                             <DoubleRightOutlined class="mr-2" />
                             <p>
@@ -28,29 +31,52 @@ import dayjs from 'dayjs';
                         </div>
                     </div>
                     <div class="mb-3">
-                            <a-progress class="mt-2" :stroke-color="{
-                                from: '#108ee9',
-                                to: '#87d068',
-                            }" :percent="progressBar.percentage" status="active" />
+                        <a-progress class="mt-2" :stroke-color="{
+                            from: '#108ee9',
+                            to: '#87d068',
+                        }" :percent="progressBar.percentage" status="active" />
 
                     </div>
                 </div>
-                <div class="flex justify-between mb-2">
+                <div class="flex  mb-2">
+
                     <div>
+                        <a-breadcrumb>
+                            <a-breadcrumb-item>
+                                <CopyOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Select Type</a-breadcrumb-item>
+                        </a-breadcrumb>
                         <a-select placeholder="Select type" @change="handleChangeDataType"
                             v-model:value="fetch.dataType" style="width: 210px" :loading="isFetching"
                             :disabled="isFetching">
                             <a-select-option value="1">Dated Cheque</a-select-option>
                             <a-select-option value="2">Post Dated Cheques</a-select-option>
                         </a-select>
-                        <a-select placeholder="Select type" v-model:value="fetch.dataStatus"
+                    </div>
+                    <div>
+                        <a-breadcrumb>
+                            <a-breadcrumb-item>
+                                <FileTextOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Select Status</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-select placeholder="Select Status" v-model:value="fetch.dataStatus"
                             @change="handleChangeDataStatus" style="width: 210px" :loading="isFetching"
                             :disabled="isFetching">
                             <a-select-option value="0">View All</a-select-option>
                             <a-select-option value="1">Pending Deposit Cheques</a-select-option>
                             <a-select-option value="2">Deposited Cheques</a-select-option>
                         </a-select>
+                    </div>
 
+                    <div>
+                        <a-breadcrumb>
+                            <a-breadcrumb-item>
+                                <ProfileOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Select Check From</a-breadcrumb-item>
+                        </a-breadcrumb>
                         <a-select placeholder="Select type" @change="handleChangeDataFrom"
                             v-model:value="fetch.dataFrom" style="width: 210px" :loading="isFetching"
                             :disabled="isFetching">
@@ -59,18 +85,29 @@ import dayjs from 'dayjs';
                                 v-model:value="department_from[item][0].department">
                                 {{ department_from[item][0].department }}</a-select-option>
                         </a-select>
-
-                        <a-range-picker v-model:value="fetch.dateRange" :loading="isFetching" :disabled="isFetching"
-                            @change="handleChangeDateRange" />
                     </div>
                     <div>
-                        <a-button style="width: 200px" type="primary" @click="startGeneratingExcel"
-                            :disabled="data.length <= 0">
-                            <CloudUploadOutlined />
-                            generate excel
+                        <a-breadcrumb>
+                            <a-breadcrumb-item>
+                                <CalendarOutlined />
+                            </a-breadcrumb-item>
+                            <a-breadcrumb-item>Select Date Range</a-breadcrumb-item>
+                        </a-breadcrumb>
+                        <a-range-picker class="mr-10" v-model:value="fetch.dateRange" :loading="isFetching"
+                            :disabled="isFetching" @change="handleChangeDateRange" />
+                    </div>
+                    <div class="mt-6">
+                        <a-button type="primary" @click="startGeneratingExcel" :disabled="data.length <= 0"
+                            :loading="isLoading">
+                            <template #icon>
+                                <CloudUploadOutlined />
+                            </template>
+                            {{ isLoading ? 'Generating checks in progress..' : 'Generate dated and pdc checks' }}
                         </a-button>
                     </div>
                 </div>
+
+
 
                 <a-table size="small" bordered :data-source="data.data" :columns="columns" :pagination="false" />
                 <pagination class="mt-6 " :datarecords="data" />
@@ -89,11 +126,13 @@ export default {
         dataStatusBackend: Number,
         dataFromBackend: String,
         dataRangeBackend: Array,
+        bunit: Object,
     },
     data() {
         return {
             isFetching: false,
             isProgressing: false,
+            isLoading: false,
             fetch: {
                 dataType: this.dataTypeBackend,
                 dataStatus: this.dataStatusBackend,
@@ -119,6 +158,7 @@ export default {
 
     methods: {
         handleChangeDataType(value) {
+
             this.isFetching = true;
             this.$inertia.get(route('datedpcchecks.accounting'), {
                 dataType: value,
@@ -142,11 +182,11 @@ export default {
                 dataType: this.fetch.dataType,
                 dataFrom: this.fetch.dataFrom,
                 dataStatus: value,
-                dateRange:this.fetch.dateRange !== null ?
-                [
-                    dayjs(this.fetch.dateRange[0]).format('YYYY-MM-DD'),
-                    dayjs(this.fetch.dateRange[1]).format('YYYY-MM-DD')
-                ] : null
+                dateRange: this.fetch.dateRange !== null ?
+                    [
+                        dayjs(this.fetch.dateRange[0]).format('YYYY-MM-DD'),
+                        dayjs(this.fetch.dateRange[1]).format('YYYY-MM-DD')
+                    ] : null
             })
         },
         handleChangeDataFrom(value) {
@@ -160,6 +200,7 @@ export default {
         },
 
         startGeneratingExcel() {
+            this.isLoading = true;
             this.isProgressing = true;
             this.$inertia.get(route('start.generate.rep.accouting'), {
                 dataType: this.fetch.dataType,

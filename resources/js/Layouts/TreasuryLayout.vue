@@ -430,9 +430,11 @@ const hide = () => {
             </div>
 
             <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
+            <div style="width: 96%; margin: 0 auto;">
+                <main>
+                    <slot />
+                </main>
+            </div>
         </div>
     </div>
 </template>
