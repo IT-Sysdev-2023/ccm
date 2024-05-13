@@ -102,7 +102,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                             </div>
                         </a-col>
                         <a-col :span="6" class="flex justify-center">
-                            <div class="card" @click="() => $inertia.get(route('bounce.checks.accounting'))">
+                            <div class="card" @click="() => $inertia.get(route('redeem.reports.accounting'))">
                                 <div class="icon">
                                     <svg viewBox="0 0 1024 1024" class="icon" version="1.1"
                                         xmlns="http://www.w3.org/2000/svg" fill="#000000">

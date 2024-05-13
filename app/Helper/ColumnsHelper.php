@@ -863,4 +863,43 @@ class ColumnsHelper
         ],
     ];
 
+    public static $innerRedeemPdcReportsColumns = [
+        [
+            'title' => 'Replacement Date',
+            'dataIndex' => 'date_time',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
+        ],
+        [
+            'title' => 'Replacement Type',
+            'dataIndex' => 'status',
+        ],
+        [
+            'title' => 'Customer Name',
+            'dataIndex' => 'fullname',
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_no',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+        ],
+        [
+            'title' => 'Mode',
+            'dataIndex' => 'mode',
+        ],
+        [
+            'title' => 'User',
+            'dataIndex' => 'name',
+        ],
+        [
+            'title' => 'Details',
+            'key' => 'details'
+        ],
+    ];
+
 }

@@ -9,6 +9,7 @@ use App\Models\NewBounceCheck;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
 use App\Services\BounceChequesAccountingReportService;
+use App\Services\RedeemPdcAccountingReportServices;
 use App\Services\DatedPdcCheckServices;
 use App\Services\DepositedChecksServices;
 use Illuminate\Http\Request;
@@ -353,4 +354,55 @@ class AccountingReportController extends Controller
 
         return (new BounceChequesAccountingReportService)->record($data)->writeResult($bunit, $dateRange, $request->bounceStatus);
     }
+
+    public function redeemPdcCheckAccountingReports(Request $request)
+    {
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
+            ->whereNotNull('b_atpgetdata')
+            ->whereNotNull('b_encashstart')
+            ->where('businessunit_id', $request->user()->businessunit_id)
+            ->get();
+
+        $data = DB::table('new_check_replacement')
+            ->join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->join('users', 'users.id', '=', 'new_check_replacement.user')
+            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->where('new_check_replacement.status', '=', 'REDEEMED')
+            ->whereBetween('new_check_replacement.date_time', [$request->dateFrom, $request->dateTo])
+            ->select('*', 'new_check_replacement.date_time')
+            ->paginate(10)->withQueryString();
+
+        return Inertia::render('AccountingReports/InnerReports/RedeemPdcCheckReports', [
+            'bunit' => $bunit,
+            'data' => $data,
+            'columns' => ColumnsHelper::$innerRedeemPdcReportsColumns,
+            'dateRangeBackend' => empty([$request->dateFrom, $request->dateTo]) ? null : [$request->dateFrom, $request->dateTo],
+        ]);
+    }
+
+    public function startGeneratingRedeemPdcAccounting(Request $request)
+    {
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
+            ->whereNotNull('b_atpgetdata')
+            ->whereNotNull('b_encashstart')
+            ->where('businessunit_id', $request->user()->businessunit_id)
+            ->get();
+
+        $dateRange = [$request->dateFrom, $request->dateTo];
+
+        $data = DB::table('new_check_replacement')
+            ->join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->join('users', 'users.id', '=', 'new_check_replacement.user')
+            ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->where('new_check_replacement.status', '=', 'REDEEMED')
+            ->whereBetween('new_check_replacement.date_time', [$request->dateFrom, $request->dateTo])
+            ->select('*', 'new_check_replacement.date_time')
+            ->get();
+        return (new RedeemPdcAccountingReportServices)->record($data)->writeResult($dateRange, $bunit );
+    }
+
 }
