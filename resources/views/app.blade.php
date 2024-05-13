@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{{ asset('ccmlogo/lgremove.png')}}" type="image/png">
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
@@ -31,7 +32,7 @@
             padding: 0;
         }
 
-  
+
         .btn-submit {
             background-color: #4CAF50;
             /* Green */

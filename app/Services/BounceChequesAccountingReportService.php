@@ -9,24 +9,22 @@ use App\Models\NewCheckReplacement;
 use App\Models\NewDsChecks;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\LazyCollection;
 use Inertia\Inertia;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class ReportBounceCheckService extends ExcelWriter
+class BounceChequesAccountingReportService extends ExcelWriter
 {
 
-    protected LazyCollection $record;
+    protected $record;
     protected $border;
     protected $borderFBN;
     protected $singleBorderWithBgColor;
 
     public function __construct()
     {
-
         parent::__construct();
 
         $this->generateUserHeader = [
@@ -130,17 +128,16 @@ class ReportBounceCheckService extends ExcelWriter
         $this->border = $this->initializedBorder();
         $this->borderFBN = $this->initializedBorderFontBoldNone();
         $this->singleBorderWithBgColor = $this->singleBorderWithBgColor();
-
     }
 
-    public function record(LazyCollection $data)
+    public function record($data)
     {
         $this->record = $data;
 
         return $this;
     }
 
-    public function writeResult($bunitCode, $bounceStatus, $dateRange)
+    public function writeResult($bunit, $dateRange, $bounceStatus)
     {
         // dd($bounceStatus);
 
@@ -159,18 +156,14 @@ class ReportBounceCheckService extends ExcelWriter
             $bStatusHeader = "SETTLED CHECKS";
         }
 
-        if ($bunitCode == "2") {
-            $bunitHeader = 'ASC-MAIN';
-        } elseif ($bunitCode == "4") {
-            $bunitHeader = "ISLAND CITY MALL";
-        } else {
-            $bunitHeader = "PLAZA MARCELA";
-        }
+        $bunitHeader = $bunit[0]->bname;
 
         if ($dateRange[0] == null) {
-            $dateGenerate = 'This day ' . today()->toFormattedDateString();
+            $dateGenerate = ' As Of ' . today()->toFormattedDateString();
+            $filename = $bStatusHeader.  $dateGenerate . '.xlsx';
         } else {
-            $dateGenerate = 'From ' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString();
+            $dateGenerate = ' From ' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString();
+            $filename = $bStatusHeader. $dateGenerate . '.xlsx';
         }
 
         $this->getActiveSheetExcel()->setCellValue('A' . $headerRow, $bStatusHeader);
@@ -197,40 +190,46 @@ class ReportBounceCheckService extends ExcelWriter
         $this->getActiveSheetExcel()->getStyle('A' . $headerRow . ':O' . $headerRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $headerRow++;
 
-        $this->getActiveSheetExcel()->setCellValue('B' . $bunitRow, "SETTLED CHECKS");
-        $this->getActiveSheetExcel()->getColumnDimension('B')->setWidth(20);
-        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFont()->setBold(true);
-        $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        if ($bounceStatus == '2' || $bounceStatus == '0' || $bounceStatus == null) {
 
-        $cell = 'B' . $bunitRow;
-        $style = $this->getActiveSheetExcel()->getStyle($cell);
-        $fill = $style->getFill();
-        $fill->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-        $fill->getStartColor()->setARGB('68D2E8');
+            $this->getActiveSheetExcel()->setCellValue('B' . $bunitRow, "SETTLED CHECKS");
+            $this->getActiveSheetExcel()->getColumnDimension('B')->setWidth(20);
+            $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getFont()->setBold(true);
+            $this->getActiveSheetExcel()->getStyle('B' . $bunitRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-        $this->getActiveSheetExcel()->setCellValue('D' . $bunitRow, "PENDING CHECKS");
-        $this->getActiveSheetExcel()->getColumnDimension('D')->setWidth(20);
-        $this->getActiveSheetExcel()->getStyle('D' . $bunitRow)->getFont()->setBold(true);
-        $this->getActiveSheetExcel()->getStyle('D' . $bunitRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $cell = 'B' . $bunitRow;
+            $style = $this->getActiveSheetExcel()->getStyle($cell);
+            $fill = $style->getFill();
+            $fill->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+            $fill->getStartColor()->setARGB('68D2E8');
+        }else{
 
-        $cell = 'D' . $bunitRow;
-        $style = $this->getActiveSheetExcel()->getStyle($cell);
-        $fill = $style->getFill();
-        $fill->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-        $fill->getStartColor()->setARGB('F78CA2');
+        }
+
+        if ($bounceStatus == '1' || $bounceStatus == '0' || $bounceStatus == null) {
+            $this->getActiveSheetExcel()->setCellValue('D' . $bunitRow, "PENDING CHECKS");
+            $this->getActiveSheetExcel()->getColumnDimension('D')->setWidth(20);
+            $this->getActiveSheetExcel()->getStyle('D' . $bunitRow)->getFont()->setBold(true);
+            $this->getActiveSheetExcel()->getStyle('D' . $bunitRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+            $cell = 'D' . $bunitRow;
+            $style = $this->getActiveSheetExcel()->getStyle($cell);
+            $fill = $style->getFill();
+            $fill->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+            $fill->getStartColor()->setARGB('F78CA2');
+
+        }else{
+
+        }
 
         $bunitRow++;
 
         $num = 1;
         $startCount = 1;
 
-        // dd($this->record->toArray());
-
         $itemCount = count($this->record);
 
-        // dd($itemCount);
-
-        $this->record->each(function ($item) use (&$excelRow, $header, &$num, &$startCount, &$replacementHeader, &$bunitCode, $itemCount) {
+        $this->record->each(function ($item) use (&$bunit, &$excelRow, $header, &$num, &$startCount, &$replacementHeader, $itemCount) {
 
             if ($item->status != 'SETTLED CHECK') {
                 $status = 'PENDING';
@@ -296,14 +295,6 @@ class ReportBounceCheckService extends ExcelWriter
             }
 
             $excelRow++;
-            $modeDataReplacement = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
-                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
-                ->join('users', 'users.id', '=', 'new_check_replacement.user')
-                ->where('checks.businessunit_id', $bunitCode)
-                ->where('new_check_replacement.bounce_id', '=', $item->id)
-                ->select('*', 'new_check_replacement.date_time')
-                ->first();
 
             if ($item->status != '') {
 
@@ -315,28 +306,25 @@ class ReportBounceCheckService extends ExcelWriter
                     ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                     ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                     ->join('users', 'users.id', '=', 'new_check_replacement.user')
-                    ->where('checks.businessunit_id', $bunitCode)
+                    ->where('checks.businessunit_id', $bunit[0]->businessunit_id)
                     ->where('new_check_replacement.bounce_id', '=', $item->id)
                     ->select('*', 'new_check_replacement.date_time')
                     ->first();
 
-                // dump($modeDataReplacement ?? null);
-
                 $dataModeCollection[] = [
-                    $modeDataReplacement->date_time,
-                    $modeDataReplacement->cash,
-                    $modeDataReplacement->penalty,
-                    $modeDataReplacement->date_time,
-                    $modeDataReplacement->reason,
-                    $modeDataReplacement->name,
+                    $modeDataReplacement->date_time ?? null,
+                    $modeDataReplacement->cash ?? null,
+                    $modeDataReplacement->penalty ?? null,
+                    $modeDataReplacement->date_time ?? null,
+                    $modeDataReplacement->reason ?? null,
+                    $modeDataReplacement->name ?? null,
                 ];
-
                 $fillColor = [
                     'fillType' => Fill::FILL_SOLID,
                     'startColor' => ['rgb' => 'F78CA2'], // Yellow color, you can change it as needed
                 ];
 
-                if ($modeData->mode == 'CASH') {
+                if ($modeData->mode ?? null == 'CASH') {
                     $this->getActiveSheetExcel()->setCellValue('F' . $excelRow, 'REPLACEMENT DETAILS - CASH');
                     $this->getActiveSheetExcel()->mergeCells('F' . $excelRow . ':K' . $excelRow);
                     $this->getActiveSheetExcel()->getStyle('F' . $excelRow . ':K' . $excelRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -346,7 +334,7 @@ class ReportBounceCheckService extends ExcelWriter
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()
                         ->setARGB('FFCCCCCC');
-                } elseif ($modeData->mode == 'RE-DEPOSIT') {
+                } elseif ($modeData->mode ?? null == 'RE-DEPOSIT') {
                     $this->getActiveSheetExcel()->setCellValue('F' . $excelRow, 'REPLACEMENT DETAILS - RE-DEPOSIT');
                     $this->getActiveSheetExcel()->mergeCells('F' . $excelRow . ':J' . $excelRow);
                     $this->getActiveSheetExcel()->getStyle('F' . $excelRow . ':J' . $excelRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -356,7 +344,7 @@ class ReportBounceCheckService extends ExcelWriter
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()
                         ->setARGB('FFCCCCCC');
-                } elseif ($modeData->mode == 'CHECK') {
+                } elseif ($modeData->mode ?? null == 'CHECK') {
                     $this->getActiveSheetExcel()->setCellValue('F' . $excelRow, 'REPLACEMENT DETAILS - CHECK');
                     $this->getActiveSheetExcel()->mergeCells('F' . $excelRow . ':L' . $excelRow);
                     $this->getActiveSheetExcel()->getStyle('F' . $excelRow . ':L' . $excelRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -366,7 +354,7 @@ class ReportBounceCheckService extends ExcelWriter
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()
                         ->setARGB('FFCCCCCC');
-                } elseif ($modeData->mode == 'CHECK & CASH') {
+                } elseif ($modeData->mode ?? null == 'CHECK & CASH') {
                     $this->getActiveSheetExcel()->setCellValue('F' . $excelRow, 'REPLACEMENT DETAILS - CHECK & CASH');
                     $this->getActiveSheetExcel()->mergeCells('F' . $excelRow . ':M' . $excelRow);
                     $this->getActiveSheetExcel()->getStyle('F' . $excelRow . ':M' . $excelRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -376,7 +364,7 @@ class ReportBounceCheckService extends ExcelWriter
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()
                         ->setARGB('FFCCCCCC');
-                } elseif ($modeData->mode == 'PARTIAL') {
+                } elseif ($modeData->mode ?? null == 'PARTIAL') {
                     $this->getActiveSheetExcel()->setCellValue('D' . $excelRow, 'REPLACEMENT DETAILS - PARTIAL');
                     $this->getActiveSheetExcel()->mergeCells('D' . $excelRow . ':L' . $excelRow);
                     $this->getActiveSheetExcel()->getStyle('D' . $excelRow . ':L' . $excelRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -390,7 +378,9 @@ class ReportBounceCheckService extends ExcelWriter
 
                 $excelRow++;
 
-                if ($modeData->mode == 'CASH') {
+                // dump($modeData->mode ?? null ?? null);
+
+                if ($modeData->mode ?? null == 'CASH') {
 
                     $this->getActiveSheetExcel()->fromArray($replacementHeader, null, 'F' . $excelRow);
 
@@ -409,7 +399,7 @@ class ReportBounceCheckService extends ExcelWriter
                     }
                     $excelRow += 2;
 
-                } elseif ($modeData->mode == 'RE-DEPOSIT') {
+                } elseif ($modeData->mode ?? null == 'RE-DEPOSIT') {
 
                     $reDepositModeCollection[] = [
                         'date_time' => $modeDataReplacement->date_time,
@@ -435,7 +425,7 @@ class ReportBounceCheckService extends ExcelWriter
                         $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                     }
                     $excelRow += 2;
-                } elseif ($modeData->mode == 'CHECK') {
+                } elseif ($modeData->mode ?? null == 'CHECK') {
                     $checkno = '';
                     $ar_ds = '';
 
@@ -524,7 +514,7 @@ class ReportBounceCheckService extends ExcelWriter
                     }
 
                     $excelRow += 2;
-                } elseif ($modeData->mode == 'CHECK & CASH') {
+                } elseif ($modeData->mode ?? null == 'CHECK & CASH') {
 
                     $checkno = '';
                     $ar_ds = '';
@@ -616,10 +606,8 @@ class ReportBounceCheckService extends ExcelWriter
 
                     $excelRow += 2;
 
-                } elseif ($modeData->mode == 'PARTIAL') {
+                } elseif ($modeData->mode ?? null == 'PARTIAL') {
 
-                    // $this->getActiveSheetExcel()->getStyle($cell)->getFill()->setFillType($fillColor['fillType']);
-                    // $this->getActiveSheetExcel()->getStyle($cell)->getFill()->getStartColor()->setRGB($fillColor['startColor']['rgb']);
                     $this->getActiveSheetExcel()->fromArray($this->generateReportHeaderPartial, null, 'D' . $excelRow);
 
                     foreach (range('D', 'L') as $col) {
@@ -729,24 +717,22 @@ class ReportBounceCheckService extends ExcelWriter
                 }
             }
 
-            GenerateBounceCheckEvents::dispatch('Generating Bounce Checks ', $startCount++, $itemCount, Auth::user());
+            GenerateBounceCheckEvents::dispatch('Generating Bounce Checks Reports...', $startCount++, $itemCount, Auth::user());
 
         });
-
         // dd(1);
-
         $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
         $writer = new Xlsx($this->spreadsheet);
         $writer->save($tempFilePath);
 
-        $filename = 'samplebounce' . '.xlsx';
+
         $filePath = storage_path('app/' . $filename);
 
         $writer->save($filePath);
 
         $downloadExcel = route('download.excel', ['filename' => $filename]);
 
-        return Inertia::render('Components/ReportPartials/ResultBouncedReports', [
+        return Inertia::render('Components/AccountingReportPartials/BounceCheckReportAccountingResult', [
             'downloadExcel' => $downloadExcel,
         ]);
 

@@ -4,17 +4,19 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
 
 <template>
 
-    <Head title="Dashboard" />
+    <Head title="Deposited Check Reports" />
 
     <AccountingLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">this is accounting Dashboard</h2>
-        </template>
         <div class="py-12">
-            <div class="text-center font-bold mb-10">
+            <div class="text-center font-bold mb-2">
                 <HomeOutlined /> {{ bunit[0].bname }}
             </div>
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="text-center text-gray  mb-10 text-gray-500 font-bold">
+                <p>
+                 DEPOSITED CHECK REPORTS
+                </p>
+            </div>
+            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <div v-if="isProgressing">
                     <div class="flex justify-between">
                         <div class="flex">
@@ -35,31 +37,39 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
 
                     </div>
                 </div>
-                <div class="flex justify-between">
-                    <div>
-                        <a-breadcrumb>
-                            <a-breadcrumb-item>
-                                <CalendarOutlined />
-                            </a-breadcrumb-item>
-                            <a-breadcrumb-item>Select Date</a-breadcrumb-item>
-                        </a-breadcrumb>
 
-                        <a-range-picker v-model:value="dateValue" @change="handleChangeDateRange" class="mb-5"
-                            style="width: 350px;" />
+                <a-card>
+                    <div class="flex justify-between">
+                        <div>
+                            <a-breadcrumb>
+                                <a-breadcrumb-item>
+                                    <CalendarOutlined />
+                                </a-breadcrumb-item>
+                                <a-breadcrumb-item>Select Date</a-breadcrumb-item>
+                            </a-breadcrumb>
+
+                            <a-range-picker v-model:value="dateValue" @change="handleChangeDateRange" class="mb-2"
+                                style="width: 350px;" />
+                        </div>
+                        <div class="mt-5">
+                            <a-button type="primary" @click="startGeneratingDepositedChecks" :loading="isLoading"
+                                :disabled="data.data.length <= 0">
+                                <template #icon>
+                                    <CloudDownloadOutlined />
+                                </template>
+                                {{
+                                    !isLoading ?
+                                        'Generate deposited checks reports' : 'Generating deposit inprogress...'
+                                }}
+                            </a-button>
+                        </div>
                     </div>
-                    <a-button type="primary" @click="startGeneratingDepositedChecks" :loading="isLoading"
-                        :disabled="data.data.length <= 0">
-                        <template #icon>
-                            <CloudDownloadOutlined />
-                        </template>
-                        {{ isLoading ? 'Generate deposited checks' : 'Generating deposit in progress...' }}
-                    </a-button>
-                </div>
 
-                <a-table :data-source="data.data" :columns="columns" size="small" :pagination="false" bordered>
+                    <a-table :data-source="data.data" :columns="columns" size="small" :pagination="false" bordered>
 
-                </a-table>
-                <pagination :datarecords="data" class="mt-4 mb-6" />
+                    </a-table>
+                    <pagination :datarecords="data" class="mt-4" />
+                </a-card>
 
             </div>
         </div>

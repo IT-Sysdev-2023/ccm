@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Helper\ColumnsHelper;
 use App\Models\BusinessUnit;
 use App\Models\Checks;
+use App\Models\NewBounceCheck;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
+use App\Services\BounceChequesAccountingReportService;
 use App\Services\DatedPdcCheckServices;
 use App\Services\DepositedChecksServices;
 use Illuminate\Http\Request;
@@ -161,7 +163,7 @@ class AccountingReportController extends Controller
 
         return Inertia::render('AccountingReports/InnerReports/DepositedCheckReports', [
             'data' => $data,
-            'bunit'=> $bunit,
+            'bunit' => $bunit,
             'columns' => ColumnsHelper::$innertDepReportsColumns,
             'dateRangeBackend' => empty([$request->dateFrom, $request->dateTo]) ? null : [$request->dateFrom, $request->dateTo],
         ]);
@@ -169,11 +171,10 @@ class AccountingReportController extends Controller
     public function startGeneratingDepositedAccountingReports(Request $request)
     {
         $bunit = BusinessUnit::whereNotNull('loc_code_atp')
-        ->whereNotNull('b_atpgetdata')
-        ->whereNotNull('b_encashstart')
-        ->where('businessunit_id', $request->user()->businessunit_id)
-        ->get();
-
+            ->whereNotNull('b_atpgetdata')
+            ->whereNotNull('b_encashstart')
+            ->where('businessunit_id', $request->user()->businessunit_id)
+            ->get();
 
         $data = NewDsChecks::select('new_ds_checks.date_deposit', 'ds_no', (DB::raw('sum(check_amount) as sum')), 'name')
             ->join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
@@ -186,5 +187,170 @@ class AccountingReportController extends Controller
             ->get();
 
         return (new DepositedChecksServices)->record($data)->writeResult($request->dateFrom, $request->dateTo, $bunit);
+    }
+    public function bounceCheckReportAccounting(Request $request)
+    {
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
+            ->whereNotNull('b_atpgetdata')
+            ->whereNotNull('b_encashstart')
+            ->where('businessunit_id', $request->user()->businessunit_id)
+            ->get();
+
+        $data = [];
+
+        if ($request->dateFrom == null && ($request->bounceStatus == 0 || $request->bounceStatus == null)) {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->paginate(10)->withQueryString();
+
+        } elseif ($request->dateFrom != null && ($request->bounceStatus == 0 || $request->bounceStatus == null)) {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->whereBetween('new_bounce_check.date_time', [$request->dateFrom, $request->dateTo])
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->paginate(10)->withQueryString();
+            // dd(2);
+
+        } elseif ($request->dateFrom == null && $request->bounceStatus == "1") {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->whereIn('new_bounce_check.status', ['', 'PARTIAL'])
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->paginate(10)->withQueryString();
+
+        } elseif ($request->dateFrom == null && $request->bounceStatus == "2") {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->where('new_bounce_check.status', 'SETTLED CHECK')
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->paginate(10)->withQueryString();
+
+        } elseif ($request->dateFrom != null && $request->bounceStatus == "1") {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->whereIn('new_bounce_check.status', ['', 'PARTIAL'])
+                ->whereBetween('new_bounce_check.date_time', [$request->dateFrom, $request->dateTo])
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->paginate(10)->withQueryString();
+
+        } elseif ($request->dateFrom != null && $request->bounceStatus == "2") {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->where('new_bounce_check.status', 'SETTLED CHECK')
+                ->whereBetween('new_bounce_check.date_time', [$request->dateFrom, $request->dateTo])
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->paginate(10)->withQueryString();
+        }
+
+        $data->map(function ($item) {
+            $item->status = empty($item->status) ? 'PENDING' : $item->status;
+            return $item;
+        });
+
+        return Inertia::render('AccountingReports/InnerReports/BounceCheckReports', [
+            'data' => $data,
+            'bunit' => $bunit,
+            'columns' => ColumnsHelper::$innerBounceCheckRepAccounting,
+            'dateRangeBackend' => empty([$request->dateFrom, $request->dateTo]) ? null : [$request->dateFrom, $request->dateTo],
+            'dataSatusBackend' => $request->bounceStatus,
+        ]);
+    }
+    public function startGeneratingReportsChequesAccounting(Request $request)
+    {
+        $dateRange = [$request->dateFrom, $request->dateTo];
+
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
+            ->whereNotNull('b_atpgetdata')
+            ->whereNotNull('b_encashstart')
+            ->where('businessunit_id', $request->user()->businessunit_id)
+            ->get();
+
+        if ($request->dateFrom == null && ($request->bounceStatus == 0 || $request->bounceStatus == null)) {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->get();
+
+        } elseif ($request->dateFrom != null && ($request->bounceStatus == 0 || $request->bounceStatus == null)) {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->whereBetween('new_bounce_check.date_time', [$request->dateFrom, $request->dateTo])
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->get();
+
+        } elseif ($request->dateFrom == null && $request->bounceStatus == "1") {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->whereIn('new_bounce_check.status', ['', 'PARTIAL'])
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->get();
+
+        } elseif ($request->dateFrom == null && $request->bounceStatus == "2") {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->where('new_bounce_check.status', 'SETTLED CHECK')
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->get();
+
+        } elseif ($request->dateFrom != null && $request->bounceStatus == "1") {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->whereIn('new_bounce_check.status', ['', 'PARTIAL'])
+                ->whereBetween('new_bounce_check.date_time', [$request->dateFrom, $request->dateTo])
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->get();
+
+        } elseif ($request->dateFrom != null && $request->bounceStatus == "2") {
+            $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
+                ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->where('businessunit_id', $request->user()->businessunit_id)
+                ->where('new_bounce_check.status', 'SETTLED CHECK')
+                ->whereBetween('new_bounce_check.date_time', [$request->dateFrom, $request->dateTo])
+                ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
+                ->get();
+        }
+
+        $data->map(function ($item) {
+            $item->status = empty($item->status) ? 'PENDING' : $item->status;
+            return $item;
+        });
+
+        return (new BounceChequesAccountingReportService)->record($data)->writeResult($bunit, $dateRange, $request->bounceStatus);
     }
 }

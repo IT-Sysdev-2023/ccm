@@ -151,6 +151,8 @@ Route::middleware('auth')->group(function () {
     Route::get('start/generatng/report/accounting', [AccountingReportController::class, 'startGeneratingAccountingReports'])->name('start.generate.rep.accouting');
     Route::get('reports/deposited/checks', [AccountingReportController::class, 'innerDepositedCheckReports'])->name('deposited.reports.accounting');
     Route::get('start/generatng/deposited/accounting', [AccountingReportController::class, 'startGeneratingDepositedAccountingReports'])->name('start.generate.rep,deposited.accouting');
+    Route::get('bounce/checks/report/accounting', [AccountingReportController::class, 'bounceCheckReportAccounting'])->name('bounce.checks.accounting');
+    Route::get('start/generating/bounce/report/accounting', [AccountingReportController::class, 'startGeneratingReportsChequesAccounting'])->name('start.bounce.accounting');
 
     Route::get('/download/excel/{filename}', function ($filename) {
         $filePath = storage_path('app/' . $filename);

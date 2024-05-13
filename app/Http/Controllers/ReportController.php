@@ -8,11 +8,12 @@ use App\Models\BusinessUnit;
 use App\Models\NewBounceCheck;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
-use App\Services\ReportDepositedCheckService;
 use App\Services\ReportBounceCheckService;
+use App\Services\ReportDepositedCheckService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -20,7 +21,6 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
@@ -61,13 +61,13 @@ class ReportController extends Controller
                 ->where('businessunit_id', $request->bunitCode)
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->paginate(10)->withQueryString();
-        } elseif ($dateRange[0] != null && $request->bounceStatus == 0 || $request->bounceStatus == null ) {
+        } elseif ($dateRange[0] != null && $request->bounceStatus == 0 || $request->bounceStatus == null) {
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                 ->where('businessunit_id', $request->bunitCode)
                 ->where('new_bounce_check.status', 'SETTLED CHECK')
-                ->WhereBetween('new_bounce_check.date_time', [$dateRange])
+                ->whereBetween('new_bounce_check.date_time', [$dateRange])
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->paginate(10)->withQueryString();
         } elseif ($dateRange[0] == null && $request->bounceStatus == "1") {
@@ -92,7 +92,7 @@ class ReportController extends Controller
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                 ->where('businessunit_id', $request->bunitCode)
                 ->whereIn('new_bounce_check.status', ['', 'PARTIAL'])
-                ->WhereBetween('new_bounce_check.date_time', [$dateRange])
+                ->whereBetween('new_bounce_check.date_time', [$dateRange])
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->paginate(10)->withQueryString();
         } elseif ($dateRange[0] != null && $request->bounceStatus == "2") {
@@ -101,7 +101,7 @@ class ReportController extends Controller
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                 ->where('businessunit_id', $request->bunitCode)
                 ->where('new_bounce_check.status', 'SETTLED CHECK')
-                ->WhereBetween('new_bounce_check.date_time', [$dateRange])
+                ->whereBetween('new_bounce_check.date_time', [$dateRange])
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->paginate(10)->withQueryString();
         }
@@ -508,19 +508,11 @@ class ReportController extends Controller
 
         $dateRange = [$request->dateRangeArr0, $request->dateRangeArr1];
 
-        if ($request->user()->usertype_id == 2) {
-            $bunit = BusinessUnit::whereNotNull('loc_code_atp')
-                ->whereNotNull('b_atpgetdata')
-                ->whereNotNull('b_encashstart')
-                ->where('businessunit_id', $request->user()->businessunit_id)
-                ->cursor();
-        } else {
-            $bunit = BusinessUnit::whereNotNull('loc_code_atp')
-                ->whereNotNull('b_atpgetdata')
-                ->whereNotNull('b_encashstart')
-                ->where('businessunit_id', '!=', 61)
-                ->cursor();
-        }
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
+            ->whereNotNull('b_atpgetdata')
+            ->whereNotNull('b_encashstart')
+            ->where('businessunit_id', '!=', 61)
+            ->cursor();
 
         $data = self::reusableQuery($request);
 
@@ -553,8 +545,7 @@ class ReportController extends Controller
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                 ->join('department', 'department.department_id', '=', 'checks.department_from')
                 ->where('businessunit_id', $request->bunitCode)
-                ->where('new_bounce_check.status', 'SETTLED CHECK')
-                ->WhereBetween('new_bounce_check.date_time', [$dateRange])
+                ->whereBetween('new_bounce_check.date_time', [$dateRange])
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->cursor();
         } elseif ($dateRange[0] == null && $request->bounceStatus == "1") {
@@ -582,7 +573,7 @@ class ReportController extends Controller
                 ->join('department', 'department.department_id', '=', 'checks.department_from')
                 ->where('businessunit_id', $request->bunitCode)
                 ->whereIn('new_bounce_check.status', ['', 'PARTIAL'])
-                ->WhereBetween('new_bounce_check.date_time', [$dateRange])
+                ->whereBetween('new_bounce_check.date_time', [$dateRange])
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->cursor();
         } elseif ($dateRange[0] != null && $request->bounceStatus == "2") {
@@ -592,7 +583,7 @@ class ReportController extends Controller
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                 ->where('businessunit_id', $request->bunitCode)
                 ->where('new_bounce_check.status', 'SETTLED CHECK')
-                ->WhereBetween('new_bounce_check.date_time', [$dateRange])
+                ->whereBetween('new_bounce_check.date_time', [$dateRange])
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->cursor();
         }
