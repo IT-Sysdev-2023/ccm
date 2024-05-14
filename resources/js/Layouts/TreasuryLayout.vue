@@ -160,11 +160,11 @@ const hide = () => {
                                 <a class="inline-block px-3 mt-2 p-4 text-sm text-white transition-all duration-200"
                                     :class="{
                                         'bg-blue-600 text-white':
-                                            route().current('bounce_tagging') ||
+                                            route().current('bounce.tagging') ||
                                             route().current('ds_tagging'),
                                         'text-black-100':
                                             !route().current(
-                                                'bounce_tagging'
+                                                'bounce.tagging'
                                             ) && !route().current('ds_tagging'),
                                     }" href="#">
                                     <FundOutlined /> Ds/Bounce Tagging
@@ -173,20 +173,29 @@ const hide = () => {
 
                                 <template #overlay>
                                     <a-menu style="background-color: #001529">
-                                        <a-menu-item style="color: white">
+                                        <a-menu-item style="color: white" :class="{
+                                            'bg-blue-600 text-white':
+                                                route().current(
+                                                    'ds_tagging'
+                                                ),
+                                            'text-white':
+                                                !route().current(
+                                                    'ds_tagging'
+                                                ),
+                                        }">
                                             <Link :href="route('ds_tagging')">Deposited Tagging</Link>
                                         </a-menu-item>
                                         <a-menu-item style="color: white" :class="{
                                             'bg-blue-600 text-white':
                                                 route().current(
-                                                    'bounce_tagging'
+                                                    'bounce.tagging'
                                                 ),
                                             'text-white':
                                                 !route().current(
-                                                    'bounce_tagging'
+                                                    'bounce.tagging'
                                                 ),
                                         }">
-                                            <Link :href="route('bounce_tagging')">Bounce Tagging</Link>
+                                            <Link :href="route('bounce.tagging')">Bounce Tagging</Link>
                                         </a-menu-item>
                                     </a-menu>
                                 </template>

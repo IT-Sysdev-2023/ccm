@@ -22,7 +22,7 @@ class CheckReceivingController extends Controller
             ->whereColumn('check_date', '<=', 'check_received')
             ->where('check_status', 'PENDING')
             ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
-            ->orderBy('check_date', 'ASC')->cursor();
+            ->orderBy('check_date', 'ASC')->get();
 
         $q = Checks::joinCheckRecCustomerDepartmentBanks()
             ->whereDateChecks($request->generate_date)

@@ -38,7 +38,12 @@ const colors = "red";
                                         display: flex;
                                         justify-content: center;
                                     ">
-                                    <a-avatar shape="square" size="large" src="../icons/abacus.png" />
+                                    <img src="../../../../public/icons/abacus.png" alt="" style="
+                                                height: 40px;
+                                                display: flex;
+                                                justify-content: center;
+                                            " />
+                                    <!-- <a-avatar shape="square" size="large" src="../../../../public/icons/abacus.png" /> -->
                                 </a-badge>
                                 <p class="ml-10 font-bold">
                                     {{ total.count }}
@@ -54,7 +59,11 @@ const colors = "red";
                                         display: flex;
                                         justify-content: center;
                                     ">
-                                    <a-avatar shape="square" size="large" src="../icons/calculator.png" />
+                                    <img src="../../../../public/icons/calculator.png" alt="" style="
+                                                height: 40px;
+                                                display: flex;
+                                                justify-content: center;
+                                            " />
                                 </a-badge>
                                 <p class="ml-10 font-bold">
                                     ₱
@@ -72,7 +81,11 @@ const colors = "red";
                                         display: flex;
                                         justify-content: center;
                                     ">
-                                    <a-avatar shape="square" size="large" src="../icons/due-date(1).png" />
+                                    <img src="../../../../public/icons/due-date(1).png" alt="" style="
+                                                height: 40px;
+                                                display: flex;
+                                                justify-content: center;
+                                            " />
                                 </a-badge>
                                 <p class="ml-10 font-bold">{{ due_dates }}</p>
                             </div>
@@ -121,10 +134,10 @@ const colors = "red";
                 </a-row>
                 <a-table :data-source="ds_c_table.data" :pagination="false" :columns="columns" size="small"
                     :scroll="{ x: 100, y: 470 }" class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
-                    _record.type === 'POST-DATED'
-                        ? 'POST-DATED'
-                        : 'DATED'
-                    ">
+                        _record.type === 'POST-DATED'
+                            ? 'POST-DATED'
+                            : 'DATED'
+                        ">
 
                     <template #bodyCell="{ column, record, index }">
                         <template v-if="column.key === 'select'">
@@ -166,10 +179,10 @@ export default {
     props: {
         pagination: Object,
         columns: Array,
-        ds_c_table: Array,
+        ds_c_table: Object,
         type: Object,
-        total: Array,
-        due_dates: Date,
+        total: Object,
+        due_dates: Number,
     },
     computed: {},
     methods: {

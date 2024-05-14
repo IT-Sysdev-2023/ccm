@@ -63,16 +63,16 @@ Route::middleware('auth')->group(function () {
     Route::get('auto/complete/company/search', [UserController::class, 'searchCompany'])->name('company.search');
     Route::get('auto/complete/bunit/search', [UserController::class, 'searchBunit'])->name('bunit.search');
     Route::get('auto/completedepartment/search', [UserController::class, 'searchDepartment'])->name('department.search');
-    Route::get('export-excel/users', [UserController::class, 'exportExcel'])->name('users.excel');
-    Route::post('resign-reactive/', [UserController::class, 'resignReactive'])->name('users.resrec');
-    Route::get('search_an_employee', [UserController::class, 'searchAnEmployeeName'])->name('searchAnEmployeeName');
+    Route::get('export/excel/users', [UserController::class, 'exportExcel'])->name('users.excel');
+    Route::post('resign/reactive/', [UserController::class, 'resignReactive'])->name('users.resrec');
+    Route::get('search/employee', [UserController::class, 'searchAnEmployeeName'])->name('searchAnEmployeeName');
 
 
     Route::get('dated/pdc/checks/reports', [ReportController::class, 'datedpdcchecksreports'])->name('reports.dpdc');
     Route::get('deposited/checks/reports', [ReportController::class, 'depositedCheckReports'])->name('deposited.checks');
     Route::get('bounce/checks/reports', [ReportController::class, 'bounceCheckReports'])->name('bounce.checks.report');
-    Route::get('get_dated_pdc_checks_rep', [ReportController::class, 'get_dated_pdc_checks_rep'])->name('get.dpdc');
-    Route::get('generate_reps_to_excel', [ReportController::class, 'generate_reps_to_excel'])->name('excel.dpdc');
+    Route::get('dated/pdc/checks/report', [ReportController::class, 'get_dated_pdc_checks_rep'])->name('get.dpdc');
+    Route::get('generate/report/excel', [ReportController::class, 'generate_reps_to_excel'])->name('excel.dpdc');
     Route::get('start/generating/depositedchecks', [ReportController::class, 'startGeneratingDepositedChecks'])->name('startgenerate.depchecks');
     Route::get('start/generating/bouncechecks', [ReportController::class, 'startGeneratingBounceCheckReport'])->name('startgenerate.bounceChecks');
 
@@ -80,20 +80,20 @@ Route::middleware('auth')->group(function () {
 
 
     Route::controller(ImportUpdateController::class)->group(function () {
-        Route::get('/indeximportupdates', 'indeximportupdates')->name('indeximportupdates');
+        Route::get('indeximportupdates', 'indeximportupdates')->name('indeximportupdates');
         Route::get('instImport', 'instImportfunction')->name('instImport');
         Route::get('update/atp/database', [ImportUpdateController::class, 'updateAtpDatabase'])->name('updatingAtp.database');
     });
 
-    Route::get('/bounce_tagging', [DsBounceTaggingController::class, 'indexBounceTagging'])->name('bounce_tagging');
-    Route::get('/ds_tagging', [DsBounceTaggingController::class, 'indexDsTagging'])->name('ds_tagging');
-    Route::get('/get_bounce_tagging', [DsBounceTaggingController::class, 'get_bounce_tagging'])->name('get_bounce_tagging');
-    Route::post('/tag_check_bounce', [DsBounceTaggingController::class, 'tagCheckBounce'])->name('tag_check_bounce');
-    Route::post('/submit-ds-tagging', [DsBounceTaggingController::class, 'submiCheckDs'])->name('submit.ds.tagging');
+    Route::get('bounce/tagging/index', [DsBounceTaggingController::class, 'indexBounceTagging'])->name('bounce.tagging');
+    Route::get('dstagging', [DsBounceTaggingController::class, 'indexDsTagging'])->name('ds_tagging');
+    Route::get('bounce/tagging', [DsBounceTaggingController::class, 'get_bounce_tagging'])->name('get_bounce_tagging');
+    Route::post('tag_check_bounce', [DsBounceTaggingController::class, 'tagCheckBounce'])->name('tag_check_bounce');
+    Route::post('submit-ds-tagging', [DsBounceTaggingController::class, 'submiCheckDs'])->name('submit.ds.tagging');
     Route::put('update-switch', [DsBounceTaggingController::class, 'updateSwitch'])->name('update.switch');
 
-    Route::get('pdc_checks', [DatedPdcChecksController::class, 'pdc_index'])->name('pdc.checks');
-    Route::get('dated_checks', [DatedPdcChecksController::class, 'dated_index'])->name('dated.checks');
+    Route::get('pdc/checks', [DatedPdcChecksController::class, 'pdc_index'])->name('pdc.checks');
+    Route::get('dated/checks', [DatedPdcChecksController::class, 'dated_index'])->name('dated.checks');
     Route::post('pdc/cash/replacement', [DatedPdcChecksController::class, 'pdc_cash_replacement'])->name('pdc_cash.replacement');
     Route::post('pdc/check/replacement', [DatedPdcChecksController::class, 'pdc_check_replacement'])->name('pdc_check.replacement');
     Route::post('pdc/cash/check/replacement', [DatedPdcChecksController::class, 'pdc_check_cash_replacement'])->name('pdc_cash_check.replacement');
@@ -111,12 +111,12 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::get('check_for_clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
-    Route::get('search_dated', [CheckReceivingController::class, 'searchDatedChecks'])->name('search_dated');
-    Route::get('check-uncheck', [CheckReceivingController::class, 'checkAndUncheck'])->name('checkUncheck.checks');
+    Route::get('check/for/clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
+    Route::get('search/dated', [CheckReceivingController::class, 'searchDatedChecks'])->name('search_dated');
+    Route::get('check/uncheck', [CheckReceivingController::class, 'checkAndUncheck'])->name('checkUncheck.checks');
     Route::post('save/dated/leasing/pdc/checks', [CheckReceivingController::class, 'savedDatedLeasingpPdcChecks'])->name('datedleaspdc.checks');
-    Route::get('pdc_check_clearing', [CheckReceivingController::class, 'pdcChecksCLearing'])->name('pdc_clearing.checks');
-    Route::get('leasing_checks', [CheckReceivingController::class, 'getLeasingChecks'])->name('leasing.checks');
+    Route::get('pdccheck/clearing', [CheckReceivingController::class, 'pdcChecksCLearing'])->name('pdc_clearing.checks');
+    Route::get('leasing/checks', [CheckReceivingController::class, 'getLeasingChecks'])->name('leasing.checks');
 
 
     Route::get('check/manual/entry', [AllTransactionController::class, 'getCheckManualEntry'])->name('manual_entry.checks');
@@ -125,11 +125,11 @@ Route::middleware('auth')->group(function () {
     Route::post('merge/checks/store', [AllTransactionController::class, 'getMergeCheckStore'])->name('mergecheckstore.checks');
     Route::get('bounce/checks', [AllTransactionController::class, 'getBounceChecks'])->name('bounce.checks');
     Route::get('replaced/checks', [AllTransactionController::class, 'getCheckReplace'])->name('replace.checks');
-    Route::get('partial_payments_checks', [AllTransactionController::class, 'getPartialPayment'])->name('partial_payments.checks');
-    Route::get('dated_check_pdc_reports', [AllTransactionController::class, 'getDatedPdcReports'])->name('dcpdc.checks');
-    Route::get('generate_report', [AllTransactionController::class, 'generate_report'])->name('generate_report.checks');
-    Route::get('get_due_pdc_reports', [AllTransactionController::class, 'getDuepdcReports'])->name('duePdcReports.checks');
-    Route::post('generate_report_due_pdc', [AllTransactionController::class, 'generateExcelDuePdcReports'])->name('generate_duepdcrep.checks');
+    Route::get('partial/payments/checks', [AllTransactionController::class, 'getPartialPayment'])->name('partial_payments.checks');
+    Route::get('dated/checkpdc/reports', [AllTransactionController::class, 'getDatedPdcReports'])->name('dcpdc.checks');
+    Route::get('generate/report', [AllTransactionController::class, 'generate_report'])->name('generate_report.checks');
+    Route::get('duepdc/reports', [AllTransactionController::class, 'getDuepdcReports'])->name('duePdcReports.checks');
+    Route::post('generate/report/duepdc', [AllTransactionController::class, 'generateExcelDuePdcReports'])->name('generate_duepdcrep.checks');
 
     Route::get('replacement/details/checks', [AllTransactionController::class, 'replacementDetails'])->name('replacment.details');
     Route::get('replacement/partial/payment', [AllTransactionController::class, 'replacedPartialPaymentTable'])->name('replacmentpartialTable.details');
@@ -161,7 +161,7 @@ Route::middleware('auth')->group(function () {
         return response()->download($filePath);
     })->name('download.excel');
 
-    Route::get('start_importing_checks', [ImportUpdateController::class, 'startImportChecks'])->name('start.importing.checks');
+    Route::get('start/importing/checks', [ImportUpdateController::class, 'startImportChecks'])->name('start.importing.checks');
 });
 
 require __DIR__ . '/auth.php';
