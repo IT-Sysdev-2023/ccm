@@ -28,7 +28,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                 v-model:value="dateRange" @change="handleChangeDateRange" />
                         </div>
                         <div>
-                            <a-button type="primary" :loading="isLoading" @click="startGeneratingRepors">
+                            <a-button type="primary" :loading="isLoading" @click="startGeneratingRepors" :disabled="data.data.length <= 0" >
                                 <template #icon>
                                     <CloudUploadOutlined />
                                 </template>

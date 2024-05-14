@@ -400,7 +400,7 @@ class AccountingReportController extends Controller
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('new_check_replacement.status', '=', 'REDEEMED')
             ->whereBetween('new_check_replacement.date_time', [$request->dateFrom, $request->dateTo])
-            ->select('*', 'new_check_replacement.date_time')
+            ->select('*', 'new_check_replacement.date_time', 'new_check_replacement.id')
             ->get();
         return (new RedeemPdcAccountingReportServices)->record($data)->writeResult($dateRange, $bunit );
     }

@@ -50,7 +50,8 @@ const showingNavigationDropdown = ref(false);
                                 route().current('reports.accounting') ||
                                 route().current('datedpcchecks.accounting') ||
                                 route().current('deposited.reports.accounting') ||
-                                route().current('bounce.checks.accounting')
+                                route().current('bounce.checks.accounting') ||
+                                route().current('redeem.reports.accounting')
                                 ,
                         }">Reports</Link>
                     <Link
