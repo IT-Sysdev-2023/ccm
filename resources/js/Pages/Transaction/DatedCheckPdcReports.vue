@@ -298,14 +298,11 @@ export default {
             this.isProgressShowing = true;
             this.isLoading = true;
 
-            const params = {
+            this.$inertia.get(route('generate_report.checks'), {
                 status: this.statusValue,
                 date_from: dayjs(this.dateRangeValue[0]).format("YYYY-MM-DD"),
                 date_to: dayjs(this.dateRangeValue[1]).format("YYYY-MM-DD"),
-            };
-            const urlWithParams =
-                "/generate_report?" + new URLSearchParams(params).toString();
-            window.location.href = urlWithParams;
+            });
         },
 
         openUpDetails(inData) {

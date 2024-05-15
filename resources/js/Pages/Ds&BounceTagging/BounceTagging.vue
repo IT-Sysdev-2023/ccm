@@ -70,7 +70,7 @@ const colors = "red";
                                     class="mx-1"
                                     size="small"
                                     ref="ref4"
-                           
+
                                     v-on:click="
                                         confirmBounceTagg(record.checks_id)
                                     "
@@ -345,7 +345,7 @@ export default {
                 try {
                     this.loading = true;
                     this.$inertia.get(
-                        route("bounce_tagging"),
+                        route("bounce.tagging"),
                         {
                             // page: this.page,
                             dt_year: this.dtYear.format("YYYY"),
@@ -363,7 +363,7 @@ export default {
     },
     methods: {
         onDateChange(dateObj, dateStr) {
-            this.$inertia.get(route("bounce_tagging"), {
+            this.$inertia.get(route("bounce.tagging"), {
                 dt_year: dateStr,
             });
         },

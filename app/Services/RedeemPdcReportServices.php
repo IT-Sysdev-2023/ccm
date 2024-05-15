@@ -161,7 +161,7 @@ class RedeemPdcReportServices extends ExcelWriter
         $this->getActiveSheetExcel()->getStyle('A' . $headerRow . ':M' . $headerRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $headerRow++;
 
-        $progressCount  = 1;
+        $progressCount  =  0;
 
         $itemCount = count($this->record);
 ;
