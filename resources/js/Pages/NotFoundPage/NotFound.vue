@@ -1,645 +1,225 @@
 <template>
-    <div class="body">
-        <div class="main_wrapper">
-            <div class="main">
-                <div class="antenna">
-                    <div class="antenna_shadow"></div>
-                    <div class="a1"></div>
-                    <div class="a1d"></div>
-                    <div class="a2"></div>
-                    <div class="a2d"></div>
-                    <div class="a_base"></div>
-                </div>
-                <div class="tv">
-                    <div class="cruve">
-                        <svg xml:space="preserve" viewBox="0 0 189.929 189.929"
-                            xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1"
-                            class="curve_svg">
-                            <path d="M70.343,70.343c-30.554,30.553-44.806,72.7-39.102,115.635l-29.738,3.951C-5.442,137.659,11.917,86.34,49.129,49.13
-        C86.34,11.918,137.664-5.445,189.928,1.502l-3.95,29.738C143.041,25.54,100.895,39.789,70.343,70.343z"></path>
-                        </svg>
-                    </div>
-                    <div class="display_div">
-                        <div class="screen_out">
-                            <div class="screen_out1">
-                                <div class="screen">
-                                    <span class="notfound_text"> NOT FOUND</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="lines">
-                        <div class="line1"></div>
-                        <div class="line2"></div>
-                        <div class="line3"></div>
-                    </div>
-                    <div class="buttons_div">
-                        <div class="b1">
-                            <div></div>
-                        </div>
-                        <div class="b2"></div>
-                        <div class="speakers">
-                            <div class="g1">
-                                <div class="g11"></div>
-                                <div class="g12"></div>
-                                <div class="g13"></div>
-                            </div>
-                            <div class="g"></div>
-                            <div class="g"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bottom">
-                    <div class="base1"></div>
-                    <div class="base2"></div>
-                    <div class="base3"></div>
-                </div>
+    <div class="flex items-center justify-center" style="height: 100vh; background: #1a1a1a;">
+        <div class="section-banner">
+            <div class="text-white">
+                Not found
             </div>
-            <div class="text_404">
-                <div class="text_4041">4</div>
-                <div class="text_4042">0</div>
-                <div class="text_4043">4</div>
+            <div id="star-1">
+                <div class="curved-corner-star">
+                    <div id="curved-corner-bottomright"></div>
+                    <div id="curved-corner-bottomleft"></div>
+                </div>
+                <div class="curved-corner-star">
+                    <div id="curved-corner-topright"></div>
+                    <div id="curved-corner-topleft"></div>
+                </div>
             </div>
 
+            <div id="star-2">
+                <div class="curved-corner-star">
+                    <div id="curved-corner-bottomright"></div>
+                    <div id="curved-corner-bottomleft"></div>
+                </div>
+                <div class="curved-corner-star">
+                    <div id="curved-corner-topright"></div>
+                    <div id="curved-corner-topleft"></div>
+                </div>
+            </div>
+
+            <div id="star-3">
+                <div class="curved-corner-star">
+                    <div id="curved-corner-bottomright"></div>
+                    <div id="curved-corner-bottomleft"></div>
+                </div>
+                <div class="curved-corner-star">
+                    <div id="curved-corner-topright"></div>
+                    <div id="curved-corner-topleft"></div>
+                </div>
+            </div>
+
+            <div id="star-4">
+                <div class="curved-corner-star">
+                    <div id="curved-corner-bottomright"></div>
+                    <div id="curved-corner-bottomleft"></div>
+                </div>
+                <div class="curved-corner-star">
+                    <div id="curved-corner-topright"></div>
+                    <div id="curved-corner-topleft"></div>
+                </div>
+            </div>
+
+            <div id="star-5">
+                <div class="curved-corner-star">
+                    <div id="curved-corner-bottomright"></div>
+                    <div id="curved-corner-bottomleft"></div>
+                </div>
+                <div class="curved-corner-star">
+                    <div id="curved-corner-topright"></div>
+                    <div id="curved-corner-topleft"></div>
+                </div>
+            </div>
+
+            <div id="star-6">
+                <div class="curved-corner-star">
+                    <div id="curved-corner-bottomright"></div>
+                    <div id="curved-corner-bottomleft"></div>
+                </div>
+                <div class="curved-corner-star">
+                    <div id="curved-corner-topright"></div>
+                    <div id="curved-corner-topleft"></div>
+                </div>
+            </div>
+
+            <div id="star-7">
+                <div class="curved-corner-star">
+                    <div id="curved-corner-bottomright"></div>
+                    <div id="curved-corner-bottomleft"></div>
+                </div>
+                <div class="curved-corner-star">
+                    <div id="curved-corner-topright"></div>
+                    <div id="curved-corner-topleft"></div>
+                </div>
+            </div>
         </div>
-
     </div>
 
 </template>
 
-
-<style scoped>
-/* Design Inspired by one of Stefan Devai's Design on Dribble */
-.body {
-    /* background: #000; */
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgb(199, 178, 158);
-
-}
-
-.main_wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30em;
-    z-index: 99;
-}
-
-.main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 5em;
-
-    /* background: #000; */
-}
-
-.antenna {
-    width: 5em;
-    height: 5em;
-    border-radius: 50%;
-    border: 2px solid black;
-    background-color: #f27405;
-    margin-bottom: -6em;
-    margin-left: 0em;
-    z-index: -1;
-}
-
-.antenna_shadow {
-    position: absolute;
-    background-color: transparent;
-    width: 50px;
-    height: 56px;
-    margin-left: 1.68em;
-    border-radius: 45%;
-    transform: rotate(140deg);
-    border: 4px solid transparent;
-    box-shadow: inset 0px 16px #a85103, inset 0px 16px 1px 1px #a85103;
-    -moz-box-shadow: inset 0px 16px #a85103, inset 0px 16px 1px 1px #a85103;
-}
-
-.antenna::after {
-    content: "";
-    position: absolute;
-    margin-top: -9.4em;
-    margin-left: 0.4em;
-    transform: rotate(-25deg);
-    width: 1em;
-    height: 0.5em;
-    border-radius: 50%;
-    background-color: #f69e50;
-}
-
-.antenna::before {
-    content: "";
-    position: absolute;
-    margin-top: 0.2em;
-    margin-left: 1.25em;
-    transform: rotate(-20deg);
-    width: 1.5em;
-    height: 0.8em;
-    border-radius: 50%;
-    background-color: #f69e50;
-}
-
-.a1 {
+<style>
+.section-banner {
+    height: 400px;
+    width: 400px;
     position: relative;
-    top: -102%;
-    left: -130%;
-    width: 12em;
-    height: 5.5em;
-    border-radius: 50px;
-    background-image: linear-gradient(#171717,
-            #171717,
-            #353535,
-            #353535,
-            #171717);
-    transform: rotate(-29deg);
-    clip-path: polygon(50% 0%, 49% 100%, 52% 100%);
-}
-
-.a1d {
-    position: relative;
-    top: -211%;
-    left: -35%;
-    transform: rotate(45deg);
-    width: 0.5em;
-    height: 0.5em;
+    transition: left 0.3s linear;
+    background: url('/images/globe.jpg');
+    background-size: cover;
+    background-position: left;
+    bottom: 0px;
     border-radius: 50%;
-    border: 2px solid black;
-    background-color: #979797;
-    z-index: 99;
+    animation: earthRotate 30s linear 0s infinite;
+    box-shadow: 0px 0 20px RGBA(255, 255, 255, 0.2), -5px 0px 8px #c3f4ff inset,
+        15px 2px 25px #000 inset, -24px -2px 34px #c3f4ff99 inset,
+        250px 0px 44px #00000066 inset, 150px 0px 38px #000000aa inset;
 }
 
-.a2 {
-    position: relative;
-    top: -210%;
-    left: -10%;
-    width: 12em;
-    height: 4em;
-    border-radius: 50px;
-    background-color: #171717;
-    background-image: linear-gradient(#171717,
-            #171717,
-            #353535,
-            #353535,
-            #171717);
-    margin-right: 5em;
-    clip-path: polygon(47% 0,
-            47% 0,
-            34% 34%,
-            54% 25%,
-            32% 100%,
-            29% 96%,
-            49% 32%,
-            30% 38%);
-    transform: rotate(-8deg);
-}
+@keyframes earthRotate {
+    0% {
+        background-position: 0 0;
+    }
 
-.a2d {
-    position: relative;
-    top: -294%;
-    left: 94%;
-    width: 0.5em;
-    height: 0.5em;
-    border-radius: 50%;
-    border: 2px solid black;
-    background-color: #979797;
-    z-index: 99;
-}
-
-.notfound_text {
-    background-color: black;
-    padding-left: 0.3em;
-    padding-right: 0.3em;
-    font-size: 0.75em;
-    color: white;
-    letter-spacing: 0;
-    border-radius: 5px;
-    z-index: 10;
-}
-
-.tv {
-    width: 17em;
-    height: 9em;
-    margin-top: 3em;
-    border-radius: 15px;
-    background-color: #d36604;
-    display: flex;
-    justify-content: center;
-    border: 2px solid #1d0e01;
-    box-shadow: inset 0.2em 0.2em #e69635;
-}
-
-.tv::after {
-    content: "";
-    position: absolute;
-    width: 17em;
-    height: 9em;
-    border-radius: 15px;
-    background: repeating-radial-gradient(#d36604 0 0.0001%, #00000070 0 0.0002%) 50% 0/2500px 2500px,
-        repeating-conic-gradient(#d36604 0 0.0001%, #00000070 0 0.0002%) 60% 60%/2500px 2500px;
-    background-blend-mode: difference;
-    opacity: 0.09;
-}
-
-.curve_svg {
-    position: absolute;
-    margin-top: 0.25em;
-    margin-left: -0.25em;
-    height: 12px;
-    width: 12px;
-}
-
-.display_div {
-    display: flex;
-    align-items: center;
-    align-self: center;
-    justify-content: center;
-    border-radius: 15px;
-    box-shadow: 3.5px 3.5px 0px #e69635;
-}
-
-.screen_out {
-    width: auto;
-    height: auto;
-
-    border-radius: 10px;
-}
-
-.screen_out1 {
-    width: 11em;
-    height: 7.75em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-}
-
-.screen {
-    width: 13em;
-    height: 7.85em;
-    font-family: Montserrat;
-    border: 2px solid #1d0e01;
-    background: repeating-radial-gradient(#000 0 0.0001%, #ffffff 0 0.0002%) 50% 0/2500px 2500px,
-        repeating-conic-gradient(#000 0 0.0001%, #ffffff 0 0.0002%) 60% 60%/2500px 2500px;
-    background-blend-mode: difference;
-    animation: b 0.2s infinite alternate;
-    border-radius: 10px;
-    z-index: 99;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: #252525;
-    letter-spacing: 0.15em;
-    text-align: center;
-}
-
-@keyframes b {
     100% {
-        background-position: 50% 0, 60% 50%;
+        background-position: 400px 0;
     }
 }
 
-
-
-.lines {
+.curved-corner-star {
     display: flex;
-    column-gap: 0.1em;
-    align-self: flex-end;
-}
-
-.line1,
-.line3 {
-    width: 2px;
-    height: 0.5em;
-    background-color: black;
-    border-radius: 25px 25px 0px 0px;
-    margin-top: 0.5em;
-}
-
-.line2 {
-    flex-grow: 1;
-    width: 2px;
-    height: 1em;
-    background-color: black;
-    border-radius: 25px 25px 0px 0px;
-}
-
-.buttons_div {
-    width: 4.25em;
-    align-self: center;
-    height: 8em;
-    background-color: #e69635;
-    border: 2px solid #1d0e01;
-    padding: 0.6em;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    row-gap: 0.75em;
-    box-shadow: 3px 3px 0px #e69635;
-}
-
-.b1 {
-    width: 1.65em;
-    height: 1.65em;
-    border-radius: 50%;
-    background-color: #7f5934;
-    border: 2px solid black;
-    box-shadow: inset 2px 2px 1px #b49577, -2px 0px #513721,
-        -2px 0px 0px 1px black;
-}
-
-.b1::before {
-    content: "";
-    position: absolute;
-    margin-top: 1em;
-    margin-left: 0.5em;
-    transform: rotate(47deg);
-    border-radius: 5px;
-    width: 0.1em;
-    height: 0.4em;
-    background-color: #000000;
-}
-
-.b1::after {
-    content: "";
-    position: absolute;
-    margin-top: 0.9em;
-    margin-left: 0.8em;
-    transform: rotate(47deg);
-    border-radius: 5px;
-    width: 0.1em;
-    height: 0.55em;
-    background-color: #000000;
-}
-
-.b1 div {
-    content: "";
-    position: absolute;
-    margin-top: -0.1em;
-    margin-left: 0.65em;
-    transform: rotate(45deg);
-    width: 0.15em;
-    height: 1.5em;
-    background-color: #000000;
-}
-
-.b2 {
-    width: 1.65em;
-    height: 1.65em;
-    border-radius: 50%;
-    background-color: #7f5934;
-    border: 2px solid black;
-    box-shadow: inset 2px 2px 1px #b49577, -2px 0px #513721,
-        -2px 0px 0px 1px black;
-}
-
-.b2::before {
-    content: "";
-    position: absolute;
-    margin-top: 1.05em;
-    margin-left: 0.8em;
-    transform: rotate(-45deg);
-    border-radius: 5px;
-    width: 0.15em;
-    height: 0.4em;
-    background-color: #000000;
-}
-
-.b2::after {
-    content: "";
-    position: absolute;
-    margin-top: -0.1em;
-    margin-left: 0.65em;
-    transform: rotate(-45deg);
-    width: 0.15em;
-    height: 1.5em;
-    background-color: #000000;
-}
-
-.speakers {
-    display: flex;
-    flex-direction: column;
-    row-gap: 0.5em;
-}
-
-.speakers .g1 {
-    display: flex;
-    column-gap: 0.25em;
-}
-
-.speakers .g1 .g11,
-.g12,
-.g13 {
-    width: 0.65em;
-    height: 0.65em;
-    border-radius: 50%;
-    background-color: #7f5934;
-    border: 2px solid black;
-    box-shadow: inset 1.25px 1.25px 1px #b49577;
-}
-
-.speakers .g {
-    width: auto;
-    height: 2px;
-    background-color: #171717;
-}
-
-.bottom {
-    width: 100%;
-    height: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    column-gap: 8.7em;
-}
-
-.base1 {
-    height: 1em;
-    width: 2em;
-    border: 2px solid #171717;
-    background-color: #4d4d4d;
-    margin-top: -0.15em;
-    z-index: -1;
-}
-
-.base2 {
-    height: 1em;
-    width: 2em;
-    border: 2px solid #171717;
-    background-color: #4d4d4d;
-    margin-top: -0.15em;
-    z-index: -1;
-}
-
-.base3 {
-    position: absolute;
-    height: 0.15em;
-    width: 17.5em;
-    background-color: #171717;
-    margin-top: 0.8em;
-}
-
-.text_404 {
-    position: absolute;
-    display: flex;
-    flex-direction: row;
-    column-gap: 6em;
-    z-index: -5;
-    margin-bottom: 2em;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.5;
-    font-family: Montserrat;
-}
-
-.text_4041 {
-    transform: scaleY(24.5) scaleX(9);
-}
-
-.text_4042 {
-    transform: scaleY(24.5) scaleX(9);
-}
-
-.text_4043 {
-    transform: scaleY(24.5) scaleX(9);
-}
-
-/*
-
-button {
     position: relative;
-    padding: 15px 45px;
-    background: #fec195;
-    font-size: 17px;
-    font-weight: 500;
-    color: #181818;
-    cursor: pointer;
-    border: 1px solid #fec195;
-    border-radius: 8px;
-    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.2));
 }
 
-button:hover {
-    border: 1px solid #f3b182;
-    background: linear-gradient(85deg,
-            #fec195,
-            #fcc196,
-            #fabd92,
-            #fac097,
-            #fac39c);
-    animation: wind 2s ease-in-out infinite;
+#curved-corner-bottomleft,
+#curved-corner-bottomright,
+#curved-corner-topleft,
+#curved-corner-topright {
+    width: 4px;
+    height: 5px;
+    overflow: hidden;
+    position: relative;
 }
 
-@keyframes wind {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    0% {
-        background-position: 50% 100%;
-    }
-
-    0% {
-        background-position: 0% 50%;
-    }
-}
-
-.icon-1 {
+#curved-corner-bottomleft:before,
+#curved-corner-bottomright:before,
+#curved-corner-topleft:before,
+#curved-corner-topright:before {
+    content: "";
+    display: block;
+    width: 200%;
+    height: 200%;
     position: absolute;
-    top: 0;
+    border-radius: 50%;
+}
+
+#curved-corner-bottomleft:before {
+    bottom: 0;
+    left: 0;
+    box-shadow: -5px 5px 0 0 white;
+}
+
+#curved-corner-bottomright:before {
+    bottom: 0;
     right: 0;
-    width: 25px;
-    transform-origin: 0 0;
-    transform: rotate(10deg);
-    transition: all 0.5s ease-in-out;
-    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
+    box-shadow: 5px 5px 0 0 white;
 }
 
-button:hover .icon-1 {
-    animation: slay-1 3s cubic-bezier(0.52, 0, 0.58, 1) infinite;
-    transform: rotate(10deg);
-}
-
-@keyframes slay-1 {
-    0% {
-        transform: rotate(10deg);
-    }
-
-    50% {
-        transform: rotate(-5deg);
-    }
-
-    100% {
-        transform: rotate(10deg);
-    }
-}
-
-.icon-2 {
-    position: absolute;
-    top: 0;
-    left: 25px;
-    width: 12px;
-    transform-origin: 50% 0;
-    transform: rotate(10deg);
-    transition: all 1s ease-in-out;
-    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.5));
-}
-
-button:hover .icon-2 {
-    animation: slay-2 3s cubic-bezier(0.52, 0, 0.58, 1) 1s infinite;
-    transform: rotate(0);
-}
-
-@keyframes slay-2 {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    50% {
-        transform: rotate(15deg);
-    }
-
-    100% {
-        transform: rotate(0);
-    }
-}
-
-.icon-3 {
-    position: absolute;
+#curved-corner-topleft:before {
     top: 0;
     left: 0;
-    width: 18px;
-    transform-origin: 50% 0;
-    transform: rotate(-5deg);
-    transition: all 1s ease-in-out;
-    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.5));
+    box-shadow: -5px -5px 0 0 white;
 }
 
-button:hover .icon-3 {
-    animation: slay-3 2s cubic-bezier(0.52, 0, 0.58, 1) 1s infinite;
-    transform: rotate(0);
+#curved-corner-topright:before {
+    top: 0;
+    right: 0;
+    box-shadow: 5px -5px 0 0 white;
 }
 
-@keyframes slay-3 {
-    0% {
-        transform: rotate(0deg);
+@keyframes twinkling {
+
+    0%,
+    100% {
+        opacity: 0.1;
     }
 
     50% {
-        transform: rotate(-5deg);
+        opacity: 1;
     }
+}
 
-    100% {
-        transform: rotate(0);
-    }
-} */
+#star-1 {
+    position: absolute;
+    left: -20px;
+    animation: twinkling 3s infinite;
+}
+
+#star-2 {
+    position: absolute;
+    left: -40px;
+    top: 30px;
+    animation: twinkling 2s infinite;
+}
+
+#star-3 {
+    position: absolute;
+    left: 350px;
+    top: 90px;
+    animation: twinkling 4s infinite;
+}
+
+#star-4 {
+    position: absolute;
+    left: 200px;
+    top: 290px;
+    animation: twinkling 3s infinite;
+}
+
+#star-5 {
+    position: absolute;
+    left: 50px;
+    top: 270px;
+    animation: twinkling 1.5s infinite;
+}
+
+#star-6 {
+    position: absolute;
+    left: 250px;
+    top: -50px;
+    animation: twinkling 4s infinite;
+}
+
+#star-7 {
+    position: absolute;
+    left: 290px;
+    top: 60px;
+    animation: twinkling 2s infinite;
+}
 </style>

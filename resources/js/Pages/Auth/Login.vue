@@ -62,7 +62,7 @@ const submit = () => {
                             <div id="input-area">
                                 <div class="form-inp flex">
                                     <UserOutlined class="mr-2 text-black" />
-                                    <input v-model="form.username" placeholder="Username" type="text" >
+                                    <input v-model="form.username"  @keyup.enter="submit" placeholder="Username" type="text" >
                                 </div>
                                 <div v-if="form.errors.username" class="text-white" style="
 

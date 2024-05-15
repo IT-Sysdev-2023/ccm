@@ -73,7 +73,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                         <a-row :gutter="[16, 16]" class="mt-4">
                             <a-col :span="8">
                                 <div class="walletBalanceCard" style="
-                                
+
                                         background: linear-gradient(
                                             to right,
                                             #378ce7,
@@ -102,7 +102,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             </a-col>
                             <a-col :span="8">
                                 <div class="walletBalanceCard" style="
-                                
+
                                         background: linear-gradient(
                                             to right,
                                             #ef4040,
@@ -130,7 +130,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             </a-col>
                             <a-col :span="8">
                                 <div class="walletBalanceCard" style="
-                                
+
                                         background: linear-gradient(
                                             to right,
                                             #219c90,
@@ -158,7 +158,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             </a-col>
                             <a-col :span="8">
                                 <div class="walletBalanceCard" style="
-                                
+
                                         background: linear-gradient(
                                             to right,
                                             #1d5b79,
@@ -188,7 +188,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             </a-col>
                             <a-col :span="8">
                                 <div class="walletBalanceCard" style="
-                                
+
                                         background: linear-gradient(
                                             to right,
                                             black,
@@ -216,7 +216,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             </a-col>
                             <a-col :span="8">
                                 <div class="walletBalanceCard" style="
-                                
+
                                         background: linear-gradient(
                                             to right,
                                             red,
@@ -250,78 +250,8 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                             <div id="chart">
                                 <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
                             </div>
-
                         </a-card>
-                        <!-- <p>{{ holiday }}</p> -->
-                        <a-collapse v-model:activeKey="activeKey" class="mt-10" style="
-                     
-                               
-                            ">
-                            <a-collapse-panel key="1" :header="activeKey == true
-                                ? 'Click here to hide this calendar...'
-                                : 'Click here to Open this calendar...'
-                                ">
-                                <a-calendar v-model:value="value">
-                                    <template #dateCellRender="{ current }">
-                                        <div :class="validateDayOfMonth(current) &&
-                                            someFunction(current)
-                                            ? 'bg-green-100 text-gray-500'
-                                            : someFunction(current)
-                                                ? 'bg-green-600 text-white'
-                                                : validateDayOfMonth(
-                                                    current
-                                                ) && isWeekend(current)
-                                                    ? 'bg-red-100 text-gray-500'
-                                                    : validateDayOfMonth(
-                                                        current
-                                                    )
-                                                        ? 'bg-blue-100 text-gray-500'
-                                                        : isWeekend(current)
-                                                            ? 'bg-red-400'
-                                                            : !someFunction(current)
-                                                                ? 'bg-blue-400'
-                                                                : ''
-                                            " style="
-                                                width: 100%;
-                                                height: 100%;
-                                                box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
-                                                border-radius: 4px;
-                                            ">
-                                            <span class="p-2"> </span>
-                                            <div class="text-center mt-1 text-xl">
-                                                {{ current.format("ddd") }}
-                                            </div>
-                                            <span v-if="someFunction(current)"
-                                                class="flex justify-center items-center mt-1" style="font-size: 11px">
-                                                <a-badge status="warning" />
-                                                {{
-                                                    holiday.find(
-                                                        (item) =>
-                                                            item.date?.date ===
-                                                            dayjs(
-                                                                current
-                                                            ).format(
-                                                                "YYYY-MM-DD"
-                                                            )
-                                                    ).title
-                                                }}
-                                            </span>
-                                        </div>
-                                    </template>
-                                    <template #monthCellRender="{ current }">
-                                        <!-- <div
-                                            v-if="getMonthData(current)"
-                                            class="notes-month"
-                                        >
-                                            <section>
-                                                {{ getMonthData(current) }}
-                                            </section>
-                                            <span>Backlog number</span>
-                                        </div> -->
-                                    </template>
-                                </a-calendar>
-                            </a-collapse-panel>
-                        </a-collapse>
+
                     </a-col>
                 </a-row>
             </div>
@@ -331,11 +261,11 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 
 <script>
 import dayjs from "dayjs";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+// import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+// import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
-dayjs.extend(isSameOrAfter);
-dayjs.extend(isSameOrBefore);
+// dayjs.extend(isSameOrAfter);
+// dayjs.extend(isSameOrBefore);
 
 export default {
     data() {
