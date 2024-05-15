@@ -22,7 +22,6 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                     <p class="card-content">
                                         This is the data of the Cheques
                                     </p>
-                                    <!-- <span class="see-more">See More</span> -->
                                 </div>
                                 <div class="date-box">
                                     <span class="month">Count</span>
