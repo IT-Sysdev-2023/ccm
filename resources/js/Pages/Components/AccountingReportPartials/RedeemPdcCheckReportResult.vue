@@ -40,7 +40,7 @@ export default {
             window.location.href = this.downloadExcel;
         },
         returnBack() {
-            this.$inertia.get(route('deposited.reports.accounting'));
+            this.$inertia.get(route('redeem.reports.accounting'));
         }
     }
 }
