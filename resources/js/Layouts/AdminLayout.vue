@@ -14,6 +14,7 @@ const visible = ref(false);
 const hide = () => {
     visible.value = false;
 };
+const selectedKeys = ref(['']);
 const placement = "bottom";
 </script>
 
@@ -30,20 +31,18 @@ const placement = "bottom";
                 </div>
             </div>
 
-            <a-menu theme="dark" mode="inline">
-                <a-menu-item key="1" :class="{
+            <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys">
+                <a-menu-item key="1"  :class="{
                     'bg-blue-500 text-white':
                         route().current('admin.dashboard'),
-                    'text-black-100': !route().current('admin.dashboard'),
                 }">
                     <DashboardOutlined />
                     <span>
                         <Link :href="route('admin.dashboard')">Dashboard</Link>
                     </span>
                 </a-menu-item>
-                <a-menu-item :class="{
+                <a-menu-item key="2" :class="{
                     'bg-blue-500 text-white': route().current('users.index'),
-                    'text-black-100': !route().current('users.index'),
                 }">
                     <UserOutlined />
                     <span>
@@ -93,7 +92,7 @@ const placement = "bottom";
                             <span>Reports</span>
                         </span>
                     </template>
-                    <a-menu-item :class="{
+                    <a-menu-item key="3" :class="{
                         'bg-blue-600 text-white':
                             route().current('reports.dpdc'),
                         'text-black-100':
@@ -104,7 +103,7 @@ const placement = "bottom";
                             <Link :href="route('reports.dpdc')">Dated / Pdc</Link>
                         </span>
                     </a-menu-item>
-                    <a-menu-item :class="{
+                    <a-menu-item key="4" :class="{
                         'bg-blue-600 text-white':
                             route().current('deposited.checks'),
                         'text-black-100':
@@ -115,7 +114,12 @@ const placement = "bottom";
                             <Link :href="route('deposited.checks')">Deposited</Link>
                         </span>
                     </a-menu-item>
-                    <a-menu-item>
+                    <a-menu-item key="5" :class="{
+                        'bg-blue-600 text-white':
+                            route().current('bounce.checks.report'),
+                        'text-black-100':
+                            !route().current('bounce.checks.report'),
+                    }">
                         <ShakeOutlined />
                         <span>  <Link :href="route('bounce.checks.report')">Bounce</Link></span>
                     </a-menu-item>
