@@ -75,6 +75,8 @@ Route::middleware('auth')->group(function () {
     Route::get('generate/report/excel', [ReportController::class, 'generate_reps_to_excel'])->name('excel.dpdc');
     Route::get('start/generating/depositedchecks', [ReportController::class, 'startGeneratingDepositedChecks'])->name('startgenerate.depchecks');
     Route::get('start/generating/bouncechecks', [ReportController::class, 'startGeneratingBounceCheckReport'])->name('startgenerate.bounceChecks');
+    Route::get('redeem/check/reports', [ReportController::class, 'redeemCheckReportsAdmin'])->name('redeem.reports.admin');
+    Route::get('start/generating/redeem/report', [ReportController::class, 'startGeneratingRedeemReports'])->name('start.generate.redeem.reports');
 
 
 

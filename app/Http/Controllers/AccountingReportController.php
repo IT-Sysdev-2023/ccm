@@ -9,7 +9,7 @@ use App\Models\NewBounceCheck;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
 use App\Services\BounceChequesAccountingReportService;
-use App\Services\RedeemPdcAccountingReportServices;
+use App\Services\RedeemPdcReportServices;
 use App\Services\DatedPdcCheckServices;
 use App\Services\DepositedChecksServices;
 use Illuminate\Http\Request;
@@ -388,7 +388,7 @@ class AccountingReportController extends Controller
             ->whereNotNull('b_atpgetdata')
             ->whereNotNull('b_encashstart')
             ->where('businessunit_id', $request->user()->businessunit_id)
-            ->get();
+            ->first();
 
         $dateRange = [$request->dateFrom, $request->dateTo];
 
@@ -402,7 +402,7 @@ class AccountingReportController extends Controller
             ->whereBetween('new_check_replacement.date_time', [$request->dateFrom, $request->dateTo])
             ->select('*', 'new_check_replacement.date_time', 'new_check_replacement.id')
             ->get();
-        return (new RedeemPdcAccountingReportServices)->record($data)->writeResult($dateRange, $bunit );
+        return (new RedeemPdcReportServices)->record($data)->writeResult($dateRange, $bunit );
     }
 
 }

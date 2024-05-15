@@ -6,10 +6,12 @@ use App\Helper\ColumnsHelper;
 use App\Helper\NumberHelper;
 use App\Models\BusinessUnit;
 use App\Models\NewBounceCheck;
+use App\Models\NewCheckReplacement;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
 use App\Services\ReportBounceCheckService;
 use App\Services\ReportDepositedCheckService;
+use App\Services\RedeemPdcReportServices;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -595,6 +597,62 @@ class ReportController extends Controller
 
         // dd($data->toArray());
         return (new ReportBounceCheckService())->record($data)->writeResult($request->bunitCode, $request->bounceStatus, $dateRange);
+    }
+
+    public function redeemCheckReportsAdmin(Request $request)
+    {
+
+        // dd($request->all());
+
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
+            ->whereNotNull('b_atpgetdata')
+            ->whereNotNull('b_encashstart')
+            ->where('businessunit_id', '!=', 61)
+            ->cursor();
+
+        $data = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->join('users', 'users.id', '=', 'new_check_replacement.user')
+            ->where('checks.businessunit_id', $request->bunitId)
+            ->where('new_check_replacement.status', '=', 'REDEEMED')
+            ->whereBetween('new_check_replacement.date_time', [$request->dateFrom, $request->dateTo])
+            ->select('*', 'new_check_replacement.date_time')
+            ->paginate(10)->withQueryString();
+            
+        return Inertia::render('Reports/RedeemCheckReports', [
+            'bunit' => $bunit,
+            'data' => $data,
+            'columns' => ColumnsHelper::$innerRedeemPdcReportsColumns,
+            'bunitBackend' => $request->bunitId == null ? null : intval($request->bunitId),
+            'dateRangeBackend' => empty([$request->dateFrom, $request->dateTo]) ? null : [$request->dateFrom, $request->dateTo],
+        ]);
+
+    }
+
+    public function startGeneratingRedeemReports(Request $request)
+    {
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
+            ->whereNotNull('b_atpgetdata')
+            ->whereNotNull('b_encashstart')
+            ->where('businessunit_id', $request->bunitId)
+            ->first();
+
+        $dateRange = [$request->dateFrom, $request->dateTo];
+
+        $data = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->join('users', 'users.id', '=', 'new_check_replacement.user')
+            ->where('checks.businessunit_id', $request->bunitId)
+            ->where('new_check_replacement.status', '=', 'REDEEMED')
+            ->whereBetween('new_check_replacement.date_time',  $dateRange)
+            ->select('*', 'new_check_replacement.date_time' , 'new_check_replacement.id')
+            ->get();
+
+            // dump($data);
+
+        return (new RedeemPdcReportServices)->record($data)->writeResult($dateRange, $bunit);
     }
 
 }

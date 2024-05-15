@@ -16,6 +16,23 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                     </p>
                 </div>
 
+
+                <div v-if="isGeneratingShow">
+                    <div class="flex justify-between mt-5">
+                        <div>
+                            <p> {{ progressBar.message }}{{ progressBar.currentRow
+                                }}
+                                to
+                                {{
+                                    progressBar.totalRows }}</p>
+                        </div>
+                    </div>
+                    <a-progress :stroke-color="{
+                        from: '#108ee9', to: '#87d068',
+                    }" :percent="progressBar.percentage" status="active" />
+                </div>
+
+
                 <a-card>
                     <div class="font-bold text-right text-gray-500 mb-5">
                         <p>
@@ -28,7 +45,8 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                 v-model:value="dateRange" @change="handleChangeDateRange" />
                         </div>
                         <div>
-                            <a-button type="primary" :loading="isLoading" @click="startGeneratingRepors" :disabled="data.data.length <= 0" >
+                            <a-button type="primary" :loading="isLoading" @click="startGeneratingRepors"
+                                :disabled="data.data.length <= 0">
                                 <template #icon>
                                     <CloudUploadOutlined />
                                 </template>
@@ -57,6 +75,13 @@ export default {
     },
     data() {
         return {
+            isGeneratingShow: false,
+            progressBar: {
+                currentRow: 0,
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+            },
             isLoading: false,
             isFetching: false,
             dateRange: this.dateRangeBackend ? [this.dateRangeBackend[0] ? dayjs(this.dateRangeBackend[0]) : null, this.dateRangeBackend[1] ? dayjs(this.dateRangeBackend[1]) : null] : null,
@@ -72,11 +97,19 @@ export default {
         },
         startGeneratingRepors() {
             this.isLoading = true;
+            this.isGeneratingShow = true;
             this.$inertia.get(route('start.generating.redpdc.accounting'), {
                 dateFrom: this.dateRangeBackend[0],
                 dateTo: this.dateRangeBackend[1],
             })
         }
+    },
+    mounted() {
+        this.$ws
+            .private(`generating-redeem-reports.${this.$page.props.auth.user.id}`)
+            .listen(".generating-redeem-reports", (e) => {
+                this.progressBar = e;
+            });
     }
 }
 </script>

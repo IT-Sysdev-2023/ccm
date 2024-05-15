@@ -123,9 +123,14 @@ const placement = "bottom";
                         <ShakeOutlined />
                         <span>  <Link :href="route('bounce.checks.report')">Bounce</Link></span>
                     </a-menu-item>
-                    <a-menu-item>
+                    <a-menu-item key="6" :class="{
+                        'bg-blue-600 text-white':
+                            route().current('redeem.reports.admin'),
+                        'text-black-100':
+                            !route().current('redeem.reports.admin'),
+                    }">
                         <TagOutlined />
-                        <span>Redeem</span>
+                        <span>  <Link :href="route('redeem.reports.admin')">Redeem</Link></span>
                     </a-menu-item>
                     <a-menu-item>
                         <RobotOutlined />

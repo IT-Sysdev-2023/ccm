@@ -20,7 +20,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                 <div class="content-box">
                                     <span class="card-title">Cheques</span>
                                     <p class="card-content">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                        This is the data of the Cheques
                                     </p>
                                     <!-- <span class="see-more">See More</span> -->
                                 </div>
@@ -37,7 +37,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                 <div class="content-box">
                                     <span class="card-title">Post Dated Cheques</span>
                                     <p class="card-content">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                        This is the data of the Cheques
                                     </p>
 
                                 </div>
@@ -54,7 +54,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                 <div class="content-box">
                                     <span class="card-title">Dated Cheques</span>
                                     <p class="card-content">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                        This is the data of the Cheques
                                     </p>
 
                                 </div>
@@ -72,7 +72,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                 <div class="content-box">
                                     <span class="card-title">Deposited Cheques</span>
                                     <p class="card-content">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                        This is the data of the Cheques
                                     </p>
 
                                 </div>
@@ -90,7 +90,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                 <div class="content-box">
                                     <span class="card-title">Bounce Cheques</span>
                                     <p class="card-content">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                        This is the data of the Cheques
                                     </p>
 
                                 </div>
@@ -108,7 +108,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                                 <div class="content-box">
                                     <span class="card-title">Replacement Cheques</span>
                                     <p class="card-content">
-                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                        This is the data of the Cheques
                                     </p>
 
                                 </div>
@@ -185,8 +185,8 @@ export default {
 .content-box .card-content {
     margin-top: 10px;
     font-size: 12px;
-    font-weight: 700;
-    color: #f2f2f2;
+    /* font-weight: 700; */
+    color: rgb(71, 71, 71);
     transition: all 0.5s ease-in-out;
     transform: translate3d(0px, 0px, 30px);
 }

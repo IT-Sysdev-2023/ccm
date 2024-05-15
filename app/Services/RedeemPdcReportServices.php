@@ -11,8 +11,9 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-class RedeemPdcAccountingReportServices extends ExcelWriter
+use Illuminate\Support\Facades\Auth;
+use App\Events\RedeemCheckReportEvents;
+class RedeemPdcReportServices extends ExcelWriter
 {
 
     protected $record;
@@ -123,12 +124,13 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
 
     public function writeResult($dateRange, $bunit)
     {
+        // dd($bunit->bname);
 
         $header = $this->generateUserHeader;
         // $replacementHeader = $this->generateReportHeader;
 
         $bStatusHeader = "REPLACED CHEQUES";
-        $bunitHeader = $bunit[0]->bname;
+        $bunitHeader = $bunit->bname;
 
         $bunitRow = 7;
         $headerRow = 2;
@@ -159,7 +161,11 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
         $this->getActiveSheetExcel()->getStyle('A' . $headerRow . ':M' . $headerRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $headerRow++;
 
-        $this->record->each(function ($item) use (&$excelRow, &$num, &$header, &$bunit) {
+        $progressCount  = 1;
+
+        $itemCount = count($this->record);
+;
+        $this->record->each(function ($item) use (&$excelRow, &$num, &$header, &$bunit, &$progressCount, $itemCount) {
 
             $replacedCheck = Checks::where('checks_id', $item->checks_id)
                 ->join('customers', 'customers.customer_id', '=', 'checks.customer_id')
@@ -231,21 +237,40 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
                 $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setName('Arial');
             }
 
-            $excelRow += 2;
+            $excelRow++;
 
-            $mode = NewCheckReplacement::where('new_check_replacement.id', '=', $item->id)
-                ->join('users', 'users.id', '=', 'new_check_replacement.user')
-                ->first();
-
-            if ($mode->mode == 'CASH') {
+            if ($item->mode == 'CASH') {
 
                 $queryReplaced = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
                     ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                     ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                     ->join('users', 'users.id', '=', 'new_check_replacement.user')
-                    ->where('checks.businessunit_id', '=', $bunit[0]->businessunit_id)
+                    ->where('checks.businessunit_id', '=', $bunit->businessunit_id)
                     ->where('new_check_replacement.id', $item->id)
                     ->select('*', 'new_check_replacement.date_time')->first();
+
+                $this->getActiveSheetExcel()->setCellValue('E' . $excelRow, 'REPLACEMENT MODE: CASH');
+                $this->getActiveSheetExcel()->mergeCells('E' . $excelRow . ':J' . $excelRow);
+                $style = $this->getActiveSheetExcel()->getStyle('E' . $excelRow . ':J' . $excelRow);
+                $font = $style->getFont();
+                $font->setBold(true);
+                $this->getActiveSheetExcel()->getStyle('E' . $excelRow . ':J' . $excelRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+                foreach (range('E', 'J') as $col) {
+                    $cell = $col . $excelRow;
+                    $fillColor = [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'CAF4FF'],
+                    ];
+                    $this->getActiveSheetExcel()->getStyle($col . $excelRow)->applyFromArray($this->border);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFill()->setFillType($fillColor['fillType']);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFill()->getStartColor()->setRGB($fillColor['startColor']['rgb']);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setSize(8);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setName('Arial');
+                }
+                $excelRow++;
 
                 $this->getActiveSheetExcel()->fromArray($this->generateReportHeader, null, 'E' . $excelRow);
                 foreach (range('E', 'J') as $col) {
@@ -266,12 +291,12 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
                 $excelRow++;
 
                 $dataCashCollection[] = [
-                    $queryReplaced->date_time,
-                    $queryReplaced->cash,
-                    $queryReplaced->penalty,
-                    $queryReplaced->ar_ds,
-                    $queryReplaced->reason,
-                    $queryReplaced->name,
+                    $queryReplaced->date_time ?? null,
+                    $queryReplaced->cash ?? null,
+                    $queryReplaced->penalty ?? null,
+                    $queryReplaced->ar_ds ?? null,
+                    $queryReplaced->reason ?? null,
+                    $queryReplaced->name ?? null,
                 ];
 
                 $this->spreadsheet->getActiveSheet()->fromArray($dataCashCollection, null, "E$excelRow");
@@ -286,14 +311,38 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
 
                 $excelRow += 2;
 
-            } elseif ($mode->mode == 'RE-DEPOSIT') {
+            } elseif ($item->mode == 'RE-DEPOSIT') {
+                // dd(1);
                 $queryReplaced = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
                     ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                     ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                     ->join('users', 'users.id', '=', 'new_check_replacement.user')
-                    ->where('checks.businessunit_id', '=', $bunit[0]->businessunit_id)
+                    ->where('checks.businessunit_id', '=', $bunit->businessunit_id)
                     ->where('new_check_replacement.id', $item->id)
                     ->select('*', 'new_check_replacement.date_time')->first();
+
+                $this->getActiveSheetExcel()->setCellValue('E' . $excelRow, 'REPLACEMENT MODE: RE-DEPOSIT');
+                $this->getActiveSheetExcel()->mergeCells('E' . $excelRow . ':J' . $excelRow);
+                $style = $this->getActiveSheetExcel()->getStyle('E' . $excelRow . ':J' . $excelRow);
+                $font = $style->getFont();
+                $font->setBold(true);
+                $this->getActiveSheetExcel()->getStyle('E' . $excelRow . ':J' . $excelRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+                foreach (range('E', 'J') as $col) {
+                    $cell = $col . $excelRow;
+                    $fillColor = [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'CAF4FF'],
+                    ];
+                    $this->getActiveSheetExcel()->getStyle($col . $excelRow)->applyFromArray($this->border);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFill()->setFillType($fillColor['fillType']);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFill()->getStartColor()->setRGB($fillColor['startColor']['rgb']);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setSize(8);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setName('Arial');
+                }
+                $excelRow++;
 
                 $this->getActiveSheetExcel()->fromArray($this->generateReportHeader, null, 'E' . $excelRow);
                 foreach (range('E', 'J') as $col) {
@@ -334,14 +383,39 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
 
                 $excelRow += 2;
 
-            } elseif ($mode->mode == 'CHECK') {
+            } elseif ($item->mode == 'CHECK') {
                 $queryReplaced = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
                     ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                     ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                     ->join('users', 'users.id', '=', 'new_check_replacement.user')
-                    ->where('checks.businessunit_id', '=', $bunit[0]->businessunit_id)
+                    ->where('checks.businessunit_id', '=', $bunit->businessunit_id)
                     ->where('new_check_replacement.id', $item->id)
                     ->select('*', 'new_check_replacement.date_time')->first();
+
+                    // dd($queryReplaced);
+
+                $this->getActiveSheetExcel()->setCellValue('E' . $excelRow, 'REPLACEMENT MODE: CHECK');
+                $this->getActiveSheetExcel()->mergeCells('E' . $excelRow . ':J' . $excelRow);
+                $style = $this->getActiveSheetExcel()->getStyle('E' . $excelRow . ':J' . $excelRow);
+                $font = $style->getFont();
+                $font->setBold(true);
+                $this->getActiveSheetExcel()->getStyle('E' . $excelRow . ':J' . $excelRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+                foreach (range('E', 'J') as $col) {
+                    $cell = $col . $excelRow;
+                    $fillColor = [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'CAF4FF'],
+                    ];
+                    $this->getActiveSheetExcel()->getStyle($col . $excelRow)->applyFromArray($this->border);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFill()->setFillType($fillColor['fillType']);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFill()->getStartColor()->setRGB($fillColor['startColor']['rgb']);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setSize(8);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setName('Arial');
+                }
+                $excelRow++;
 
                 $this->getActiveSheetExcel()->fromArray($this->generateCheckReportHeader, null, 'E' . $excelRow);
                 foreach (range('E', 'K') as $col) {
@@ -363,10 +437,12 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
                 $checkNumber = '';
                 $arDs = '';
 
-                $repCheckNumber = Checks::where('checks_id', '=', $queryReplaced->rep_check_id)->first();
+                // dd($queryReplaced->rep_check_id ?? null);
+
+                $repCheckNumber = Checks::where('checks_id', '=', $queryReplaced?->rep_check_id)->first();
 
                 $repArDs = NewDsChecks::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
-                    ->where('new_ds_checks.checks_id', '=', $queryReplaced->rep_check_id)
+                    ->where('new_ds_checks.checks_id', '=', $queryReplaced?->rep_check_id)
                     ->first();
 
                 if ($repCheckNumber == null) {
@@ -381,13 +457,13 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
                 }
 
                 $dataCheckCollection[] = [
-                    $queryReplaced->date_time,
-                    $queryReplaced->check_amount_paid,
-                    $checkNumber,
-                    $queryReplaced->penalty,
-                    $arDs,
-                    $queryReplaced->reason,
-                    $mode->name,
+                    $queryReplaced->date_time ?? null,
+                    $queryReplaced->check_amount_paid ?? null,
+                    $checkNumber ?? null,
+                    $queryReplaced->penalty ?? null,
+                    $arDs ?? null,
+                    $queryReplaced->reason ?? null,
+                    $item->name ?? null,
                 ];
 
                 $this->spreadsheet->getActiveSheet()->fromArray($dataCheckCollection, null, "E$excelRow");
@@ -401,14 +477,37 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
                 }
 
                 $excelRow += 2;
-            } elseif ($mode->mode == 'CHECK & CASH') {
+            } elseif ($item->mode == 'CHECK & CASH') {
                 $queryReplaced = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
                     ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                     ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                     ->join('users', 'users.id', '=', 'new_check_replacement.user')
-                    ->where('checks.businessunit_id', '=', $bunit[0]->businessunit_id)
+                    ->where('checks.businessunit_id', '=', $bunit->businessunit_id)
                     ->where('new_check_replacement.id', $item->id)
                     ->select('*', 'new_check_replacement.date_time')->first();
+
+                $this->getActiveSheetExcel()->setCellValue('E' . $excelRow, 'REPLACEMENT MODE: CHECK AND CASH');
+                $this->getActiveSheetExcel()->mergeCells('E' . $excelRow . ':J' . $excelRow);
+                $style = $this->getActiveSheetExcel()->getStyle('E' . $excelRow . ':J' . $excelRow);
+                $font = $style->getFont();
+                $font->setBold(true);
+                $this->getActiveSheetExcel()->getStyle('E' . $excelRow . ':J' . $excelRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+                foreach (range('E', 'J') as $col) {
+                    $cell = $col . $excelRow;
+                    $fillColor = [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'CAF4FF'],
+                    ];
+                    $this->getActiveSheetExcel()->getStyle($col . $excelRow)->applyFromArray($this->border);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFill()->setFillType($fillColor['fillType']);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFill()->getStartColor()->setRGB($fillColor['startColor']['rgb']);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setSize(8);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setName('Arial');
+                }
+                $excelRow++;
 
                 $this->getActiveSheetExcel()->fromArray($this->generateCheckCashReportHeader, null, 'E' . $excelRow);
 
@@ -431,10 +530,10 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
                 $checkNumber = '';
                 $arDs = '';
 
-                $repCheckNumber = Checks::where('checks_id', '=', $queryReplaced->rep_check_id)->first();
+                $repCheckNumber = Checks::where('checks_id', '=', $queryReplaced?->rep_check_id)->first();
 
                 $repArDs = NewDsChecks::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
-                    ->where('new_ds_checks.checks_id', '=', $queryReplaced->rep_check_id)
+                    ->where('new_ds_checks.checks_id', '=', $queryReplaced?->rep_check_id)
                     ->first();
 
                 if ($repCheckNumber == null) {
@@ -449,14 +548,14 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
                 }
 
                 $dataCheckCollection[] = [
-                    $queryReplaced->date_time,
-                    $queryReplaced->check_amount_paid,
-                    $checkNumber,
-                    $queryReplaced->cash,
-                    $queryReplaced->penalty,
-                    $arDs,
-                    $queryReplaced->reason,
-                    $mode->name,
+                    $queryReplaced->date_time ?? null,
+                    $queryReplaced->check_amount_paid ?? null,
+                    $checkNumber ?? null,
+                    $queryReplaced->cash ?? null,
+                    $queryReplaced->penalty ?? null,
+                    $arDs ?? null,
+                    $queryReplaced->reason ?? null,
+                    $item->name ?? null,
                 ];
 
                 $this->spreadsheet->getActiveSheet()->fromArray($dataCheckCollection, null, "E$excelRow");
@@ -489,25 +588,25 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
 
                 $excelRow++;
 
-                $replaceCheck = Checks::where('checks_id', $repCheckNumber->checks_id)
+                $replaceCheck = Checks::where('checks_id', $repCheckNumber?->checks_id)
                     ->join('customers', 'customers.customer_id', '=', 'checks.customer_id')
                     ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
                     ->join('department', 'department.department_id', '=', 'checks.department_from')
                     ->first();
 
                 $innerDataDetailsCollection[] = [
-                    $replaceCheck->check_received,
-                    $replaceCheck->check_date,
-                    $replaceCheck->account_no,
-                    $replaceCheck->account_name,
-                    $replaceCheck->bankbranchname,
-                    $replaceCheck->fullname,
-                    $replaceCheck->approving_officer,
-                    $replaceCheck->check_class,
-                    $replaceCheck->check_category,
-                    $replaceCheck->department,
-                    $replaceCheck->check_no,
-                    $replaceCheck->check_amount,
+                    $replaceCheck->check_received ?? null,
+                    $replaceCheck->check_date ?? null,
+                    $replaceCheck->account_no ?? null,
+                    $replaceCheck->account_name ?? null,
+                    $replaceCheck->bankbranchname ?? null,
+                    $replaceCheck->fullname ?? null,
+                    $replaceCheck->approving_officer ?? null,
+                    $replaceCheck->check_class ?? null,
+                    $replaceCheck->check_category ?? null,
+                    $replaceCheck->department ?? null,
+                    $replaceCheck->check_no ?? null,
+                    $replaceCheck->check_amount ?? null,
                 ];
 
                 $this->spreadsheet->getActiveSheet()->fromArray($innerDataDetailsCollection, null, "B$excelRow");
@@ -520,7 +619,29 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
                     $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setName('Arial');
                 }
                 $excelRow += 2;
-            } elseif ($mode->mode == 'PARTIAL') {
+            } elseif ($item->mode == 'PARTIAL') {
+                $this->getActiveSheetExcel()->setCellValue('E' . $excelRow, 'REPLACEMENT MODE: PARTIAL');
+                $this->getActiveSheetExcel()->mergeCells('E' . $excelRow . ':J' . $excelRow);
+                $style = $this->getActiveSheetExcel()->getStyle('E' . $excelRow . ':J' . $excelRow);
+                $font = $style->getFont();
+                $font->setBold(true);
+                $this->getActiveSheetExcel()->getStyle('E' . $excelRow . ':J' . $excelRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+                foreach (range('C', 'L') as $col) {
+                    $cell = $col . $excelRow;
+                    $fillColor = [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'CAF4FF'],
+                    ];
+                    $this->getActiveSheetExcel()->getStyle($col . $excelRow)->applyFromArray($this->border);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFill()->setFillType($fillColor['fillType']);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFill()->getStartColor()->setRGB($fillColor['startColor']['rgb']);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setSize(8);
+                    $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setName('Arial');
+                }
+                $excelRow++;
                 $this->getActiveSheetExcel()->fromArray($this->generatePartialReportHeader, null, 'C' . $excelRow);
                 foreach (range('C', 'K') as $col) {
                     $cell = $col . $excelRow;
@@ -537,9 +658,8 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
                     $this->getActiveSheetExcel()->getStyle($cell)->getFont()->setName('Arial');
                 }
 
-                $partialQuery = DB::table('new_check_replacement')
-                    ->join('users', 'users.id', '=', 'new_check_replacement.user')
-                    ->where('new_check_replacement.checks_id', $value->checks_id)
+                $partialQuery = NewCheckReplacement::join('users', 'users.id', '=', 'new_check_replacement.user')
+                    ->where('new_check_replacement.checks_id', $item->checks_id)
                     ->where('new_check_replacement.mode', 'PARTIAL')
                     ->get();
 
@@ -633,7 +753,10 @@ class RedeemPdcAccountingReportServices extends ExcelWriter
                 $excelRow += 2;
             }
 
+            RedeemCheckReportEvents::dispatch('Generating Redeem Checks excel... ', ++$progressCount, $itemCount, Auth::user());
+
         });
+        // dd(1);
         foreach (range('A', 'M') as $col) {
             $this->getActiveSheetExcel()->getColumnDimension($col)->setAutoSize(true);
         }
