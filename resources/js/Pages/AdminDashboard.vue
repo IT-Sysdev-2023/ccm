@@ -29,12 +29,13 @@ import dayjs from "dayjs";
             <a-row :gutter="[16, 16]">
 
                 <a-col :span="12">
-                    <div
-                        style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 1rem; box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;">
-                        <div id="chart">
-                            <p class="font-bold mb-20 text-center">
+                    <p class="font-bold mb-5 text-center">
                                 ALL CHECQUE COUNTS
                             </p>
+                    <div
+                        style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
+                        <div id="chart">
+
                             <apexchart style="height: 100px;" type="polarArea" width="600" :options="chartOptions"
                                 :series="series">
                             </apexchart>
@@ -42,12 +43,13 @@ import dayjs from "dayjs";
                     </div>
                 </a-col>
                 <a-col :span="12">
-                    <div
-                        style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 1rem; box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;">
-                        <div id="chart">
-                            <p class="font-bold text-center mb-20">
+                    <p class="font-bold text-center mb-5">
                                 WEEKLY ACTIVITIES
                             </p>
+                    <div
+                        style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
+                        <div id="chart">
+
                             <apexchart type="line" height="390" :options="chartOptions2" :series="series2"></apexchart>
                         </div>
 
