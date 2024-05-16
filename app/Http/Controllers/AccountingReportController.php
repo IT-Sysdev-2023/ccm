@@ -384,6 +384,7 @@ class AccountingReportController extends Controller
 
     public function startGeneratingRedeemPdcAccounting(Request $request)
     {
+        // dd($request->all());
         $bunit = BusinessUnit::whereNotNull('loc_code_atp')
             ->whereNotNull('b_atpgetdata')
             ->whereNotNull('b_encashstart')
@@ -402,7 +403,7 @@ class AccountingReportController extends Controller
             ->whereBetween('new_check_replacement.date_time', [$request->dateFrom, $request->dateTo])
             ->select('*', 'new_check_replacement.date_time', 'new_check_replacement.id')
             ->get();
-        return (new RedeemPdcReportServices)->record($data)->writeResult($dateRange, $bunit );
+        return (new RedeemPdcReportServices)->record($data)->writeResult($dateRange, $bunit , $request->reDirect);
     }
 
 }

@@ -101,6 +101,7 @@ export default {
             this.$inertia.get(route('start.generating.redpdc.accounting'), {
                 dateFrom: this.dateRangeBackend[0],
                 dateTo: this.dateRangeBackend[1],
+                reDirect: 1,
             })
         }
     },

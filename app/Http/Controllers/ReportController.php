@@ -633,6 +633,8 @@ class ReportController extends Controller
 
     public function startGeneratingRedeemReports(Request $request)
     {
+        // dd($request->all());
+
         $bunit = BusinessUnit::whereNotNull('loc_code_atp')
             ->whereNotNull('b_atpgetdata')
             ->whereNotNull('b_encashstart')
@@ -653,7 +655,7 @@ class ReportController extends Controller
 
             // dump($data);
 
-        return (new RedeemPdcReportServices)->record($data)->writeResult($dateRange, $bunit);
+        return (new RedeemPdcReportServices)->record($data)->writeResult($dateRange, $bunit, $request->reDirect);
     }
 
     public function checksInAltaReports(Request $request)

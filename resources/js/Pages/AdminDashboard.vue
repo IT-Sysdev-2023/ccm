@@ -29,7 +29,7 @@ import dayjs from "dayjs";
             <a-row :gutter="[16, 16]">
 
                 <a-col :span="12">
-                    <p class="font-bold mb-5 text-center">
+                    <p class="font-bold mb-5 text-gray-500 text-center">
                                 ALL CHECQUE COUNTS
                             </p>
                     <div
@@ -43,7 +43,7 @@ import dayjs from "dayjs";
                     </div>
                 </a-col>
                 <a-col :span="12">
-                    <p class="font-bold text-center mb-5">
+                    <p class="font-bold text-gray-500 text-center mb-5">
                                 WEEKLY ACTIVITIES
                             </p>
                     <div

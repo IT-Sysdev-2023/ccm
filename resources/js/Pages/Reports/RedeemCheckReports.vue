@@ -110,6 +110,7 @@ export default {
                 bunitId: this.bunitValue,
                 dateFrom: (this.dateRange && this.dateRange[0] !== null) ? dayjs(this.dateRange[0]).format('YYYY-MM-DD') : null,
                 dateTo: (this.dateRange && this.dateRange[1] !== null) ? dayjs(this.dateRange[1]).format('YYYY-MM-DD') : null,
+                reDirect: 2,
             });
         }
     },

@@ -33,6 +33,7 @@
 export default {
     props: {
         downloadExcel: Object,
+        url: String,
 
     },
     methods: {
@@ -40,7 +41,11 @@ export default {
             window.location.href = this.downloadExcel;
         },
         returnBack() {
-            this.$inertia.get(route('redeem.reports.accounting'));
+            if(this.url == '1'){
+                this.$inertia.get(route('redeem.reports.accounting'));
+            }else{
+                this.$inertia.get(route('redeem.reports.admin'));
+            }
         }
     }
 }

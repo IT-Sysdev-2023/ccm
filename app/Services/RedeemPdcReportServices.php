@@ -122,7 +122,7 @@ class RedeemPdcReportServices extends ExcelWriter
         return $this;
     }
 
-    public function writeResult($dateRange, $bunit)
+    public function writeResult($dateRange, $bunit, $url)
     {
         // dd($bunit->bname);
 
@@ -131,6 +131,7 @@ class RedeemPdcReportServices extends ExcelWriter
 
         $bStatusHeader = "REPLACED CHEQUES";
         $bunitHeader = $bunit->bname;
+        $dateGenerate = 'From ' .  date('F j Y', strtotime($dateRange[0])) . ' to '.  date('F j Y', strtotime($dateRange[1]));
 
         $bunitRow = 7;
         $headerRow = 2;
@@ -145,13 +146,13 @@ class RedeemPdcReportServices extends ExcelWriter
         $this->getActiveSheetExcel()->getStyle('A' . $headerRow . ':M' . $headerRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $headerRow++;
 
-        // $this->getActiveSheetExcel()->setCellValue('A' . $headerRow, $dateGenerate);
-        // $this->getActiveSheetExcel()->mergeCells('A' . $headerRow . ':M' . $headerRow);
-        // $style = $this->getActiveSheetExcel()->getStyle('A' . $headerRow . ':M' . $headerRow);
-        // $font = $style->getFont();
-        // $font->setBold(true);
-        // $this->getActiveSheetExcel()->getStyle('A' . $headerRow . ':M' . $headerRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        // $headerRow++;
+        $this->getActiveSheetExcel()->setCellValue('A' . $headerRow, $dateGenerate);
+        $this->getActiveSheetExcel()->mergeCells('A' . $headerRow . ':M' . $headerRow);
+        $style = $this->getActiveSheetExcel()->getStyle('A' . $headerRow . ':M' . $headerRow);
+        $font = $style->getFont();
+        $font->setBold(true);
+        $this->getActiveSheetExcel()->getStyle('A' . $headerRow . ':M' . $headerRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $headerRow++;
 
         $this->getActiveSheetExcel()->setCellValue('A' . $headerRow, $bunitHeader);
         $this->getActiveSheetExcel()->mergeCells('A' . $headerRow . ':M' . $headerRow);
@@ -765,8 +766,8 @@ class RedeemPdcReportServices extends ExcelWriter
         $writer = new Xlsx($this->spreadsheet);
         $writer->save($tempFilePath);
 
-        // $filename = $bunitHeader . ' Report from ' . date('F j Y', strtotime($dateFrom)) . ' to ' . date('F j Y', strtotime($dateTo)) . '.xlsx';
-        $filename = 'Sample' . '.xlsx';
+        $filename = $bunitHeader . ' Report from ' . date('F j Y', strtotime($dateRange[0])) . ' to ' . date('F j Y', strtotime($dateRange[1])) . '.xlsx';
+        // $filename = 'Sample' . '.xlsx';
         $filePath = storage_path('app/' . $filename);
 
         $writer->save($filePath);
@@ -775,6 +776,7 @@ class RedeemPdcReportServices extends ExcelWriter
 
         return Inertia::render('Components/AccountingReportPartials/RedeemPdcCheckReportResult', [
             'downloadExcel' => $downloadExcel,
+            'url' => $url
         ]);
 
     }
