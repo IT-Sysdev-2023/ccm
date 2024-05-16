@@ -14,6 +14,7 @@ use App\Http\Controllers\DsBounceTaggingController;
 use App\Http\Controllers\DatedPdcChecksController;
 use App\Http\Controllers\CheckReceivingController;
 use App\Http\Controllers\AccountingReportController;
+use App\Http\Controllers\AdjustmentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 
@@ -113,6 +114,9 @@ Route::middleware('auth')->group(function () {
     Route::get('search/bunit/name', [SearchInputController::class, 'searchBunit'])->name('search.bunit');
     Route::get('search/company/name', [SearchInputController::class, 'searchCompany'])->name('search.company');
 
+
+
+    Route::get('check/adjustments', [AdjustmentController::class, 'editChecksAdjustment'])->name('checks.adjustment');
 
 
     Route::get('check/for/clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');

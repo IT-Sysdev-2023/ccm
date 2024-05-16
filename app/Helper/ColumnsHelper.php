@@ -936,4 +936,31 @@ class ColumnsHelper
         ],
     ];
 
+    public static $checks_table_columns = [
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'check_received',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
+        ],
+        [
+            'title' => 'Customer Name',
+            'dataIndex' => 'fullname',
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_no',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
+        ],
+    ];
+
 }

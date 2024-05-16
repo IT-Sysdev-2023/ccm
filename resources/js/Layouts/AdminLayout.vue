@@ -56,9 +56,11 @@ const placement = "bottom";
                             <span>Adjusments</span>
                         </span>
                     </template>
-                    <a-menu-item>
+                    <a-menu-item key="8">
                         <EditOutlined />
-                        <span>Edit Details</span>
+                        <span>
+                            <Link :href="route('checks.adjustment')">Edit Checks </Link>
+                        </span>
                     </a-menu-item>
                     <a-menu-item>
                         <WalletOutlined />
@@ -101,6 +103,7 @@ const placement = "bottom";
                         <CalendarOutlined />
                         <span>
                             <Link :href="route('reports.dpdc')">Dated / Pdc</Link>
+
                         </span>
                     </a-menu-item>
                     <a-menu-item key="4" :class="{
