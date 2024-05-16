@@ -28,6 +28,8 @@ trait NewSavedChecksTraits
                     ->from('new_ds_checks')
                     ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
             });
+
+         
     }
 
     public function scopeJoinChecksCustomerBanksDepartment(Builder $builder)

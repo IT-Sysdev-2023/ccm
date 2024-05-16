@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::get('start/generating/bouncechecks', [ReportController::class, 'startGeneratingBounceCheckReport'])->name('startgenerate.bounceChecks');
     Route::get('redeem/check/reports', [ReportController::class, 'redeemCheckReportsAdmin'])->name('redeem.reports.admin');
     Route::get('start/generating/redeem/report', [ReportController::class, 'startGeneratingRedeemReports'])->name('start.generate.redeem.reports');
+    Route::get('alta-cita/report', [ReportController::class, 'checksInAltaReports'])->name('alta.reports');
 
 
 

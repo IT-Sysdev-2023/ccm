@@ -619,7 +619,7 @@ class ReportController extends Controller
             ->whereBetween('new_check_replacement.date_time', [$request->dateFrom, $request->dateTo])
             ->select('*', 'new_check_replacement.date_time')
             ->paginate(10)->withQueryString();
-            
+
         return Inertia::render('Reports/RedeemCheckReports', [
             'bunit' => $bunit,
             'data' => $data,
@@ -653,6 +653,37 @@ class ReportController extends Controller
             // dump($data);
 
         return (new RedeemPdcReportServices)->record($data)->writeResult($dateRange, $bunit);
+    }
+
+    public function checksInAltaReports(Request $request)
+    {
+        $checkFromTms = DB::connection('mysql2')
+        ->table('tbl_checks2')
+        ->join('tbl_sales', 'tbl_sales.sales_id', '=', 'tbl_checks2.sales_id')
+        ->join('tbl_bank', 'tbl_bank.bank_id', '=', 'tbl_checks2.bank_id')
+        ->where('tbl_checks2.check_date', 'LIKE', '%' . $request->altaDates . '%')
+        ->where('official_ds', '!=', '')
+        ->select(
+            'check_id',
+            'tbl_bank.bank',
+            'check_num',
+            'check_recieved',
+            'check_date',
+            'currency',
+            'official_ds',
+            (DB::raw('sum(tbl_checks2.amount) as amount'))
+        )
+        ->groupBy('official_ds', 'check_date')
+        ->paginate(10)->withQueryString();
+
+
+
+
+        return Inertia::render('Reports/ChecksAltaReports', [
+            'data' => empty($request->altaDates) ? [] : $checkFromTms,
+            'columns' => ColumnsHelper::$alta_citaCheckColumns,
+            'dateBackEnd' => empty($request->altaDates) ? null : $request->altaDates,
+        ]);
     }
 
 }

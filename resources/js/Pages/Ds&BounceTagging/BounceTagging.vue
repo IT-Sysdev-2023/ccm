@@ -18,7 +18,7 @@ const colors = "red";
 
     <TreasuryLayout>
         <template #header> </template>
-
+<!-- {{data}} -->
         <div class="py-5">
             <div class="max-full mx-auto sm:px-6 lg:px-8">
                 <div

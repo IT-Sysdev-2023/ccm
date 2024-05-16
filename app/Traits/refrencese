@@ -1,0 +1,22 @@
+
+        // dd($request->user()->businessunit_id);
+
+        // $data = NewDsChecks::with(['user', 'check.customer', 'check.bank', 'check.department'])
+        //     ->whereHas('check', function ($query) use ($request, $datedYear) {
+        //         $query->where('businessunit_id', $request->user()->businessunit_id);
+        //         $query->whereYear('check_received', $datedYear);
+        //         $query->where('check_no', 'like', '%' . $request->search . '%');
+        //     })
+        //     ->where('new_ds_checks.status', '=', '')
+        //     ->paginate(10)->withQueryString();
+
+        // // $data->transform(function ($value) {
+        // //     $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
+        // //     $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+        // //     $value->check_amount = NumberHelper::currency($value->check_amount);
+        // //     return $value;
+        // // });
+
+        // dd(Arr::flatten($data));
+
+        // // dd(collect($data)->values());

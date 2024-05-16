@@ -898,7 +898,41 @@ class ColumnsHelper
         ],
         [
             'title' => 'Details',
-            'key' => 'details'
+            'key' => 'details',
+        ],
+    ];
+    public static $alta_citaCheckColumns = [
+        [
+            'title' => 'Bank',
+            'dataIndex' => 'bank',
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_num',
+        ],
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'check_recieved',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
+        ],
+        [
+            'title' => 'Currency',
+            'dataIndex' => 'currency',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'amount',
+        ],
+        [
+            'title' => 'Ds No.',
+            'dataIndex' => 'official_ds',
+        ],
+        [
+            'title' => 'Details.',
+            'key' => 'details',
         ],
     ];
 

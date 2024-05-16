@@ -22,4 +22,17 @@ class NewDsChecks extends Model
     {
         return $this->belongsTo('App\Models\User', 'user', 'id');
     }
+    public function bank()
+    {
+        return $this->belongsTo('App\Models\Bank', 'bank_id', 'bank_id');
+    }
+    public function customer()
+    {
+        return $this->belongsTo('App\Models\Customer', 'customer_id', 'customer_id');
+    }
+    public function department()
+    {
+        return $this->belongsTo('App\Models\Department', 'department_id', 'department_from');
+    }
+
 }

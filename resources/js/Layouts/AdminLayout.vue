@@ -32,7 +32,7 @@ const placement = "bottom";
             </div>
 
             <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys">
-                <a-menu-item key="1"  :class="{
+                <a-menu-item key="1" :class="{
                     'bg-blue-500 text-white':
                         route().current('admin.dashboard'),
                 }">
@@ -121,7 +121,9 @@ const placement = "bottom";
                             !route().current('bounce.checks.report'),
                     }">
                         <ShakeOutlined />
-                        <span>  <Link :href="route('bounce.checks.report')">Bounce</Link></span>
+                        <span>
+                            <Link :href="route('bounce.checks.report')">Bounce</Link>
+                        </span>
                     </a-menu-item>
                     <a-menu-item key="6" :class="{
                         'bg-blue-600 text-white':
@@ -130,11 +132,20 @@ const placement = "bottom";
                             !route().current('redeem.reports.admin'),
                     }">
                         <TagOutlined />
-                        <span>  <Link :href="route('redeem.reports.admin')">Redeem</Link></span>
+                        <span>
+                            <Link :href="route('redeem.reports.admin')">Redeem</Link>
+                        </span>
                     </a-menu-item>
-                    <a-menu-item>
+                    <a-menu-item key="7" :class="{
+                        'bg-blue-600 text-white':
+                            route().current('alta.reports'),
+                        'text-black-100':
+                            !route().current('alta.reports'),
+                    }">
                         <RobotOutlined />
-                        <span>Alta Cita</span>
+                        <span>
+                            <Link :href="route('alta.reports')">Alta Cita</Link>
+                        </span>
                     </a-menu-item>
                 </a-sub-menu>
             </a-menu>
@@ -147,12 +158,12 @@ const placement = "bottom";
                         color: white;
                     ">
                     <div>
-                        <a-input-search v-model:value="value" class="mr-3"  placeholder="input search text" style="width: 300px"
-                            @search="onSearch" />
-                                <MessageOutlined  style="font-size: 25px; " class="mt-1 mr-3"/>
-                                <NotificationOutlined class="mr-3" style="font-size: 25px;"/>
-                                <BellOutlined class="mr-3" style="font-size: 25px;"/>
-                                <!-- <SettingOutlined class="mr-3" style="font-size: 25px;"/> -->
+                        <a-input-search v-model:value="value" class="mr-3" placeholder="input search text"
+                            style="width: 300px" @search="onSearch" />
+                        <MessageOutlined style="font-size: 25px; " class="mt-1 mr-3" />
+                        <NotificationOutlined class="mr-3" style="font-size: 25px;" />
+                        <BellOutlined class="mr-3" style="font-size: 25px;" />
+                        <!-- <SettingOutlined class="mr-3" style="font-size: 25px;"/> -->
                     </div>
 
                     <div>

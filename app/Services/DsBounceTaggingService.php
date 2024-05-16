@@ -2,23 +2,20 @@
 
 namespace App\Services;
 
+use App\Helper\ColumnsHelper;
+use App\Helper\NumberHelper;
+use App\Models\CheckHistory;
+use App\Models\Checks;
+use App\Models\NewBounceCheck;
+use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Helper\NumberHelper;
-use App\Helper\ColumnsHelper;
-use App\Models\NewBounceCheck;
-use App\Models\CheckHistory;
-use App\Models\Checks;
-use App\Models\NewDsChecks;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Response;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\LazyCollection;
 use Inertia\Inertia;
+use Illuminate\Support\Arr;
 
 class DsBounceTaggingService
 {
@@ -31,7 +28,7 @@ class DsBounceTaggingService
     {
         $this->newSavedChecks->findChecks($request->id)
             ->update([
-                'done' => $request->isCheck ? "check" : ""
+                'done' => $request->isCheck ? "check" : "",
             ]);
 
         $amount = $request->oldAmount;
@@ -50,6 +47,7 @@ class DsBounceTaggingService
 
     public function indexDsTagging(Request $request)
     {
+        // dd($query);
         $due_dates = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
             ->whereDate('checks.check_date', today()->toDateString())
             ->count();
@@ -60,7 +58,7 @@ class DsBounceTaggingService
 
         $ds_checks_table->transform(function ($value) {
             $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST-DATED';
-            $value->done = empty ($value->done) ? false : true;
+            $value->done = empty($value->done) ? false : true;
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             $value->check_amount = NumberHelper::float($value->check_amount);
@@ -74,7 +72,7 @@ class DsBounceTaggingService
             'due_dates' => $due_dates,
             'total' => [
                 'totalSum' => (float) $totalAmountActive,
-                'count' => $getAmount->count()
+                'count' => $getAmount->count(),
             ],
             'ds_c_table' => $ds_checks_table,
             'columns' => ColumnsHelper::$columns_ds_tagging,
@@ -107,9 +105,6 @@ class DsBounceTaggingService
         });
 
 
-
-
-
         return Inertia::render('Ds&BounceTagging/BounceTagging', [
             'data' => $data,
             'columns' => ColumnsHelper::$get_bounce_tagging_columns,
@@ -129,7 +124,7 @@ class DsBounceTaggingService
                 'checks_id' => $request->check_id,
                 'status' => 'bounce',
                 'date_time' => $request->date,
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
             ]);
 
             NewBounceCheck::create([
@@ -137,7 +132,7 @@ class DsBounceTaggingService
                 'check_type' => 'bounce',
                 'status' => '',
                 'date_time' => $request->date,
-                'user' => Auth::user()->id
+                'user' => Auth::user()->id,
             ]);
 
         });
@@ -162,7 +157,7 @@ class DsBounceTaggingService
                     'date_deposit' => $request->dateDeposit,
                     'user' => $request->user()->id,
                     'status' => '',
-                    'date_time' => now()
+                    'date_time' => now(),
                 ]);
 
             });
