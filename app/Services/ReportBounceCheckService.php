@@ -168,9 +168,11 @@ class ReportBounceCheckService extends ExcelWriter
         }
 
         if ($dateRange[0] == null) {
-            $dateGenerate = 'This day ' . today()->toFormattedDateString();
+            $dateGenerate = ' This day ' . today()->toFormattedDateString();
+            $filename = $bStatusHeader. $dateGenerate . '.xlsx';
         } else {
-            $dateGenerate = 'From ' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString();
+            $dateGenerate = ' From ' . Date::parse($dateRange[0])->toFormattedDateString() . ' To ' . Date::parse($dateRange[1])->toFormattedDateString();
+            $filename = $bStatusHeader. $dateGenerate . '.xlsx';
         }
 
         $this->getActiveSheetExcel()->setCellValue('A' . $headerRow, $bStatusHeader);
@@ -739,7 +741,7 @@ class ReportBounceCheckService extends ExcelWriter
         $writer = new Xlsx($this->spreadsheet);
         $writer->save($tempFilePath);
 
-        $filename = 'samplebounce' . '.xlsx';
+        // $filename = 'samplebounce' . '.xlsx';
         $filePath = storage_path('app/' . $filename);
 
         $writer->save($filePath);

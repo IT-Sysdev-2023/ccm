@@ -46,7 +46,7 @@ const colors = "red";
                         <a-select-option value="1">Pending Checks</a-select-option>
                         <a-select-option value="2">Settled Checks</a-select-option>
                     </a-select>
-                    <a-button style="width: 200px;" type="primary" ghost @click="fetchBounceData">
+                    <a-button style="width: 200px;" type="primary" ghost @click="fetchBounceData" :loading="isFetching">
                         <template #icon>
                             <LoginOutlined />
                         </template>
@@ -54,11 +54,11 @@ const colors = "red";
                     </a-button>
                 </div>
                 <div>
-                    <a-button class="mt-5" @click="startGeneratingBounceChecks">
+                    <a-button  :loading="isLoading" type="primary" class="mt-5" @click="startGeneratingBounceChecks" :disabled="data.data.length <= 0 || data.data == undefined">
                         <template #icon>
-                            <ExportOutlined />
+                            <CloudDownloadOutlined />
                         </template>
-                        start generating
+                        {{ isLoading ? 'Generating Cheques in progress...' : 'Start Generating Cheques'}}
                     </a-button>
                 </div>
             </div>
@@ -83,6 +83,8 @@ export default {
     data() {
         return {
             isGeneratingShow: false,
+            isLoading: false,
+            isFetching: false,
             bunitCode: this.bunitCodeBackend,
             bounceStatus: this.bounceValue,
             dateRangeValue: this.dateRangeBackend?.length > 0 ?
@@ -103,6 +105,7 @@ export default {
     },
     methods: {
         fetchBounceData() {
+            this.isFetching = true;
             if (!this.dateRangeValue) {
                 this.dateRangeValue = false;
             }
@@ -119,6 +122,7 @@ export default {
         },
         startGeneratingBounceChecks() {
             this.isGeneratingShow = true;
+            this.isLoading = true;
             this.$inertia.get(route('startgenerate.bounceChecks'), {
                 dateRangeArr0: this.dateRangeValue[0] === undefined ? null : dayjs(this.dateRangeValue[0]).format(
                     "YYYY-MM-DD"

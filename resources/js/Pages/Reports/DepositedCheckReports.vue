@@ -19,8 +19,6 @@ const colors = "red";
                     </a-breadcrumb-item>
                     <a-breadcrumb-item>Deposited Check Reports</a-breadcrumb-item>
                 </a-breadcrumb>
-
-
                 <div v-if="progressBarShowing" class="mb-5">
 
                     <div class="flex justify-between">
@@ -41,7 +39,7 @@ const colors = "red";
 
                 <div class="flex justify-between">
                     <div>
-                        <a-range-picker v-model:value="dateRangeValue" class="mb-5 mr-2" />
+                        <a-range-picker @change="handleDateChange" v-model:value="dateRangeValue" class="mb-5 mr-2" />
                         <a-select placeholder="Select Business Unit " ref="select" v-model:value="selectBunit"
                             style="width: 200px" @change="handleSelectBunitChange">
                             <a-select-option v-for="(item, key) in buData" :key="key"
@@ -61,9 +59,9 @@ const colors = "red";
                         <a-button :disabled="data.data.length <= 0" style="width: 230px;" type="primary"
                             @click="startGenerating" :loading="loadingGenButton">
                             <template #icon>
-                                <ExportOutlined />
+                                <CloudDownloadOutlined />
                             </template>
-                            {{ loadingGenButton ? 'Generating Excel...' : 'start generating' }}
+                            {{ loadingGenButton ? 'Generating Excel On Progress...' : 'Start Generating Cheques' }}
                         </a-button>
                     </div>
                 </div>
@@ -93,6 +91,7 @@ export default {
     data() {
         return {
             progressBarShowing: false,
+            disabledFetch: false,
             progressBar: {
                 percentage: 0,
                 department: "",
@@ -120,13 +119,8 @@ export default {
         fetchData() {
             this.loadingbutton = true;
             this.$inertia.get(route('deposited.checks'), {
-                dateRangeArr0: dayjs(this.dateRangeValue[0]).format(
-                    "YYYY-MM-DD"
-                ),
-                dateRangeArr1: dayjs(this.dateRangeValue[1]).format(
-                    "YYYY-MM-DD"
-                ),
-
+                dateRangeArr0: this.dateRangeArray0,
+                dateRangeArr1: this.dateRangeArray1,
                 bunitId: this.selectBunit,
             }, {
                 onSuccess: () => {
@@ -134,20 +128,25 @@ export default {
                 }
             });
         },
+        handleDateChange(dateObj, dateStr) {
+            this.dateRangeArray0 = dateStr[0];
+            this.dateRangeArray1 = dateStr[1];
+
+        },
         startGenerating() {
             this.progressBarShowing = true;
             this.loadingGenButton = true;
             this.$inertia.get(route('startgenerate.depchecks'), {
-                dateRangeArr0: dayjs(this.dateRangeValue[0]).format(
+                dateRangeArr0: this.dateRangeValue[0] === undefined ? null : dayjs(this.dateRangeValue[0]).format(
                     "YYYY-MM-DD"
                 ),
-                dateRangeArr1: dayjs(this.dateRangeValue[1]).format(
+                dateRangeArr1: this.dateRangeValue[1] === undefined ? null : dayjs(this.dateRangeValue[1]).format(
                     "YYYY-MM-DD"
                 ),
 
                 bunitId: this.selectBunit,
             });
-        }
+        },
     },
     mounted() {
         this.$ws
@@ -155,6 +154,9 @@ export default {
             .listen(".generating-deposited", (e) => {
                 this.progressBar = e;
             });
+
+
+
     }
 }
 </script>
