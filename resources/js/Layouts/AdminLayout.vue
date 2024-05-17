@@ -56,15 +56,21 @@ const placement = "bottom";
                             <span>Adjusments</span>
                         </span>
                     </template>
-                    <a-menu-item key="8">
+                    <a-menu-item key="8" :class="{
+                        'bg-blue-500 text-white': route().current('checks.adjustment'),
+                    }">
                         <EditOutlined />
                         <span>
                             <Link :href="route('checks.adjustment')">Edit Checks </Link>
                         </span>
                     </a-menu-item>
-                    <a-menu-item>
+                    <a-menu-item key="9" :class="{
+                        'bg-blue-500 text-white': route().current('deposit.adjustment'),
+                    }">
                         <WalletOutlined />
-                        <span>Deposit</span>
+                        <span>
+                            <Link :href="route('deposit.adjustment')">Deposit </Link>
+                        </span>
                     </a-menu-item>
                     <a-menu-item>
                         <ShakeOutlined />

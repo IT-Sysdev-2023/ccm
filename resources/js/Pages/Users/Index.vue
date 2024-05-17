@@ -196,14 +196,7 @@ const handleOpen = (val) => {
                                                     <a-spin size="small" />
                                                 </template>
                                             </a-select>
-                                            <div v-if="
-                                                createUsers.errors.department_id
-                                            " class="text-red-600 ml-2" style="font-size: 12px">
-                                                *{{
-                                                    createUsers.errors.department_id
-                                                }}
-                                            </div>
-
+                                                
                                             <p class="mt-3">Company</p>
                                             <a-select show-search placeholder="Search Department"
                                                 :default-active-first-option="false" v-model:value="createUsers.company_id

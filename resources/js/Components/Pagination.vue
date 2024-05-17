@@ -1,7 +1,7 @@
 <template>
     <a-row class="flex justify-between" align="middle">
         <a-col>
-            <a-typography-text>{{ `Showing ${datarecords.from || 0} to ${datarecords.to || 0} of ${datarecords.total}
+            <a-typography-text>{{ `Showing ${datarecords.from || 0} to ${datarecords.to || 0} of ${datarecords.total.toLocaleString()}
                 records` }}
             </a-typography-text>
         </a-col>

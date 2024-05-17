@@ -940,14 +940,17 @@ class ColumnsHelper
         [
             'title' => 'Check Received',
             'dataIndex' => 'check_received',
+            'align' => 'center'
         ],
         [
             'title' => 'Check Date',
             'dataIndex' => 'check_date',
+            'align' => 'center'
         ],
         [
             'title' => 'Customer Name',
             'dataIndex' => 'fullname',
+            'align' => 'center'
         ],
         [
             'title' => 'Check Number',
@@ -960,6 +963,50 @@ class ColumnsHelper
         [
             'title' => 'Action',
             'key' => 'action',
+            'align' => 'center'
+        ],
+    ];
+    public static $deposit_adjustment_columns = [
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'check_received',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
+        ],
+        [
+            'title' => 'Date Deposit',
+            'dataIndex' => 'date_deposit',
+        ],
+        [
+            'title' => 'Customer Name',
+            'dataIndex' => 'fullname',
+        ],
+        [
+            'title' => 'Check No',
+            'dataIndex' => 'check_no',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+        ],
+        [
+            'title' => 'Ds No.',
+            'dataIndex' => 'ds_no',
+        ],
+        [
+            'title' => 'User',
+            'dataIndex' => 'name',
+        ],
+        [
+            'title' => 'Status',
+            'dataIndex' => 'check_status',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
+            'align' => 'center'
         ],
     ];
 
