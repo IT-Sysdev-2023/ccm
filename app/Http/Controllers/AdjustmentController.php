@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Helper\ColumnsHelper;
 use App\Models\BusinessUnit;
 use App\Models\Checks;
+use App\Models\NewBounceCheck;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AdjustmentController extends Controller
@@ -34,10 +36,7 @@ class AdjustmentController extends Controller
             ->paginate(10)->withQueryString();
 
         // dd($data->toArray());
-        $data->transform(function ($value) {
-            $type = $value->check_date <= date('Y-m-d') ? 'DATED' : 'POST DATED';
-            return $value;
-        });
+
         return Inertia::render('Adjustments/EditCheckDetails', [
             'data' => $data,
             'bunit' => $bunit,
@@ -104,15 +103,54 @@ class AdjustmentController extends Controller
 
         return redirect()->back();
     }
-    public function bounceChecksAdjustments()
+    public function bounceChecksAdjustments(Request $request)
     {
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
+            ->whereNotNull('b_atpgetdata')
+            ->whereNotNull('b_encashstart')
+            ->where('businessunit_id', '!=', 61)
+            ->get();
 
-        return Inertia::render('Adjustments/DepositDetails', [
+        $data = NewBounceCheck::join('checks', 'checks.checks_id', '=', 'new_bounce_check.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->where('new_bounce_check.status', '=', '')
+            ->where('checks.businessunit_id', $request->bunitId)
+            ->select('check_received', 'check_date', 'new_bounce_check.date_time', 'fullname', 'check_no', 'new_bounce_check.checks_id', 'check_amount', 'new_bounce_check.id')
+            ->paginate(10)->withQueryString();
+
+        $data->transform(function ($value) {
+            $value->type = $value->check_date <= date('Y-m-d') ? 'DATED' : 'POST DATED';
+            $value->statusType = 'BOUNCE';
+
+            return $value;
+        });
+
+        // dd($data->toArray());
+
+        return Inertia::render('Adjustments/BounceDetails', [
             'data' => $data,
             'bunit' => $bunit,
-            'columns' => ColumnsHelper::$deposit_adjustment_columns,
-            'yearBackend' => empty($request->datedYear) ? null : $request->datedYear,
+            'columns' => ColumnsHelper::$bounce_adjustment_columns,
             'bunitBackend' => empty($request->bunitId) ? [] : intval($request->bunitId),
         ]);
+    }
+
+    public function reBounceCheckAdjustments(Request $request)
+    {
+        // dd(1);
+        DB::transaction(function () use ($request) {
+
+            Checks::where('checks_id', $request->checksId)->update(['check_status' => 'CLEARED']);
+
+            NewSavedChecks::where('checks_id', $request->checksId)->update(['status' => '']);
+
+            NewDsChecks::where('checks_id', $request->checksId)->update(['status' => '']);
+
+            NewBounceCheck::where('checks_id', $request->checksId)->delete();
+
+        });
+
+        return redirect()->back();
+
     }
 }

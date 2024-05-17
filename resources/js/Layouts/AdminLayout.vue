@@ -72,9 +72,13 @@ const placement = "bottom";
                             <Link :href="route('deposit.adjustment')">Deposit </Link>
                         </span>
                     </a-menu-item>
-                    <a-menu-item>
+                    <a-menu-item key="10" :class="{
+                        'bg-blue-500 text-white': route().current('bounce.checks.adjustments'),
+                    }">
                         <ShakeOutlined />
-                        <span>Bounce</span>
+                        <span>
+                            <Link :href="route('bounce.checks.adjustments')">Bounce </Link>
+                        </span>
                     </a-menu-item>
                     <a-menu-item>
                         <RollbackOutlined />

@@ -940,17 +940,17 @@ class ColumnsHelper
         [
             'title' => 'Check Received',
             'dataIndex' => 'check_received',
-            'align' => 'center'
+            'align' => 'center',
         ],
         [
             'title' => 'Check Date',
             'dataIndex' => 'check_date',
-            'align' => 'center'
+            'align' => 'center',
         ],
         [
             'title' => 'Customer Name',
             'dataIndex' => 'fullname',
-            'align' => 'center'
+            'align' => 'center',
         ],
         [
             'title' => 'Check Number',
@@ -963,7 +963,7 @@ class ColumnsHelper
         [
             'title' => 'Action',
             'key' => 'action',
-            'align' => 'center'
+            'align' => 'center',
         ],
     ];
     public static $deposit_adjustment_columns = [
@@ -1006,7 +1006,46 @@ class ColumnsHelper
         [
             'title' => 'Action',
             'key' => 'action',
-            'align' => 'center'
+            'align' => 'center',
+        ],
+    ];
+
+    public static $bounce_adjustment_columns = [
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'check_received',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
+        ],
+        [
+            'title' => 'Bounce Date',
+            'dataIndex' => 'date_time',
+        ],
+        [
+            'title' => 'Customer Name',
+            'dataIndex' => 'fullname',
+        ],
+        [
+            'title' => 'Check No',
+            'dataIndex' => 'check_no',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+        ],
+        [
+            'title' => 'Type',
+            'dataIndex' => 'type',
+        ],
+        [
+            'title' => 'Status',
+            'dataIndex' => 'statusType',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
         ],
     ];
 

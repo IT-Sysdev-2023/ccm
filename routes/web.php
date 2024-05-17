@@ -120,7 +120,8 @@ Route::middleware('auth')->group(function () {
     Route::put('update/adjustments', [AdjustmentController::class, 'updateCheckAdjustments'])->name('update.adjustments');
     Route::get('deposit/adjustments', [AdjustmentController::class, 'depositAdjustments'])->name('deposit.adjustment');
     Route::put('dsNumber/adjustments', [AdjustmentController::class, 'updateDsNumber'])->name('update.dsNo.adjustments');
-    Route::put('bounce/adjustments', [AdjustmentController::class, 'bounceChecksAdjustments'])->name('c');
+    Route::get('bounce/adjustments', [AdjustmentController::class, 'bounceChecksAdjustments'])->name('bounce.checks.adjustments');
+    Route::put('rebounce/adjustments', [AdjustmentController::class, 'reBounceCheckAdjustments'])->name('rebounce.adjustments');
 
 
     Route::get('check/for/clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
