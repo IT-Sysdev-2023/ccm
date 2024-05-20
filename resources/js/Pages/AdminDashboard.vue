@@ -50,7 +50,7 @@
                 </a-col>
                 <a-col :span="8">
                     <p class="font-bold mb-5 text-gray-500 text-center">
-                        Online users
+                      ( {{ getOnlineUsers.length }} )  Online users
                     </p>
                     <a-card>
                         <a-card v-for="item in getOnlineUsers" class="mb-1">
