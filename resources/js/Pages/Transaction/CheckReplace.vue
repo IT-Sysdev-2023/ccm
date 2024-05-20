@@ -1,16 +1,5 @@
-<script setup>
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-</script>
-
 <template>
     <Head title="Dashboard" />
-
-    <TreasuryLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                This is treasury Dashboard
-            </h2>
-        </template>
 
         <div class="py-0">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
@@ -124,7 +113,6 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                 </a-card>
             </div>
         </div>
-    </TreasuryLayout>
     <a-modal
         v-model:open="openModalCheck"
         width="1000px"
@@ -514,8 +502,10 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 
 <script>
 import Pagination from "@/Components/Pagination.vue";
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 
 export default {
+    layout: TreasuryLayout,
     data() {
         return {
             isloadingtable: false,

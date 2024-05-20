@@ -1,13 +1,8 @@
-<script setup>
-import AdminLayout from "@/Layouts/AdminLayout.vue";
-import dayjs from "dayjs";
-</script>
 
 <template>
 
     <Head title="Dashboard" />
 
-    <AdminLayout>
         <!-- <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Dashboard
@@ -25,13 +20,12 @@ import dayjs from "dayjs";
                 </a-breadcrumb-item>
                 <a-breadcrumb-item>Charts</a-breadcrumb-item>
             </a-breadcrumb>
-
             <a-row :gutter="[16, 16]">
 
-                <a-col :span="12">
+                <a-col :span="16">
                     <p class="font-bold mb-5 text-gray-500 text-center">
-                                ALL CHECQUE COUNTS
-                            </p>
+                        ALL CHECQUE COUNTS
+                    </p>
                     <div
                         style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
                         <div id="chart">
@@ -41,11 +35,10 @@ import dayjs from "dayjs";
                             </apexchart>
                         </div>
                     </div>
-                </a-col>
-                <a-col :span="12">
-                    <p class="font-bold text-gray-500 text-center mb-5">
-                                WEEKLY ACTIVITIES
-                            </p>
+
+                    <p class="font-bold text-gray-500 text-center mb-5 mt-10">
+                        WEEKLY ACTIVITIES
+                    </p>
                     <div
                         style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
                         <div id="chart">
@@ -55,12 +48,35 @@ import dayjs from "dayjs";
 
                     </div>
                 </a-col>
+                <a-col :span="8">
+                    <p class="font-bold mb-5 text-gray-500 text-center">
+                        Online users
+                    </p>
+                    <a-card>
+                        <a-card v-for="item in getOnlineUsers" class="mb-1">
+                            <div class="flex">
+                                <span><img src="/ccmlogo/onlinebadge.png" style="height: 20px; position: relative; left: 57px;" alt=""></span>
+                                <img src="/ccmlogo/lgremove.png" style="height: 50px; background: #000; border-radius: 50%" class="mr-5"alt="img">
+                                <p>
+                                    {{ item.name }} <br>
+                                    {{ item.usertype == 1 ? 'Admin' : item.usertype == 9 ? 'Treasury' : 'Accounting' }}
+
+                                </p>
+                            </div>
+                        </a-card>
+                    </a-card>
+                </a-col>
             </a-row>
         </div>
-    </AdminLayout>
 </template>
 <script>
+import AdminLayout from "@/Layouts/AdminLayout.vue";
+import dayjs from "dayjs";
+import { mapState, mapActions } from 'pinia'
+import { useOnlineUsersStore } from '@/stores/online-users'
 export default {
+
+    layout: AdminLayout,
     props: {
         pmCounts: Object,
         icm: Object,
@@ -71,6 +87,7 @@ export default {
     },
     data() {
         return {
+
             series: [this.pmCounts, this.icm, this.asc],
             chartOptions: {
                 chart: {
@@ -163,5 +180,10 @@ export default {
             },
         };
     },
+
+    computed: {
+        ...mapState(useOnlineUsersStore, ['getOnlineUsers']),
+    },
+
 };
 </script>

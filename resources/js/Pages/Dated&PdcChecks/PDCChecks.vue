@@ -1,18 +1,7 @@
-<script setup>
-import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
-import { ref } from 'vue';
-
-const size = ref('large');
-</script>
-
 <template>
 
     <Head title="Dashboard" />
 
-    <TreasuryLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">This is treasury Dashboard</h2>
-        </template>
         <div class="py-0">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mt-3 mb-3">
@@ -1345,15 +1334,17 @@ const size = ref('large');
                 </a-col>
             </a-row>
         </a-modal>
-    </TreasuryLayout>
 </template>
 <script>
+import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
+import { ref } from 'vue';
 import Pagination from "@/Components/Pagination.vue"
 import dayjs from 'dayjs';
 import { useForm } from '@inertiajs/vue3';
 import { message } from 'ant-design-vue';
 import debounce from 'lodash/debounce'
 export default {
+    layout: TreasuryLayout,
     data() {
         return {
             isActive: null,

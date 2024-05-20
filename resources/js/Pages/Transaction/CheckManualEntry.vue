@@ -1,16 +1,5 @@
-<script setup>
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-</script>
-
 <template>
     <Head title="Dashboard" />
-
-    <TreasuryLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                This is treasury Dashboard
-            </h2>
-        </template>
 
         <div class="py-2">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
@@ -719,16 +708,17 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                 </table>
             </div>
         </a-modal>
-    </TreasuryLayout>
 </template>
 
 <script>
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 import { message } from "ant-design-vue";
 import debounce from "lodash/debounce";
 import Pagination from "@/Components/Pagination.vue";
 import { useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 export default {
+    layout: TreasuryLayout,
     data() {
         return {
             isloadingtable: false,

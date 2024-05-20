@@ -1,10 +1,7 @@
 <script setup>
 import { ref } from "vue";
-import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import Dropdown from "@/Components/Dropdown.vue";
-import DropdownLink from "@/Components/DropdownLink.vue";
+import { Link } from '@inertiajs/vue3';
 import NavLink from "@/Components/NavLink.vue";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 
 const placements = "bottom";
 
@@ -19,7 +16,7 @@ const hide = () => {
 <template>
     <div>
         <div class="min-h-screen">
-            <header v-if="$slots.header" style="width: 100%; background: #001529; margin-top: -7px">
+            <header style="width: 100%; background: #001529; margin-top: -7px">
                 <div class="px-4">
                     <div class="flex items-center justify-between">
                         <div class="flex shrink-0">
@@ -47,25 +44,18 @@ const hide = () => {
                                 }" :href="route('indeximportupdates')">
                             <CloudUploadOutlined /> Import&Update Checks
                             </Link>
-                            <a-dropdown arrow :placement="placements">
-                                <a :class="{
-                                    'bg-blue-600 text-white':
-                                        route().current(
-                                            'check_for.clearing'
-                                        ) ||
-                                        route().current(
-                                            'pdc_clearing.checks'
-                                        ) ||
-                                        route().current('leasing.checks'),
-                                    'text-white':
-                                        !route().current(
-                                            'check_for.clearing'
-                                        ) ||
-                                        !route().current(
-                                            'pdc_clearing.checks'
-                                        ) ||
-                                        !route().current('leasing.checks'),
-                                }" class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
+                            <a-dropdown :class="{
+                                'bg-blue-600 text-white':
+                                    route().current(
+                                        'check_for.clearing'
+                                    ) ||
+                                    route().current(
+                                        'leasing.checks'
+                                    ) || route().current(
+                                        'pdc_clearing.checks'
+                                    )
+                            }" :placement="placements">
+                                <a class="inline-block px-3 p-4 mt-2 text-sm text-white transition-all duration-200"
                                     href="#">
                                     <CheckCircleOutlined /> Check Receiving
                                 </a>
@@ -113,15 +103,15 @@ const hide = () => {
                                     </a-menu>
                                 </template>
                             </a-dropdown>
-                            <a-dropdown arrow :placement="placements">
-                                <a :class="{
-                                    'bg-blue-600 text-white':
-                                        route().current('dated.checks') ||
-                                        route().current('pdc.checks'),
-                                    'text-white':
-                                        !route().current('dated.checks') ||
-                                        !route().current('pdc.checks'),
-                                }" class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
+                            <a-dropdown :placement="placements" :class="{
+                                'bg-blue-600 text-white':
+                                    route().current('dated.checks') ||
+                                    route().current('pdc.checks'),
+                                'text-white':
+                                    !route().current('dated.checks') ||
+                                    !route().current('pdc.checks'),
+                            }">
+                                <a class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
                                     href="#">
                                     <CalendarOutlined /> Dated Checks/Pdc
                                 </a>
@@ -156,17 +146,17 @@ const hide = () => {
                                     </a-menu>
                                 </template>
                             </a-dropdown>
-                            <a-dropdown arrow :placement="placements">
+                            <a-dropdown :placement="placements" :class="{
+                                'bg-blue-600 text-white':
+                                    route().current('bounce.tagging') ||
+                                    route().current('ds_tagging'),
+                                'text-black-100':
+                                    !route().current(
+                                        'bounce.tagging'
+                                    ) && !route().current('ds_tagging'),
+                            }">
                                 <a class="inline-block px-3 mt-2 p-4 text-sm text-white transition-all duration-200"
-                                    :class="{
-                                        'bg-blue-600 text-white':
-                                            route().current('bounce.tagging') ||
-                                            route().current('ds_tagging'),
-                                        'text-black-100':
-                                            !route().current(
-                                                'bounce.tagging'
-                                            ) && !route().current('ds_tagging'),
-                                    }" href="#">
+                                    href="#">
                                     <FundOutlined /> Ds/Bounce Tagging
                                 </a>
 
@@ -200,43 +190,43 @@ const hide = () => {
                                     </a-menu>
                                 </template>
                             </a-dropdown>
-                            <a-dropdown arrow :placement="placements">
-                                <a :class="{
-                                    'bg-blue-600 text-white':
-                                        route().current(
-                                            'manual_entry.checks'
-                                        ) ||
-                                        route().current(
-                                            'mergechecks.checks'
-                                        ) ||
-                                        route().current('bounce.checks') ||
-                                        route().current('replace.checks') ||
-                                        route().current(
-                                            'partial_payments.checks'
-                                        ) ||
-                                        route().current('dcpdc.checks') ||
-                                        route().current(
-                                            'duePdcReports.checks'
-                                        ),
-                                    'text-white':
-                                        !route().current(
-                                            'manual_entry.checks'
-                                        ) ||
-                                        !route().current(
-                                            'mergechecks.checks'
-                                        ) ||
-                                        !route().current('bounce.checks') ||
-                                        !route().current(
-                                            'replace.checks'
-                                        ) ||
-                                        !route().current(
-                                            'partial_payments.checks'
-                                        ) ||
-                                        !route().current('dcpdc.checks') ||
-                                        !route().current(
-                                            'duePdcReports.checks'
-                                        ),
-                                }" class="inline-block px-3 mt-2 p-4 text-sm text-white transition-all duration-200"
+                            <a-dropdown :placement="placements" :class="{
+                                'bg-blue-600 text-white':
+                                    route().current(
+                                        'manual_entry.checks'
+                                    ) ||
+                                    route().current(
+                                        'mergechecks.checks'
+                                    ) ||
+                                    route().current('bounce.checks') ||
+                                    route().current('replace.checks') ||
+                                    route().current(
+                                        'partial_payments.checks'
+                                    ) ||
+                                    route().current('dcpdc.checks') ||
+                                    route().current(
+                                        'duePdcReports.checks'
+                                    ),
+                                'text-white':
+                                    !route().current(
+                                        'manual_entry.checks'
+                                    ) ||
+                                    !route().current(
+                                        'mergechecks.checks'
+                                    ) ||
+                                    !route().current('bounce.checks') ||
+                                    !route().current(
+                                        'replace.checks'
+                                    ) ||
+                                    !route().current(
+                                        'partial_payments.checks'
+                                    ) ||
+                                    !route().current('dcpdc.checks') ||
+                                    !route().current(
+                                        'duePdcReports.checks'
+                                    ),
+                            }">
+                                <a class="inline-block px-3 mt-2 p-4 text-sm text-white transition-all duration-200"
                                     href="#">
                                     <ContactsOutlined /> Transaction
                                 </a>
@@ -394,12 +384,14 @@ const hide = () => {
                                             </li>
                                         </ul>
                                         <div class="mt-5">
-                                            <a-button block @click="logoutUser">
+
+                                            <a-button block @click="logout">
                                                 <template #icon>
                                                     <LogoutOutlined />
                                                 </template>
                                                 Logout
                                             </a-button>
+
                                         </div>
                                     </div>
 
@@ -449,16 +441,28 @@ const hide = () => {
 </template>
 
 <script>
+import { mapState, mapActions } from 'pinia'
+import { useOnlineUsersStore } from '@/stores/online-users'
+
 export default {
     data() {
         return {
             currentTime: "",
+            dataws: [],
         };
     },
+
     methods: {
-        logoutUser() {
+        logout() {
             this.$inertia.post(route('logout'));
         },
+
+        ...mapActions(useOnlineUsersStore, [
+            'setOnlineUsers',
+            'addOnlineUser',
+            'removeOnlineUser'
+        ]),
+
         showTime() {
             var date = new Date();
             var h = date.getHours(); // 0 - 23
@@ -487,7 +491,21 @@ export default {
     },
     mounted() {
         this.showTime();
+
+
+        if (this.$page.props.auth) {
+            this.$ws
+                .join('online.users')
+                .here(users => this.setOnlineUsers(users))
+                .joining(async user => this.addOnlineUser(user))
+                .leaving(async user => this.removeOnlineUser(user))
+        }
     },
+    beforeUnmount() {
+        if (this.$page.props.auth) {
+            this.$ws.leaveAllChannels()
+        }
+    }
 };
 </script>
 

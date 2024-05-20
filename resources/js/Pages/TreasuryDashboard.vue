@@ -1,19 +1,7 @@
-<script setup>
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-</script>
-
 <template>
 
     <Head title="Dashboard" />
-
-    <TreasuryLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                This is treasury Dashboard
-            </h2>
-        </template>
-
-        <div class="py-4">
+      <div class="py-4">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-row :gutter="[16, 16]" class="mt-4">
                     <a-col :span="9">
@@ -256,18 +244,14 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                 </a-row>
             </div>
         </div>
-    </TreasuryLayout>
 </template>
 
 <script>
 import dayjs from "dayjs";
-// import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-// import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-
-// dayjs.extend(isSameOrAfter);
-// dayjs.extend(isSameOrBefore);
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 
 export default {
+    layout: TreasuryLayout,
     data() {
         return {
             value: dayjs(),

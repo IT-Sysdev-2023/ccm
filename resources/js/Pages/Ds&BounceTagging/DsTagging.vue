@@ -1,20 +1,8 @@
-<script setup>
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-import { Head } from "@inertiajs/vue3";
-import { reactive } from "vue";
-const colors = "red";
-</script>
+
 
 <template>
 
     <Head title="Dashboard" />
-
-    <TreasuryLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                This is treasury Dashboard
-            </h2>
-        </template>
 
         <div class="py-4">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
@@ -152,16 +140,18 @@ const colors = "red";
                 <pagination class="mt-6" :datarecords="ds_c_table" />
             </div>
         </div>
-    </TreasuryLayout>
 </template>
 
 <script>
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
+import { Head } from "@inertiajs/vue3";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import Pagination from "@/Components/Pagination.vue"
 import axios from "axios";
 
 export default {
+    layout: TreasuryLayout,
     data() {
         return {
             switchValues: [],

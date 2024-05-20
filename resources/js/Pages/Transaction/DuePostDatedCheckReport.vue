@@ -1,16 +1,5 @@
-<script setup>
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-</script>
-
 <template>
     <Head title="Dashboard" />
-
-    <TreasuryLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                This is treasury Dashboard
-            </h2>
-        </template>
 
         <div class="py-0">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
@@ -293,7 +282,6 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                 </table>
             </div>
         </a-modal>
-    </TreasuryLayout>
 </template>
 
 <script>
@@ -301,7 +289,9 @@ import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import Pagination from "@/Components/Pagination.vue";
 import { InfoCircleTwoTone } from "@ant-design/icons-vue";
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 export default {
+    layout: TreasuryLayout,
     props: {
         data: Array,
         columns: Array,

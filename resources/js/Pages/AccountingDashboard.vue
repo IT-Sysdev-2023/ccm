@@ -1,16 +1,6 @@
-<script setup>
-import AccountingLayout from '@/Layouts/AccountingLayout.vue';
-</script>
-
 <template>
 
     <Head title="Dashboard" />
-
-    <AccountingLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">this is accounting Dashboard</h2>
-        </template>
-
         <div class="py-12">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-row :gutter="[16, 16]" class="mt-4">
@@ -121,11 +111,13 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                 </a-row>
             </div>
         </div>
-    </AccountingLayout>
+
 </template>
 
 <script>
+import AccountingLayout from '@/Layouts/AccountingLayout.vue';
 export default {
+    layout: AccountingLayout,
     props: {
         checkCount: Number,
         pdcCount: Number,

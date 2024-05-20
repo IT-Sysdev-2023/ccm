@@ -44,8 +44,7 @@ const handleOpen = (val) => {
 
     <Head title="Usermaintinance" />
 
-    <AdminLayout>
-        <template #header> </template>
+
         <a-float-button v-on:click="handleOpen(true)" :style="{
             right: '24px',
         }">
@@ -196,7 +195,7 @@ const handleOpen = (val) => {
                                                     <a-spin size="small" />
                                                 </template>
                                             </a-select>
-                                                
+
                                             <p class="mt-3">Company</p>
                                             <a-select show-search placeholder="Search Department"
                                                 :default-active-first-option="false" v-model:value="createUsers.company_id
@@ -459,7 +458,6 @@ const handleOpen = (val) => {
                 </a-form>
             </a-modal>
         </div>
-    </AdminLayout>
 </template>
 
 <script>
@@ -472,6 +470,8 @@ import { useForm } from "@inertiajs/vue3";
 import { SaveOutlined } from "@ant-design/icons-vue";
 
 export default {
+
+    layout: AdminLayout,
     data() {
         return {
             openModal: false,

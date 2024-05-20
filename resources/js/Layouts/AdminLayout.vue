@@ -233,7 +233,7 @@ const placement = "bottom";
                                             </li>
                                         </ul>
                                         <div class="mt-5">
-                                            <a-button block @click="logoutUser">
+                                            <a-button block @click="logout">
                                                 <template #icon>
                                                     <LogoutOutlined />
                                                 </template>
@@ -254,6 +254,7 @@ const placement = "bottom";
                 </div>
             </a-layout-content>
             <a-layout-footer style="text-align: center">
+
                 Ant Design ©2024 Created by Ant UED - Programmer
                 Kenstilllearning
             </a-layout-footer>
@@ -261,16 +262,40 @@ const placement = "bottom";
     </a-layout>
 </template>
 <script>
+
+import { mapState, mapActions } from 'pinia'
+import { useOnlineUsersStore } from '@/stores/online-users'
 export default {
     data() {
         return {
+            dataws: [],
             collapsed: false,
         };
     },
     methods: {
-        logoutUser() {
+        ...mapActions(useOnlineUsersStore, [
+            'setOnlineUsers',
+            'addOnlineUser',
+            'removeOnlineUser'
+        ]),
+        logout() {
             this.$inertia.post(route('logout'));
         },
+    },
+
+    mounted() {
+        if (this.$page.props.auth) {
+            this.$ws
+                .join('online.users')
+                .here(users => this.setOnlineUsers(users))
+                .joining(async user => this.addOnlineUser(user))
+                .leaving(async user => this.removeOnlineUser(user))
+        }
+    },
+    beforeUnmount() {
+        if (this.$page.props.auth) {
+            this.$ws.leaveAllChannels()
+        }
     }
 };
 </script>

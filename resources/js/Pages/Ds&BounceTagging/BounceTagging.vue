@@ -1,24 +1,5 @@
-<script setup>
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-import { h } from "vue";
-
-import axios from "axios";
-
-const indicator = h(LoadingOutlined, {
-    style: {
-        fontSize: "18px",
-    },
-    spin: true,
-});
-const colors = "red";
-</script>
-
 <template>
     <Head title="Dashboard" />
-
-    <TreasuryLayout>
-        <template #header> </template>
-<!-- {{data}} -->
         <div class="py-5">
             <div class="max-full mx-auto sm:px-6 lg:px-8">
                 <div
@@ -304,15 +285,15 @@ const colors = "red";
                 </div>
             </a-modal>
         </div>
-    </TreasuryLayout>
 </template>
 
 <script>
-import { LoadingOutlined } from "@ant-design/icons-vue";
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import debounce from "lodash/debounce";
 export default {
+    layout: TreasuryLayout,
     props: {
         data: Object,
         columns: Array,
@@ -320,6 +301,7 @@ export default {
     },
     data() {
         return {
+            colors: 'red',
             dataSource: [],
             isSearchLoading: false,
             loading: false,

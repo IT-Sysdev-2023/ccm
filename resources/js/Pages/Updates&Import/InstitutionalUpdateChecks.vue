@@ -1,16 +1,6 @@
-<script setup>
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-const placement = "top";
-
-const tabPosition = "right";
-</script>
-
 <template>
 
     <Head title="Dashboard" />
-
-    <TreasuryLayout>
-        <template #header> </template>
 
         <div class="py-5">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
@@ -370,13 +360,15 @@ const tabPosition = "right";
                 </template>
             </a-dropdown>
         </div>
-    </TreasuryLayout>
 </template>
 
 <script>
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 export default {
+    layout: TreasuryLayout,
     data() {
         return {
+            placement: 'top',
             jokes: "",
             showUpdate: false,
             showImport: false,

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Broadcast;
 use App\Models\User;
+use App\Broadcasting\OnlineUsers;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,4 @@ Broadcast::channel('generating-dated-pdc-reports-accounting.{id}', fn(User $user
 Broadcast::channel('generating-deposited-checks-accounting.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);
 Broadcast::channel('generating-redeem-reports.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);
 Broadcast::channel('generating-general-checks.{id}', fn(User $user, $id) => (int) $user->id === (int) $id);
+Broadcast::channel('online.users', OnlineUsers::class);

@@ -1,16 +1,5 @@
-<script setup>
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-</script>
-
 <template>
     <Head title="Dashboard" />
-
-    <TreasuryLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                This is treasury Dashboard
-            </h2>
-        </template>
 
         <div class="py-0">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
@@ -87,7 +76,6 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                 </a-card>
             </div>
         </div>
-    </TreasuryLayout>
     <a-modal
         v-model:open="openModalPPayment"
         title="Partial payment modal"
@@ -1207,22 +1195,15 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 </template>
 
 <script>
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 import Pagination from "@/Components/Pagination.vue";
-import {
-    CalendarOutlined,
-    DollarCircleFilled,
-    IdcardFilled,
-    MoneyCollectFilled,
-    MoneyCollectTwoTone,
-    SettingOutlined,
-} from "@ant-design/icons-vue";
-import { DollarCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import debounce from "lodash/debounce";
 export default {
+    layout: TreasuryLayout,
     props: {
         data: Object,
         columns: Array,

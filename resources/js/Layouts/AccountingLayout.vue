@@ -1,16 +1,10 @@
 <script setup>
 import { ref } from 'vue';
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-
 const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div  style="width: 95%; margin: 0 auto;">
+    <div style="width: 95%; margin: 0 auto;">
         <div class="w-full text-gray-700 bg">
             <div class="flex flex-col  px-8 mx-auto md:items-center md:justify-between md:flex-row">
                 <div class="flex flex-row items-center justify-between py-6">
@@ -45,14 +39,14 @@ const showingNavigationDropdown = ref(false);
                                 route().current('accounting.dashboard'),
                         }">Dashboard</Link>
                     <Link class="px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black rounded "
-                         :href="route('reports.accounting')" :class="{
+                        :href="route('reports.accounting')" :class="{
                             'bg-nav':
                                 route().current('reports.accounting') ||
                                 route().current('datedpcchecks.accounting') ||
                                 route().current('deposited.reports.accounting') ||
                                 route().current('bounce.checks.accounting') ||
                                 route().current('redeem.reports.accounting')
-                                ,
+                            ,
                         }">Reports</Link>
                     <Link
                         class="rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
@@ -83,6 +77,39 @@ const showingNavigationDropdown = ref(false);
 
     </div>
 </template>
+<script>
+import { mapState, mapActions } from 'pinia'
+import { useOnlineUsersStore } from '@/stores/online-users'
+
+export default {
+    data() {
+        return {
+            dataws: []
+        }
+    },
+    methods: {
+        ...mapActions(useOnlineUsersStore, [
+            'setOnlineUsers',
+            'addOnlineUser',
+            'removeOnlineUser'
+        ]),
+    },
+    mounted() {
+        if (this.$page.props.auth) {
+            this.$ws
+                .join('online.users')
+                .here(users => this.setOnlineUsers(users))
+                .joining(async user => this.addOnlineUser(user))
+                .leaving(async user => this.removeOnlineUser(user))
+        }
+    },
+    beforeUnmount() {
+        if (this.$page.props.auth) {
+            this.$ws.leaveAllChannels()
+        }
+    }
+}
+</script>
 <style scoped>
 .bg-cream {
     background-color: white;
