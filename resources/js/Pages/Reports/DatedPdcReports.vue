@@ -1,14 +1,6 @@
-<script setup>
-import AdminLayout from "@/Layouts/AdminLayout.vue";
-import { Head } from "@inertiajs/vue3";
-const colors = "red";
-</script>
-
 <template>
     <Head title="Dated & Post Dated Checks Report" />
 
-    <AdminLayout>
-        <template #header> </template>
         <div class="py-4">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb>
@@ -208,24 +200,27 @@ const colors = "red";
                 </div>
             </div>
         </div>
-    </AdminLayout>
 </template>
 
 <script>
 import debounce from "lodash/debounce";
+import AdminLayout from "@/Layouts/AdminLayout.vue";
 import axios from "axios";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
+import { Head } from "@inertiajs/vue3";
 
 export default {
+    layout: AdminLayout,
     props: {
         bunit: Array,
         columns: Array,
     },
     data() {
         return {
+            colors: 'red',
             showGenerateButton: false,
             showPagination: false,
             dateRange: null,

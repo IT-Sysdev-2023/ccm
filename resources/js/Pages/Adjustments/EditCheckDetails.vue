@@ -1,13 +1,5 @@
-<script setup>
-import AdminLayout from "@/Layouts/AdminLayout.vue";
-import dayjs from "dayjs";
-</script>
-
 <template>
-
     <Head title="Edit check Details" />
-
-    <AdminLayout>
         <div class=" py-4 max-w-8xl mx-auto sm:px-6 lg:px-8">
             <a-breadcrumb class="mb-5">
                 <a-breadcrumb-item href="">
@@ -161,15 +153,15 @@ import dayjs from "dayjs";
             </a-row>
 
         </a-modal>
-    </AdminLayout>
 </template>
 <script>
 import dayjs from "dayjs";
+import AdminLayout from "@/Layouts/AdminLayout.vue";
+import { useForm } from "@inertiajs/vue3";
 import debounce from "lodash/debounce";
-import { useForm } from '@inertiajs/vue3';
 import { message } from "ant-design-vue";
-import { update } from "lodash";
 export default {
+    layout: AdminLayout,
     props: {
         data: Object,
         columns: Array,

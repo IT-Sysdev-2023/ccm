@@ -1,13 +1,4 @@
-<script setup>
-import AdminLayout from "@/Layouts/AdminLayout.vue";
-import { Head, useForm } from '@inertiajs/vue3';
-
-
-const colors = "red";
-</script>
-
 <template>
-    <AdminLayout>
         <div class=" py-4 max-w-8xl mx-auto sm:px-6 lg:px-8">
             <a-breadcrumb>
                 <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
@@ -65,13 +56,13 @@ const colors = "red";
             <a-table class="mt-5" :pagination="false" size="small" :data-source="data.data" :columns="columns" />
             <pagination class="mt-6" :datarecords="data" />
         </div>
-    </AdminLayout>
 </template>
 
 <script>
 import dayjs from "dayjs";
-
+import AdminLayout from "@/Layouts/AdminLayout.vue";
 export default {
+    layout: AdminLayout,
     props: {
         data: Object,
         columns: Array,

@@ -1,15 +1,5 @@
-<script setup>
-import AdminLayout from "@/Layouts/AdminLayout.vue";
-</script>
-
 <template>
     <Head title="Dashboard" />
-
-    <AdminLayout>
-        <template #header>
-            <h2 class="font text-xl text-gray-800 leading-tight">Dashboard</h2>
-        </template>
-
         <div class="py-4">
             <!-- {{ user }} -->
             <div class="flex justify-end mb-10">
@@ -95,11 +85,12 @@ import AdminLayout from "@/Layouts/AdminLayout.vue";
                 </a-col>
             </a-row>
         </div>
-    </AdminLayout>
 </template>
 
 <script>
+import AdminLayout from "@/Layouts/AdminLayout.vue";
 export default {
+    layout: AdminLayout,
     props: {
         user: "",
     },

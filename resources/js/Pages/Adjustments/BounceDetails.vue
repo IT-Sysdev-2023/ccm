@@ -1,14 +1,7 @@
-<script setup>
-import AdminLayout from "@/Layouts/AdminLayout.vue";
-import { useForm } from "@inertiajs/vue3";
-import dayjs from "dayjs";
-</script>
-
 <template>
 
     <Head title="Edit check Details" />
 
-    <AdminLayout>
         <div class=" py-4 max-w-8xl mx-auto sm:px-6 lg:px-8">
             <a-select style="width: 250px;" v-model:value="bunitValue" class="mr-2 mb-4"
                 placeholder="Select Businessunit" @change="handleChangeBunit">
@@ -38,12 +31,15 @@ import dayjs from "dayjs";
             </a-table>
             <pagination :datarecords="data" class="mt-5"></pagination>
         </div>
-    </AdminLayout>
 
 </template>
 <script>
+import AdminLayout from "@/Layouts/AdminLayout.vue";
+import { useForm } from "@inertiajs/vue3";
+import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 export default {
+    layout: AdminLayout,
     props: {
         data: Object,
         columns: Array,

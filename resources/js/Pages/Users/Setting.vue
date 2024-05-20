@@ -1,14 +1,4 @@
-<script setup>
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-</script>
-
 <template>
-    <TreasuryLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                This is treasury Dashboard
-            </h2>
-        </template>
         <a-row :gutter="[16, 16]">
             <a-col :span="8" style="margin: 0 auto;">
                 <a-card class="flex justify-center items-center" style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
@@ -126,13 +116,14 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
                 </a-row>
             </a-col>
         </a-row>
-    </TreasuryLayout>
 </template>
 
 <script>
 import { message } from 'ant-design-vue';
 import { useForm } from "@inertiajs/vue3";
+import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 export default {
+    layout: TreasuryLayout,
     data() {
         return {
             isEditUsername: false,

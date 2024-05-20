@@ -1,12 +1,4 @@
-<script setup>
-import AdminLayout from "@/Layouts/AdminLayout.vue";
-import { Head } from "@inertiajs/vue3";
-
-const colors = "red";
-</script>
 <template>
-    <AdminLayout>
-        <template #header> </template>
         <div class="py-4">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mb-5">
@@ -70,17 +62,14 @@ const colors = "red";
                 <pagination class="mt-6" :datarecords="data" />
             </div>
         </div>
-
-
-
-
-    </AdminLayout>
 </template>
 <script>
 import Pagination from "@/Components/Pagination.vue";
+import AdminLayout from "@/Layouts/AdminLayout.vue";
 import dayjs from "dayjs";
 
 export default {
+    layout: AdminLayout,
     props: {
         buData: Object,
         data: Array,

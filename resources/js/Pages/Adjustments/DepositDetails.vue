@@ -1,14 +1,6 @@
-<script setup>
-import AdminLayout from "@/Layouts/AdminLayout.vue";
-import { useForm } from "@inertiajs/vue3";
-import dayjs from "dayjs";
-</script>
-
 <template>
 
     <Head title="Edit check Details" />
-
-    <AdminLayout>
         <div class=" py-4 max-w-8xl mx-auto sm:px-6 lg:px-8">
             <a-date-picker style="width: 250px;" @change="handleChangeYear" v-model:value="yearValue" picker="year"
                 class="mr-2 mb-4" />
@@ -54,14 +46,15 @@ import dayjs from "dayjs";
                 {{ form.processing ? 'Submiting Ds number...' : 'Submit Ds Number' }}
             </a-button>
         </a-modal>
-    </AdminLayout>
-
 </template>
 
 <script>
+import AdminLayout from "@/Layouts/AdminLayout.vue";
+import { useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 export default {
+    layout: AdminLayout,
     props: {
         data: Object,
         columns: Array,
