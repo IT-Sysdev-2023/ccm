@@ -1,175 +1,167 @@
 <template>
 
     <Head title="Dashboard" />
-        <div class="py-0">
-            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-                <a-breadcrumb class="mt-3 mb-3">
-                    <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-                    <a-breadcrumb-item><a href="">Dated Checks/Pdc</a></a-breadcrumb-item>
-                    <a-breadcrumb-item>Dated Checks</a-breadcrumb-item>
-                </a-breadcrumb>
+    <div class="py-0">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <a-breadcrumb class="mt-3 mb-3">
+                <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
+                <a-breadcrumb-item><a href="">Dated Checks/Pdc</a></a-breadcrumb-item>
+                <a-breadcrumb-item>Dated Checks</a-breadcrumb-item>
+            </a-breadcrumb>
 
-                <a-card>
-                    <a-table :pagination="false" :data-source="data.data" :loading="isLoadingTbl"
-                        class="components-table-demo-nested" :columns="columns" size="small" bordered>
+            <a-card>
+                <div class="flex justify-end">
+                    <a-input-search v-model:value="query.search" style="width: 400px;" class="mb-5"
+                        placeholder="Search Checks" :loading="isFetching" />
+                </div>
+                <a-table :pagination="false" :data-source="data.data" :loading="isLoadingTbl"
+                    class="components-table-demo-nested" :columns="columns" size="small" bordered>
 
-                        <template #bodyCell="{ column, record }">
-                            <template v-if="column.key === 'action'">
-                                <a-button @click="detailedChecks(record)" size="small" style="width: 100%;">
-                                    <template #icon>
-                                        <SettingOutlined />
-                                    </template>
-                                </a-button>
-                            </template>
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'action'">
+                            <a-button @click="detailedChecks(record)" size="small" style="width: 100%;">
+                                <template #icon>
+                                    <SettingOutlined />
+                                </template>
+                            </a-button>
                         </template>
-                    </a-table>
-                    <pagination class="mt-6" :datarecords="data" />
-                </a-card>
-            </div>
+                    </template>
+                </a-table>
+                <pagination class="mt-6" :datarecords="data" />
+            </a-card>
         </div>
+    </div>
 
-        <a-modal v-model:open="isOpenModal" title="Details" style="top: 20px; width: 1000px"
-            @ok="setModal1Visible(false)" :footer="null">
-            <div class="product-container">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <tbody>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-t border-gray-200">
-                                Customer Name
-                            </td>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
-                                {{ selectDataDetails.fullname }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check From
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.department }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Number
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.check_no }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Approving Officer
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.approving_officer }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Class
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.check_class }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Status
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.check_status }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Date
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.check_date }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Account No
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.account_no }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Received
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.check_received }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Account Name
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.account_name }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Received As
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.check_type }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Bank Name
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.bankbranchname }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Check Category
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.check_category }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td
-                                class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
-                                Amount
-                            </td>
-                            <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
-                                {{ selectDataDetails.check_amount }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </a-modal>
+    <a-modal v-model:open="isOpenModal" title="Details" style="top: 20px; width: 1000px" @ok="setModal1Visible(false)"
+        :footer="null">
+        <div class="product-container">
+            <table class="min-w-full divide-y divide-gray-200">
+                <tbody>
+                    <tr>
+                        <td
+                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-t border-gray-200">
+                            Customer Name
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
+                            {{ selectDataDetails.fullname }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Check From
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.department }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Check Number
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.check_no }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Approving Officer
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.approving_officer }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Check Class
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.check_class }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Check Status
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.check_status }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Check Date
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.check_date }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Account No
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.account_no }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Check Received
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.check_received }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Account Name
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.account_name }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Received As
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.check_type }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Bank Name
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.bankbranchname }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Check Category
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.check_category }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
+                            Amount
+                        </td>
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
+                            {{ selectDataDetails.check_amount }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </a-modal>
 </template>
 
 <script>
 import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 import { ref } from "vue";
+import debounce from "lodash/debounce";
 import Pagination from "@/Components/Pagination.vue"
+
 export default {
     layout: TreasuryLayout,
     components: {
@@ -178,9 +170,13 @@ export default {
 
     data() {
         return {
+            query: {
+                search: '',
+            },
             isOpenModal: false,
             selectDataDetails: {},
             isLoadingTbl: false,
+            isFetching: false,
         };
     },
     props: {
@@ -193,18 +189,25 @@ export default {
             this.isOpenModal = true;
             this.selectDataDetails = selectData;
         },
-        handleTableChange(page) {
-            this.isLoadingTbl = true;
-            try {
-                this.$inertia.get(route("dated.checks"), {
-                    page: page,
-                },
-                    {
-                        preserveScroll: true,
-                    });
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
+    },
+    watch: {
+        query: {
+            deep: true,
+            handler: debounce(async function () {
+                this.isFetching = true,
+                    this.$inertia.get(route("dated.checks"), {
+                        searchQuery: this.query.search,
+                    }, {
+                        preserveState: true,
+                        onSuccess: () => {
+                            this.isFetching = false;
+                        },
+                        onError: () => {
+                            this.isFetching = false; // Ensure the flag is reset on error
+                        }
+                    }
+                    );
+            }, 600),
         },
     },
 };
