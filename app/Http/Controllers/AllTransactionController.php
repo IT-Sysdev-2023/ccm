@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\ExcelGenerateEvents;
+use App\Helper\ColumnsHelper;
+use App\Helper\NumberHelper;
 use App\Http\Requests\CashReplacementRequest;
 use App\Http\Requests\CheckCashReplacementRequest;
 use App\Http\Requests\CheckReDepositRequest;
@@ -16,20 +17,16 @@ use App\Http\Requests\PartialReplaymentCheckRequest;
 use App\Models\BusinessUnit;
 use App\Models\Checks;
 use App\Models\Currency;
+use App\Models\NewBounceCheck;
 use App\Models\NewCheckReplacement;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use App\Helper\ColumnsHelper;
-use App\Helper\NumberHelper;
-use Illuminate\Support\Facades\Date;
-use App\Models\NewBounceCheck;
-use Carbon\Carbon;
 
 class AllTransactionController extends Controller
 {
@@ -51,7 +48,6 @@ class AllTransactionController extends Controller
             $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST DATED';
             return $value;
         });
-
 
         return Inertia::render('Transaction/CheckManualEntry', [
             'data' => $data,
@@ -116,6 +112,12 @@ class AllTransactionController extends Controller
         $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
 
         $data = NewSavedChecks::joinChecksCustomer()->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
+            ->where(function ($query) use ($request) {
+                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
+                return $query;
+            })
             ->whereColumn('check_date', '>', 'check_received')
             ->paginate(500)->withQueryString();
 
@@ -204,7 +206,6 @@ class AllTransactionController extends Controller
 
         return redirect()->route('mergechecks.checks');
 
-
     }
     public function getBounceChecks(Request $request)
     {
@@ -215,17 +216,22 @@ class AllTransactionController extends Controller
         $data = NewBounceCheck::join('checks', 'checks.checks_id', '=', 'new_bounce_check.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('new_bounce_check.status', '=', '')
+            ->where(function ($query) use ($request) {
+                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
+                return $query;
+            })
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->select('new_bounce_check.*', 'new_bounce_check.id as bounceId', 'checks.*', 'customers.*')
             ->paginate(10)->withQueryString();
-
 
         return Inertia::render('Transaction/BounceChecks', [
             'data' => $data,
             'columns' => ColumnsHelper::$bounced_checks_columns,
             'currency' => $currency,
             'category' => $category,
-            'check_class' => $check_class
+            'check_class' => $check_class,
         ]);
     }
 
@@ -321,9 +327,7 @@ class AllTransactionController extends Controller
 
         });
 
-
         return redirect()->back();
-
 
     }
 
@@ -535,7 +539,6 @@ class AllTransactionController extends Controller
             NewBounceCheck::where('id', $request->rep_bounce_id)->update(['status' => 'PARTIAL']);
         });
 
-
         return redirect()->back();
 
     }
@@ -546,7 +549,12 @@ class AllTransactionController extends Controller
             ->join('users', 'users.id', '=', 'new_check_replacement.user')
             ->where('new_check_replacement.status', '!=', '')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            // ->where('mode', 'CHECK & CASH')
+            ->where(function ($query) use ($request) {
+                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
+                return $query;
+            })
             ->orderBy('new_check_replacement.id', 'desc')
             ->select('*', 'new_check_replacement.date_time');
 
@@ -563,7 +571,7 @@ class AllTransactionController extends Controller
         return Inertia::render('Transaction/CheckReplace', [
             'data' => $data,
             'columns' => ColumnsHelper::$check_replace_columns,
-            'getModeProps' => $request->getMode
+            'getModeProps' => $request->getMode,
         ]);
     }
 
@@ -587,9 +595,7 @@ class AllTransactionController extends Controller
                 ->first();
         }
 
-
         $repCheckNo = Checks::where('checks_id', $data->rep_check_id)->first();
-
 
         $result = [];
 
@@ -603,7 +609,7 @@ class AllTransactionController extends Controller
                 'ar_ds' => $data->ar_ds,
                 'replacement_id' => $data->id,
                 'replacement_status' => $data->status,
-                'approving_officer' => $data->approving_officer
+                'approving_officer' => $data->approving_officer,
             ];
         } elseif ($data->mode == 'CHECK') {
             $result = [
@@ -616,7 +622,7 @@ class AllTransactionController extends Controller
                 'replacement_id' => $data->id,
                 'replacement_status' => $data->status,
                 'rep_check_id' => $data->rep_check_id,
-                'approving_officer' => $data->approving_officer
+                'approving_officer' => $data->approving_officer,
             ];
         } elseif ($data->mode == 'CHECK & CASH') {
             $result = [
@@ -630,13 +636,13 @@ class AllTransactionController extends Controller
                 'replacement_id' => $data->id,
                 'replacement_status' => $data->status,
                 'rep_check_id' => $data->rep_check_id,
-                'approving_officer' => $data->approving_officer
+                'approving_officer' => $data->approving_officer,
             ];
         } elseif ($data->mode == 'PARTIAL') {
             $result = [
                 'mode' => $data->mode,
                 'checks_id' => $request->checksId,
-                'bounce_id' => $request->bouncedId
+                'bounce_id' => $request->bouncedId,
             ];
         } elseif ($data->mode == 'RE-DEPOSIT') {
             $result = [
@@ -646,7 +652,7 @@ class AllTransactionController extends Controller
                 'ar_ds' => $data->ar_ds,
                 'replacement_id' => $data->id,
                 'replacement_status' => $data->status,
-                'approving_officer' => $data->approving_officer
+                'approving_officer' => $data->approving_officer,
             ];
         }
 
@@ -670,7 +676,6 @@ class AllTransactionController extends Controller
 
             $data->each(function ($item) use (&$result, &$cash, &$c, &$balance, &$amount) {
 
-
                 $balanced = 0;
 
                 if ($c = 0) {
@@ -687,7 +692,6 @@ class AllTransactionController extends Controller
                     }
                 }
 
-
                 $balanced = $amount - $cash;
 
                 $partialCheckNo = Checks::where('checks_id', $item->rep_check_id)->first();
@@ -702,7 +706,7 @@ class AllTransactionController extends Controller
                         'checkNumber' => $partialCheckNo->check_no,
                         'partial_check_amount' => NumberHelper::float($partialCheckNo->check_amount),
                         'ar_ds' => $item->ar_ds,
-                        'name' => $item->name
+                        'name' => $item->name,
                     ];
                 } else {
                     $result[] = [
@@ -714,7 +718,7 @@ class AllTransactionController extends Controller
                         'penalty' => number_format($item->penalty, 2),
                         'checkNumber' => 'N/A',
                         'ar_ds' => $item->ar_ds,
-                        'name' => $item->name
+                        'name' => $item->name,
                     ];
 
                 }
@@ -753,7 +757,6 @@ class AllTransactionController extends Controller
                     }
                 }
 
-
                 $balanced = $amount - $cash;
 
                 $partialCheckNo = Checks::where('checks_id', $item->rep_check_id)->first();
@@ -767,7 +770,7 @@ class AllTransactionController extends Controller
                         'penalty' => number_format($item->penalty, 2),
                         'checkNumber' => $partialCheckNo->check_no . ' [ Check amount ] : ' . NumberHelper::float($partialCheckNo->check_amount),
                         'ar_ds' => $item->ar_ds,
-                        'name' => $item->name
+                        'name' => $item->name,
 
                     ];
                 } else {
@@ -780,7 +783,7 @@ class AllTransactionController extends Controller
                         'penalty' => number_format($item->penalty, 2),
                         'checkNumber' => 'N/A',
                         'ar_ds' => $item->ar_ds,
-                        'name' => $item->name
+                        'name' => $item->name,
 
                     ];
 
@@ -797,8 +800,6 @@ class AllTransactionController extends Controller
         return response()->json($result);
     }
 
-
-
     public function getPartialPayment(Request $request)
     {
 
@@ -807,13 +808,18 @@ class AllTransactionController extends Controller
         $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
 
         $data = NewCheckReplacement::joinCheckReplacementCustomer()
-            // ->where('checks.businessunit_id', $request->user()->businessunit_id)
+        // ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('checks.check_status', 'PARTIAL')
             ->where('new_check_replacement.mode', 'PARTIAL')
             ->select('checks.*', 'customers.*', 'new_check_replacement.status', 'new_check_replacement.*')
-            // ->groupBy('new_check_replacement.checks_id')
-            ->paginate(10);
-
+            ->where(function ($query) use ($request) {
+                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
+                return $query;
+            })
+        // ->groupBy('new_check_replacement.checks_id')
+            ->paginate(10)->withQueryString();
 
         $data->transform(function ($value) {
             $check_replacement = NewCheckReplacement::checksMode($value->checks_id)
@@ -821,7 +827,6 @@ class AllTransactionController extends Controller
                 ->first();
 
             $bounceDate = '';
-
 
             if ($value->bounce_id != 0) {
                 $bounceDateRecord = NewBounceCheck::where('id', $value->bounce_id)->first();
@@ -848,7 +853,7 @@ class AllTransactionController extends Controller
             'columns' => ColumnsHelper::$partial_payment_columns,
             'currency' => $currency,
             'category' => $category,
-            'check_class' => $check_class
+            'check_class' => $check_class,
 
         ]);
     }
@@ -896,7 +901,6 @@ class AllTransactionController extends Controller
             'grandTotal' => NumberHelper::float($grandTotal),
             'days' => $days,
         ]);
-
 
     }
 
@@ -1022,10 +1026,10 @@ class AllTransactionController extends Controller
             $data->each(function ($value) use (&$result) {
                 $result[] =
                     [
-                        'checkCred' => $value->id,
-                        'customer' => $value->fullname,
-                        'amount' => $value->check_amount,
-                    ];
+                    'checkCred' => $value->id,
+                    'customer' => $value->fullname,
+                    'amount' => $value->check_amount,
+                ];
             });
         } else {
             $data = NewSavedChecks::join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
@@ -1045,10 +1049,10 @@ class AllTransactionController extends Controller
             $data->each(function ($value) use (&$result) {
                 $result[] =
                     [
-                        'checkCred' => $value->checks_id,
-                        'customer' => $value->fullname,
-                        'amount' => $value->check_amount,
-                    ];
+                    'checkCred' => $value->checks_id,
+                    'customer' => $value->fullname,
+                    'amount' => $value->check_amount,
+                ];
             });
         }
         return response()->json($result);
@@ -1179,7 +1183,7 @@ class AllTransactionController extends Controller
                             'user' => $request->user()->id,
                             'date_time' => $request->rep_date,
                             'cash' => 0,
-                            'bounce_id' => 0
+                            'bounce_id' => 0,
                         ]);
                         Checks::where('checks_id', $request->conCheckPartial)->update(['check_status' => 'PARTIAL']);
                         NewBounceCheck::where('id', $request->conCheckPartial)->update(['status' => 'PARTIAL']);
@@ -1270,7 +1274,7 @@ class AllTransactionController extends Controller
                         'date_time' => $request->rep_date,
                         'cash' => 0,
                         'status' => '',
-                        'bounce_id' => $request->bouncedId
+                        'bounce_id' => $request->bouncedId,
                     ]);
 
                     if ($request->conType == "1") {
@@ -1290,7 +1294,7 @@ class AllTransactionController extends Controller
                             'user' => $request->user()->id,
                             'date_time' => $request->rep_date,
                             'bounce_id' => $request->conCheckPartial,
-                            'cash' => 0
+                            'cash' => 0,
                         ]);
                         Checks::where('checks_id', $dataBounce->checks_id)->update(['check_status' => 'PARTIAL']);
                         NewBounceCheck::where('id', $request->conCheckPartial)->update(['status' => 'PARTIAL']);

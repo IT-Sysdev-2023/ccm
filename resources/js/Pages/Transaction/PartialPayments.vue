@@ -1,90 +1,58 @@
 <template>
+
     <Head title="Dashboard" />
 
-        <div class="py-0">
-            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-                <a-breadcrumb class="mt-2 mb-3">
-                    <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-                    <a-breadcrumb-item
-                        ><a href="">Transaction </a></a-breadcrumb-item
-                    >
-                    <a-breadcrumb-item>Partial Payments</a-breadcrumb-item>
-                </a-breadcrumb>
-                <a-card>
-                    <a-table
-                        :data-source="data.data"
-                        :pagination="false"
-                        :columns="columns"
-                        size="small"
-                        bordered
-                    >
-                        <template #bodyCell="{ column, record }">
-                            <template v-if="column.key === 'action'">
-                                <a-button
-                                    size="small"
-                                    class="mx-1"
-                                    @click="openUpDetails(record)"
-                                >
-                                    <template #icon>
-                                        <SettingOutlined />
-                                    </template>
-                                </a-button>
-                                <a-button
-                                    size="small"
-                                    class="mx-1"
-                                    @click="partialPaymentNotNull(record)"
-                                    v-if="record.bounce_id != 0"
-                                >
-                                    <template #icon>
-                                        <IdcardOutlined />
-                                    </template>
-                                </a-button>
-                                <a-button
-                                    size="small"
-                                    class="mx-1"
-                                    @click="partialPaymentNull(record)"
-                                    v-else
-                                >
-                                    <template #icon>
-                                        <IdcardFilled />
-                                    </template>
-                                </a-button>
-                                <a-button
-                                    v-if="record.bounce_id != 0"
-                                    size="small"
-                                    class="mx-1"
-                                    @click="partialPaymentCheckNotNull(record)"
-                                >
-                                    <template #icon>
-                                        <CreditCardFilled />
-                                    </template>
-                                </a-button>
-                                <a-button
-                                    v-else
-                                    size="small"
-                                    class="mx-1"
-                                    @click="partialPaymentCheckNull(record)"
-                                >
-                                    <template #icon>
-                                        <CreditCardFilled />
-                                    </template>
-                                </a-button>
-                            </template>
+    <div class="py-0">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <a-breadcrumb class="mt-2 mb-3">
+                <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
+                <a-breadcrumb-item><a href="">Transaction </a></a-breadcrumb-item>
+                <a-breadcrumb-item>Partial Payments</a-breadcrumb-item>
+            </a-breadcrumb>
+            <a-card>
+                <div class="flex justify-end">
+                    <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
+                        placeholder="Search Checks" :loading="isFetching" />
+                </div>
+                <a-table :data-source="data.data" :pagination="false" :columns="columns" size="small" bordered>
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'action'">
+                            <a-button size="small" class="mx-1" @click="openUpDetails(record)">
+                                <template #icon>
+                                    <SettingOutlined />
+                                </template>
+                            </a-button>
+                            <a-button size="small" class="mx-1" @click="partialPaymentNotNull(record)"
+                                v-if="record.bounce_id != 0">
+                                <template #icon>
+                                    <IdcardOutlined />
+                                </template>
+                            </a-button>
+                            <a-button size="small" class="mx-1" @click="partialPaymentNull(record)" v-else>
+                                <template #icon>
+                                    <IdcardFilled />
+                                </template>
+                            </a-button>
+                            <a-button v-if="record.bounce_id != 0" size="small" class="mx-1"
+                                @click="partialPaymentCheckNotNull(record)">
+                                <template #icon>
+                                    <CreditCardFilled />
+                                </template>
+                            </a-button>
+                            <a-button v-else size="small" class="mx-1" @click="partialPaymentCheckNull(record)">
+                                <template #icon>
+                                    <CreditCardFilled />
+                                </template>
+                            </a-button>
                         </template>
-                    </a-table>
-                    <pagination class="mt-6" :datarecords="data"></pagination>
-                </a-card>
-            </div>
+                    </template>
+                </a-table>
+                <pagination class="mt-6" :datarecords="data"></pagination>
+            </a-card>
         </div>
-    <a-modal
-        v-model:open="openModalPPayment"
-        title="Partial payment modal"
-        width="100%"
-        style="top: 10px"
-        :footer="null"
-        wrap-class-name="full-modal"
-        :afterClose="afterCloseModal"
-    >
+    </div>
+    <a-modal v-model:open="openModalPPayment" title="Partial payment modal" width="100%" style="top: 10px"
+        :footer="null" wrap-class-name="full-modal" :afterClose="afterCloseModal">
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <a-card style="background-color: #f5f7f8">
@@ -116,118 +84,77 @@
                             </a-breadcrumb-item>
                             <a-breadcrumb-item>Cash amount</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-input
-                            v-model:value="partial_pay_form.checkAmount"
-                            placeholder="input with clear icon"
-                            allow-clear
-                        />
+                        <a-input v-model:value="partial_pay_form.checkAmount" placeholder="input with clear icon"
+                            allow-clear />
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
                                 <DollarOutlined />
                             </a-breadcrumb-item>
                             <a-breadcrumb-item>Penalty</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-input
-                            v-model:value="partial_pay_form.parPenalty"
-                            placeholder="input with clear icon"
-                            allow-clear
-                        />
+                        <a-input v-model:value="partial_pay_form.parPenalty" placeholder="input with clear icon"
+                            allow-clear />
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
                                 <NumberOutlined />
                             </a-breadcrumb-item>
                             <a-breadcrumb-item>Ar# and Ds#</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-input
-                            v-model:value="partial_pay_form.parArDs"
-                            placeholder="input with clear icon"
-                            allow-clear
-                        />
-                        <div
-                            v-if="partial_pay_form.errors.parArDs"
-                            class="text-white"
-                            style="
+                        <a-input v-model:value="partial_pay_form.parArDs" placeholder="input with clear icon"
+                            allow-clear />
+                        <div v-if="partial_pay_form.errors.parArDs" class="text-white" style="
                                 font-size: 12px;
                                 border: 1px solid #ff5c58;
                                 border-radius: 5px;
                                 background: rgba(255, 99, 71, 0.6);
-                            "
-                        >
+                            ">
                             {{ partial_pay_form.errors.parArDs }}
                         </div>
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
                                 <CalendarOutlined />
                             </a-breadcrumb-item>
-                            <a-breadcrumb-item
-                                >Replacement Date</a-breadcrumb-item
-                            >
+                            <a-breadcrumb-item>Replacement Date</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-date-picker
-                            v-model:value="partial_pay_form.parRepDate"
-                            style="width: 100%"
-                        />
-                        <div
-                            v-if="partial_pay_form.errors.parRepDate"
-                            class="text-white"
-                            style="
+                        <a-date-picker v-model:value="partial_pay_form.parRepDate" style="width: 100%" />
+                        <div v-if="partial_pay_form.errors.parRepDate" class="text-white" style="
                                 font-size: 12px;
                                 border: 1px solid #ff5c58;
                                 border-radius: 5px;
                                 background: rgba(255, 99, 71, 0.6);
-                            "
-                        >
+                            ">
                             {{ partial_pay_form.errors.parRepDate }}
                         </div>
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
                                 <home-outlined />
                             </a-breadcrumb-item>
-                            <a-breadcrumb-item
-                                >Reason of replace</a-breadcrumb-item
-                            >
+                            <a-breadcrumb-item>Reason of replace</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-textarea
-                            v-model:value="partial_pay_form.parReason"
-                            placeholder="Enter here"
-                            :rows="4"
-                        />
-                        <div
-                            v-if="partial_pay_form.errors.parReason"
-                            class="text-white"
-                            style="
+                        <a-textarea v-model:value="partial_pay_form.parReason" placeholder="Enter here" :rows="4" />
+                        <div v-if="partial_pay_form.errors.parReason" class="text-white" style="
                                 font-size: 12px;
                                 border: 1px solid #ff5c58;
                                 border-radius: 5px;
                                 background: rgba(255, 99, 71, 0.6);
-                            "
-                        >
+                            ">
                             {{ partial_pay_form.errors.parReason }}
                         </div>
                         <div class="flex justify-between mt-5">
-                            <a-button
-                                style="width: 100%; background-color: gainsboro"
-                                @click="
-                                    () =>
-                                        partial_pay_form.reset(
-                                            'parArDs',
-                                            'parReason',
-                                            'parRepDate'
-                                        )
-                                "
-                                class="mr-2"
-                            >
+                            <a-button style="width: 100%; background-color: gainsboro" @click="() =>
+                                partial_pay_form.reset(
+                                    'parArDs',
+                                    'parReason',
+                                    'parRepDate'
+                                )
+                                " class="mr-2">
                                 <template #icon>
                                     <ClearOutlined />
                                 </template>
                                 clear input
                             </a-button>
-                            <a-button
-                                style="width: 100%"
-                                type="primary"
-                                @click="saveChangesPartialPayment"
-                                :loading="partial_pay_form.processing"
-                            >
+                            <a-button style="width: 100%" type="primary" @click="saveChangesPartialPayment"
+                                :loading="partial_pay_form.processing">
                                 <template #icon>
                                     <SaveOutlined></SaveOutlined>
                                 </template>
@@ -244,26 +171,14 @@
             <a-col :span="16">
                 <a-card style="background-color: #f5f7f8">
                     <h4 class="text-center mb-10">Payment history List</h4>
-                    <a-table
-                        bordered
-                        size="small"
-                        :data-source="selectDataDetails"
-                        :columns="payParColumns"
-                    >
+                    <a-table bordered size="small" :data-source="selectDataDetails" :columns="payParColumns">
                     </a-table>
                 </a-card>
             </a-col>
         </a-row>
     </a-modal>
-    <a-modal
-        v-model:open="openModalPPaymentCheck"
-        title="Partial payment modal"
-        width="100%"
-        style="top: 10px"
-        :footer="null"
-        wrap-class-name="full-modal"
-        :afterClose="afterCloseModal"
-    >
+    <a-modal v-model:open="openModalPPaymentCheck" title="Partial payment modal" width="100%" style="top: 10px"
+        :footer="null" wrap-class-name="full-modal" :afterClose="afterCloseModal">
         <a-row :gutter="[16, 16]">
             <a-col :span="8">
                 <a-card style="background-color: #f5f7f8">
@@ -295,43 +210,30 @@
                             </a-breadcrumb-item>
                             <a-breadcrumb-item>Cash amount</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-input
-                            v-model:value="par_pay_check_form.rep_check_amount"
-                            placeholder="input with clear icon"
-                            allow-clear
-                        />
+                        <a-input v-model:value="par_pay_check_form.rep_check_amount" placeholder="input with clear icon"
+                            allow-clear />
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
                                 <DollarOutlined />
                             </a-breadcrumb-item>
                             <a-breadcrumb-item>Penalty</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-input
-                            v-model:value="par_pay_check_form.rep_check_penalty"
-                            placeholder="input with clear icon"
-                            allow-clear
-                        />
+                        <a-input v-model:value="par_pay_check_form.rep_check_penalty"
+                            placeholder="input with clear icon" allow-clear />
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
                                 <NumberOutlined />
                             </a-breadcrumb-item>
                             <a-breadcrumb-item>Ar# and Ds#</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-input
-                            v-model:value="par_pay_check_form.rep_ar_ds"
-                            placeholder="input with clear icon"
-                            allow-clear
-                        />
-                        <div
-                            v-if="par_pay_check_form.errors.rep_ar_ds"
-                            class="text-white"
-                            style="
+                        <a-input v-model:value="par_pay_check_form.rep_ar_ds" placeholder="input with clear icon"
+                            allow-clear />
+                        <div v-if="par_pay_check_form.errors.rep_ar_ds" class="text-white" style="
                                 font-size: 12px;
                                 border: 1px solid #ff5c58;
                                 border-radius: 5px;
                                 background: rgba(255, 99, 71, 0.6);
-                            "
-                        >
+                            ">
                             {{ par_pay_check_form.errors.rep_ar_ds }}
                         </div>
 
@@ -339,49 +241,30 @@
                             <a-breadcrumb-item href="">
                                 <CalendarOutlined />
                             </a-breadcrumb-item>
-                            <a-breadcrumb-item
-                                >Replacement Date</a-breadcrumb-item
-                            >
+                            <a-breadcrumb-item>Replacement Date</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-date-picker
-                            v-model:value="par_pay_check_form.rep_date"
-                            style="width: 100%"
-                        />
-                        <div
-                            v-if="par_pay_check_form.errors.rep_date"
-                            class="text-white"
-                            style="
+                        <a-date-picker v-model:value="par_pay_check_form.rep_date" style="width: 100%" />
+                        <div v-if="par_pay_check_form.errors.rep_date" class="text-white" style="
                                 font-size: 12px;
                                 border: 1px solid #ff5c58;
                                 border-radius: 5px;
                                 background: rgba(255, 99, 71, 0.6);
-                            "
-                        >
+                            ">
                             {{ par_pay_check_form.errors.rep_date }}
                         </div>
                         <a-breadcrumb class="mt-3">
                             <a-breadcrumb-item href="">
                                 <home-outlined />
                             </a-breadcrumb-item>
-                            <a-breadcrumb-item
-                                >Reason of replace</a-breadcrumb-item
-                            >
+                            <a-breadcrumb-item>Reason of replace</a-breadcrumb-item>
                         </a-breadcrumb>
-                        <a-textarea
-                            v-model:value="par_pay_check_form.rep_reason"
-                            placeholder="Enter here"
-                            :rows="4"
-                        />
-                        <div
-                            v-if="par_pay_check_form.errors.rep_reason"
-                            class="text-white"
-                            style="
+                        <a-textarea v-model:value="par_pay_check_form.rep_reason" placeholder="Enter here" :rows="4" />
+                        <div v-if="par_pay_check_form.errors.rep_reason" class="text-white" style="
                                 font-size: 12px;
                                 border: 1px solid #ff5c58;
                                 border-radius: 5px;
                                 background: rgba(255, 99, 71, 0.6);
-                            "
-                        >
+                            ">
                             {{ par_pay_check_form.errors.rep_reason }}
                         </div>
                     </a-card>
@@ -389,20 +272,9 @@
             </a-col>
             <a-col :span="16">
                 <a-card style="background-color: #f5f7f8">
-                    <a-collapse
-                        v-model:activeKey="activeKey"
-                        style="background-color: white"
-                    >
-                        <a-collapse-panel
-                            key="1"
-                            header="Click this to see the payment history list"
-                        >
-                            <a-table
-                                bordered
-                                size="small"
-                                :data-source="selectDataDetails"
-                                :columns="payParColumns"
-                            >
+                    <a-collapse v-model:activeKey="activeKey" style="background-color: white">
+                        <a-collapse-panel key="1" header="Click this to see the payment history list">
+                            <a-table bordered size="small" :data-source="selectDataDetails" :columns="payParColumns">
                             </a-table>
                         </a-collapse-panel>
                     </a-collapse>
@@ -412,267 +284,164 @@
                         <a-row :gutter="[16, 16]">
                             <a-col :span="12" style="width: 600px">
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Account Number</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Account Number</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-input
-                                    class="hidden"
-                                    v-model:value="
-                                        par_pay_check_form.rep_check_id
-                                    "
-                                >
+                                <a-input class="hidden" v-model:value="par_pay_check_form.rep_check_id
+                                    ">
                                 </a-input>
-                                <a-input
-                                    v-model:value="
-                                        par_pay_check_form.accountnumber
-                                    "
-                                    placeholder="Enter Account Number"
-                                    style="width: 100%"
-                                >
+                                <a-input v-model:value="par_pay_check_form.accountnumber
+                                    " placeholder="Enter Account Number" style="width: 100%">
                                     <template #prefix>
                                         <NumberOutlined />
                                     </template>
                                     <template #suffix>
                                         <a-tooltip title="Account Number here">
-                                            <info-circle-outlined
-                                                style="
+                                            <info-circle-outlined style="
                                                     color: rgba(0, 0, 0, 0.45);
-                                                "
-                                            />
+                                                " />
                                         </a-tooltip>
                                     </template>
                                 </a-input>
-                                <div
-                                    v-if="
-                                        par_pay_check_form.errors.accountnumber
-                                    "
-                                    class="text-white"
-                                    style="
+                                <div v-if="
+                                    par_pay_check_form.errors.accountnumber
+                                " class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{
                                         par_pay_check_form.errors.accountnumber
                                     }}
                                 </div>
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Account Name</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Account Name</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-select
-                                    show-search
-                                    placeholder="Search acount name"
-                                    :default-active-first-option="false"
-                                    v-model:value="
-                                        par_pay_check_form.accountname
-                                    "
-                                    style="width: 100%"
-                                    :show-arrow="false"
-                                    :filter-option="false"
-                                    :not-found-content="
-                                        isRetrieving ? undefined : null
-                                    "
-                                    :options="accountOption"
-                                    @search="handleSearchAccountName"
-                                >
-                                    <template
-                                        v-if="isRetrieving"
-                                        #notFoundContent
-                                    >
+                                <a-select show-search placeholder="Search acount name"
+                                    :default-active-first-option="false" v-model:value="par_pay_check_form.accountname
+                                        " style="width: 100%" :show-arrow="false" :filter-option="false"
+                                    :not-found-content="isRetrieving ? undefined : null
+                                        " :options="accountOption" @search="handleSearchAccountName">
+                                    <template v-if="isRetrieving" #notFoundContent>
                                         <a-spin size="small" />
                                     </template>
                                 </a-select>
-                                <div
-                                    v-if="par_pay_check_form.errors.accountname"
-                                    class="text-white"
-                                    style="
+                                <div v-if="par_pay_check_form.errors.accountname" class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{ par_pay_check_form.errors.accountname }}
                                 </div>
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Check Number</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Check Number</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-input
-                                    v-model:value="
-                                        par_pay_check_form.checkNumber
-                                    "
-                                    placeholder="Enter Check number"
-                                    style="width: 100%"
-                                >
+                                <a-input v-model:value="par_pay_check_form.checkNumber
+                                    " placeholder="Enter Check number" style="width: 100%">
                                     <template #prefix>
                                         <NumberOutlined />
                                     </template>
                                     <template #suffix>
                                         <a-tooltip title="Check number here">
-                                            <info-circle-outlined
-                                                style="
+                                            <info-circle-outlined style="
                                                     color: rgba(0, 0, 0, 0.45);
-                                                "
-                                            />
+                                                " />
                                         </a-tooltip>
                                     </template>
                                 </a-input>
-                                <div
-                                    v-if="par_pay_check_form.errors.checkNumber"
-                                    class="text-white"
-                                    style="
+                                <div v-if="par_pay_check_form.errors.checkNumber" class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{ par_pay_check_form.errors.checkNumber }}
                                 </div>
 
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Check Date</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Check Date</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-date-picker
-                                    v-model:value="
-                                        par_pay_check_form.rep_check_date
-                                    "
-                                    style="width: 100%"
-                                >
+                                <a-date-picker v-model:value="par_pay_check_form.rep_check_date
+                                    " style="width: 100%">
                                 </a-date-picker>
-                                <div
-                                    v-if="
-                                        par_pay_check_form.errors.rep_check_date
-                                    "
-                                    class="text-white"
-                                    style="
+                                <div v-if="
+                                    par_pay_check_form.errors.rep_check_date
+                                " class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{
                                         par_pay_check_form.errors.rep_check_date
                                     }}
                                 </div>
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Check Received</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Check Received</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-date-picker
-                                    v-model:value="
-                                        par_pay_check_form.rep_check_received
-                                    "
-                                    style="width: 100%"
-                                >
+                                <a-date-picker v-model:value="par_pay_check_form.rep_check_received
+                                    " style="width: 100%">
                                 </a-date-picker>
-                                <div
-                                    v-if="
-                                        par_pay_check_form.errors
-                                            .rep_check_received
-                                    "
-                                    class="text-white"
-                                    style="
+                                <div v-if="
+                                    par_pay_check_form.errors
+                                        .rep_check_received
+                                " class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{
                                         par_pay_check_form.errors
                                             .rep_check_received
                                     }}
                                 </div>
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Check Amount</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Check Amount</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-input
-                                    v-model:value="
-                                        par_pay_check_form.checkAmount
-                                    "
-                                    placeholder="Basic usage"
-                                    style="width: 100%"
-                                >
+                                <a-input v-model:value="par_pay_check_form.checkAmount
+                                    " placeholder="Basic usage" style="width: 100%">
                                     <template #prefix>
                                         <MoneyCollectOutlined />
                                     </template>
                                     <template #suffix>
                                         <a-tooltip title="Check Amount">
-                                            <info-circle-outlined
-                                                style="
+                                            <info-circle-outlined style="
                                                     color: rgba(0, 0, 0, 0.45);
-                                                "
-                                            />
+                                                " />
                                         </a-tooltip>
                                     </template>
                                 </a-input>
-                                <div
-                                    v-if="par_pay_check_form.errors.checkAmount"
-                                    class="text-white"
-                                    style="
+                                <div v-if="par_pay_check_form.errors.checkAmount" class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{ par_pay_check_form.errors.checkAmount }}
                                 </div>
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Approving Officer</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Approving Officer</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-select
-                                    show-search
-                                    placeholder="Search approving officer"
-                                    :default-active-first-option="false"
-                                    v-model:value="
-                                        par_pay_check_form.approvingOfficer
-                                    "
-                                    style="width: 100%"
-                                    :show-arrow="false"
-                                    :filter-option="false"
-                                    :not-found-content="
-                                        isRetrieving ? undefined : null
-                                    "
-                                    :options="appoffOption"
-                                    @search="handleSearchEmployee"
-                                >
-                                    <template
-                                        v-if="isRetrieving"
-                                        #notFoundContent
-                                    >
+                                <a-select show-search placeholder="Search approving officer"
+                                    :default-active-first-option="false" v-model:value="par_pay_check_form.approvingOfficer
+                                        " style="width: 100%" :show-arrow="false" :filter-option="false"
+                                    :not-found-content="isRetrieving ? undefined : null
+                                        " :options="appoffOption" @search="handleSearchEmployee">
+                                    <template v-if="isRetrieving" #notFoundContent>
                                         <a-spin size="small" />
                                     </template>
                                 </a-select>
-                                <div
-                                    v-if="
-                                        par_pay_check_form.errors
-                                            .approvingOfficer
-                                    "
-                                    class="text-white"
-                                    style="
+                                <div v-if="
+                                    par_pay_check_form.errors
+                                        .approvingOfficer
+                                " class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{
                                         par_pay_check_form.errors
                                             .approvingOfficer
@@ -681,251 +450,142 @@
                             </a-col>
                             <a-col :span="12">
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Check From</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Check From</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-select
-                                    show-search
-                                    placeholder="Search check from"
-                                    :default-active-first-option="false"
-                                    v-model:value="
-                                        par_pay_check_form.checkFrom_id
-                                    "
-                                    style="width: 100%"
-                                    :show-arrow="false"
-                                    :filter-option="false"
-                                    :not-found-content="
-                                        isRetrieving ? undefined : null
-                                    "
-                                    :options="checkOption"
-                                    @search="handleSearchCheckFrom"
-                                >
-                                    <template
-                                        v-if="isRetrieving"
-                                        #notFoundContent
-                                    >
+                                <a-select show-search placeholder="Search check from"
+                                    :default-active-first-option="false" v-model:value="par_pay_check_form.checkFrom_id
+                                        " style="width: 100%" :show-arrow="false" :filter-option="false"
+                                    :not-found-content="isRetrieving ? undefined : null
+                                        " :options="checkOption" @search="handleSearchCheckFrom">
+                                    <template v-if="isRetrieving" #notFoundContent>
                                         <a-spin size="small" />
                                     </template>
                                 </a-select>
-                                <div
-                                    v-if="
-                                        par_pay_check_form.errors.checkFrom_id
-                                    "
-                                    class="text-white"
-                                    style="
+                                <div v-if="
+                                    par_pay_check_form.errors.checkFrom_id
+                                " class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{ par_pay_check_form.errors.checkFrom_id }}
                                 </div>
 
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Bank Name</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-select
-                                    show-search
-                                    placeholder="Search bank name"
-                                    :default-active-first-option="false"
-                                    v-model:value="par_pay_check_form.bank_id"
-                                    style="width: 100%"
-                                    :show-arrow="false"
-                                    :filter-option="false"
-                                    :not-found-content="
-                                        isRetrieving ? undefined : null
-                                    "
-                                    :options="bankOption"
-                                    @search="handleSearchBank"
-                                >
-                                    <template
-                                        v-if="isRetrieving"
-                                        #notFoundContent
-                                    >
+                                <a-select show-search placeholder="Search bank name"
+                                    :default-active-first-option="false" v-model:value="par_pay_check_form.bank_id"
+                                    style="width: 100%" :show-arrow="false" :filter-option="false" :not-found-content="isRetrieving ? undefined : null
+                                        " :options="bankOption" @search="handleSearchBank">
+                                    <template v-if="isRetrieving" #notFoundContent>
                                         <a-spin size="small" />
                                     </template>
                                 </a-select>
-                                <div
-                                    v-if="par_pay_check_form.errors.bank_id"
-                                    class="text-white"
-                                    style="
+                                <div v-if="par_pay_check_form.errors.bank_id" class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{ par_pay_check_form.errors.bank_id }}
                                 </div>
 
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Customer Name</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-select
-                                    show-search
-                                    placeholder="Search customer name"
-                                    :default-active-first-option="false"
-                                    v-model:value="
-                                        par_pay_check_form.customerId
-                                    "
-                                    style="width: 100%"
-                                    :show-arrow="false"
-                                    :filter-option="false"
-                                    :not-found-content="
-                                        isRetrieving ? undefined : null
-                                    "
-                                    :options="customerOption"
-                                    @search="handleSearchCustomer"
-                                >
-                                    <template
-                                        v-if="isRetrieving"
-                                        #notFoundContent
-                                    >
+                                <a-select show-search placeholder="Search customer name"
+                                    :default-active-first-option="false" v-model:value="par_pay_check_form.customerId
+                                        " style="width: 100%" :show-arrow="false" :filter-option="false"
+                                    :not-found-content="isRetrieving ? undefined : null
+                                        " :options="customerOption" @search="handleSearchCustomer">
+                                    <template v-if="isRetrieving" #notFoundContent>
                                         <a-spin size="small" />
                                     </template>
                                 </a-select>
-                                <div
-                                    v-if="par_pay_check_form.errors.customerId"
-                                    class="text-white"
-                                    style="
+                                <div v-if="par_pay_check_form.errors.customerId" class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{ par_pay_check_form.errors.customerId }}
                                 </div>
 
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Currency</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Currency</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-select
-                                    placeholder="Select Currency"
-                                    v-model:value="
-                                        par_pay_check_form.currency_id
-                                    "
-                                    style="width: 100%"
-                                >
-                                    <a-select-option
-                                        v-for="(item, key) in currency"
-                                        v-model:value="item.currency_id"
-                                        >{{
-                                            item.currency_name
-                                        }}</a-select-option
-                                    >
+                                <a-select placeholder="Select Currency" v-model:value="par_pay_check_form.currency_id
+                                    " style="width: 100%">
+                                    <a-select-option v-for="(item, key) in currency" v-model:value="item.currency_id">{{
+                                        item.currency_name
+                                        }}</a-select-option>
                                 </a-select>
-                                <div
-                                    v-if="par_pay_check_form.errors.currency_id"
-                                    class="text-white"
-                                    style="
+                                <div v-if="par_pay_check_form.errors.currency_id" class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{ par_pay_check_form.errors.currency_id }}
                                 </div>
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Check Category</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Check Category</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-select
-                                    ref="select"
-                                    placeholder="Select category"
-                                    v-model:value="par_pay_check_form.category"
-                                    style="width: 100%"
-                                >
-                                    <a-select-option
-                                        v-for="(catItem, key) in category"
-                                        v-model:value="catItem.check_category"
-                                        >{{
+                                <a-select ref="select" placeholder="Select category"
+                                    v-model:value="par_pay_check_form.category" style="width: 100%">
+                                    <a-select-option v-for="(catItem, key) in category"
+                                        v-model:value="catItem.check_category">{{
                                             catItem.check_category
-                                        }}</a-select-option
-                                    >
+                                        }}</a-select-option>
                                 </a-select>
-                                <div
-                                    v-if="par_pay_check_form.errors.category"
-                                    class="text-white"
-                                    style="
+                                <div v-if="par_pay_check_form.errors.category" class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{ par_pay_check_form.errors.category }}
                                 </div>
                                 <a-breadcrumb class="mt-2 ml-1">
-                                    <a-breadcrumb-item
-                                        >Check class</a-breadcrumb-item
-                                    >
+                                    <a-breadcrumb-item>Check class</a-breadcrumb-item>
                                 </a-breadcrumb>
-                                <a-select
-                                    ref="select"
-                                    placeholder="Select category"
-                                    v-model:value="
-                                        par_pay_check_form.checkClass
-                                    "
-                                    style="width: 100%"
-                                >
-                                    <a-select-option
-                                        v-for="(chclass, key) in check_class"
-                                        v-model:value="chclass.check_class"
-                                        >{{
+                                <a-select ref="select" placeholder="Select category" v-model:value="par_pay_check_form.checkClass
+                                    " style="width: 100%">
+                                    <a-select-option v-for="(chclass, key) in check_class"
+                                        v-model:value="chclass.check_class">{{
                                             chclass.check_class
-                                        }}</a-select-option
-                                    >
+                                        }}</a-select-option>
                                 </a-select>
-                                <div
-                                    v-if="par_pay_check_form.errors.checkClass"
-                                    class="text-white"
-                                    style="
+                                <div v-if="par_pay_check_form.errors.checkClass" class="text-white" style="
                                         font-size: 12px;
                                         border: 1px solid #ff5c58;
                                         border-radius: 5px;
                                         background: rgba(255, 99, 71, 0.6);
-                                    "
-                                >
+                                    ">
                                     {{ par_pay_check_form.errors.checkClass }}
                                 </div>
                                 <a-row :gutter="[16, 16]" class="mt-4">
                                     <a-col :span="12">
-                                        <a-button
-                                            block
-                                            class="mt-2"
-                                            type="primary"
-                                            danger
-                                            @click="
-                                                () =>
-                                                    par_pay_check_form.reset(
-                                                        'checkFrom_id',
-                                                        'bank_id',
-                                                        'customerId',
-                                                        'approvingOfficer',
-                                                        'currency_id',
-                                                        'category',
-                                                        'rep_reason',
-                                                        'checkClass',
-                                                        'rep_date',
-                                                        'rep_check_date',
-                                                        'rep_check_recieved',
-                                                        'accountname',
-                                                        'accountnumber',
-                                                        'checkNumber'
-                                                    )
-                                            "
-                                        >
+                                        <a-button block class="mt-2" type="primary" danger @click="() =>
+                                            par_pay_check_form.reset(
+                                                'checkFrom_id',
+                                                'bank_id',
+                                                'customerId',
+                                                'approvingOfficer',
+                                                'currency_id',
+                                                'category',
+                                                'rep_reason',
+                                                'checkClass',
+                                                'rep_date',
+                                                'rep_check_date',
+                                                'rep_check_recieved',
+                                                'accountname',
+                                                'accountnumber',
+                                                'checkNumber'
+                                            )
+                                            ">
                                             <template #icon>
                                                 <ClearOutlined />
                                             </template>
@@ -933,15 +593,9 @@
                                         </a-button>
                                     </a-col>
                                     <a-col :span="12" class="mb-7">
-                                        <a-button
-                                            block
-                                            class="mt-2"
-                                            type="primary"
-                                            @click="saveChangesPartialCheck"
-                                            :loading="
-                                                par_pay_check_form.processing
-                                            "
-                                        >
+                                        <a-button block class="mt-2" type="primary" @click="saveChangesPartialCheck"
+                                            :loading="par_pay_check_form.processing
+                                                ">
                                             <template #icon>
                                                 <SaveOutlined />
                                             </template>
@@ -963,228 +617,142 @@
 
                             <a-row :gutter="[16, 16]" class="mt-4">
                                 <a-col :span="8">
-                                    <a-select
-                                        v-model:value="
-                                            par_pay_check_form.conType
-                                        "
-                                        :disabled="!isValid()"
-                                        ref="select"
-                                        placeholder="Choose a type "
-                                        style="width: 100%"
-                                        @change="handleChangeCheckType"
-                                    >
-                                        <a-select-option value="1"
-                                            >Bounce check type</a-select-option
-                                        >
-                                        <a-select-option value="2"
-                                            >Redeem check type</a-select-option
-                                        >
+                                    <a-select v-model:value="par_pay_check_form.conType
+                                        " :disabled="!isValid()" ref="select" placeholder="Choose a type "
+                                        style="width: 100%" @change="handleChangeCheckType">
+                                        <a-select-option value="1">Bounce check type</a-select-option>
+                                        <a-select-option value="2">Redeem check type</a-select-option>
                                     </a-select>
                                 </a-col>
                                 <a-col :span="16" class="mb-7">
-                                    <a-select
-                                        placeholder="Please choose a check type"
-                                        v-model:value="
-                                            par_pay_check_form.conCheckPartial
-                                        "
-                                        style="width: 100%"
-                                        :disabled="dataCheckType.length <= 0"
-                                    >
-                                        <a-select-option
-                                            v-for="(data, key) in dataCheckType"
-                                            :key="key"
-                                            v-model:value="data.checkCred"
-                                            >{{ data.customer }} - Check amount:
-                                            {{ data.amount }}</a-select-option
-                                        ></a-select
-                                    ></a-col
-                                >
-                            </a-row></a-card
-                        >
+                                    <a-select placeholder="Please choose a check type" v-model:value="par_pay_check_form.conCheckPartial
+                                        " style="width: 100%" :disabled="dataCheckType.length <= 0">
+                                        <a-select-option v-for="(data, key) in dataCheckType" :key="key"
+                                            v-model:value="data.checkCred">{{ data.customer }} - Check amount:
+                                            {{ data.amount }}</a-select-option></a-select></a-col>
+                            </a-row>
+                        </a-card>
                     </a-card>
                 </a-card>
             </a-col>
         </a-row>
     </a-modal>
 
-    <a-modal
-        v-model:open="openDetails"
-        style="top: 25px"
-        width="1000px"
-        title="Details"
-        @ok="handleOk"
-        :ok-button-props="{ hidden: true }"
-        :cancel-button-props="{ hidden: true }"
-        :footer="null"
-    >
+    <a-modal v-model:open="openDetails" style="top: 25px" width="1000px" title="Details" @ok="handleOk"
+        :ok-button-props="{ hidden: true }" :cancel-button-props="{ hidden: true }" :footer="null">
         <div class="product-table">
             <table class="min-w-full divide-y divide-gray-200">
                 <tbody>
                     <tr>
                         <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-t border-gray-200"
-                        >
+                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-t border-gray-200">
                             Customer Name
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-t border-gray-200">
                             {{ selectDataDetails.fullname }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Check From
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.department }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Check Number
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.check_no }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Approving Officer
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.approving_officer }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Check Class
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.check_class }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Check Status
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.check_status }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Check Date
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.check_date }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Account No
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.account_no }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Check Received
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.check_received }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Account Name
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.account_name }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Received As
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.check_type }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Bank Name
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.bankbranchname }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Check Category
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.check_category }}
                         </td>
                     </tr>
                     <tr>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap font-bold border-b border-r border-l border-gray-200">
                             Amount
                         </td>
-                        <td
-                            class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200"
-                        >
+                        <td class="px-6 py-2 whitespace-no-wrap border-b border-r border-l border-gray-200">
                             {{ selectDataDetails.check_amount }}
                         </td>
                     </tr>
@@ -1213,6 +781,10 @@ export default {
     },
     data() {
         return {
+            query: {
+                start: '',
+            },
+            isFetching: false,
             openModalPPayment: false,
             openModalPPaymentCheck: false,
             selectDataDetails: {},
@@ -1657,6 +1229,26 @@ export default {
                 this.isRetrieving = false;
             }
         }, 1000),
+    },
+    watch: {
+        query: {
+            deep: true,
+            handler: debounce(async function () {
+                this.isFetching = true,
+                    this.$inertia.get(route("partial_payments.checks"), {
+                        searchQuery: this.query.search,
+                    }, {
+                        preserveState: true,
+                        onSuccess: () => {
+                            this.isFetching = false;
+                        },
+                        onError: () => {
+                            this.isFetching = false; // Ensure the flag is reset on error
+                        }
+                    }
+                    );
+            }, 600),
+        },
     },
 };
 </script>

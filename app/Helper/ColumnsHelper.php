@@ -565,7 +565,7 @@ class ColumnsHelper
             'title' => "Bounced date",
             'dataIndex' => "bounce_date",
             'key' => "checks_r",
-            'width' => "15%",
+            'width' => "10%",
         ],
         [
             'title' => "Checkdate",
@@ -578,14 +578,14 @@ class ColumnsHelper
             'title' => "Customer Name",
             'dataIndex' => "fullname",
             'key' => "address",
-            'width' => "20%",
+            'width' => "15%",
         ],
 
         [
-            'title' => "Check Number",
+            'title' => "Check No.",
             'dataIndex' => "check_no",
             'key' => "check_no",
-            'width' => "10%",
+            'width' => "6%",
         ],
         [
             'title' => "Amount",
