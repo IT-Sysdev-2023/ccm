@@ -19,7 +19,7 @@
                     ALL CHECQUE COUNTS
                 </p>
                 <div
-                    style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
+                    style="border: 1px solid #EEEDEB; display: flex; justify-content: center; padding-top: 50px; padding-bottom: 50px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
                     <div id="chart">
 
                         <apexchart style="height: 100px;" type="polarArea" width="600" :options="chartOptions"
