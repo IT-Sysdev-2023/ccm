@@ -12,7 +12,7 @@ import ToastPlugin from 'vue-toast-notification';
 import VueApexCharts from "vue3-apexcharts";
 import { createPinia } from 'pinia';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.APP_NAME || 'Check Clearing And Monitoring System';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

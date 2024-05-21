@@ -33,12 +33,12 @@ const showingNavigationDropdown = ref(false);
                 <nav
                     class="h-0 md:h-auto flex flex-col flex-grow md:items-center pb-4 md:pb-0 md:flex md:justify-end md:flex-row origin-top duration-300 scale-y-0">
                     <Link
-                        class=" rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
+                        class="hov rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
                         :href="route('accounting.dashboard')" :class="{
                             'bg-nav':
                                 route().current('accounting.dashboard'),
-                        }">Dashboard</Link>
-                    <Link class="px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black rounded "
+                        }"><DashboardOutlined /> Dashboard</Link>
+                    <Link class="hov px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black rounded "
                         :href="route('reports.accounting')" :class="{
                             'bg-nav':
                                 route().current('reports.accounting') ||
@@ -47,10 +47,13 @@ const showingNavigationDropdown = ref(false);
                                 route().current('bounce.checks.accounting') ||
                                 route().current('redeem.reports.accounting')
                             ,
-                        }">Reports</Link>
+                        }"><PaperClipOutlined /> Reports</Link>
                     <Link
-                        class="rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
-                        href="#">About Us</Link>
+                        class="hov rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
+                        href="#"><AliwangwangOutlined /> About Us</Link>
+                    <Link
+                        class="hov rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
+                        :href="route('logout')" method="post"><LogoutOutlined /> Logout</Link>
 
                 </nav>
             </div>
@@ -111,6 +114,10 @@ export default {
 }
 </script>
 <style scoped>
+.hov:hover {
+    background: #706767;
+    color: white
+}
 .bg-cream {
     background-color: white;
 }

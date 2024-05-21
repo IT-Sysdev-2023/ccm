@@ -1,7 +1,7 @@
 
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Leasing Checks" />
 
 
         <div class="py-2">

@@ -1,4 +1,5 @@
 <template>
+     <Head title="Deposited Check Reports" />
         <div class="py-4">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-breadcrumb class="mb-5">

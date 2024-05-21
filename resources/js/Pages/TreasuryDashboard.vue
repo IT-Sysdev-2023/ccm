@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Dashboard" />
+    <Head title="Treasury Dashboard" />
       <div class="py-4">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
                 <a-row :gutter="[16, 16]" class="mt-4">

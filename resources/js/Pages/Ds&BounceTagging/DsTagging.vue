@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Dashboard" />
+    <Head title="Ds Tagging" />
 
     <div class="py-4">
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">

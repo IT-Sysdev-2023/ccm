@@ -1,116 +1,128 @@
 <template>
 
-    <Head title="Dashboard" />
-        <div class="py-12">
-            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-                <a-row :gutter="[16, 16]" class="mt-4">
-                    <a-col :span="8">
-                        <div class="parent">
-                            <div class="card">
-                                <div class="content-box">
-                                    <span class="card-title">Cheques</span>
-                                    <p class="card-content">
-                                        This is the data of the Cheques
-                                    </p>
-                                </div>
-                                <div class="date-box">
-                                    <span class="month">Count</span>
-                                    <span class="date">{{ checkCount.toLocaleString() }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a-col>
-                    <a-col :span="8">
-                        <div class="parent">
-                            <div class="card">
-                                <div class="content-box">
-                                    <span class="card-title">Post Dated Cheques</span>
-                                    <p class="card-content">
-                                        This is the data of the Cheques
-                                    </p>
-
-                                </div>
-                                <div class="date-box">
-                                    <span class="month">Count</span>
-                                    <span class="date">{{ pdcCount.toLocaleString() }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a-col>
-                    <a-col :span="8">
-                        <div class="parent">
-                            <div class="card">
-                                <div class="content-box">
-                                    <span class="card-title">Dated Cheques</span>
-                                    <p class="card-content">
-                                        This is the data of the Cheques
-                                    </p>
-
-                                </div>
-                                <div class="date-box">
-                                    <span class="month">Count</span>
-                                    <span class="date">{{ datedCount.toLocaleString() }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                    </a-col>
-                    <a-col :span="8">
-                        <div class="parent">
-                            <div class="card">
-                                <div class="content-box">
-                                    <span class="card-title">Deposited Cheques</span>
-                                    <p class="card-content">
-                                        This is the data of the Cheques
-                                    </p>
-
-                                </div>
-                                <div class="date-box">
-                                    <span class="month">Count</span>
-                                    <span class="date">{{ depositedCount.toLocaleString() }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                    </a-col>
-                    <a-col :span="8">
-                        <div class="parent">
-                            <div class="card">
-                                <div class="content-box">
-                                    <span class="card-title">Bounce Cheques</span>
-                                    <p class="card-content">
-                                        This is the data of the Cheques
-                                    </p>
-
-                                </div>
-                                <div class="date-box">
-                                    <span class="month">Count</span>
-                                    <span class="date">{{ bouncedCount.toLocaleString() }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                    </a-col>
-                    <a-col :span="8">
-                        <div class="parent">
-                            <div class="card">
-                                <div class="content-box">
-                                    <span class="card-title">Replacement Cheques</span>
-                                    <p class="card-content">
-                                        This is the data of the Cheques
-                                    </p>
-
-                                </div>
-                                <div class="date-box">
-                                    <span class="month">Count</span>
-                                    <span class="date">{{ replacementCount.toLocaleString() }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a-col>
-                </a-row>
+    <Head title="Accounting Dashboard" />
+    <div class="py-12">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <div class="ml-5">
+                <a-breadcrumb>
+                    <a-breadcrumb-item href="">
+                        <home-outlined />
+                    </a-breadcrumb-item>
+                    <a-breadcrumb-item href="">
+                        <user-outlined />
+                        <span>Accounting Reports</span>
+                    </a-breadcrumb-item>
+                    <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
+                </a-breadcrumb>
             </div>
+            <a-row :gutter="[16, 16]" class="mt-4">
+                <a-col :span="8">
+                    <div class="parent">
+                        <div class="card">
+                            <div class="content-box">
+                                <span class="card-title">Cheques</span>
+                                <p class="card-content">
+                                    This is the data of the Cheques
+                                </p>
+                            </div>
+                            <div class="date-box">
+                                <span class="month">Count</span>
+                                <span class="date">{{ checkCount.toLocaleString() }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a-col>
+                <a-col :span="8">
+                    <div class="parent">
+                        <div class="card">
+                            <div class="content-box">
+                                <span class="card-title">Post Dated Cheques</span>
+                                <p class="card-content">
+                                    This is the data of the Cheques
+                                </p>
+
+                            </div>
+                            <div class="date-box">
+                                <span class="month">Count</span>
+                                <span class="date">{{ pdcCount.toLocaleString() }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a-col>
+                <a-col :span="8">
+                    <div class="parent">
+                        <div class="card">
+                            <div class="content-box">
+                                <span class="card-title">Dated Cheques</span>
+                                <p class="card-content">
+                                    This is the data of the Cheques
+                                </p>
+
+                            </div>
+                            <div class="date-box">
+                                <span class="month">Count</span>
+                                <span class="date">{{ datedCount.toLocaleString() }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </a-col>
+                <a-col :span="8">
+                    <div class="parent">
+                        <div class="card">
+                            <div class="content-box">
+                                <span class="card-title">Deposited Cheques</span>
+                                <p class="card-content">
+                                    This is the data of the Cheques
+                                </p>
+
+                            </div>
+                            <div class="date-box">
+                                <span class="month">Count</span>
+                                <span class="date">{{ depositedCount.toLocaleString() }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </a-col>
+                <a-col :span="8">
+                    <div class="parent">
+                        <div class="card">
+                            <div class="content-box">
+                                <span class="card-title">Bounce Cheques</span>
+                                <p class="card-content">
+                                    This is the data of the Cheques
+                                </p>
+
+                            </div>
+                            <div class="date-box">
+                                <span class="month">Count</span>
+                                <span class="date">{{ bouncedCount.toLocaleString() }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </a-col>
+                <a-col :span="8">
+                    <div class="parent">
+                        <div class="card">
+                            <div class="content-box">
+                                <span class="card-title">Replacement Cheques</span>
+                                <p class="card-content">
+                                    This is the data of the Cheques
+                                </p>
+
+                            </div>
+                            <div class="date-box">
+                                <span class="month">Count</span>
+                                <span class="date">{{ replacementCount.toLocaleString() }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a-col>
+            </a-row>
         </div>
+    </div>
 
 </template>
 

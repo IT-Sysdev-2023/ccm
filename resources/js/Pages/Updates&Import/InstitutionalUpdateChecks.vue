@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Dashboard" />
+    <Head title="Import And Update Check" />
 
         <div class="py-5">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">

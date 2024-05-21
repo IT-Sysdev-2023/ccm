@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Edit check Details" />
+    <Head title="Bounce Check Details" />
 
         <div class=" py-4 max-w-8xl mx-auto sm:px-6 lg:px-8">
             <a-select style="width: 250px;" v-model:value="bunitValue" class="mr-2 mb-4"

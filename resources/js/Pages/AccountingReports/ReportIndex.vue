@@ -1,18 +1,21 @@
-<script setup>
-import AccountingLayout from '@/Layouts/AccountingLayout.vue';
-</script>
-
 <template>
 
     <Head title="Report Index " />
 
-    <AccountingLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">this is accounting Dashboard</h2>
-        </template>
-
         <div class="py-5">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+                <div class="ml-20">
+                    <a-breadcrumb>
+                        <a-breadcrumb-item href="">
+                            <home-outlined />
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item href="">
+                            <user-outlined />
+                            <span>Accounting Reports</span>
+                        </a-breadcrumb-item>
+                        <a-breadcrumb-item>Reports Navigation</a-breadcrumb-item>
+                    </a-breadcrumb>
+                </div>
                 <div class="p-10">
                     <a-row :gutter="[16, 16]">
                         <a-col :span="6" class="flex justify-center">
@@ -140,8 +143,14 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                 </div>
             </div>
         </div>
-    </AccountingLayout>
 </template>
+
+<script>
+import AccountingLayout from '@/Layouts/AccountingLayout.vue';
+export default {
+    layout: AccountingLayout,
+}
+</script>
 
 <style scoped>
 .card {
@@ -216,6 +225,4 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
     opacity: 1;
     max-height: 40px;
 }
-
-
 </style>

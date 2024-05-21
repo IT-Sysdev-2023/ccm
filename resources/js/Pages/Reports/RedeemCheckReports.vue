@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Dashboard" />
+    <Head title="Redeem Checks Reports" />
         <div class="py-4 max-w-8xl mx-auto sm:px-6 lg:px-8">
             <a-breadcrumb class="mb-2">
                 <a-breadcrumb-item>Dashboard</a-breadcrumb-item>

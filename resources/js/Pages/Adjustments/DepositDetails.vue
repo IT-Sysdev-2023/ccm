@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Edit check Details" />
+    <Head title="Deposit Details" />
         <div class=" py-4 max-w-8xl mx-auto sm:px-6 lg:px-8">
             <a-date-picker style="width: 250px;" @change="handleChangeYear" v-model:value="yearValue" picker="year"
                 class="mr-2 mb-4" />

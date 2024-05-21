@@ -1,5 +1,5 @@
 <template>
-    <Head title="Dashboard" />
+    <Head title="Post Dated Checks" />
 
         <div class="py-2">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">

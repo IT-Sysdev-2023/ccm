@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Dashboard" />
+    <Head title="Dated Checks" />
     <div class="py-0">
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <a-breadcrumb class="mt-3 mb-3">
@@ -19,7 +19,7 @@
 
                     <template #bodyCell="{ column, record }">
                         <template v-if="column.key === 'action'">
-                            <a-button @click="detailedChecks(record)" size="small" style="width: 100%;">
+                            <a-button @click="detailedChecks(record)" size="small" >
                                 <template #icon>
                                     <SettingOutlined />
                                 </template>

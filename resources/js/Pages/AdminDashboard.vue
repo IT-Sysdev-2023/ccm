@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Dashboard" />
+    <Head title="Admin Dashboard" />
     <div>
         <a-breadcrumb class="mb-5">
             <a-breadcrumb-item href="">

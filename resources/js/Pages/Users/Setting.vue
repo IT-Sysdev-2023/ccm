@@ -1,4 +1,5 @@
 <template>
+    <Head title="My Setting"></Head>
         <a-row :gutter="[16, 16]">
             <a-col :span="8" style="margin: 0 auto;">
                 <a-card class="flex justify-center items-center" style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
@@ -51,69 +52,7 @@
                 </a-card>
             </a-col>
             <a-col :span="14" style="margin: 0 auto;">
-                <a-row :gutter="[16, 16]">
-                    <a-col :span="8">
-                        <a-card>
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolore suscipit
-                            voluptates nisi
-                            repudiandae aliquid, quibusdam repellat ex modi! Minima culpa distinctio dignissimos
-                            deleniti eum
-                            aspernatur sed fuga porro fugiat.
 
-                        </a-card>
-                    </a-col>
-                    <a-col :span="8">
-                        <a-card>
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolore suscipit
-                            voluptates nisi
-                            repudiandae aliquid, quibusdam repellat ex modi! Minima culpa distinctio dignissimos
-                            deleniti eum
-                            aspernatur sed fuga porro fugiat.
-
-                        </a-card>
-                    </a-col>
-                    <a-col :span="8">
-                        <a-card>
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolore suscipit
-                            voluptates nisi
-                            repudiandae aliquid, quibusdam repellat ex modi! Minima culpa distinctio dignissimos
-                            deleniti eum
-                            aspernatur sed fuga porro fugiat.
-
-                        </a-card>
-                    </a-col>
-                    <a-col :span="8">
-                        <a-card>
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolore suscipit
-                            voluptates nisi
-                            repudiandae aliquid, quibusdam repellat ex modi! Minima culpa distinctio dignissimos
-                            deleniti eum
-                            aspernatur sed fuga porro fugiat.
-
-                        </a-card>
-                    </a-col>
-                    <a-col :span="8">
-                        <a-card>
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolore suscipit
-                            voluptates nisi
-                            repudiandae aliquid, quibusdam repellat ex modi! Minima culpa distinctio dignissimos
-                            deleniti eum
-                            aspernatur sed fuga porro fugiat.
-
-                        </a-card>
-                    </a-col>
-                    <a-col :span="8">
-                        <a-card>
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt dolore suscipit
-                            voluptates nisi
-                            repudiandae aliquid, quibusdam repellat ex modi! Minima culpa distinctio dignissimos
-                            deleniti eum
-                            aspernatur sed fuga porro fugiat.
-
-                        </a-card>
-                    </a-col>
-
-                </a-row>
             </a-col>
         </a-row>
 </template>

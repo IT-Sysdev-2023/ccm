@@ -4,7 +4,7 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
 
 <template>
 
-    <Head title="Dashboard" />
+    <Head title="Redeem Pdc Check Reports" />
 
     <AccountingLayout>
 
