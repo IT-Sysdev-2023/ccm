@@ -1,94 +1,99 @@
-
-
 <template>
 
     <Head title="Dashboard" />
 
-        <div class="py-4">
-            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-                <a-breadcrumb class="mb-5">
-                    <a-breadcrumb-item href="">
-                        <HomeOutlined />
-                    </a-breadcrumb-item>
-                    <a-breadcrumb-item href="">
-                        <user-outlined />
-                        <span>Ds&Bounce Tagging</span>
-                    </a-breadcrumb-item>
-                    <a-breadcrumb-item>Ds Taggings</a-breadcrumb-item>
-                    <a-breadcrumb-item></a-breadcrumb-item>
-                </a-breadcrumb>
-                <a-row :gutter="[16, 16]">
-                    <a-col :span="4">
-                        <p class="text-center mb-1 font-bold">check count</p>
-                        <a-card style="width: 100%; height: 90px" class="mb-5">
-                            <div class="flex justify-center items-center">
-                                <a-badge count="0" style="
-                                        display: flex;
-                                        justify-content: center;
-                                    ">
-                                    <img src="../../../../public/icons/abacus.png" alt="" style="
-                                                height: 40px;
-                                                display: flex;
-                                                justify-content: center;
-                                            " />
-                                    <!-- <a-avatar shape="square" size="large" src="../../../../public/icons/abacus.png" /> -->
-                                </a-badge>
-                                <p class="ml-10 font-bold">
-                                    {{ total.count }}
-                                </p>
-                            </div>
-                        </a-card>
-                    </a-col>
-                    <a-col :span="5">
-                        <p class="text-center mb-1 font-bold">total amount</p>
-                        <a-card style="width: 100%; height: 90px" class="mb-5">
-                            <div class="flex justify-center items-center">
-                                <a-badge count="0" style="
-                                        display: flex;
-                                        justify-content: center;
-                                    ">
-                                    <img src="../../../../public/icons/calculator.png" alt="" style="
-                                                height: 40px;
-                                                display: flex;
-                                                justify-content: center;
-                                            " />
-                                </a-badge>
-                                <p class="ml-10 font-bold">
-                                    ₱
-                                    {{ total.totalSum.toLocaleString() }}
-                                </p>
-                            </div>
-                        </a-card>
-                    </a-col>
-                    <a-col :span="4">
-                        <p class="text-center mb-1 font-bold">due dates</p>
-                        <a-card style="width: 100%; height: 90px" class="mb-5">
-                            <div class="flex justify-center items-center">
+    <div class="py-4">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <a-breadcrumb class="mb-5">
+                <a-breadcrumb-item href="">
+                    <HomeOutlined />
+                </a-breadcrumb-item>
+                <a-breadcrumb-item href="">
+                    <user-outlined />
+                    <span>Ds&Bounce Tagging</span>
+                </a-breadcrumb-item>
+                <a-breadcrumb-item>Ds Taggings</a-breadcrumb-item>
+                <a-breadcrumb-item></a-breadcrumb-item>
+            </a-breadcrumb>
 
-                                <a-badge count="0" style="
+            <a-row :gutter="[16, 16]">
+
+                <a-col :span="4">
+                    <p class="text-center mb-1 font-bold">check count</p>
+                    <a-card style="width: 100%; height: 90px" class="mb-5">
+
+                        <div class="flex justify-center items-center">
+                            <a-badge count="0" style="
                                         display: flex;
                                         justify-content: center;
                                     ">
-                                    <img src="../../../../public/icons/due-date(1).png" alt="" style="
+                                <img src="../../../../public/icons/abacus.png" alt="" style="
                                                 height: 40px;
                                                 display: flex;
                                                 justify-content: center;
                                             " />
-                                </a-badge>
-                                <p class="ml-10 font-bold">{{ due_dates }}</p>
-                            </div>
-                        </a-card>
-                    </a-col>
-                    <a-col :span="11">
-                        <a-card style="width: 100%" class="mb-5 mt-5">
-                            <a-row :gutter="[16, 16]" class="mt-2">
-                                <a-col :span="8">
-                                    <a-tooltip :color="colors" :open="isTooltipVisibleNo" title="Ds Number is required">
-                                        <a-input placeholder="Ds Number" v-model:value="dsNo">
+                                <!-- <a-avatar shape="square" size="large" src="../../../../public/icons/abacus.png" /> -->
+                            </a-badge>
+                            <p class="ml-10 font-bold">
+                                {{ total.count }}
+                            </p>
+                        </div>
+                    </a-card>
+                </a-col>
+                <a-col :span="5">
+                    <p class="text-center mb-1 font-bold">total amount</p>
+                    <a-card style="width: 100%; height: 90px" class="mb-5">
+                        <div class="flex justify-center items-center">
+                            <a-badge count="0" style="
+                                        display: flex;
+                                        justify-content: center;
+                                    ">
+                                <img src="../../../../public/icons/calculator.png" alt="" style="
+                                                height: 40px;
+                                                display: flex;
+                                                justify-content: center;
+                                            " />
+                            </a-badge>
+                            <p class="ml-10 font-bold">
+                                ₱
+                                {{ total.totalSum.toLocaleString() }}
+                            </p>
+                        </div>
+                    </a-card>
+                </a-col>
+                <a-col :span="4">
+                    <p class="text-center mb-1 font-bold">due dates</p>
+                    <a-card style="width: 100%; height: 90px" class="mb-5">
+                        <div class="flex justify-center items-center">
 
-                                            <template #suffix>
-                                                <a-tooltip title="Please Enter a Ds Number">
-                                                    <info-circle-outlined style="
+                            <a-badge count="0" style="
+                                        display: flex;
+                                        justify-content: center;
+                                    ">
+                                <img src="../../../../public/icons/due-date(1).png" alt="" style="
+                                                height: 40px;
+                                                display: flex;
+                                                justify-content: center;
+                                            " />
+                            </a-badge>
+                            <p class="ml-10 font-bold">{{ due_dates }}</p>
+                        </div>
+                    </a-card>
+                </a-col>
+                <a-col :span="11">
+                    <a-card style="width: 100%" class="mb-5 mt-5">
+                        <div>
+                            <a-input-search v-model:value="query.search" block class="mb-5" placeholder="Search Checks"
+                                :loading="isFetching" />
+                        </div>
+                        <a-row :gutter="[16, 16]" class="mt-2">
+                            <a-col :span="8">
+                                <a-tooltip :color="colors" :open="isTooltipVisibleNo" title="Ds Number is required">
+                                    <a-input placeholder="Ds Number" v-model:value="dsNo">
+
+                                        <template #suffix>
+                                            <a-tooltip title="Please Enter a Ds Number">
+                                                <info-circle-outlined style="
                                                             color: rgba(
                                                                 0,
                                                                 0,
@@ -96,50 +101,49 @@
                                                                 0.45
                                                             );
                                                         " />
-                                                </a-tooltip>
-                                            </template>
-                                        </a-input>
-                                    </a-tooltip>
-                                </a-col>
-                                <a-col :span="8">
-                                    <a-tooltip :color="colors" :open="isTooltipVisibleDt"
-                                        title="Return Date is required ">
-                                        <a-date-picker v-model:value="dateDeposit" style="width: 100%" />
-                                    </a-tooltip>
-                                </a-col>
-                                <a-col :span="8">
-
-                                    <a-button :loading="isLoadingbutton" style="width: 100%;" type="primary"
-                                        @click="submitToConButton()">
-                                        <template #icon>
-                                            <SaveOutlined />
+                                            </a-tooltip>
                                         </template>
-                                        submit ds number</a-button>
-                                </a-col>
-                            </a-row>
-                        </a-card>
-                    </a-col>
-                </a-row>
-                <a-table :data-source="ds_c_table.data" :pagination="false" :columns="columns" size="small"
-                    :scroll="{ x: 100, y: 470 }" class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
-                        _record.type === 'POST-DATED'
-                            ? 'POST-DATED'
-                            : 'DATED'
-                        ">
+                                    </a-input>
+                                </a-tooltip>
+                            </a-col>
+                            <a-col :span="8">
+                                <a-tooltip :color="colors" :open="isTooltipVisibleDt" title="Return Date is required ">
+                                    <a-date-picker v-model:value="dateDeposit" style="width: 100%" />
+                                </a-tooltip>
+                            </a-col>
+                            <a-col :span="8">
 
-                    <template #bodyCell="{ column, record, index }">
-                        <template v-if="column.key === 'select'">
-                            <a-switch v-model:checked="record.done" @change="handleSwitchChange(record)" size="small">
-                                <template #checkedChildren><check-outlined /></template>
+                                <a-button :loading="isLoadingbutton" style="width: 100%;" type="primary"
+                                    @click="submitToConButton()">
+                                    <template #icon>
+                                        <SaveOutlined />
+                                    </template>
+                                    submit ds number</a-button>
+                            </a-col>
+                        </a-row>
+                    </a-card>
+                </a-col>
+            </a-row>
+            <a-table :data-source="ds_c_table.data" :pagination="false" :columns="columns" size="small"
+                :scroll="{ x: 100, y: 470 }" class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
+                    _record.type === 'POST-DATED'
+                        ? 'POST-DATED'
+                        : 'DATED'
+                    ">
 
-                                <template #unCheckedChildren><close-outlined /></template>
-                            </a-switch>
-                        </template>
+                <template #bodyCell="{ column, record, index }">
+                    <template v-if="column.key === 'select'">
+                        <a-switch v-model:checked="record.done" @change="handleSwitchChange(record)" size="small">
+                            <template #checkedChildren><check-outlined /></template>
+
+                            <template #unCheckedChildren><close-outlined /></template>
+                        </a-switch>
                     </template>
-                </a-table>
-                <pagination class="mt-6" :datarecords="ds_c_table" />
-            </div>
+                </template>
+            </a-table>
+            <pagination class="mt-6" :datarecords="ds_c_table" />
         </div>
+    </div>
 </template>
 
 <script>
@@ -149,11 +153,15 @@ import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import Pagination from "@/Components/Pagination.vue"
 import axios from "axios";
+import debounce from "lodash/debounce";
 
 export default {
     layout: TreasuryLayout,
     data() {
         return {
+            query: {
+                search: '',
+            },
             switchValues: [],
             countDs: 0,
             totalAmount: 0,
@@ -164,6 +172,7 @@ export default {
             isTooltipVisibleDt: false,
             isTooltipVisibleNo: false,
             isLoadingbutton: false,
+            isFetching: false,
         };
     },
     props: {
@@ -182,17 +191,6 @@ export default {
                 value.done === "" ? false : true
             );
         },
-
-        handleTableChange(page) {
-            try {
-                this.$inertia.get(route().current(), {
-                    page: page,
-                });
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        },
-
         async submitToConButton() {
             this.isLoadingbutton = true;
             const selected = this.ds_c_table.data.filter((value) => value.done);
@@ -329,6 +327,26 @@ export default {
         this.switchValues = this.ds_c_table.data.map((value) =>
             value.done === "" ? false : true
         );
+    },
+    watch: {
+        query: {
+            deep: true,
+            handler: debounce(async function () {
+                this.isFetching = true,
+                    this.$inertia.get(route("ds_tagging"), {
+                        searchQuery: this.query.search,
+                    }, {
+                        preserveState: true,
+                        onSuccess: () => {
+                            this.isFetching = false;
+                        },
+                        onError: () => {
+                            this.isFetching = false; // Ensure the flag is reset on error
+                        }
+                    }
+                    );
+            }, 600),
+        },
     },
 };
 </script>

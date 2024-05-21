@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Illuminate\Support\Arr;
 
 class DsBounceTaggingService
 {
@@ -48,11 +47,18 @@ class DsBounceTaggingService
     public function indexDsTagging(Request $request)
     {
         // dd($query);
+        // dd(1);
         $due_dates = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
             ->whereDate('checks.check_date', today()->toDateString())
             ->count();
 
         $ds_checks_table = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
+            ->where(function ($query) use ($request) {
+                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
+                return $query; // Add other columns as needed
+            })
             ->orderBy('checks.check_received', 'DESC')
             ->paginate(300);
 
@@ -103,7 +109,6 @@ class DsBounceTaggingService
             $value->check_amount = NumberHelper::currency($value->check_amount);
             return $value;
         });
-
 
         return Inertia::render('Ds&BounceTagging/BounceTagging', [
             'data' => $data,

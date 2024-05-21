@@ -219,7 +219,6 @@ export default {
         }
     },
     watch: {
-
         query: {
             deep: true,
             handler: debounce(async function () {
