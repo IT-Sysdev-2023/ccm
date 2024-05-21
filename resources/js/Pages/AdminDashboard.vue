@@ -13,7 +13,7 @@
             <a-breadcrumb-item>Charts</a-breadcrumb-item>
         </a-breadcrumb>
         <a-row :gutter="[16, 16]">
-
+            <!-- {{  getOnlineUsers }} -->
             <a-col :span="16">
                 <p class="font-bold mb-5 text-gray-500 text-center">
                     ALL CHECQUE COUNTS
@@ -53,9 +53,9 @@
                     <a-card v-for="item in getOnlineUsers" class="mb-1">
                         <div class="flex">
                             <span><img src="/ccmlogo/onlinebadge.png"
-                                    style="height: 20px; position: relative; left: 57px;" alt=""></span>
-                            <img src="/ccmlogo/lgremove.png" style="height: 50px; background: #000; border-radius: 50%"
-                                class="mr-5" alt="img">
+                                    style="height: 15px; position: relative; left: 57px; background: rgb(1, 255, 1); border: 1px solid rgb(1, 255, 1); border-radius: 50%;" alt=""></span>
+                            <img :src="item.image" style="height: 50px; border-radius: 50%"
+                                class="mr-5" alt="image">
                             <p>
                                 {{ item.name }} <br>
                                 {{ item.usertype == 1 ? 'Admin' : item.usertype == 9 ? 'Treasury' : 'Accounting' }}
@@ -186,3 +186,4 @@ export default {
 
 };
 </script>
+

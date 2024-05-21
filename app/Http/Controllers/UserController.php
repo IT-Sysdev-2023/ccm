@@ -2,35 +2,43 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BusinessUnit;
 use App\Models\Company;
 use App\Models\Department;
+use App\Models\User;
+use App\Models\UserType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Inertia\Inertia;
-use App\Models\User;
-use App\Models\UserType;
-use App\Models\BusinessUnit;
-use Illuminate\Support\Facades\DB;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::join('company', 'company.company_id', '=', 'users.company_id')
-            ->join('department', 'department.department_id', '=', 'users.department_id')
-            ->join('businessunit', 'businessunit.businessunit_id', '=', 'users.businessunit_id')
-            ->join('usertype', 'usertype.usertype_id', '=', 'users.usertype_id')
-            ->select('users.*', 'company.*', 'department.*', 'businessunit.*', 'usertype.*')
-            ->orderBy('users.created_at', 'desc')
-            ->paginate(12)->withQueryString();
 
+        $users = User::where('empid', '!=', '')->with([
+            'company' => function ($query) {
+                $query->select('company_id', 'company');
+            },
+            'departments' => function ($query) {
+                $query->select('department_id', 'department');
+            },
+            'businessunit' => function ($query) {
+                $query->select('businessunit_id', 'bname');
+            },
+            'employee3' => function ($query) {
+                $query->select('emp_no', 'emp_id');
+            },
+            'employee3.applicant' => function ($query) {
+                $query->select('app_id', 'photo');
+            },
+        ])->paginate(12)->withQueryString();
 
         $userType = UserType::all();
 
@@ -39,8 +47,9 @@ class UserController extends Controller
             'userType' => $userType,
         ]);
     }
-    public function settings()
+    public function settings($id)
     {
+
         return Inertia::render("Users/Setting");
     }
 
@@ -157,7 +166,6 @@ class UserController extends Controller
         // Create a new Spreadsheet object
         $spreadsheet = new Spreadsheet();
 
-
         $headerRow = [
             'Name',
             'Username',
@@ -225,7 +233,6 @@ class UserController extends Controller
         return response()->download($tempFilePath, $filename)->deleteFileAfterSend(true);
     }
 
-
     public function resignReactive(Request $request)
     {
         // dd($request->user);
@@ -245,24 +252,46 @@ class UserController extends Controller
 
     }
 
-    public function userDetails(Request $request, $id)
+    public function userDetails($id)
     {
-        $user = User::join('company', 'company.company_id', '=', 'users.company_id')
-            ->join('department', 'department.department_id', '=', 'users.department_id')
-            ->join('businessunit', 'businessunit.businessunit_id', '=', 'users.businessunit_id')
-            ->join('usertype', 'usertype.usertype_id', '=', 'users.usertype_id')
-            ->where('users.id', $id)
-            ->select('users.*', 'company.*', 'department.*', 'businessunit.*', 'usertype.*')
-            ->orderBy('users.created_at', 'desc')
-            ->firstOrFail();
+        $user = User::where('id', $id)->with([
+            'company' => function ($query) {
+                $query->select('company_id', 'company', 'acroname');
+            },
+            'departments' => function ($query) {
+                $query->select('department_id', 'department');
+            },
+            'businessunit' => function ($query) {
+                $query->select('businessunit_id', 'bname');
+            },
+            'employee3' => function ($query) {
+                $query->select('emp_no', 'emp_id');
+            },
+            'employee3.applicant' => function ($query) {
+                $query->select('app_id', 'photo');
+            },
+        ])->first();
 
-        // dd($user);
+        if ($user && $user->employee3 && $user->employee3->applicant && $user->employee3->applicant->photo) {
+
+            $photoPath = $user->employee3->applicant->photo;
+            $photoContent = file_get_contents('http://172.16.161.34:8080/hrms' . $photoPath);
+            $extension = pathinfo($photoPath, PATHINFO_EXTENSION);
+            $filename = $user->id;
+
+            $path = 'users-image/' . $filename;
+
+            if (!Storage::disk('public')->exists($path)) {
+
+                $photoContent = file_get_contents('http://172.16.161.34:8080/hrms' . $photoPath);
+
+                Storage::disk('public')->put($path, $photoContent);
+            }
+        }
 
         return Inertia::render('Users/UsersDetails', [
             'user' => $user,
         ]);
     }
-
-
 
 }

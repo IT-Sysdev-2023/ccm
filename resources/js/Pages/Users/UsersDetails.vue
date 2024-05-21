@@ -15,7 +15,7 @@
                     <div id="card">
                         <img
                             id="avatar"
-                            src="https://images.unsplash.com/photo-1483909796554-bb0051ab60ad?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z2lybCUyMHByb2ZpbGV8ZW58MHx8MHx8fDA%3D"
+                            :src="'http://172.16.161.34:8080/hrms' + user.employee3.applicant.photo"
                             alt="avatar"
                         />
                         <div id="info">
@@ -67,15 +67,15 @@
                         </div>
                         <div class="flex justify-between mb-3">
                             <p>Department:</p>
-                            <p>{{ user.department }}</p>
+                            <p>{{ user.departments.department }}</p>
                         </div>
                         <div class="flex justify-between mb-3">
                             <p>Company:</p>
-                            <p>{{ user.company }} - {{ user.acroname }}</p>
+                            <p>{{ user.company.company }} - {{ user.company.acroname }}</p>
                         </div>
                         <div class="flex justify-between mb-3">
                             <p>Business unit:</p>
-                            <p>{{ user.bname }}</p>
+                            <p>{{ user.businessunit.bname }}</p>
                         </div>
                         <div class="flex justify-between mb-3">
                             <p>Contact:</p>
