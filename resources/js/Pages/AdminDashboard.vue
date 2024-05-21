@@ -1,73 +1,72 @@
-
 <template>
 
     <Head title="Dashboard" />
+    <div>
+        <a-breadcrumb class="mb-5">
+            <a-breadcrumb-item href="">
+                <home-outlined />
+            </a-breadcrumb-item>
+            <a-breadcrumb-item href="">
+                <DashboardOutlined />
+                <span>Dashboard</span>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>Charts</a-breadcrumb-item>
+        </a-breadcrumb>
+        <a-row :gutter="[16, 16]">
 
-        <!-- <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard
-            </h2>
-        </template> -->
+            <a-col :span="16">
+                <p class="font-bold mb-5 text-gray-500 text-center">
+                    ALL CHECQUE COUNTS
+                </p>
+                <div
+                    style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
+                    <div id="chart">
 
-        <div>
-            <a-breadcrumb class="mb-5">
-                <a-breadcrumb-item href="">
-                    <home-outlined />
-                </a-breadcrumb-item>
-                <a-breadcrumb-item href="">
-                    <DashboardOutlined />
-                    <span>Dashboard</span>
-                </a-breadcrumb-item>
-                <a-breadcrumb-item>Charts</a-breadcrumb-item>
-            </a-breadcrumb>
-            <a-row :gutter="[16, 16]">
+                        <apexchart style="height: 100px;" type="polarArea" width="600" :options="chartOptions"
+                            :series="series">
+                        </apexchart>
+                    </div>
+                </div>
 
-                <a-col :span="16">
-                    <p class="font-bold mb-5 text-gray-500 text-center">
-                        ALL CHECQUE COUNTS
-                    </p>
-                    <div
-                        style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
-                        <div id="chart">
+                <p class="font-bold text-gray-500 text-center mb-5 mt-10">
+                    WEEKLY ACTIVITIES
+                </p>
+                <div
+                    style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
+                    <div id="chart">
 
-                            <apexchart style="height: 100px;" type="polarArea" width="600" :options="chartOptions"
-                                :series="series">
-                            </apexchart>
-                        </div>
+                        <apexchart type="line" height="390" :options="chartOptions2" :series="series2"></apexchart>
                     </div>
 
-                    <p class="font-bold text-gray-500 text-center mb-5 mt-10">
-                        WEEKLY ACTIVITIES
+                </div>
+            </a-col>
+            <a-col :span="8">
+                <p class="font-bold mb-2 text-gray-500 text-center">
+                    <a :href="route('users.index')"><a-button block>
+                            {{ users.length }} registered users
+                        </a-button></a>
+                </p>
+                <a-card>
+                    <p class="mb-2 text-center text-blue-500">
+                        ( {{ getOnlineUsers.length }} ) Online users
                     </p>
-                    <div
-                        style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
-                        <div id="chart">
+                    <a-card v-for="item in getOnlineUsers" class="mb-1">
+                        <div class="flex">
+                            <span><img src="/ccmlogo/onlinebadge.png"
+                                    style="height: 20px; position: relative; left: 57px;" alt=""></span>
+                            <img src="/ccmlogo/lgremove.png" style="height: 50px; background: #000; border-radius: 50%"
+                                class="mr-5" alt="img">
+                            <p>
+                                {{ item.name }} <br>
+                                {{ item.usertype == 1 ? 'Admin' : item.usertype == 9 ? 'Treasury' : 'Accounting' }}
 
-                            <apexchart type="line" height="390" :options="chartOptions2" :series="series2"></apexchart>
+                            </p>
                         </div>
-
-                    </div>
-                </a-col>
-                <a-col :span="8">
-                    <p class="font-bold mb-5 text-gray-500 text-center">
-                      ( {{ getOnlineUsers.length }} )  Online users
-                    </p>
-                    <a-card>
-                        <a-card v-for="item in getOnlineUsers" class="mb-1">
-                            <div class="flex">
-                                <span><img src="/ccmlogo/onlinebadge.png" style="height: 20px; position: relative; left: 57px;" alt=""></span>
-                                <img src="/ccmlogo/lgremove.png" style="height: 50px; background: #000; border-radius: 50%" class="mr-5"alt="img">
-                                <p>
-                                    {{ item.name }} <br>
-                                    {{ item.usertype == 1 ? 'Admin' : item.usertype == 9 ? 'Treasury' : 'Accounting' }}
-
-                                </p>
-                            </div>
-                        </a-card>
                     </a-card>
-                </a-col>
-            </a-row>
-        </div>
+                </a-card>
+            </a-col>
+        </a-row>
+    </div>
 </template>
 <script>
 import AdminLayout from "@/Layouts/AdminLayout.vue";
@@ -78,6 +77,7 @@ export default {
 
     layout: AdminLayout,
     props: {
+        users: Array,
         pmCounts: Object,
         icm: Object,
         asc: Object,
@@ -87,7 +87,6 @@ export default {
     },
     data() {
         return {
-
             series: [this.pmCounts, this.icm, this.asc],
             chartOptions: {
                 chart: {

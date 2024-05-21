@@ -1,97 +1,94 @@
-<script setup>
-import AccountingLayout from '@/Layouts/AccountingLayout.vue';
-</script>
-
 <template>
 
     <Head title="Bounce Checks Report" />
 
-    <AccountingLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">this is accounting Dashboard</h2>
-        </template>
-
-
-        <div class="py-12">
-            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-                <div class="text-center font-bold mb-2">
-                    <HomeOutlined /> {{ bunit[0].bname }}
-                </div>
-                <div class="text-center text-gray  mb-10 text-gray-500 font-bold">
-                    <p>
-                        BOUNCE CHECK REPORTS
-                    </p>
-                </div>
-                <div v-if="isGeneratingShow">
-                    <div class="flex justify-between mt-5">
-                        <div>
-                            <p> {{ progressBar.message }}{{ progressBar.currentRow
-                                }}
-                                to
-                                {{
-                                    progressBar.totalRows }}</p>
-                        </div>
-                    </div>
-                    <a-progress :stroke-color="{
-                        from: '#108ee9', to: '#87d068',
-                    }" :percent="progressBar.percentage" status="active" />
-                </div>
-
-                <a-card>
-                    <div class="flex  mb-2 justify-between">
-
-                        <div class="flex">
-                            <div>
-                                <a-breadcrumb>
-                                    <a-breadcrumb-item>
-                                        <CalendarOutlined />
-                                    </a-breadcrumb-item>
-                                    <a-breadcrumb-item>Select Date Range</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-range-picker class="mr-1" v-model:value="fetch.dateRange"
-                                    @change="handleChangeDateRange" />
-                            </div>
-                            <div>
-                                <a-breadcrumb>
-                                    <a-breadcrumb-item>
-                                        <FileTextOutlined />
-                                    </a-breadcrumb-item>
-                                    <a-breadcrumb-item>Select Status</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-select placeholder="Select Status" v-model:value="fetch.dataStatus"
-                                    @change="handleChangeDataStatus" style="width: 210px" :loading="isFetching"
-                                    :disabled="isFetching">
-                                    <a-select-option value="0">View All</a-select-option>
-                                    <a-select-option value="1">Pending Deposit Cheques</a-select-option>
-                                    <a-select-option value="2">Settled Cheques</a-select-option>
-                                </a-select>
-                            </div>
-                        </div>
-                        <div class="mt-6">
-                            <a-button type="primary" @click="startGeneratingExcel"
-                                :disabled="data.data?.length <= 0 || data.data === undefined" :loading="isLoading">
-                                <template #icon>
-                                    <CloudUploadOutlined />
-                                </template>
-                                {{
-                                    isLoading ? 'Generating Cheques in Progress..' : 'Generate Bounce Cheques Reports'
-                                }}
-                            </a-button>
-                        </div>
-                    </div>
-                    <a-table :data-source="data.data" :columns="columns" size="small" bordered :pagination="false">
-                    </a-table>
-                    <pagination :datarecords="data" class="mt-6" />
-                </a-card>
+    <div class="py-12">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <div class="text-center font-bold mb-2">
+                <HomeOutlined /> {{ bunit[0].bname }}
             </div>
+            <div class="text-center text-gray  mb-10 text-gray-500 font-bold">
+                <p>
+                    BOUNCE CHECK REPORTS
+                </p>
+            </div>
+            <div v-if="isGeneratingShow">
+                <div class="flex justify-between mt-5">
+                    <div>
+                        <p> {{ progressBar.message }}{{ progressBar.currentRow
+                            }}
+                            to
+                            {{
+                                progressBar.totalRows }}</p>
+                    </div>
+                </div>
+                <a-progress :stroke-color="{
+                    from: '#108ee9', to: '#87d068',
+                }" :percent="progressBar.percentage" status="active" />
+            </div>
+
+            <a-card>
+                <div class="flex justify-end">
+                    <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
+                        placeholder="Search Checks" :loading="isFetching" />
+                </div>
+                <div class="flex  mb-2 justify-between">
+
+                    <div class="flex">
+                        <div>
+                            <a-breadcrumb>
+                                <a-breadcrumb-item>
+                                    <CalendarOutlined />
+                                </a-breadcrumb-item>
+                                <a-breadcrumb-item>Select Date Range</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-range-picker class="mr-1" v-model:value="fetch.dateRange"
+                                @change="handleChangeDateRange" />
+                        </div>
+                        <div>
+                            <a-breadcrumb>
+                                <a-breadcrumb-item>
+                                    <FileTextOutlined />
+                                </a-breadcrumb-item>
+                                <a-breadcrumb-item>Select Status</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-select placeholder="Select Status" v-model:value="fetch.dataStatus"
+                                @change="handleChangeDataStatus" style="width: 210px" :loading="isFetching"
+                                :disabled="isFetching">
+                                <a-select-option value="0">View All</a-select-option>
+                                <a-select-option value="1">Pending Deposit Cheques</a-select-option>
+                                <a-select-option value="2">Settled Cheques</a-select-option>
+                            </a-select>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <a-button type="primary" @click="startGeneratingExcel"
+                            :disabled="data.data?.length <= 0 || data.data === undefined" :loading="isLoading">
+                            <template #icon>
+                                <CloudUploadOutlined />
+                            </template>
+                            {{
+                                isLoading ? 'Generating Cheques in Progress..' : 'Generate Bounce Cheques Reports'
+                            }}
+                        </a-button>
+                    </div>
+                </div>
+                <a-table class="mt-10" :data-source="data.data" :columns="columns" size="small" bordered
+                    :pagination="false">
+                </a-table>
+                <pagination :datarecords="data" class="mt-6" />
+            </a-card>
         </div>
-    </AccountingLayout>
+    </div>
 </template>
 <script>
+import debounce from "lodash/debounce";
 import dayjs from 'dayjs';
+import AccountingLayout from '@/Layouts/AccountingLayout.vue';
 export default {
+    layout: AccountingLayout,
     props: {
-        data: Array,
+        data: Object,
         bunit: Object,
         columns: Array,
         dateRangeBackend: Array,
@@ -99,6 +96,9 @@ export default {
     },
     data() {
         return {
+            query: {
+                search: '',
+            },
             isGeneratingShow: false,
             isLoading: false,
             isFetching: false,
@@ -147,6 +147,30 @@ export default {
             .listen(".generating-bounced", (e) => {
                 this.progressBar = e;
             });
-    }
+    },
+    watch: {
+
+        query: {
+            deep: true,
+            handler: debounce(async function () {
+                this.isFetching = true,
+                    this.$inertia.get(route("bounce.checks.accounting"), {
+                        searchQuery: this.query.search,
+                        bounceStatus: this.dataSatusBackend,
+                        dateFrom: this.dateRangeBackend[0],
+                        dateTo: this.dateRangeBackend[1],
+                    }, {
+                        preserveState: true,
+                        onSuccess: () => {
+                            this.isFetching = false;
+                        },
+                        onError: () => {
+                            this.isFetching = false; // Ensure the flag is reset on error
+                        }
+                    }
+                    );
+            }, 600),
+        },
+    },
 }
 </script>

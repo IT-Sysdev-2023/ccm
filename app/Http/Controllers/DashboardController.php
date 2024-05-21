@@ -12,44 +12,35 @@ class DashboardController extends Controller
 {
     public function adminDashboardComponent()
     {
-        $plazaMarcelaCounts = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
-            ->where('checks.businessunit_id', '=', '21')
-            ->where('new_saved_checks.status', '=', '')
-            ->count();
+        $users = User::get();
 
-        $islandCityMall = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
-            ->where('checks.businessunit_id', '=', '4')
-            ->where('new_saved_checks.status', '=', '')
-            ->count();
+        $counts = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+            ->selectRaw('
+        SUM(CASE WHEN checks.businessunit_id = 21 AND new_saved_checks.status = "" THEN 1 ELSE 0 END) AS plazaMarcelaCounts,
+        SUM(CASE WHEN checks.businessunit_id = 4 AND new_saved_checks.status = "" THEN 1 ELSE 0 END) AS islandCityMall,
+        SUM(CASE WHEN checks.businessunit_id = 2 AND new_saved_checks.status = "" THEN 1 ELSE 0 END) AS ascMain
+    ')
+            ->first();
 
-        $ascMain = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
-            ->where('checks.businessunit_id', '=', '2')
-            ->where('new_saved_checks.status', '=', '')
-            ->count();
+        $plazaMarcelaCounts = $counts->plazaMarcelaCounts;
+        $islandCityMall = $counts->islandCityMall;
+        $ascMain = $counts->ascMain;
 
-        $dataPlazaMarcela = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
-            ->select(DB::raw('COUNT(*) as y , check_received as x'))
-            ->where('checks.businessunit_id', '=', '21')
+        $data = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+            ->select(
+                DB::raw('COUNT(*) as y'),
+                'check_received as x',
+                DB::raw('checks.businessunit_id')
+            )
+            ->whereIn('checks.businessunit_id', [21, 4, 2])
             ->where('new_saved_checks.status', '=', '')
+            ->groupBy('x', 'checks.businessunit_id')
             ->orderBy('x', 'desc')
-            ->groupBy('x')
-            ->limit(7)->get();
+            ->get();
 
-        $dataIslandCityMall = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
-            ->select(DB::raw('COUNT(*) as y , check_received as x'))
-            ->where('checks.businessunit_id', '=', '4')
-            ->where('new_saved_checks.status', '=', '')
-            ->orderBy('x', 'desc')
-            ->groupBy('x')
-            ->limit(7)->get();
-
-        $dataAscMain = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
-            ->select(DB::raw('COUNT(*) as y , check_received as x'))
-            ->where('checks.businessunit_id', '=', '2')
-            ->where('new_saved_checks.status', '=', '')
-            ->orderBy('x', 'desc')
-            ->groupBy('x')
-            ->limit(7)->get();
+        $dataPlazaMarcela = $data->where('businessunit_id', 21)->take(7)->values();
+        $dataIslandCityMall = $data->where('businessunit_id', 4)->take(7)->values();
+        $dataAscMain = $data->where('businessunit_id', 2)->take(7)->values();
 
         return Inertia::render('AdminDashboard', [
             'pmCounts' => $plazaMarcelaCounts,
@@ -58,51 +49,44 @@ class DashboardController extends Controller
             'pmWeekly' => $dataPlazaMarcela,
             'icmWeekly' => $dataIslandCityMall,
             'ascMainWeekly' => $dataAscMain,
+            'users' => $users,
         ]);
     }
     public function treasuryDashboardComponent()
     {
 
-        // $holiday = new HolidayClientLaravel();
+        $businessUnitId = Auth::user()->businessunit_id;
 
-        // $va = $holiday
-        //     ->year((string) today()->year)
-        //     ->result();
+        $checksBaseQuery = Checks::where('checks.businessunit_id', '=', $businessUnitId)
+            ->join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+            ->where('new_saved_checks.status', '=', '');
 
-        $checksCount = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
-            ->where('new_saved_checks.status', '=', '')
-            ->count();
+        $checksCount = (clone $checksBaseQuery)->count();
 
-        $pdcCount = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+        $pdcCount = (clone $checksBaseQuery)
             ->where('checks.check_date', '>', DB::raw('check_received'))
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
-            ->where('new_saved_checks.status', '=', '')
             ->count();
 
-        $datedCount = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+        $datedCount = (clone $checksBaseQuery)
             ->where('checks.check_date', '<=', DB::raw('check_received'))
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
-            ->where('new_saved_checks.status', '=', '')
             ->count();
 
         $depositedCount = Checks::join('new_ds_checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
             ->where('new_ds_checks.status', '=', '')
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
+            ->where('checks.businessunit_id', '=', $businessUnitId)
             ->count();
 
         $bouncedCount = Checks::join('new_bounce_check', 'checks.checks_id', '=', 'new_bounce_check.checks_id')
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
+            ->where('checks.businessunit_id', '=', $businessUnitId)
             ->whereIn('new_bounce_check.status', ['', 'PARTIAL'])
             ->count();
 
         $replacementCount = Checks::join('new_check_replacement', 'new_check_replacement.checks_id', '=', 'checks.checks_id')
             ->where('new_check_replacement.status', '!=', '')
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
+            ->where('checks.businessunit_id', '=', $businessUnitId)
             ->count();
 
         return Inertia::render('TreasuryDashboard', [
-            // 'holiday' => collect($va)->values(),
             'checkCount' => $checksCount,
             'pdcCount' => $pdcCount,
             'datedCount' => $datedCount,
@@ -114,37 +98,37 @@ class DashboardController extends Controller
 
     public function accountingDashboard()
     {
-        $checksCount = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
-            ->where('new_saved_checks.status', '=', '')
-            ->count();
+        $businessUnitId = Auth::user()->businessunit_id;
 
-        $pdcCount = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+        $checksBaseQuery = Checks::where('checks.businessunit_id', '=', $businessUnitId)
+            ->join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+            ->where('new_saved_checks.status', '=', '');
+
+        $checksCount = (clone $checksBaseQuery)->count();
+
+        $pdcCount = (clone $checksBaseQuery)
             ->where('checks.check_date', '>', DB::raw('check_received'))
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
-            ->where('new_saved_checks.status', '=', '')
             ->count();
 
-        $datedCount = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+        $datedCount = (clone $checksBaseQuery)
             ->where('checks.check_date', '<=', DB::raw('check_received'))
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
-            ->where('new_saved_checks.status', '=', '')
             ->count();
 
         $depositedCount = Checks::join('new_ds_checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
             ->where('new_ds_checks.status', '=', '')
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
+            ->where('checks.businessunit_id', '=', $businessUnitId)
             ->count();
 
         $bouncedCount = Checks::join('new_bounce_check', 'checks.checks_id', '=', 'new_bounce_check.checks_id')
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
+            ->where('checks.businessunit_id', '=', $businessUnitId)
             ->whereIn('new_bounce_check.status', ['', 'PARTIAL'])
             ->count();
 
         $replacementCount = Checks::join('new_check_replacement', 'new_check_replacement.checks_id', '=', 'checks.checks_id')
             ->where('new_check_replacement.status', '!=', '')
-            ->where('checks.businessunit_id', '=', Auth::user()->businessunit_id)
+            ->where('checks.businessunit_id', '=', $businessUnitId)
             ->count();
+            
         return Inertia::render('AccountingDashboard', [
             'checkCount' => $checksCount,
             'pdcCount' => $pdcCount,

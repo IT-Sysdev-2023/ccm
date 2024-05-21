@@ -39,6 +39,10 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
                             REPORT TYPE: REDEEM PDC CHEQUES
                         </p>
                     </div>
+                    <div class="flex justify-end">
+                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
+                            placeholder="Search Checks" :loading="isFetching" />
+                    </div>
                     <div class="flex justify-between">
                         <div>
                             <a-range-picker :disabled="isFetching" style="width: 400px;" class="mr-1 mb-3"
@@ -66,9 +70,10 @@ import AccountingLayout from '@/Layouts/AccountingLayout.vue';
 </template>
 <script>
 import dayjs from 'dayjs';
+import debounce from "lodash/debounce";
 export default {
     props: {
-        data: Array,
+        data: Object,
         bunit: Object,
         columns: Array,
         dateRangeBackend: Array,
@@ -76,6 +81,9 @@ export default {
     data() {
         return {
             isGeneratingShow: false,
+            query: {
+                search: '',
+            },
             progressBar: {
                 currentRow: 0,
                 percentage: 0,
@@ -111,6 +119,29 @@ export default {
             .listen(".generating-redeem-reports", (e) => {
                 this.progressBar = e;
             });
-    }
+    },
+    watch: {
+
+        query: {
+            deep: true,
+            handler: debounce(async function () {
+                this.isFetching = true,
+                    this.$inertia.get(route("redeem.reports.accounting"), {
+                        searchQuery: this.query.search,
+                        dateFrom: this.dateRangeBackend[0],
+                        dateTo: this.dateRangeBackend[1],
+                    }, {
+                        preserveState: true,
+                        onSuccess: () => {
+                            this.isFetching = false;
+                        },
+                        onError: () => {
+                            this.isFetching = false; // Ensure the flag is reset on error
+                        }
+                    }
+                    );
+            }, 600),
+        },
+    },
 }
 </script>
