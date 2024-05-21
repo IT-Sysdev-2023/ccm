@@ -1329,17 +1329,22 @@ class AllTransactionController extends Controller
     {
         $data = NewSavedChecks::filter($request->only(['status']), $request->user()->businessunit_id)
             ->select('*', 'checks.check_type as check-type', 'new_saved_checks.check_type as new_check_type')
+            ->where(function ($query) use ($request) {
+                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
+                return $query;
+            })
             ->whereBetween('checks.check_received', [$request->date_from, $request->date_to])
             ->paginate(10)->withQueryString();
 
         $data->transform(function ($value) use ($request) {
             $typeStatus = '';
-            if ($request->status == '1' || $request->status == '2') {
-                if ($value->new_check_type <= today()) {
-                    $typeStatus = 'DATED';
-                } else {
-                    $typeStatus = 'POST DATED';
-                }
+
+            if ($value->new_check_type <= today()) {
+                $typeStatus = 'DATED';
+            } else {
+                $typeStatus = 'POST DATED';
             }
 
             $value->status = $typeStatus;
@@ -1378,7 +1383,14 @@ class AllTransactionController extends Controller
         $dateRange = [$request->date_from, $request->date_to];
         $buname = BusinessUnit::where('businessunit_id', $request->user()->businessunit_id)->first();
 
-        $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)->paginate(10)->withQueryString();
+        $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)
+            ->where(function ($query) use ($request) {
+                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
+                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
+                return $query;
+            })
+            ->paginate(10)->withQueryString();
 
         return Inertia::render('Transaction/DuePostDatedCheckReport', [
             'data' => $data,

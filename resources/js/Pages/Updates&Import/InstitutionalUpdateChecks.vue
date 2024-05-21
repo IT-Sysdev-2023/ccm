@@ -286,7 +286,7 @@
                                                 <UploadOutlined />
                                             </template>
                                             {{ isLoading ? 'updating database on progress...' :
-                                                ' Start Updating atp ' }}
+                                                ' Start Updating Atp in Database ' }}
                                         </a-button>
                                     </template>
                                 </a-result>
