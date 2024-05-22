@@ -337,15 +337,23 @@ const hide = () => {
                                 }" :href="route('settings')">
                             <SettingOutlined /> My Settings
                             </Link>
+                            <Link class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
+                                :class="{
+                                    'bg-blue-600 text-white':
+                                        route().current('about.us'),
+                                    'text-white':
+                                        !route().current('about.us'),
+                                }" :href="route('about.us')">
+                            <AliwangwangOutlined /> About Us
+                            </Link>
                         </div>
-                        <div class="flex items-center justify-end gap-3 mt-2">
+                        <div class="flex items-center  justify-end gap-3 mt-2">
                             <a-dropdown placement="bottom" arrow>
-                                <div style="
-                                        color: white;
-                                        font-size: 25px;
+                                <div class="flex items-center justify-center" style="
                                         cursor: pointer;
                                     ">
-                                    <UserOutlined />
+                               <span class="text-white mr-2" style="font-size: 14px;"> Howdy! {{  $page.props.auth.user.username }}</span> <img :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
+                                        alt="Profile Picture" class="rounded-full" style="height: 30px;" />
                                 </div>
                                 <template #overlay>
                                     <div class="max-w-xs p-4 rounded-md mr-2" style="background: #001529;width: 500px;">

@@ -49,7 +49,8 @@
                         <template #tab>
                             <span>
                                 <UserSwitchOutlined />
-                                {{ getOnlineUsers.length }} - Online users
+                                Online users <a-badge class="mb-3" :count="getOnlineUsers.length"
+                                    :number-style="{ backgroundColor: '#52c41a' }" />
                             </span>
                         </template>
                         <a-card v-for="item in getOnlineUsers" class="mb-1">

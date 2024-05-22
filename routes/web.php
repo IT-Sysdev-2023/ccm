@@ -47,6 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('admin/dashboard', [DashboardController::class, 'adminDashboardComponent'])->name('admin.dashboard');
     Route::get('accounting/dashboard', [DashboardController::class, 'accountingDashboard'])->name('accounting.dashboard');
     Route::get('treasury/dashboard', [DashboardController::class, 'treasuryDashboardComponent'])->name('treasury.dashboard');
+    Route::get('about', [DashboardController::class, 'aboutUs'])->name('about.us');
 });
 
 Route::middleware('auth')->group(function () {

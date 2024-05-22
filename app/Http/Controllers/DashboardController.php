@@ -151,5 +151,10 @@ class DashboardController extends Controller
             'bouncedCount' => $bouncedCount,
             'replacementCount' => $replacementCount,
         ]);
+
+    }
+    public function aboutUs()
+    {
+        return Inertia::render('AboutUs');
     }
 }
