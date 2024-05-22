@@ -313,7 +313,7 @@ class AccountingReportController extends Controller
             return $item;
         });
 
-        return Inertia::render('AccountingReports/InnerReports/BounceCheckReports', [
+        return Inertia::render('AccountingReports/InnerReports/AccountingBounceCheckReports', [
             'data' => $data,
             'bunit' => $bunit,
             'columns' => ColumnsHelper::$innerBounceCheckRepAccounting,

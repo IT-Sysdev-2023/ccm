@@ -92,9 +92,11 @@ const placement = "bottom";
                             <span>Master File</span>
                         </span>
                     </template>
-                    <a-menu-item>
+                    <a-menu-item  key="11"  :class="{
+                        'bg-blue-500 text-white': route().current('app.config'),
+                    }">
                         <AppleOutlined />
-                        <span>App Config</span>
+                        <span><Link :href="route('app.config')">App Config</Link></span>
                     </a-menu-item>
                 </a-sub-menu>
                 <a-sub-menu>

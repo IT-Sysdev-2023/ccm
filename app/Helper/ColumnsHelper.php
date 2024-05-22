@@ -1049,4 +1049,48 @@ class ColumnsHelper
         ],
     ];
 
+    public static $app_setting_columns = [
+        [
+            'title' => 'Business Unit',
+            'dataIndex' => 'bname',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Atp Location Code',
+            'dataIndex' => 'loc_code_atp',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Atp Start',
+            'dataIndex' => 'b_atpgetdata',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Encash Start',
+            'dataIndex' => 'b_encashstart',
+            'align' => 'center'
+        ],
+        [
+            'title' => 'Action',
+            'align' => 'center',
+            'key' => 'action',
+        ],
+    ];
+
+    public static $user_dashboard_table = [
+        [
+            'title' => 'Username',
+            'dataIndex' => 'username',
+        ],
+        [
+            'title' => 'Name',
+            'dataIndex' => 'name',
+        ],
+        [
+            'title' => 'Usertype',
+            'dataIndex' => 'usertype',
+            'key' => 'usertype'
+        ],
+    ];
+
 }

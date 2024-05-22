@@ -62,9 +62,14 @@ const handleOpen = (val) => {
             </a-breadcrumb>
             <div class="">
                 <!-- {{  get_users.data }} -->
-                <a-tabs v-model:activeKey="activeKey" type="card" class="mt-4">
-                    <a-tab-pane key="1" tab="Users List">
-
+                <a-tabs v-model:activeKey="activeKey" class="mt-4">
+                    <a-tab-pane key="1">
+                        <template #tab>
+                            <span>
+                                <UserOutlined />
+                                All Users List Table
+                            </span>
+                        </template>
                         <a-row :gutter="[16, 16]" class="mt-4 flex justify-between" style="width: 100%">
                             <a-col :span="6" v-for="(item, key) in get_users.data" :key="key">
                                 <div class="body" @click="settDetails(item.id)">
@@ -121,7 +126,13 @@ const handleOpen = (val) => {
                         </div>
 
                     </a-tab-pane>
-                    <a-tab-pane key="2" tab="Add Users">
+                    <a-tab-pane key="2">
+                        <template #tab>
+                            <span>
+                                <UsergroupAddOutlined />
+                                Add Users Acount
+                            </span>
+                        </template>
                         <a-card style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
                             <form>
                                 <div class="flex flex-wrap -mx-4">
@@ -133,9 +144,9 @@ const handleOpen = (val) => {
                                             style="width: 100%" :show-arrow="false" :filter-option="false"
                                             :not-found-content="isRetrieving ? undefined : null
                                                 " :options="optionsUser" @search="debouncedSearchUsers" @select="(_, val) =>
-                                                    (createUsers.empid =
-                                                        val.value1)
-                                                        ">
+                                                (createUsers.empid =
+                                                    val.value1)
+                                                    ">
                                             <template v-if="isRetrieving" #notFoundContent>
                                                 <a-spin size="small" />
                                             </template>
@@ -197,8 +208,8 @@ const handleOpen = (val) => {
                                             <!-- <a-select-option>Select UserType</a-select-option> -->
                                             <a-select-option v-for="usert in userType" v-model:value="usert.usertype_id
                                                 ">{{
-                                                        usert.usertype_name
-                                                    }}</a-select-option>
+                                                    usert.usertype_name
+                                                }}</a-select-option>
                                         </a-select>
                                         <div v-if="
                                             createUsers.errors.usertype_id
@@ -295,7 +306,13 @@ const handleOpen = (val) => {
                             </form>
                         </a-card>
                     </a-tab-pane>
-                    <a-tab-pane key="3" tab="Generate">
+                    <a-tab-pane key="3">
+                        <template #tab>
+                            <span>
+                                <CloudUploadOutlined />
+                                Generate Excel Data
+                            </span>
+                        </template>
                         <a-card>
                             <div class="flex justify-center">
                                 <a-result title="Hi there! Don't have a good day, Have a great day"
@@ -355,8 +372,8 @@ const handleOpen = (val) => {
                 </div>
 
                 <a-select show-search placeholder="Search business unit" :default-active-first-option="false"
-                    v-model:value="selectedData.businessunit.bname" style="width: 100%" :show-arrow="false" :filter-option="false"
-                    :not-found-content="isRetrieving ? undefined : null" :options="optionsBunit"
+                    v-model:value="selectedData.businessunit.bname" style="width: 100%" :show-arrow="false"
+                    :filter-option="false" :not-found-content="isRetrieving ? undefined : null" :options="optionsBunit"
                     @search="debouncedBunitName" @select="(_, val) =>
                         (selectedData.businessunit_id = val.value)
                         ">
@@ -385,7 +402,7 @@ const handleOpen = (val) => {
                     <p class="mt-2" style="color: red">*search</p>
                 </div>
                 <a-select show-search placeholder="Search Department" :default-active-first-option="false"
-                    v-model:value=" selectedData.departments.department" style="width: 100%" :show-arrow="false"
+                    v-model:value="selectedData.departments.department" style="width: 100%" :show-arrow="false"
                     :filter-option="false" :not-found-content="isRetrieving ? undefined : null"
                     :options="optionsDepartment" @search="debouncedDepartment" @select="(_, val) => (selectedData.department_id = val.value)
                         ">
@@ -401,9 +418,9 @@ const handleOpen = (val) => {
                 </div>
 
                 <a-select show-search placeholder="Search Department" :default-active-first-option="false"
-                    v-model:value="selectedData.company.company" style="width: 100%" :show-arrow="false" :filter-option="false"
-                    :not-found-content="isRetrieving ? undefined : null" :options="optionsCompany"
-                    @search="debouncedCompany" @select="(_, val) => (selectedData.company_id = val.value)
+                    v-model:value="selectedData.company.company" style="width: 100%" :show-arrow="false"
+                    :filter-option="false" :not-found-content="isRetrieving ? undefined : null"
+                    :options="optionsCompany" @search="debouncedCompany" @select="(_, val) => (selectedData.company_id = val.value)
                         ">
                     <template v-if="isRetrieving" #notFoundContent>
                         <a-spin size="small" />

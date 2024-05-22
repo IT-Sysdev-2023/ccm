@@ -12,6 +12,9 @@
             </a-breadcrumb-item>
             <a-breadcrumb-item>Charts</a-breadcrumb-item>
         </a-breadcrumb>
+        <p id="MyClockDisplay" class="clock font-bold text-gray-600 text-xl text-end">
+            {{ currentTime }}
+        </p>
         <a-row :gutter="[16, 16]">
             <!-- {{  getOnlineUsers }} -->
             <a-col :span="14">
@@ -41,41 +44,52 @@
                 </div>
             </a-col>
             <a-col :span="10">
-                <header>
-                    <p id="MyClockDisplay" class="clock font-bold text-gray-600 text-xl text-center">
-                        {{ currentTime }}
-                    </p>
+                <a-tabs v-model:activeKey="activeKey">
+                    <a-tab-pane key="1">
+                        <template #tab>
+                            <span>
+                                <UserSwitchOutlined />
+                                {{ getOnlineUsers.length }} - Online users
+                            </span>
+                        </template>
+                        <a-card v-for="item in getOnlineUsers" class="mb-1">
+                            <div class="flex">
+                                <span><img src="/ccmlogo/onlinebadge.png"
+                                        style="height: 15px; position: relative; left: 57px; background: rgb(1, 255, 1); border: 1px solid rgb(1, 255, 1); border-radius: 50%;"
+                                        alt=""></span>
+                                <img :src="item.image" style="height: 50px; border-radius: 50%" class="mr-5"
+                                    alt="image">
+                                <p>
 
-                    <br />
+                                    {{ item.name }} &nbsp; &nbsp; - &nbsp; &nbsp; <span class="text-blue-500">{{
+                                        item.username }}</span><br>
 
-                </header>
-                <p class="font-bold mb-2 text-gray-500 text-center">
-                    <a :href="route('users.index')"><a-button block>
-                            {{ users.length }} registered users
-                        </a-button></a>
-                </p>
+                                    <a-tag color="green" class="mt-1">{{ item.usertype == 1 ? 'Administrator' :
+                                        item.usertype == 9 ?
+                                            'Treasury' :
+                                            'Accounting' }}</a-tag>
 
-                    <p class="mb-4 mt-4 text-center text-blue-500">
-                        ( {{ getOnlineUsers.length }} ) Online users
-                    </p>
-                    <a-card v-for="item in getOnlineUsers" class="mb-1">
-                        <div class="flex">
-                            <span><img src="/ccmlogo/onlinebadge.png"
-                                    style="height: 15px; position: relative; left: 57px; background: rgb(1, 255, 1); border: 1px solid rgb(1, 255, 1); border-radius: 50%;"
-                                    alt=""></span>
-                            <img :src="item.image" style="height: 50px; border-radius: 50%" class="mr-5" alt="image">
-                            <p>
+                                </p>
+                            </div>
+                        </a-card>
+                    </a-tab-pane>
+                    <a-tab-pane key="2">
+                        <template #tab>
+                            <span>
+                                <UserSwitchOutlined />
+                                {{ users.length }} Registered Users
+                            </span>
+                        </template>
+                        <a-table :data-source="users" :columns="columns" size="small" bordered>
+                            <template #bodyCell="{ column, record }">
+                                <template v-if="column.key === 'usertype'">
+                                    <a-tag color="blue">{{ record.usertype }}</a-tag>
+                                </template>
+                            </template>
+                        </a-table>
 
-                                {{ item.name }} &nbsp; &nbsp; - &nbsp; &nbsp; <span class="text-blue-500">{{
-                                    item.username }}</span><br>
-
-                                <a-tag color="green" class="mt-1">{{ item.usertype == 1 ? 'Administrator' : item.usertype == 9 ?
-                                    'Treasury' :
-                                    'Accounting' }}</a-tag>
-
-                            </p>
-                        </div>
-                    </a-card>
+                    </a-tab-pane>
+                </a-tabs>
 
             </a-col>
         </a-row>
@@ -97,10 +111,12 @@ export default {
         pmWeekly: Object,
         icmWeekly: Object,
         ascMainWeekly: Object,
+        columns: Array,
     },
     data() {
         return {
             currentTime: "",
+            activeKey: '1',
             series: [this.pmCounts, this.icm, this.asc],
             chartOptions: {
                 chart: {

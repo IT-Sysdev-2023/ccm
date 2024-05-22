@@ -603,8 +603,6 @@ class ReportController extends Controller
     public function redeemCheckReportsAdmin(Request $request)
     {
 
-        // dd($request->all());
-
         $bunit = BusinessUnit::whereNotNull('loc_code_atp')
             ->whereNotNull('b_atpgetdata')
             ->whereNotNull('b_encashstart')
@@ -683,7 +681,7 @@ class ReportController extends Controller
 
 
         return Inertia::render('Reports/ChecksAltaReports', [
-            'data' => empty($request->altaDates) ? [] : $checkFromTms,
+            'data' =>  $checkFromTms,
             'columns' => ColumnsHelper::$alta_citaCheckColumns,
             'dateBackEnd' => empty($request->altaDates) ? null : $request->altaDates,
         ]);

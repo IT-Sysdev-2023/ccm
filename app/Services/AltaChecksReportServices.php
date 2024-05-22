@@ -131,7 +131,7 @@ class AltaChecksReportServices extends ExcelWriter
 
         $downloadExcel = route('download.excel', ['filename' => $filename]);
 
-        return Inertia::render('Components/ReportPartials/ChecksAltaReports', [
+        return Inertia::render('Components/ReportPartials/ChecksAltaReportResult', [
             'downloadExcel' => $downloadExcel,
         ]);
 

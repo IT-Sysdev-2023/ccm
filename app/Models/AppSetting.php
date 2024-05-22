@@ -10,5 +10,6 @@ class AppSetting extends Model
     use HasFactory;
 
     protected $table = 'app_settings';
+    
     protected $primaryKey = 'app_id';
 }

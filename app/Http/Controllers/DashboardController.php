@@ -7,12 +7,24 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use App\Helper\ColumnsHelper;
 
 class DashboardController extends Controller
 {
     public function adminDashboardComponent()
     {
-        $users = User::get();
+        $users = User::select('name', 'username', 'usertype_id')->orderBy('created_at', 'DESC')->get();
+
+        $users->transform(function ($item) {
+            if($item->usertype_id == '1'){
+                $item->usertype = 'Admin';
+            }elseif($item->usertype_id == '2'){
+                $item->usertype = 'Accounting';
+            }else{
+                $item->usertype = 'Treasury';
+            }
+            return $item;
+        });
 
         $counts = Checks::join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
             ->selectRaw('
@@ -50,12 +62,14 @@ class DashboardController extends Controller
             'icmWeekly' => $dataIslandCityMall,
             'ascMainWeekly' => $dataAscMain,
             'users' => $users,
+            'columns' => ColumnsHelper::$user_dashboard_table,
         ]);
     }
     public function treasuryDashboardComponent()
     {
 
         $businessUnitId = Auth::user()->businessunit_id;
+
 
         $checksBaseQuery = Checks::where('checks.businessunit_id', '=', $businessUnitId)
             ->join('new_saved_checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
@@ -128,7 +142,7 @@ class DashboardController extends Controller
             ->where('new_check_replacement.status', '!=', '')
             ->where('checks.businessunit_id', '=', $businessUnitId)
             ->count();
-            
+
         return Inertia::render('AccountingDashboard', [
             'checkCount' => $checksCount,
             'pdcCount' => $pdcCount,
