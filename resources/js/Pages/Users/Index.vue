@@ -54,7 +54,7 @@ const handleOpen = (val) => {
     </a-float-button>
 
     <div class="py-0">
-        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+        <!-- <div class="max-w-8xl mx-auto sm:px-6 lg:px-8"> -->
             <a-breadcrumb>
                 <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
                 <a-breadcrumb-item><a href="">User</a></a-breadcrumb-item>
@@ -67,7 +67,7 @@ const handleOpen = (val) => {
                         <template #tab>
                             <span>
                                 <UserOutlined />
-                                All Users List Table
+                                All Userlist tables
                             </span>
                         </template>
                         <a-row :gutter="[16, 16]" class="mt-4 flex justify-between" style="width: 100%">
@@ -130,7 +130,7 @@ const handleOpen = (val) => {
                         <template #tab>
                             <span>
                                 <UsergroupAddOutlined />
-                                Add Users Acount
+                                Add users account
                             </span>
                         </template>
                         <a-card style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
@@ -452,7 +452,7 @@ const handleOpen = (val) => {
                 </div>
             </a-form>
         </a-modal>
-    </div>
+
 </template>
 
 <script>

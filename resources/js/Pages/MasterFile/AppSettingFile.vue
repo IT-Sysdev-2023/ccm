@@ -57,7 +57,8 @@
                 <br>
             </div>
             <div class="flex justify-center items-center mt-4">
-                <a-button style="width: 400px;" type="primary" v-if="isOpenEdit" @click="updateInst" :loading="formApp.processing">
+                <a-button style="width: 400px;" type="primary" v-if="isOpenEdit" @click="updateInst"
+                    :loading="formApp.processing">
                     <template #icon>
                         <SaveOutlined />
                     </template>
@@ -139,7 +140,7 @@ export default {
             this.isDisAbled = !this.isDisAbled;
             this.isOpenEdit = !this.isOpenEdit;
         },
-        updateInst(){
+        updateInst() {
             this.formApp.put(route('update.inst'), {
                 onSuccess: () => {
                     message.success('Successfully Updated Institutional Ip');

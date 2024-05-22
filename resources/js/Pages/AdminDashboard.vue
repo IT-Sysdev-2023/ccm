@@ -12,7 +12,7 @@
             </a-breadcrumb-item>
             <a-breadcrumb-item>Charts</a-breadcrumb-item>
         </a-breadcrumb>
-        <p id="MyClockDisplay" class="clock font-bold text-gray-600 text-xl text-end">
+        <p id="MyClockDisplay" class="clock text-gray-500 text-xl text-end">
             {{ currentTime }}
         </p>
         <a-row :gutter="[16, 16]">
