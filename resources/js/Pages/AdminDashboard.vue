@@ -14,8 +14,8 @@
         </a-breadcrumb>
         <a-row :gutter="[16, 16]">
             <!-- {{  getOnlineUsers }} -->
-            <a-col :span="16">
-                <p class="font-bold mb-5 text-gray-500 text-center">
+            <a-col :span="14">
+                <p class="font-bold mb-5 text-gray-400 text-center">
                     ALL CHECQUE COUNTS
                 </p>
                 <div
@@ -40,30 +40,43 @@
 
                 </div>
             </a-col>
-            <a-col :span="8">
+            <a-col :span="10">
+                <header>
+                    <p id="MyClockDisplay" class="clock font-bold text-gray-600 text-xl text-center">
+                        {{ currentTime }}
+                    </p>
+
+                    <br />
+
+                </header>
                 <p class="font-bold mb-2 text-gray-500 text-center">
                     <a :href="route('users.index')"><a-button block>
                             {{ users.length }} registered users
                         </a-button></a>
                 </p>
-                <a-card>
-                    <p class="mb-2 text-center text-blue-500">
+
+                    <p class="mb-4 mt-4 text-center text-blue-500">
                         ( {{ getOnlineUsers.length }} ) Online users
                     </p>
                     <a-card v-for="item in getOnlineUsers" class="mb-1">
                         <div class="flex">
                             <span><img src="/ccmlogo/onlinebadge.png"
-                                    style="height: 15px; position: relative; left: 57px; background: rgb(1, 255, 1); border: 1px solid rgb(1, 255, 1); border-radius: 50%;" alt=""></span>
-                            <img :src="item.image" style="height: 50px; border-radius: 50%"
-                                class="mr-5" alt="image">
+                                    style="height: 15px; position: relative; left: 57px; background: rgb(1, 255, 1); border: 1px solid rgb(1, 255, 1); border-radius: 50%;"
+                                    alt=""></span>
+                            <img :src="item.image" style="height: 50px; border-radius: 50%" class="mr-5" alt="image">
                             <p>
-                                {{ item.name }} <br>
-                                {{ item.usertype == 1 ? 'Admin' : item.usertype == 9 ? 'Treasury' : 'Accounting' }}
+
+                                {{ item.name }} &nbsp; &nbsp; - &nbsp; &nbsp; <span class="text-blue-500">{{
+                                    item.username }}</span><br>
+
+                                <a-tag color="green" class="mt-1">{{ item.usertype == 1 ? 'Administrator' : item.usertype == 9 ?
+                                    'Treasury' :
+                                    'Accounting' }}</a-tag>
 
                             </p>
                         </div>
                     </a-card>
-                </a-card>
+
             </a-col>
         </a-row>
     </div>
@@ -87,6 +100,7 @@ export default {
     },
     data() {
         return {
+            currentTime: "",
             series: [this.pmCounts, this.icm, this.asc],
             chartOptions: {
                 chart: {
@@ -184,6 +198,36 @@ export default {
         ...mapState(useOnlineUsersStore, ['getOnlineUsers']),
     },
 
+    methods: {
+        showTime() {
+            var date = new Date();
+            var h = date.getHours(); // 0 - 23
+            var m = date.getMinutes(); // 0 - 59
+            var s = date.getSeconds(); // 0 - 59
+            var session = "AM";
+
+            if (h == 0) {
+                h = 12;
+            }
+
+            if (h > 12) {
+                h = h - 12;
+                session = "PM";
+            }
+
+            h = h < 10 ? "0" + h : h;
+            m = m < 10 ? "0" + m : m;
+            s = s < 10 ? "0" + s : s;
+
+            var time = h + ":" + m + ":" + s + " " + session;
+            this.currentTime = time;
+
+            setTimeout(this.showTime, 1000);
+        },
+    },
+    mounted() {
+        this.showTime()
+    }
+
 };
 </script>
-

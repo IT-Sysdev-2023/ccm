@@ -47,7 +47,7 @@ class UserController extends Controller
             'userType' => $userType,
         ]);
     }
-    public function settings($id)
+    public function settings()
     {
 
         return Inertia::render("Users/Setting");

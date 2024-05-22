@@ -30,6 +30,7 @@ class OnlineUsers
             'name' => $user->name,
             'usertype' => $user->usertype_id,
             'image' => $image,
+            'username' => $user->username
         ];
     }
 }
