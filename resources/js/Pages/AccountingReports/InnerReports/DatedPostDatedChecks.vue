@@ -1,121 +1,145 @@
-
 <template>
 
     <Head title="Dated and PDC Reports" />
 
 
-        <div class="py-12">
-            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-                <!-- {{ typeof data.data }} -->
-                <div class="text-center font-bold mb-10">
-                    <HomeOutlined /> {{ bunit[0].bname }}
-                </div>
-                <div v-if="isProgressing">
-                    <div class="flex justify-between">
-                        <div class="flex">
-                            <DoubleRightOutlined class="mr-1" />
-                            <DoubleRightOutlined class="mr-2" />
-                            <p>
-                                {{ progressBar.message }}
-                                {{ progressBar.currentRow }} to
-                                {{ progressBar.totalRows }} records
-                            </p>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <a-progress class="mt-2" :stroke-color="{
-                            from: '#108ee9',
-                            to: '#87d068',
-                        }" :percent="progressBar.percentage" status="active" />
+    <div class="ml-10">
+        <a-breadcrumb>
+            <a-breadcrumb-item href="">
+                <home-outlined />
+            </a-breadcrumb-item>
+            <a-breadcrumb-item href="">
+                <user-outlined />
+                <span>Accounting Reports</span>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>Dated Post Dated Reports</a-breadcrumb-item>
+        </a-breadcrumb>
+    </div>
 
-                    </div>
-                </div>
-                <a-card>
-                    <div class="flex justify-end">
-                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                            placeholder="Search Checks" :loading="isFetching" />
-                    </div>
-                    <div class="flex  mb-2 justify-between">
-                        <div class="flex">
-                            <div>
-                                <a-breadcrumb>
-                                    <a-breadcrumb-item>
-                                        <CopyOutlined />
-                                    </a-breadcrumb-item>
-                                    <a-breadcrumb-item>Select Type</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-select class="mr-1" placeholder="Select type" @change="handleChangeDataType"
-                                    v-model:value="fetch.dataType" style="width: 210px" :loading="isFetching"
-                                    :disabled="isFetching">
-                                    <a-select-option value="1">Dated Cheque</a-select-option>
-                                    <a-select-option value="2">Post Dated Cheques</a-select-option>
-                                </a-select>
-                            </div>
-                            <div>
-                                <a-breadcrumb>
-                                    <a-breadcrumb-item>
-                                        <FileTextOutlined />
-                                    </a-breadcrumb-item>
-                                    <a-breadcrumb-item>Select Status</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-select class="mr-1" placeholder="Select Status" v-model:value="fetch.dataStatus"
-                                    @change="handleChangeDataStatus" style="width: 210px" :loading="isFetching"
-                                    :disabled="isFetching">
-                                    <a-select-option value="0">View All</a-select-option>
-                                    <a-select-option value="1">Pending Deposit Cheques</a-select-option>
-                                    <a-select-option value="2">Deposited Cheques</a-select-option>
-                                </a-select>
-                            </div>
-
-                            <div>
-                                <a-breadcrumb>
-                                    <a-breadcrumb-item>
-                                        <ProfileOutlined />
-                                    </a-breadcrumb-item>
-                                    <a-breadcrumb-item>Select Check From</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-select class="mr-1" placeholder="Select type" @change="handleChangeDataFrom"
-                                    v-model:value="fetch.dataFrom" style="width: 210px" :loading="isFetching"
-                                    :disabled="isFetching">
-                                    <a-select-option value="">View All</a-select-option>
-                                    <a-select-option v-for="(item, key) in Object.keys(department_from)" :key="key"
-                                        v-model:value="department_from[item][0].department">
-                                        {{ department_from[item][0].department }}</a-select-option>
-                                </a-select>
-                            </div>
-                            <div>
-                                <a-breadcrumb>
-                                    <a-breadcrumb-item>
-                                        <CalendarOutlined />
-                                    </a-breadcrumb-item>
-                                    <a-breadcrumb-item>Select Date Range</a-breadcrumb-item>
-                                </a-breadcrumb>
-                                <a-range-picker v-model:value="fetch.dateRange" :loading="isFetching"
-                                    :disabled="isFetching" @change="handleChangeDateRange" />
-                            </div>
-                        </div>
-                        <div class="mt-6">
-                            <a-button type="primary" @click="startGeneratingExcel"
-                                :disabled="data.data?.length <= 0 || data.data === undefined" :loading="isLoading">
-                                <template #icon>
-                                    <CloudUploadOutlined />
-                                </template>
-                                {{
-                                    isLoading ?
-                                        'Generating checks in progress..' :
-                                        'Generate dated and pdc checks reports' }}
-                            </a-button>
-                        </div>
-                    </div>
-
-                    <a-table class="mt-10" size="small" bordered :data-source="data.data" :columns="columns"
-                        :pagination="false" />
-
-                    <pagination class="mt-6 " :datarecords="data" />
-                </a-card>
-
+    <div class="py-12">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <!-- {{ typeof data.data }} -->
+            <div class="text-center font-bold mb-10">
+                <HomeOutlined /> {{ bunit[0].bname }}
             </div>
+            <div v-if="isProgressing">
+                <div class="flex justify-between">
+                    <div class="flex">
+                        <DoubleRightOutlined class="mr-1" />
+                        <DoubleRightOutlined class="mr-2" />
+                        <p>
+                            {{ progressBar.message }}
+                            {{ progressBar.currentRow }} to
+                            {{ progressBar.totalRows }} records
+                        </p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <a-progress class="mt-2" :stroke-color="{
+                        from: '#108ee9',
+                        to: '#87d068',
+                    }" :percent="progressBar.percentage" status="active" />
+
+                </div>
+            </div>
+            <a-card>
+                <div class="flex justify-end">
+                    <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
+                        placeholder="Search Checks" :loading="isFetching" />
+                </div>
+                <div class="flex  mb-2 justify-between">
+                    <div class="flex">
+                        <div>
+                            <a-breadcrumb>
+                                <a-breadcrumb-item>
+                                    <CopyOutlined />
+                                </a-breadcrumb-item>
+                                <a-breadcrumb-item>Select Type</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-select class="mr-1" placeholder="Select type" @change="handleChangeDataType"
+                                v-model:value="fetch.dataType" style="width: 210px" :loading="isFetching"
+                                :disabled="isFetching">
+                                <a-select-option value="1">Dated Cheque</a-select-option>
+                                <a-select-option value="2">Post Dated Cheques</a-select-option>
+                            </a-select>
+                        </div>
+                        <div>
+                            <a-breadcrumb>
+                                <a-breadcrumb-item>
+                                    <FileTextOutlined />
+                                </a-breadcrumb-item>
+                                <a-breadcrumb-item>Select Status</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-select class="mr-1" placeholder="Select Status" v-model:value="fetch.dataStatus"
+                                @change="handleChangeDataStatus" style="width: 210px" :loading="isFetching"
+                                :disabled="isFetching">
+                                <a-select-option value="0">View All</a-select-option>
+                                <a-select-option value="1">Pending Deposit Cheques</a-select-option>
+                                <a-select-option value="2">Deposited Cheques</a-select-option>
+                            </a-select>
+                        </div>
+
+                        <div>
+                            <a-breadcrumb>
+                                <a-breadcrumb-item>
+                                    <ProfileOutlined />
+                                </a-breadcrumb-item>
+                                <a-breadcrumb-item>Select Check From</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-select class="mr-1" placeholder="Select type" @change="handleChangeDataFrom"
+                                v-model:value="fetch.dataFrom" style="width: 210px" :loading="isFetching"
+                                :disabled="isFetching">
+                                <a-select-option value="">View All</a-select-option>
+                                <a-select-option v-for="(item, key) in Object.keys(department_from)" :key="key"
+                                    v-model:value="department_from[item][0].department">
+                                    {{ department_from[item][0].department }}</a-select-option>
+                            </a-select>
+                        </div>
+                        <div>
+                            <a-breadcrumb>
+                                <a-breadcrumb-item>
+                                    <CalendarOutlined />
+                                </a-breadcrumb-item>
+                                <a-breadcrumb-item>Select Date Range</a-breadcrumb-item>
+                            </a-breadcrumb>
+                            <a-range-picker v-model:value="fetch.dateRange" :loading="isFetching" :disabled="isFetching"
+                                @change="handleChangeDateRange" />
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <a-button type="primary" @click="startGeneratingExcel"
+                            :disabled="data.data?.length <= 0 || data.data === undefined" :loading="isLoading">
+                            <template #icon>
+                                <CloudUploadOutlined />
+                            </template>
+                            {{
+                                isLoading ?
+                                    'Generating checks in progress..' :
+                                    'Generate dated and pdc checks reports' }}
+                        </a-button>
+                    </div>
+                </div>
+                <a-table class="mt-10" size="small" bordered :data-source="data.data" :columns="columns"
+                    :pagination="false">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'details'">
+                            <a-button size="small" @click="details(record)">
+                                <template #icon>
+                                    <SettingOutlined></SettingOutlined>
+                                </template>
+                            </a-button>
+                        </template>
+                    </template>
+                </a-table>
+
+
+                <pagination class="mt-6 " :datarecords="data" />
+            </a-card>
+
         </div>
+    </div>
+
+    <CheckModalDetail v-model:open="isOpenModal" :datarecords="selectDataDetails"></CheckModalDetail>
 </template>
 <script>
 import debounce from "lodash/debounce";
@@ -138,6 +162,8 @@ export default {
             query: {
                 search: ''
             },
+            isOpenModal: false,
+            selectDataDetails: [],
             isFetching: false,
             isProgressing: false,
             isLoading: false,
@@ -165,6 +191,10 @@ export default {
     },
 
     methods: {
+        details(data) {
+            this.isOpenModal = true;
+            this.selectDataDetails = data;
+        },
         handleChangeDataType(value) {
 
             this.isFetching = true;

@@ -214,6 +214,8 @@ class AllTransactionController extends Controller
         $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
 
         $data = NewBounceCheck::join('checks', 'checks.checks_id', '=', 'new_bounce_check.checks_id')
+            ->join('department', 'department.department_id', '=', 'checks.department_from')
+            ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('new_bounce_check.status', '=', '')
             ->where(function ($query) use ($request) {
@@ -223,7 +225,7 @@ class AllTransactionController extends Controller
                 return $query;
             })
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->select('new_bounce_check.*', 'new_bounce_check.id as bounceId', 'checks.*', 'customers.*')
+            ->select('new_bounce_check.*', 'new_bounce_check.id as bounceId', 'checks.*', 'customers.*', 'banks.bankbranchname', 'department.department')
             ->paginate(10)->withQueryString();
 
         return Inertia::render('Transaction/BounceChecks', [
@@ -808,10 +810,11 @@ class AllTransactionController extends Controller
         $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
 
         $data = NewCheckReplacement::joinCheckReplacementCustomer()
-        // ->where('checks.businessunit_id', $request->user()->businessunit_id)
+            ->join('department', 'department.department_id', '=', 'checks.department_from')
+            ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
             ->where('checks.check_status', 'PARTIAL')
             ->where('new_check_replacement.mode', 'PARTIAL')
-            ->select('checks.*', 'customers.*', 'new_check_replacement.status', 'new_check_replacement.*')
+            ->select('checks.*', 'customers.*', 'new_check_replacement.status', 'new_check_replacement.*', 'banks.bankbranchname', 'department.department')
             ->where(function ($query) use ($request) {
                 $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
                     ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')

@@ -2,15 +2,22 @@
 
     <Head title="Bounce Checks Report" />
 
+    <div class="ml-20">
+        <a-breadcrumb>
+            <a-breadcrumb-item href="">
+                <home-outlined />
+            </a-breadcrumb-item>
+            <a-breadcrumb-item href="">
+                <user-outlined />
+                <span>Accounting Reports</span>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>Bounce Check Reports</a-breadcrumb-item>
+        </a-breadcrumb>
+    </div>
     <div class="py-12">
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <div class="text-center font-bold mb-2">
                 <HomeOutlined /> {{ bunit[0].bname }}
-            </div>
-            <div class="text-center text-gray  mb-10 text-gray-500 font-bold">
-                <p>
-                    BOUNCE CHECK REPORTS
-                </p>
             </div>
             <div v-if="isGeneratingShow">
                 <div class="flex justify-between mt-5">
@@ -75,11 +82,22 @@
                 </div>
                 <a-table class="mt-10" :data-source="data.data" :columns="columns" size="small" bordered
                     :pagination="false">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'details'">
+                            <a-button size="small" @click="details(record)">
+                                <template #icon>
+                                    <SettingOutlined></SettingOutlined>
+                                </template>
+                            </a-button>
+                        </template>
+                    </template>
                 </a-table>
                 <pagination :datarecords="data" class="mt-6" />
             </a-card>
         </div>
     </div>
+
+    <CheckModalDetail v-model:open="isOpenModal" :datarecords="selectDataDetails"></CheckModalDetail>
 </template>
 <script>
 import debounce from "lodash/debounce";
@@ -106,6 +124,8 @@ export default {
                 dataStatus: this.dataSatusBackend,
                 dateRange: this.dateRangeBackend ? [this.dateRangeBackend[0] ? dayjs(this.dateRangeBackend[0]) : null, this.dateRangeBackend[1] ? dayjs(this.dateRangeBackend[1]) : null] : null,
             },
+            isOpenModal: false,
+            selectedDataDetails: [],
             progressBar: {
                 percentage: 0,
                 department: "",
@@ -116,6 +136,11 @@ export default {
         }
     },
     methods: {
+        details(data) {
+            this.isOpenModal = true;
+            this.selectDataDetails = data;
+        },
+
         handleChangeDateRange(dateobj, dateStr) {
             this.isFetching = true,
                 this.$inertia.get(route('bounce.checks.accounting'), {

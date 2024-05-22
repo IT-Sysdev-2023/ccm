@@ -98,6 +98,7 @@ class ColumnsHelper
         [
             'title' => 'Action',
             'key' => 'action',
+            'align' => 'center'
         ],
 
     ];
@@ -798,6 +799,7 @@ class ColumnsHelper
         [
             'title' => 'Details',
             'key' => 'details',
+            'align' => 'center'
         ],
     ];
 
@@ -821,6 +823,7 @@ class ColumnsHelper
         [
             'title' => 'Details',
             'key' => 'details',
+            'align' => 'center'
         ],
     ];
 
@@ -860,6 +863,7 @@ class ColumnsHelper
         [
             'title' => 'Details',
             'key' => 'details',
+            'align' => 'center'
         ],
     ];
 
@@ -899,6 +903,7 @@ class ColumnsHelper
         [
             'title' => 'Details',
             'key' => 'details',
+            'align' => 'center'
         ],
     ];
     public static $alta_citaCheckColumns = [
@@ -933,6 +938,7 @@ class ColumnsHelper
         [
             'title' => 'Details.',
             'key' => 'details',
+            'align' => 'center'
         ],
     ];
 
@@ -1046,6 +1052,7 @@ class ColumnsHelper
         [
             'title' => 'Action',
             'key' => 'action',
+            'align' => 'center'
         ],
     ];
 
@@ -1074,6 +1081,7 @@ class ColumnsHelper
             'title' => 'Action',
             'align' => 'center',
             'key' => 'action',
+
         ],
     ];
 

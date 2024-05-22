@@ -169,6 +169,7 @@ Route::middleware('auth')->group(function () {
     Route::get('start/generating/bounce/report/accounting', [AccountingReportController::class, 'startGeneratingReportsChequesAccounting'])->name('start.bounce.accounting');
     Route::get('redeem/check/accounting/report', [AccountingReportController::class, 'redeemPdcCheckAccountingReports'])->name('redeem.reports.accounting');
     Route::get('start/generating/redpdc/report', [AccountingReportController::class, 'startGeneratingRedeemPdcAccounting'])->name('start.generating.redpdc.accounting');
+    Route::get('details/bounce', [AccountingReportController::class, 'tableBounceReports'])->name('bounce.details');
 
    Route::get('app/config', [AppSettingController::class, 'appConfigIndex'])->name('app.config');
    Route::put('update/settings', [AppSettingController::class, 'updateSettings'])->name('update.settings');

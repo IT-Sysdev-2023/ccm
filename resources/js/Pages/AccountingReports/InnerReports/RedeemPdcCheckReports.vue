@@ -1,77 +1,94 @@
-<script setup>
-import AccountingLayout from '@/Layouts/AccountingLayout.vue';
-</script>
-
 <template>
 
     <Head title="Redeem Pdc Check Reports" />
+    <div class="ml-10">
+        <a-breadcrumb>
+            <a-breadcrumb-item href="">
+                <home-outlined />
+            </a-breadcrumb-item>
+            <a-breadcrumb-item href="">
+                <user-outlined />
+                <span>Accounting Reports</span>
+            </a-breadcrumb-item>
+            <a-breadcrumb-item>Redeem Post Dated Reports</a-breadcrumb-item>
+        </a-breadcrumb>
+    </div>
+    <div class="py-12">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <div class="font-bold text-center mb-6">
+                <p>
+                    {{ bunit[0].bname }}
+                </p>
+            </div>
 
-    <AccountingLayout>
 
-        <div class="py-12">
-            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-                <div class="font-bold text-center mb-6">
+            <div v-if="isGeneratingShow">
+                <div class="flex justify-between mt-5">
+                    <div>
+                        <p> {{ progressBar.message }}{{ progressBar.currentRow
+                            }}
+                            to
+                            {{
+                                progressBar.totalRows }}</p>
+                    </div>
+                </div>
+                <a-progress :stroke-color="{
+                    from: '#108ee9', to: '#87d068',
+                }" :percent="progressBar.percentage" status="active" />
+            </div>
+
+
+            <a-card>
+                <div class="font-bold text-right text-gray-500 mb-5">
                     <p>
-                        {{ bunit[0].bname }}
+                        REPORT TYPE: REDEEM PDC CHEQUES
                     </p>
                 </div>
-
-
-                <div v-if="isGeneratingShow">
-                    <div class="flex justify-between mt-5">
-                        <div>
-                            <p> {{ progressBar.message }}{{ progressBar.currentRow
-                                }}
-                                to
-                                {{
-                                    progressBar.totalRows }}</p>
-                        </div>
-                    </div>
-                    <a-progress :stroke-color="{
-                        from: '#108ee9', to: '#87d068',
-                    }" :percent="progressBar.percentage" status="active" />
+                <div class="flex justify-end">
+                    <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
+                        placeholder="Search Checks" :loading="isFetching" />
                 </div>
-
-
-                <a-card>
-                    <div class="font-bold text-right text-gray-500 mb-5">
-                        <p>
-                            REPORT TYPE: REDEEM PDC CHEQUES
-                        </p>
+                <div class="flex justify-between">
+                    <div>
+                        <a-range-picker :disabled="isFetching" style="width: 400px;" class="mr-1 mb-3"
+                            v-model:value="dateRange" @change="handleChangeDateRange" />
                     </div>
-                    <div class="flex justify-end">
-                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                            placeholder="Search Checks" :loading="isFetching" />
+                    <div>
+                        <a-button type="primary" :loading="isLoading" @click="startGeneratingRepors"
+                            :disabled="data.data.length <= 0">
+                            <template #icon>
+                                <CloudUploadOutlined />
+                            </template>
+                            Generate Redeem Cheque Reports
+                        </a-button>
                     </div>
-                    <div class="flex justify-between">
-                        <div>
-                            <a-range-picker :disabled="isFetching" style="width: 400px;" class="mr-1 mb-3"
-                                v-model:value="dateRange" @change="handleChangeDateRange" />
-                        </div>
-                        <div>
-                            <a-button type="primary" :loading="isLoading" @click="startGeneratingRepors"
-                                :disabled="data.data.length <= 0">
+                </div>
+                <a-table :data-source="data.data" :columns="columns" size="small" bordered :pagination="false">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'details'">
+                            <a-button size="small" @click="details(record)">
                                 <template #icon>
-                                    <CloudUploadOutlined />
+                                    <SettingOutlined></SettingOutlined>
                                 </template>
-                                Generate Redeem Cheque Reports
                             </a-button>
-                        </div>
-                    </div>
-                    <a-table :data-source="data.data" :columns="columns" size="small" bordered :pagination="false">
-                    </a-table>
-                    <pagination :datarecords="data" class="mt-5">
+                        </template>
+                    </template>
+                </a-table>
+                <pagination :datarecords="data" class="mt-5">
 
-                    </pagination>
-                </a-card>
-            </div>
+                </pagination>
+            </a-card>
         </div>
-    </AccountingLayout>
+    </div>
+    <CheckModalDetail v-model:open="isOpenModal" :datarecords="selectDataDetails"></CheckModalDetail>
+
 </template>
 <script>
 import dayjs from 'dayjs';
 import debounce from "lodash/debounce";
+import AccountingLayout from '@/Layouts/AccountingLayout.vue';
 export default {
+    layout: AccountingLayout,
     props: {
         data: Object,
         bunit: Object,
@@ -90,12 +107,18 @@ export default {
                 message: "",
                 totalRows: 0,
             },
+            isOpenModal: false,
+            selectDataDetails: [],
             isLoading: false,
             isFetching: false,
             dateRange: this.dateRangeBackend ? [this.dateRangeBackend[0] ? dayjs(this.dateRangeBackend[0]) : null, this.dateRangeBackend[1] ? dayjs(this.dateRangeBackend[1]) : null] : null,
         }
     },
     methods: {
+        details(data) {
+            this.isOpenModal = true;
+            this.selectDataDetails = data;
+        },
         handleChangeDateRange(dateObj, dateStr) {
             this.isFetching = true,
                 this.$inertia.get(route('redeem.reports.accounting'), {

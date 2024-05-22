@@ -25,6 +25,7 @@ class AccountingReportController extends Controller
     }
     public function innerReportDatedPdcCheques(Request $request)
     {
+
         $department_from = Checks::select('department_from', 'department')
             ->leftJoin('department', 'department.department_id', '=', 'checks.department_from')
             ->where('businessunit_id', $request->user()->businessunit_id)
@@ -168,6 +169,37 @@ class AccountingReportController extends Controller
             'columns' => ColumnsHelper::$innertDepReportsColumns,
             'dateRangeBackend' => empty([$request->dateFrom, $request->dateTo]) ? null : [$request->dateFrom, $request->dateTo],
         ]);
+    }
+
+    public function tableBounceReports(Request $request)
+    {
+        $data = NewDsChecks::select('new_ds_checks.*',
+                    'customers.*',
+                    'checks.check_date',
+                    'checks.check_no',
+                    'checks.check_amount',
+                    'checks.check_class',
+                    'checks.check_status',
+                    'checks.account_name',
+                    'checks.account_no',
+                    'checks.check_received',
+                    'checks.check_category',
+                    'checks.check_type',
+                    'checks.approving_officer',
+                    'banks.bankbranchname',
+                    'department.department',
+                )
+            ->join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('department', 'department.department_id', '=', 'checks.department_from')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->Where('ds_no', 'like', '%' . $request->ds_no . '%')
+            ->where('businessunit_id', $request->bunit)
+            ->Where('new_ds_checks.date_deposit', 'like', '%' . $request->date . '%')
+            ->where('status', '')
+            ->get();
+
+        return response()->json($data);
     }
     public function startGeneratingDepositedAccountingReports(Request $request)
     {
@@ -411,6 +443,7 @@ class AccountingReportController extends Controller
 
         $data = DB::table('new_check_replacement')
             ->join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
+            ->join('department', 'department.department_id', '=', 'checks.department_from')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
             ->join('users', 'users.id', '=', 'new_check_replacement.user')
