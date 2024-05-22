@@ -162,7 +162,7 @@ class AccountingReportController extends Controller
             ->groupBy('date_deposit', 'ds_no', 'name')
             ->paginate(10)->withQueryString();
 
-        return Inertia::render('AccountingReports/InnerReports/DepositedCheckReports', [
+        return Inertia::render('AccountingReports/InnerReports/AccountingDepositedCheckReports', [
             'data' => $data,
             'bunit' => $bunit,
             'columns' => ColumnsHelper::$innertDepReportsColumns,
