@@ -16,10 +16,21 @@
             {{ currentTime }}
         </p>
         <a-row :gutter="[16, 16]">
-            <!-- {{  getOnlineUsers }} -->
+
             <a-col :span="14">
-                <p class="font-bold mb-5 text-gray-400 text-center">
-                    ALL CHECQUE COUNTS
+                <p class="text-gray-600 text-center mb-2">
+                    Weekly activies in every Business Unit
+                </p>
+                <div
+                    style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
+                    <div id="chart">
+
+                        <apexchart type="line" height="390" :options="chartOptions2" :series="series2"></apexchart>
+                    </div>
+
+                </div>
+                <p class="mb-5 text-gray-600 text-center  mb-5 mt-10">
+                    Cheques count in every business unit
                 </p>
                 <div
                     style="border: 1px solid #EEEDEB; display: flex; justify-content: center; padding-top: 50px; padding-bottom: 50px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
@@ -31,17 +42,6 @@
                     </div>
                 </div>
 
-                <p class="font-bold text-gray-500 text-center mb-5 mt-10">
-                    WEEKLY ACTIVITIES
-                </p>
-                <div
-                    style="border: 1px solid #EEEDEB; padding: 20px; border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;">
-                    <div id="chart">
-
-                        <apexchart type="line" height="390" :options="chartOptions2" :series="series2"></apexchart>
-                    </div>
-
-                </div>
             </a-col>
             <a-col :span="10">
                 <a-tabs v-model:activeKey="activeKey">
@@ -189,7 +189,7 @@ export default {
 
                 yaxis: {
                     title: {
-                        text: 'Weekly Cheques',
+                        text: 'Weekly Activies',
                     },
                     min: 0
                 },
