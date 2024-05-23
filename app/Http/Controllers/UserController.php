@@ -38,7 +38,7 @@ class UserController extends Controller
             'employee3.applicant' => function ($query) {
                 $query->select('app_id', 'photo');
             },
-        ])->paginate(12)->withQueryString();
+        ])->orderBy('users.created_at', 'DESC')->paginate(12)->withQueryString();
 
         $userType = UserType::all();
 
@@ -265,10 +265,10 @@ class UserController extends Controller
                 $query->select('businessunit_id', 'bname');
             },
             'employee3' => function ($query) {
-                $query->select('emp_no', 'emp_id');
+                $query->select('emp_no', 'emp_id', 'emp_type', 'position');
             },
             'employee3.applicant' => function ($query) {
-                $query->select('app_id', 'photo');
+                $query->select('app_id', 'photo', 'hobbies', 'home_address','specialSkills');
             },
         ])->first();
 

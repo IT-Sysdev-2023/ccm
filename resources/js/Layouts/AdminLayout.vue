@@ -24,7 +24,7 @@ const placement = "bottom";
             <div class="flex  mt-10 justify-center mb-5">
 
                 <img v-if="!collapsed" style="height: 50px; border-radius: 50%"
-                    :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
+                    :src="`/storage/users-image/${$page.props.auth.user.id}`"
                     alt="logo" />
                 <div class="flex justify-center items-center text-white">
                     <img style="height: 50px;" src="../../../public/ccmlogo/lgremove.png" alt="" />
@@ -195,13 +195,13 @@ const placement = "bottom";
                                         height: 30px;
                                         width: 30px;
                                         border-radius: 50%;"
-                                        :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
+                                        :src="`/storage/users-image/${$page.props.auth.user.id}`"
                                         alt="">
                                 </div>
                                 <template #overlay>
                                     <div class="max-w-xs p-4 rounded-md mr-2" style="background: #001529;width: 500px;">
                                         <div class="flex items-center justify-center mb-4">
-                                            <img :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
+                                            <img  :src="`/storage/users-image/${$page.props.auth.user.id}`"
                                                 alt="Profile Picture" class="rounded-full w-16 h-16" />
                                         </div>
                                         <div class="text-center">

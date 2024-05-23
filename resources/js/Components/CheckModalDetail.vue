@@ -120,7 +120,7 @@
             </table>
         </div>
     </a-modal>
-    
+
 </template>
 
 <script>

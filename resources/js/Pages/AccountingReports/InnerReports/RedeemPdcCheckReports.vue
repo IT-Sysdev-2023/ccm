@@ -44,23 +44,21 @@
                         REPORT TYPE: REDEEM PDC CHEQUES
                     </p>
                 </div>
-                <div class="flex justify-end">
-                    <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                        placeholder="Search Checks" :loading="isFetching" />
-                </div>
                 <div class="flex justify-between">
                     <div>
                         <a-range-picker :disabled="isFetching" style="width: 400px;" class="mr-1 mb-3"
                             v-model:value="dateRange" @change="handleChangeDateRange" />
                     </div>
                     <div>
-                        <a-button type="primary" :loading="isLoading" @click="startGeneratingRepors"
+                        <a-button class="mr-1"type="primary" :loading="isLoading" @click="startGeneratingRepors"
                             :disabled="data.data.length <= 0">
                             <template #icon>
                                 <CloudUploadOutlined />
                             </template>
                             Generate Redeem Cheque Reports
                         </a-button>
+                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
+                            placeholder="Search Checks" :loading="isFetching" />
                     </div>
                 </div>
                 <a-table :data-source="data.data" :columns="columns" size="small" bordered :pagination="false">

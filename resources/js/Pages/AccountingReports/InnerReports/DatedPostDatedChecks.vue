@@ -43,10 +43,6 @@
                 </div>
             </div>
             <a-card>
-                <div class="flex justify-end">
-                    <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                        placeholder="Search Checks" :loading="isFetching" />
-                </div>
                 <div class="flex  mb-2 justify-between">
                     <div class="flex">
                         <div>
@@ -107,7 +103,7 @@
                         </div>
                     </div>
                     <div class="mt-6">
-                        <a-button type="primary" @click="startGeneratingExcel"
+                        <a-button class="mr-1"type="primary" @click="startGeneratingExcel"
                             :disabled="data.data?.length <= 0 || data.data === undefined" :loading="isLoading">
                             <template #icon>
                                 <CloudUploadOutlined />
@@ -117,6 +113,8 @@
                                     'Generating checks in progress..' :
                                     'Generate dated and pdc checks reports' }}
                         </a-button>
+                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
+                        placeholder="Search Checks" :loading="isFetching" />
                     </div>
                 </div>
                 <a-table class="mt-10" size="small" bordered :data-source="data.data" :columns="columns"

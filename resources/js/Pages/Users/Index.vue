@@ -133,7 +133,7 @@ const handleOpen = (val) => {
                                 Add users account
                             </span>
                         </template>
-                        <a-card style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
+                        <a-card >
                             <form>
                                 <div class="flex flex-wrap -mx-4">
                                     <!-- First Column -->
@@ -295,8 +295,8 @@ const handleOpen = (val) => {
                                             </template>
                                             {{
                                                 createUsers.processing
-                                                    ? "saving users please wait..."
-                                                    : "continue saving user"
+                                                    ? "Saving Users Credentials..."
+                                                    : "Continue Saving User"
                                             }}
                                         </a-button>
                                     </div>
@@ -343,7 +343,7 @@ const handleOpen = (val) => {
             </template>
         </a-tour>
 
-        <a-modal v-model:open="openModal" width="1000px" title="Edit User" :footer="null">
+        <a-modal v-model:open="openModal" width="1000px" style="top: 50px" title="Edit User" :footer="null">
             <a-form>
                 <div class="flex">
                     <p class="mt-3">Employee Name</p>

@@ -41,10 +41,7 @@
             </div>
 
             <a-card>
-                <div class="flex justify-end">
-                    <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                        placeholder="Search Checks" :loading="isFetching" />
-                </div>
+
                 <div class="flex justify-between">
                     <div>
                         <a-breadcrumb>
@@ -58,7 +55,7 @@
                             style="width: 350px;" />
                     </div>
                     <div class="mt-5">
-                        <a-button type="primary" @click="startGeneratingDepositedChecks" :loading="isLoading"
+                        <a-button class="mr-1" type="primary" @click="startGeneratingDepositedChecks" :loading="isLoading"
                             :disabled="data.data.length <= 0">
                             <template #icon>
                                 <CloudDownloadOutlined />
@@ -68,6 +65,8 @@
                                     'Generate deposited checks reports' : 'Generating deposit inprogress...'
                             }}
                         </a-button>
+                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
+                        placeholder="Search Checks" :loading="isFetching" />
                     </div>
                 </div>
 
