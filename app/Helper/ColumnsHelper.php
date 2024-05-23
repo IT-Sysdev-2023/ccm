@@ -769,6 +769,7 @@ class ColumnsHelper
         [
             'title' => 'Details',
             'key' => 'details',
+            'align'=> 'center'
         ],
     ];
     public static $acc_dated_pdc_reports = [

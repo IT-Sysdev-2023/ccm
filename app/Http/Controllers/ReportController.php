@@ -9,10 +9,10 @@ use App\Models\NewBounceCheck;
 use App\Models\NewCheckReplacement;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
+use App\Services\AltaChecksReportServices;
+use App\Services\RedeemPdcReportServices;
 use App\Services\ReportBounceCheckService;
 use App\Services\ReportDepositedCheckService;
-use App\Services\RedeemPdcReportServices;
-use App\Services\AltaChecksReportServices;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -59,6 +59,7 @@ class ReportController extends Controller
 
         if ($dateRange[0] == null && $request->bounceStatus == 0 || $request->bounceStatus == null) {
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                 ->where('businessunit_id', $request->bunitCode)
@@ -67,6 +68,7 @@ class ReportController extends Controller
         } elseif ($dateRange[0] != null && $request->bounceStatus == 0 || $request->bounceStatus == null) {
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                 ->where('businessunit_id', $request->bunitCode)
                 ->where('new_bounce_check.status', 'SETTLED CHECK')
@@ -76,6 +78,7 @@ class ReportController extends Controller
         } elseif ($dateRange[0] == null && $request->bounceStatus == "1") {
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
                 ->where('businessunit_id', $request->bunitCode)
                 ->whereIn('new_bounce_check.status', ['', 'PARTIAL'])
@@ -85,6 +88,7 @@ class ReportController extends Controller
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
                 ->where('businessunit_id', $request->bunitCode)
                 ->where('new_bounce_check.status', 'SETTLED CHECK')
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
@@ -93,6 +97,7 @@ class ReportController extends Controller
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
                 ->where('businessunit_id', $request->bunitCode)
                 ->whereIn('new_bounce_check.status', ['', 'PARTIAL'])
                 ->whereBetween('new_bounce_check.date_time', [$dateRange])
@@ -102,6 +107,7 @@ class ReportController extends Controller
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
                 ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
                 ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+                ->join('department', 'department.department_id', '=', 'checks.department_from')
                 ->where('businessunit_id', $request->bunitCode)
                 ->where('new_bounce_check.status', 'SETTLED CHECK')
                 ->whereBetween('new_bounce_check.date_time', [$dateRange])
@@ -602,6 +608,7 @@ class ReportController extends Controller
 
     public function redeemCheckReportsAdmin(Request $request)
     {
+        // dd(1);
 
         $bunit = BusinessUnit::whereNotNull('loc_code_atp')
             ->whereNotNull('b_atpgetdata')
@@ -611,6 +618,7 @@ class ReportController extends Controller
 
         $data = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('department', 'department.department_id', '=', 'checks.department_from')
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
             ->join('users', 'users.id', '=', 'new_check_replacement.user')
             ->where('checks.businessunit_id', $request->bunitId)
@@ -647,11 +655,11 @@ class ReportController extends Controller
             ->join('users', 'users.id', '=', 'new_check_replacement.user')
             ->where('checks.businessunit_id', $request->bunitId)
             ->where('new_check_replacement.status', '=', 'REDEEMED')
-            ->whereBetween('new_check_replacement.date_time',  $dateRange)
-            ->select('*', 'new_check_replacement.date_time' , 'new_check_replacement.id')
+            ->whereBetween('new_check_replacement.date_time', $dateRange)
+            ->select('*', 'new_check_replacement.date_time', 'new_check_replacement.id')
             ->get();
 
-            // dump($data);
+        // dump($data);
 
         return (new RedeemPdcReportServices)->record($data)->writeResult($dateRange, $bunit, $request->reDirect);
     }
@@ -659,53 +667,110 @@ class ReportController extends Controller
     public function checksInAltaReports(Request $request)
     {
         $checkFromTms = DB::connection('mysql2')
-        ->table('tbl_checks2')
-        ->join('tbl_sales', 'tbl_sales.sales_id', '=', 'tbl_checks2.sales_id')
-        ->join('tbl_bank', 'tbl_bank.bank_id', '=', 'tbl_checks2.bank_id')
-        ->where('tbl_checks2.check_date', 'LIKE', '%' . $request->altaDates . '%')
-        ->where('official_ds', '!=', '')
-        ->select(
-            'check_id',
-            'tbl_bank.bank',
-            'check_num',
-            'check_recieved',
-            'check_date',
-            'currency',
-            'official_ds',
-            (DB::raw('sum(tbl_checks2.amount) as amount'))
-        )
-        ->groupBy('official_ds', 'check_date')
-        ->paginate(10)->withQueryString();
-
-
-
+            ->table('tbl_checks2')
+            ->join('tbl_sales', 'tbl_sales.sales_id', '=', 'tbl_checks2.sales_id')
+            ->join('tbl_bank', 'tbl_bank.bank_id', '=', 'tbl_checks2.bank_id')
+            ->where('tbl_checks2.check_date', 'LIKE', '%' . $request->altaDates . '%')
+            ->where('official_ds', '!=', '')
+            ->select(
+                'check_id',
+                'tbl_bank.bank',
+                'check_num',
+                'check_recieved',
+                'check_date',
+                'currency',
+                'official_ds',
+                (DB::raw('sum(tbl_checks2.amount) as amount'))
+            )
+            ->groupBy('official_ds', 'check_date')
+            ->paginate(10)->withQueryString();
 
         return Inertia::render('Reports/ChecksAltaReports', [
-            'data' =>  $checkFromTms,
+            'data' => $checkFromTms,
             'columns' => ColumnsHelper::$alta_citaCheckColumns,
             'dateBackEnd' => empty($request->altaDates) ? null : $request->altaDates,
         ]);
     }
+    public function altaCitaDetails(Request $request)
+    {
+        // dd(1);
+
+        $checkTmsAlta = DB::connection('mysql2')
+            ->table('tbl_checks2')
+            ->join('tbl_sales', 'tbl_sales.sales_id', '=', 'tbl_checks2.sales_id')
+            ->join('tbl_bank', 'tbl_bank.bank_id', '=', 'tbl_checks2.bank_id')
+            ->where('check_id', '=', $request->check_id)
+            ->select(
+                'acc_num',
+                'acc_name',
+                'business_unit_id',
+                'department_id',
+                'emp_id'
+            )
+            ->first();
+
+            // dd( $checkTmsAlta);
+
+        $dataPis = DB::connection('pis')
+            ->table('locate_business_unit')
+            ->where('bcode', '=', $checkTmsAlta->business_unit_id)
+            ->select(
+                'business_unit',
+                'bunit_code',
+                'company_code'
+            )
+            ->first();
+
+        $getDepFromPis = DB::connection('pis')
+            ->table('locate_department')
+            ->where('bunit_code', '=', $dataPis->bunit_code)
+            ->where('dept_code', '=', $checkTmsAlta->department_id)
+            ->where('company_code', '=', $dataPis->company_code)
+            ->select(
+                'dept_name'
+            )
+            ->first();
+
+        $appOff = DB::connection('pis')
+            ->table('employee3')
+            ->where('record_no', '=', $checkTmsAlta->emp_id)
+            ->select(
+                'name'
+            )
+            ->first();
+
+        $result= [
+            'acc_num' => $checkTmsAlta->acc_num,
+            'acc_name' => $checkTmsAlta->acc_name,
+            'business_unit' => $dataPis->business_unit,
+            'dept_name' => $getDepFromPis->dept_name,
+        ];
+
+        // dd($result);
+
+        return response()->json($result);
+
+    }
     public function startGenerateAltaReports(Request $request)
     {
         $data = DB::connection('mysql2')
-        ->table('tbl_checks2')
-        ->join('tbl_sales', 'tbl_sales.sales_id', '=', 'tbl_checks2.sales_id')
-        ->join('tbl_bank', 'tbl_bank.bank_id', '=', 'tbl_checks2.bank_id')
-        ->where('tbl_checks2.check_date', 'LIKE', '%' . $request->altaDates . '%')
-        ->where('official_ds', '!=', '')
-        ->select(
-            'check_id',
-            'tbl_bank.bank',
-            'check_num',
-            'check_recieved',
-            'check_date',
-            'currency',
-            'official_ds',
-            (DB::raw('sum(tbl_checks2.amount) as amount'))
-        )
-        ->groupBy('official_ds', 'check_date')
-        ->get(10);
+            ->table('tbl_checks2')
+            ->join('tbl_sales', 'tbl_sales.sales_id', '=', 'tbl_checks2.sales_id')
+            ->join('tbl_bank', 'tbl_bank.bank_id', '=', 'tbl_checks2.bank_id')
+            ->where('tbl_checks2.check_date', 'LIKE', '%' . $request->altaDates . '%')
+            ->where('official_ds', '!=', '')
+            ->select(
+                'check_id',
+                'tbl_bank.bank',
+                'check_num',
+                'check_recieved',
+                'check_date',
+                'currency',
+                'official_ds',
+                (DB::raw('sum(tbl_checks2.amount) as amount'))
+            )
+            ->groupBy('official_ds', 'check_date')
+            ->get(10);
 
         return (new AltaChecksReportServices)->record($data)->writeResult($request->altaDates);
     }

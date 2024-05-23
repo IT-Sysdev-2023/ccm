@@ -83,7 +83,7 @@
             </a-card>
         </div>
     </div>
-    <a-modal v-model:open="openModalCheck" width="1000px" title="Replaced Check Details" @ok="handleOk" :footer="null"
+    <a-modal v-model:open="openModalCheck" width="1000px" title="Replaced Check Details" :footer="null"
         style="top: 50px">
         <div class="product-table">
             <table class="min-w-full divide-y divide-gray-200">
@@ -147,7 +147,7 @@
             </a-card>
         </div>
     </a-modal>
-    <a-modal v-model:open="openModalCash" width="1000px" title="Replaced Cash Details" @ok="handleOk" :footer="null"
+    <a-modal v-model:open="openModalCash" width="1000px" title="Replaced Cash Details" :footer="null"
         style="top: 50px">
         <div class="product-table">
             <table class="min-w-full divide-y divide-gray-200">
@@ -208,7 +208,7 @@
             </a-card>
         </div>
     </a-modal>
-    <a-modal v-model:open="openModalCashAndCheck" width="1000px" title="Replaced Cash Details" @ok="handleOk"
+    <a-modal v-model:open="openModalCashAndCheck" width="1000px" title="Replaced Cash Details"
         :footer="null" style="top: 50px">
         <div class="product-table">
             <table class="min-w-full divide-y divide-gray-200">
@@ -277,7 +277,7 @@
             </a-card>
         </div>
     </a-modal>
-    <a-modal v-model:open="openModalReDeposit" width="1000px" title="Replaced Cash Details" @ok="handleOk"
+    <a-modal v-model:open="openModalReDeposit" width="1000px" title="Replaced Cash Details"
         :footer="null" style="top: 50px">
         <div class="product-table">
             <table class="min-w-full divide-y divide-gray-200">
@@ -346,7 +346,7 @@
             </a-card>
         </div>
     </a-modal>
-    <a-modal v-model:open="openModalPartial" width="100%" title="Replaced Cash Details" @ok="handleOk" :footer="null"
+    <a-modal v-model:open="openModalPartial" width="100%" title="Replaced Cash Details" :footer="null"
         style="top: 50px">
         <a-card style="border: none">
             <a-table bordered :data-source="partialData" size="small" :columns="partialColumns">

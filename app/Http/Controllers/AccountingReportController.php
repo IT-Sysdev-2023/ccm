@@ -173,6 +173,7 @@ class AccountingReportController extends Controller
 
     public function tableBounceReports(Request $request)
     {
+        // dd($request->all());
         $data = NewDsChecks::select('new_ds_checks.*',
                     'customers.*',
                     'checks.check_date',
@@ -198,6 +199,8 @@ class AccountingReportController extends Controller
             ->Where('new_ds_checks.date_deposit', 'like', '%' . $request->date . '%')
             ->where('status', '')
             ->get();
+
+            // dd($data->toArray());
 
         return response()->json($data);
     }

@@ -1,62 +1,74 @@
 <template>
-     <Head title="Bounce Check Reports" />
-        <div class=" py-4 max-w-8xl mx-auto sm:px-6 lg:px-8">
-            <a-breadcrumb>
-                <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-                <a-breadcrumb-item><a href="">Reports</a></a-breadcrumb-item>
-                <a-breadcrumb-item>Bounce Check Report</a-breadcrumb-item>
-            </a-breadcrumb>
-            <div v-if="isGeneratingShow">
-                <div class="flex justify-between mt-5">
-                    <div>
-                        <p> {{ progressBar.message }}{{ progressBar.currentRow
-                            }}
-                            to
-                            {{
-                                progressBar.totalRows }}</p>
-                    </div>
-                </div>
-                <a-progress :stroke-color="{
-                    from: '#108ee9', to: '#87d068',
-                }" :percent="progressBar.percentage" status="active" />
-            </div>
 
-            <div class="flex justify-between">
-
-
+    <Head title="Bounce Check Reports" />
+    <div class=" py-4 max-w-8xl mx-auto sm:px-6 lg:px-8">
+        <a-breadcrumb>
+            <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
+            <a-breadcrumb-item><a href="">Reports</a></a-breadcrumb-item>
+            <a-breadcrumb-item>Bounce Check Report</a-breadcrumb-item>
+        </a-breadcrumb>
+        <div v-if="isGeneratingShow">
+            <div class="flex justify-between mt-5">
                 <div>
-                    <a-range-picker class="mt-5 mr-2" v-model:value="dateRangeValue" />
-                    <!-- {{ bunit }} -->
-                    <a-select ref="select" style="width: 200px" v-model:value="bunitCode" placeholder="Business Unit"
-                        class="mr-2">
-                        <a-select-option v-for="(item, key) in bunit" :key="key" v-model:value="item.businessunit_id">{{
-                            item.bname }}</a-select-option>
-                    </a-select>
-                    <a-select ref="select" style="width: 200px" v-model:value="bounceStatus" placeholder="Bounce Status"
-                        class="mr-2">
-                        <a-select-option value="0">All Checks</a-select-option>
-                        <a-select-option value="1">Pending Checks</a-select-option>
-                        <a-select-option value="2">Settled Checks</a-select-option>
-                    </a-select>
-                    <a-button style="width: 200px;" type="primary" ghost @click="fetchBounceData" :loading="isFetching">
-                        <template #icon>
-                            <LoginOutlined />
-                        </template>
-                        fetch data
-                    </a-button>
-                </div>
-                <div>
-                    <a-button  :loading="isLoading" type="primary" class="mt-5" @click="startGeneratingBounceChecks" :disabled="data.data.length <= 0 || data.data == undefined">
-                        <template #icon>
-                            <CloudDownloadOutlined />
-                        </template>
-                        {{ isLoading ? 'Generating Cheques in progress...' : 'Start Generating Cheques'}}
-                    </a-button>
+                    <p> {{ progressBar.message }}{{ progressBar.currentRow
+                        }}
+                        to
+                        {{
+                            progressBar.totalRows }}</p>
                 </div>
             </div>
-            <a-table class="mt-5" :pagination="false" size="small" :data-source="data.data" :columns="columns" />
-            <pagination class="mt-6" :datarecords="data" />
+            <a-progress :stroke-color="{
+                from: '#108ee9', to: '#87d068',
+            }" :percent="progressBar.percentage" status="active" />
         </div>
+
+        <div class="flex justify-between">
+
+
+            <div>
+                <a-range-picker class="mt-5 mr-2" v-model:value="dateRangeValue" />
+                <!-- {{ bunit }} -->
+                <a-select ref="select" style="width: 200px" v-model:value="bunitCode" placeholder="Business Unit"
+                    class="mr-2">
+                    <a-select-option v-for="(item, key) in bunit" :key="key" v-model:value="item.businessunit_id">{{
+                        item.bname }}</a-select-option>
+                </a-select>
+                <a-select ref="select" style="width: 200px" v-model:value="bounceStatus" placeholder="Bounce Status"
+                    class="mr-2">
+                    <a-select-option value="0">All Checks</a-select-option>
+                    <a-select-option value="1">Pending Checks</a-select-option>
+                    <a-select-option value="2">Settled Checks</a-select-option>
+                </a-select>
+                <a-button style="width: 200px;" type="primary" ghost @click="fetchBounceData" :loading="isFetching">
+                    <template #icon>
+                        <LoginOutlined />
+                    </template>
+                    fetch data
+                </a-button>
+            </div>
+            <div>
+                <a-button :loading="isLoading" type="primary" class="mt-5" @click="startGeneratingBounceChecks"
+                    :disabled="data.data.length <= 0 || data.data == undefined">
+                    <template #icon>
+                        <CloudDownloadOutlined />
+                    </template>
+                    {{ isLoading ? 'Generating Cheques in progress...' : 'Start Generating Cheques' }}
+                </a-button>
+            </div>
+        </div>
+        <a-table class="mt-5" :pagination="false" size="small" :data-source="data.data" :columns="columns">
+            <template #bodyCell="{ column, record }">
+                <template v-if="column.key === 'details'">
+                    <a-button size="small" @click="details(record)">
+                        <template #icon>
+                            <SettingOutlined></SettingOutlined>
+                        </template>
+                    </a-button>
+                </template>
+            </template></a-table>
+        <pagination class="mt-6" :datarecords="data" />
+    </div>
+    <CheckModalDetail v-model:open="isOpenModal" :datarecords="selectDataDetails"></CheckModalDetail>
 </template>
 
 <script>
@@ -77,6 +89,8 @@ export default {
             isGeneratingShow: false,
             isLoading: false,
             isFetching: false,
+            selectDataDetails: [],
+            isOpenModal: false,
             bunitCode: this.bunitCodeBackend,
             bounceStatus: this.bounceValue,
             dateRangeValue: this.dateRangeBackend?.length > 0 ?
@@ -96,6 +110,10 @@ export default {
         };
     },
     methods: {
+        details(data){
+            this.isOpenModal = true,
+            this.selectDataDetails = data;
+        },
         fetchBounceData() {
             this.isFetching = true;
             if (!this.dateRangeValue) {

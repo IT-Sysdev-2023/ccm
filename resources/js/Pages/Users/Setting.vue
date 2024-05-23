@@ -6,7 +6,7 @@
               width: 100% ; height: 70vh">
                     <div class="max-w-xs text-center">
                         <img class="mx-auto mb-4 h-56 w-56 rounded-full outline outline-2 outline-white outline-offset-2"
-                            :src="'http://172.16.161.34:8080/hrms' + $page.props.auth.user.employee3.applicant.photo"
+                            :src="`/storage/users-image/${$page.props.auth.user.id}`"
                             alt="profile picture" />
                         <h4 class="text-xl font-semibold text-black">{{ $page.props.auth.user.name }}</h4>
                         <h3 class="font-semibold text-slate-600">{{ $page.props.auth.user.username }}
