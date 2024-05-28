@@ -112,12 +112,17 @@ class AllTransactionController extends Controller
         $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
 
         $data = NewSavedChecks::joinChecksCustomer()->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
-                return $query;
-            })
+            // ->where(function ($query) use ($request) {
+            //     $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
+            //         ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
+            //         ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
+            //     return $query;
+            // })
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname',
+            ], 'LIKE', `'%' . $request->searchQuery . '%'`)
             ->whereColumn('check_date', '>', 'check_received')
             ->paginate(500)->withQueryString();
 
@@ -218,12 +223,17 @@ class AllTransactionController extends Controller
             ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('new_bounce_check.status', '=', '')
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
-                return $query;
-            })
+            // ->where(function ($query) use ($request) {
+            //     $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
+            //         ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
+            //         ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
+            //     return $query;
+            // })
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname',
+            ], 'LIKE', `'%' . $request->searchQuery . '%'`)
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->select('new_bounce_check.*', 'new_bounce_check.id as bounceId', 'checks.*', 'customers.*', 'banks.bankbranchname', 'department.department')
             ->paginate(10)->withQueryString();
@@ -268,7 +278,6 @@ class AllTransactionController extends Controller
     public function bouncedCheckReplacement(CheckReplacementRequest $request)
     {
         $request->validated();
-        $check_type = "";
 
         if ($request->rep_check_date > today()->toDateString()) {
             $check_type = "POST DATED";
@@ -336,8 +345,6 @@ class AllTransactionController extends Controller
     public function bouncedCheckCashReplacement(CheckCashReplacementRequest $request)
     {
         $request->validated();
-
-        $check_type = "";
 
         if ($request->rep_check_date > today()->toDateString()) {
             $check_type = "POST DATED";
@@ -557,7 +564,7 @@ class AllTransactionController extends Controller
                     ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
                 return $query;
             })
-            ->orderBy('new_check_replacement.id', 'desc')
+            ->orderByDesc('new_check_replacement.id')
             ->select('*', 'new_check_replacement.date_time');
 
         $q = match ($request->getMode) {
@@ -586,14 +593,14 @@ class AllTransactionController extends Controller
             $data = NewCheckReplacement::join('checks', 'checks.checks_id', 'new_check_replacement.checks_id')
                 ->select('new_check_replacement.*', 'checks.approving_officer', )
                 ->where('new_check_replacement.checks_id', $request->checksId)
-                ->orderBy('id', 'ASC')
+                ->orderBy('id')
                 ->first();
 
         } else {
             $data = NewCheckReplacement::join('checks', 'checks.checks_id', 'new_check_replacement.checks_id')
                 ->select('new_check_replacement.*', 'checks.approving_officer')
                 ->where('new_check_replacement.bounce_id', $request->bouncedId)
-                ->orderBy('id', 'ASC')
+                ->orderBy('id')
                 ->first();
         }
 
