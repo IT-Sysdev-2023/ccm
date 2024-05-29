@@ -24,8 +24,7 @@ const placement = "bottom";
             <div class="flex  mt-10 justify-center mb-5">
 
                 <img v-if="!collapsed" style="height: 50px; border-radius: 50%"
-                    :src="`/storage/users-image/${$page.props.auth.user.id}`"
-                    alt="logo" />
+                    :src="`/storage/users-image/${$page.props.auth.user.id}`" alt="logo" />
                 <div class="flex justify-center items-center text-white">
                     <img style="height: 50px;" src="../../../public/ccmlogo/lgremove.png" alt="" />
                 </div>
@@ -80,9 +79,13 @@ const placement = "bottom";
                             <Link :href="route('bounce.checks.adjustments')">Bounce </Link>
                         </span>
                     </a-menu-item>
-                    <a-menu-item>
+                    <a-menu-item key="13" :class="{
+                        'bg-blue-500 text-white': route().current('replace.checks.adjustments'),
+                    }">
                         <RollbackOutlined />
-                        <span>Replacement</span>
+                        <span>
+                            <Link :href="route('replace.checks.adjustments')">Replacement </Link>
+                        </span>
                     </a-menu-item>
                 </a-sub-menu>
                 <a-sub-menu>
@@ -92,11 +95,13 @@ const placement = "bottom";
                             <span>Master File</span>
                         </span>
                     </template>
-                    <a-menu-item  key="11"  :class="{
+                    <a-menu-item key="11" :class="{
                         'bg-blue-500 text-white': route().current('app.config'),
                     }">
                         <AppleOutlined />
-                        <span><Link :href="route('app.config')">App Config</Link></span>
+                        <span>
+                            <Link :href="route('app.config')">App Config</Link>
+                        </span>
                     </a-menu-item>
                 </a-sub-menu>
                 <a-sub-menu>
@@ -194,14 +199,13 @@ const placement = "bottom";
                                     <img style="
                                         height: 30px;
                                         width: 30px;
-                                        border-radius: 50%;"
-                                        :src="`/storage/users-image/${$page.props.auth.user.id}`"
+                                        border-radius: 50%;" :src="`/storage/users-image/${$page.props.auth.user.id}`"
                                         alt="">
                                 </div>
                                 <template #overlay>
                                     <div class="max-w-xs p-4 rounded-md mr-2" style="background: #001529;width: 500px;">
                                         <div class="flex items-center justify-center mb-4">
-                                            <img  :src="`/storage/users-image/${$page.props.auth.user.id}`"
+                                            <img :src="`/storage/users-image/${$page.props.auth.user.id}`"
                                                 alt="Profile Picture" class="rounded-full w-16 h-16" />
                                         </div>
                                         <div class="text-center">

@@ -6,6 +6,7 @@ use App\Helper\ColumnsHelper;
 use App\Models\BusinessUnit;
 use App\Models\Checks;
 use App\Models\NewBounceCheck;
+use App\Models\NewCheckReplacement;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
 use Illuminate\Http\Request;
@@ -152,5 +153,30 @@ class AdjustmentController extends Controller
 
         return redirect()->back();
 
+    }
+    public function replacementAdjustments(Request $request)
+    {
+        $bunitData = BusinessUnit::whereNotNull('loc_code_atp')
+            ->whereNotNull('b_atpgetdata')
+            ->whereNotNull('b_encashstart')
+            ->where('businessunit_id', '!=', 61)
+            ->get();
+
+        $data = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
+            ->join('users', 'users.id', '=', 'new_check_replacement.user')
+            ->where('new_check_replacement.status', '!=', '')
+            ->where('checks.businessunit_id', $request->bunit)
+            ->orderBy('new_check_replacement.id', 'desc')
+            ->select('*', 'new_check_replacement.date_time')
+            ->paginate(10)->withQueryString();
+
+        return Inertia::render('Adjustments/ReplacementChecks', [
+            'bunit' => $bunitData,
+            'columns' => ColumnsHelper::$replaced_check_columns,
+            'data' => $data,
+            'bunitBackend' => empty($request->bunit) ? null : intval($request->bunit)
+        ]);
     }
 }

@@ -98,7 +98,7 @@ class ColumnsHelper
         [
             'title' => 'Action',
             'key' => 'action',
-            'align' => 'center'
+            'align' => 'center',
         ],
 
     ];
@@ -769,7 +769,7 @@ class ColumnsHelper
         [
             'title' => 'Details',
             'key' => 'details',
-            'align'=> 'center'
+            'align' => 'center',
         ],
     ];
     public static $acc_dated_pdc_reports = [
@@ -800,7 +800,7 @@ class ColumnsHelper
         [
             'title' => 'Details',
             'key' => 'details',
-            'align' => 'center'
+            'align' => 'center',
         ],
     ];
 
@@ -824,7 +824,7 @@ class ColumnsHelper
         [
             'title' => 'Details',
             'key' => 'details',
-            'align' => 'center'
+            'align' => 'center',
         ],
     ];
 
@@ -864,7 +864,7 @@ class ColumnsHelper
         [
             'title' => 'Details',
             'key' => 'details',
-            'align' => 'center'
+            'align' => 'center',
         ],
     ];
 
@@ -904,7 +904,7 @@ class ColumnsHelper
         [
             'title' => 'Details',
             'key' => 'details',
-            'align' => 'center'
+            'align' => 'center',
         ],
     ];
     public static $alta_citaCheckColumns = [
@@ -939,7 +939,7 @@ class ColumnsHelper
         [
             'title' => 'Details.',
             'key' => 'details',
-            'align' => 'center'
+            'align' => 'center',
         ],
     ];
 
@@ -1053,7 +1053,7 @@ class ColumnsHelper
         [
             'title' => 'Action',
             'key' => 'action',
-            'align' => 'center'
+            'align' => 'center',
         ],
     ];
 
@@ -1061,22 +1061,22 @@ class ColumnsHelper
         [
             'title' => 'Business Unit',
             'dataIndex' => 'bname',
-            'align' => 'center'
+            'align' => 'center',
         ],
         [
             'title' => 'Atp Location Code',
             'dataIndex' => 'loc_code_atp',
-            'align' => 'center'
+            'align' => 'center',
         ],
         [
             'title' => 'Atp Start',
             'dataIndex' => 'b_atpgetdata',
-            'align' => 'center'
+            'align' => 'center',
         ],
         [
             'title' => 'Encash Start',
             'dataIndex' => 'b_encashstart',
-            'align' => 'center'
+            'align' => 'center',
         ],
         [
             'title' => 'Action',
@@ -1098,7 +1098,50 @@ class ColumnsHelper
         [
             'title' => 'Usertype',
             'dataIndex' => 'usertype',
-            'key' => 'usertype'
+            'key' => 'usertype',
+        ],
+    ];
+    public static $replaced_check_columns = [
+        [
+            'title' => 'Replacement Date',
+            'dataIndex' => 'date_time',
+            'align' => 'center',
+        ],
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'check_received',
+            'align' => 'center',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
+            'align' => 'center',
+        ],
+        [
+            'title' => 'Customer Name',
+            'dataIndex' => 'fullname',
+        ],
+        [
+            'title' => 'Check No.',
+            'dataIndex' => 'check_no',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+        ],
+        [
+            'title' => 'Mode',
+            'dataIndex' => 'mode',
+            'align' => 'center',
+        ],
+        [
+            'title' => 'User',
+            'dataIndex' => 'name',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
+            'align' => 'center',
         ],
     ];
 
