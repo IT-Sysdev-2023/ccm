@@ -1,205 +1,117 @@
 <template>
+
     <Head title="Dated & Post Dated Checks Report" />
 
-        <div class="py-4">
-            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-                <a-breadcrumb>
-                    <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-                    <a-breadcrumb-item
-                        ><a href="">Reports</a></a-breadcrumb-item
-                    >
-                    <a-breadcrumb-item
-                        >Dated & Post Dated Checks</a-breadcrumb-item
-                    >
-                </a-breadcrumb>
-                <div
-                    class="mt-6"
-                    style="display: flex; justify-content: space-between"
-                >
+    <div class="py-4">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <a-breadcrumb>
+                <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
+                <a-breadcrumb-item><a href="">Reports</a></a-breadcrumb-item>
+                <a-breadcrumb-item>Dated & Post Dated Checks</a-breadcrumb-item>
+            </a-breadcrumb>
+            <div v-if="isProgressing" class="mt-4">
+                <div class="flex justify-between">
                     <div class="flex">
-                        <a-range-picker
-                            v-model:value="dateRange"
-                            class="mt-2 mr-2"
-                            style="width: 250px"
-                        />
-                        <div class="mr-2">
-                            <a-tooltip
-                                :open="isTooltipVisible"
-                                :color="colors"
-                                title="select business unit first"
-                            >
-                                <a-select
-                                    class="mt-2"
-                                    ref="select"
-                                    v-model:value="bunitCode"
-                                    style="width: 160px"
-                                    placeholder="Business Unit"
-                                    @change="handleChange"
-                                >
-                                    <a-select-option
-                                        v-for="bu in bunit"
-                                        v-model:value="bu.businessunit_id"
-                                        >{{ bu.bname }}</a-select-option
-                                    >
-                                </a-select>
-                            </a-tooltip>
-                        </div>
-                        <div class="mr-2">
-                            <a-tooltip
-                                :color="colors"
-                                :open="isTooltipVisible"
-                                title="select check type first"
-                            >
-                                <a-select
-                                    class="mt-2"
-                                    ref="select"
-                                    v-model:value="pdcdatedChecks"
-                                    style="width: 150px"
-                                    placeholder="Check Type"
-                                    @change="handleChange"
-                                >
-                                    <a-select-option value="1"
-                                        >PDC</a-select-option
-                                    >
-                                    <a-select-option value="2"
-                                        >DATED CHECKS</a-select-option
-                                    >
-                                </a-select>
-                            </a-tooltip>
-                        </div>
-                        <div class="mr-2">
-                            <a-tooltip
-                                :color="colors"
-                                :open="isTooltipVisible"
-                                title="select report type first"
-                            >
-                                <a-select
-                                    class="mt-2"
-                                    ref="select"
-                                    v-model:value="repportType"
-                                    style="width: 150px"
-                                    placeholder="Deposit Status"
-                                    @change="handleChange"
-                                >
-                                    <a-select-option value="0"
-                                        >VIEW ALL</a-select-option
-                                    >
-                                    <a-select-option value="1"
-                                        >PENDING</a-select-option
-                                    >
-                                    <a-select-option value="2"
-                                        >DEPOSITED</a-select-option
-                                    >
-                                </a-select>
-                            </a-tooltip>
-                        </div>
-                    </div>
-
-                    <div class="mt-2">
-                        <a-button
-                            style="
-                                background-color: rgb(207, 250, 225);
-                                margin-right: 10px;
-                                width: 200px;
-                            "
-                            v-on:click="generateReport"
-                            v-if="showGenerateButton"
-                            :loading="loadingGenerate"
-                        >
-                            Generate to Excel
-                        </a-button>
-                        <a-button
-                            style="
-                                background-color: rgb(193, 224, 253);
-                                margin-right: 10px;
-                                width: 200px;
-                            "
-                            @click="fetchData"
-                        >
-                            Fetch Data
-                        </a-button>
+                        <DoubleRightOutlined class="mr-1" />
+                        <DoubleRightOutlined class="mr-2" />
+                        <p>
+                            {{ progressBar.message }}
+                            {{ progressBar.currentRow }} to
+                            {{ progressBar.totalRows }} records
+                        </p>
                     </div>
                 </div>
-                <div class="flex mt-5 justify-end mx-0">
-                    <a-input
-                        placeholder="Search Cheques"
-                        v-model:value="query.search"
-                        style="width: 420px"
-                    >
-                        <template #prefix>
-                            <FileSearchOutlined />
-                        </template>
+                <div class="mb-3">
+                    <a-progress class="mt-2" :stroke-color="{
+                        from: '#108ee9',
+                        to: '#87d068',
+                    }" :percent="progressBar.percentage" status="active" />
 
-                        <template #suffix>
-                            <a-tooltip
-                                title="Please input name or check number to filter "
-                            >
-                                <InfoCircleOutlined
-                                    style="color: rgba(0, 0, 0, 0.45)"
-                                />
-                            </a-tooltip>
-                        </template>
-                    </a-input>
-                </div>
-                <div class="mt-4">
-                    <a-table
-                        :total="85"
-                        :dataSource="dataSource"
-                        size="small"
-                        class="components-table-demo-nested"
-                        :pagination="false"
-                        :columns="columns"
-                        :loading="loading"
-                        bordered
-                        @change="handleTableChange"
-                    >
-                        <template #bodyCell="{ column, record }">
-                            <template v-if="column.key === 'checks_r'">
-                                {{ record.check_received }}
-                            </template>
-
-                            <template v-else-if="column.key === 'check_date'">
-                                {{ record.check_date }}
-                            </template>
-
-                            <template v-else-if="column.key === 'check_a'">
-                                {{ record.check_amount }}
-                            </template>
-
-                            <template v-else-if="column.key === 'details'">
-                                <a-button size="small">
-                                    <BarsOutlined />
-                                </a-button>
-                            </template>
-                        </template>
-                    </a-table>
-                    <div
-                        v-if="showPagination"
-                        class="mt-3 mb-5"
-                        style="
-                            border: 1px solid rgb(224, 224, 224);
-                            border-radius: 10px;
-                            padding: 10px;
-                        "
-                    >
-                        <div class="flex justify-end">
-                            <a-pagination
-                                class="mt-0 mb-0"
-                                v-model:current="pagination.current"
-                                v-model:page-size="pagination.pageSize"
-                                :show-size-changer="false"
-                                :total="pagination.total"
-                                :show-total="
-                                    (total, range) =>
-                                        `${range[0]}-${range[1]} of ${total} reports`
-                                "
-                                @change="handleTableChange"
-                            />
-                        </div>
-                    </div>
                 </div>
             </div>
+            <div class="flex justify-end">
+                <a-input-search v-model:value="query.search" style="width: 400px;" placeholder="Search Checks"
+                    :loading="isFetching" />
+            </div>
+            <div class="" style="display: flex; justify-content: space-between">
+
+                <div class="flex">
+                    <a-range-picker v-model:value="dateRange" @change="handleChangeDateRange" class="mt-2 mr-2"
+                        style="width: 250px" />
+                    <div class="mr-2">
+                        <a-tooltip :open="isTooltipVisible" :color="colors" title="select business unit first">
+                            <a-select class="mt-2" ref="select" v-model:value="bunitCode" style="width: 160px"
+                                placeholder="Business Unit" @change="handleChange">
+                                <a-select-option v-for="bu in bunit" v-model:value="bu.businessunit_id">{{ bu.bname
+                                    }}</a-select-option>
+                            </a-select>
+                        </a-tooltip>
+                    </div>
+                    <div class="mr-2">
+                        <a-tooltip :color="colors" :open="isTooltipVisible" title="select check type first">
+                            <a-select class="mt-2" ref="select" v-model:value="pdcdatedChecks" style="width: 150px"
+                                placeholder="Check Type" @change="handleChange">
+                                <a-select-option value="1">PDC</a-select-option>
+                                <a-select-option value="2">DATED CHECKS</a-select-option>
+                            </a-select>
+                        </a-tooltip>
+                    </div>
+                    <div class="mr-2">
+                        <a-tooltip :color="colors" :open="isTooltipVisible" title="select report type first">
+                            <a-select class="mt-2" ref="select" v-model:value="repportType" style="width: 150px"
+                                placeholder="Deposit Status" @change="handleChange">
+                                <a-select-option value="0">VIEW ALL</a-select-option>
+                                <a-select-option value="1">PENDING</a-select-option>
+                                <a-select-option value="2">DEPOSITED</a-select-option>
+                            </a-select>
+                        </a-tooltip>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <a-button class="mr-2" v-on:click="generateReport" :loading="loadingGenerate">
+                        <template #icon>
+                            <CloudUploadOutlined />
+                        </template>
+                        Generate Excel Checks
+                    </a-button>
+                    <a-button type="primary" style="width: 200px;" @click="getData">
+                        <template #icon>
+                            <LoginOutlined />
+                        </template>
+                        Fetch Data
+                    </a-button>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a-table :total="85" :data-source="data.data" size="small" class="components-table-demo-nested"
+                    :pagination="false" :columns="columns" :loading="loading" bordered @change="handleTableChange">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'checks_r'">
+                            {{ record.check_received }}
+                        </template>
+
+                        <template v-else-if="column.key === 'check_date'">
+                            {{ record.check_date }}
+                        </template>
+
+                        <template v-else-if="column.key === 'check_a'">
+                            {{ record.check_amount }}
+                        </template>
+
+                        <template v-else-if="column.key === 'details'">
+                            <a-button size="small" @click="details(record)">
+                                <SettingOutlined></SettingOutlined>
+                            </a-button>
+                        </template>
+                    </template>
+                </a-table>
+                <pagination :datarecords="data" class="mt-6"></pagination>
+            </div>
         </div>
+    </div>
+
+    <CheckModalDetail v-model:open="isModalOpen" :datarecords="selectDataDetails"></CheckModalDetail>
 </template>
 
 <script>
@@ -215,23 +127,32 @@ import { Head } from "@inertiajs/vue3";
 export default {
     layout: AdminLayout,
     props: {
+        data: Object,
+        typeBackend: Object,
+        reportTypeBackend: Object,
+        dateRangeBackend: Array,
         bunit: Array,
         columns: Array,
+        bunitBackend: Object,
     },
     data() {
         return {
+            isProgressing: false,
             colors: 'red',
             showGenerateButton: false,
             showPagination: false,
-            dateRange: null,
-            bunitCode: null,
-            repportType: null,
+            dateRange: this.dateRangeBackend ? [this.dateRangeBackend[0] ? dayjs(this.dateRangeBackend[0]) : null, this.dateRangeBackend[1] ? dayjs(this.dateRangeBackend[1]) : null] : null,
+            bunitCode: this.bunitBackend,
+            repportType: this.reportTypeBackend,
             dataSource: [],
-            pdcdatedChecks: null,
+            isModalOpen: false,
+            selectDataDetails: [],
+            pdcdatedChecks: this.typeBackend,
             loading: false,
             loadingGenerate: false,
             searchBar: null,
             isTooltipVisible: false,
+            isFetching: false,
             pagination: {
                 current: 1,
                 total: "",
@@ -240,132 +161,34 @@ export default {
             query: {
                 search: "",
             },
-
-            pageCustom: 1,
+            progressBar: {
+                currentRow: 0,
+                percentage: 0,
+                message: "",
+                totalRows: 0,
+            },
         };
-    },
-    watch: {
-        query: {
-            deep: true,
-            handler: debounce(async function () {
-                this.loading = true;
-                try {
-                    const res = await axios.get(
-                        `get_dated_pdc_checks_rep?page=${this.pageCustom}`,
-                        {
-                            params: {
-                                dt_from: this.dateRange[0].toISOString(),
-                                dt_to: this.dateRange[1].toISOString(),
-                                bu: this.bunitCode,
-                                ch_type: this.pdcdatedChecks,
-                                repporttype: this.repportType,
-                                search: this.query.search,
-                            },
-                        }
-                    );
-                    this.showGenerateButton = true;
-                    this.dataSource = res.data.data;
-                    this.pagination = res.data.pagination;
-
-                    if (res.data.data.length > 0) {
-                        this.showGenerateButton = true;
-                    } else {
-                        this.showGenerateButton = false;
-                    }
-                } catch (error) {
-                    // Handle error, you can log it or show a message
-                    console.error("Error in watcher:", error);
-                } finally {
-                    this.loading = false;
-                }
-            }, 500),
-        },
     },
 
     methods: {
-        async fetchData(page = 1) {
-            this.loading = true;
-
-            if (
-                this.bunitCode === null &&
-                this.pdcdatedChecks === null &&
-                this.repportType === null
-            ) {
-                this.isTooltipVisible = true;
-            } else {
-                this.isTooltipVisible = false;
-            }
-
-            if (!this.dateRange) {
-                try {
-                    const response = await axios.get(route("get.dpdc"), {
-                        params: {
-                            page: page,
-                            dt_from: "",
-                            dt_to: "",
-                            bu: this.bunitCode,
-                            ch_type: this.pdcdatedChecks,
-                            repporttype: this.repportType,
-                            search: this.searchBar,
-                        },
-                    });
-
-                    this.showPagination = true;
-                    this.showGenerateButton = true;
-                    this.dataSource = response.data.data;
-                    this.pagination = response.data.pagination;
-                    if (response.data.data.length > 0) {
-                        this.showGenerateButton = true;
-                    } else {
-                        this.showGenerateButton = false;
-                    }
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                } finally {
-                    this.loading = false;
-                }
-            } else {
-                try {
-                    const response = await axios.get(route("get.dpdc"), {
-                        params: {
-                            dt_from: dayjs(this.dateRange[0]).format(
-                                "YYYY-MM-DD"
-                            ),
-                            dt_to: dayjs(this.dateRange[1]).format(
-                                "YYYY-MM-DD"
-                            ),
-                            bu: this.bunitCode,
-                            ch_type: this.pdcdatedChecks,
-                            repporttype: this.repportType,
-                            search: this.searchBar,
-                        },
-                    });
-
-                    this.showPagination = true;
-                    this.dataSource = response.data.data;
-                    this.pagination = response.data.pagination;
-                    if (response.data.data.length > 0) {
-                        this.showGenerateButton = true;
-                    } else {
-                        this.showGenerateButton = false;
-                    }
-                } catch (error) {
-                    console.error("Error fetching data:", error);
-                } finally {
-                    this.loading = false;
-                }
-            }
+        details(data) {
+            this.isModalOpen = true;
+            this.selectDataDetails = data;
+        },
+        getData() {
+            this.$inertia.get(route('reports.dpdc'), {
+                dt_from: this.dateRange == null ? null : this.dt_from,
+                dt_to: this.dateRange == null ? null : this.dt_to,
+                bu: this.bunitCode,
+                ch_type: this.pdcdatedChecks,
+                repporttype: this.repportType,
+            });
+        },
+        handleChangeDateRange(obj, str) {
+            this.dt_from = str[0];
+            this.dt_to = str[1];
         },
 
-        // formattedDate(event) {
-        //     const date = new Date(event);
-        //     const options = {
-        //         year: "numeric",
-        //         month: "long",
-        //         day: "numeric",
-        //     };
-        //     return date.toLocaleDateString("en-US", options);
-        // },
         formattedPrice(value) {
             // You can implement your own formatting logic here
             const formatted = new Intl.NumberFormat("en-PH", {
@@ -388,26 +211,52 @@ export default {
         },
 
         generateReport() {
-            this.loadingGenerate = true;
-            const params = {
-                dt_from:
-                    this.dateRange && this.dateRange[0]
-                        ? this.dateRange[0].toISOString()
-                        : "",
-                dt_to:
-                    this.dateRange && this.dateRange[1]
-                        ? this.dateRange[1].toISOString()
-                        : "",
+            this.isProgressing = true;
+            this.$inertia.get(route('generate.datedpdc.excel'), {
+                redAdmin: 2,
+                dt_from: this.dateRangeBackend[0],
+                dt_to: this.dateRangeBackend[1],
                 bu: this.bunitCode,
                 ch_type: this.pdcdatedChecks,
                 repporttype: this.repportType,
-            };
-
-            const urlWithParams =
-                "/generate_reps_to_excel?" +
-                new URLSearchParams(params).toString();
-            window.location.href = urlWithParams;
+                search: this.query.search,
+            });
         },
+    },
+
+    watch: {
+
+        query: {
+            deep: true,
+            handler: debounce(async function () {
+                this.isFetching = true,
+                    this.$inertia.get(route("reports.dpdc"), {
+                        dt_from: this.dateRange == null? null : this.dateRangeBackend[0],
+                        dt_to:  this.dateRange == null? null : this.dateRangeBackend[1],
+                        bu: this.bunitCode,
+                        ch_type: this.pdcdatedChecks,
+                        repporttype: this.repportType,
+                        search: this.query.search,
+                    }, {
+                        preserveState: true,
+                        onSuccess: () => {
+                            this.isFetching = false;
+                        },
+                        onError: () => {
+                            this.isFetching = false; // Ensure the flag is reset on error
+                        }
+                    }
+                    );
+            }, 600),
+        },
+    },
+
+    mounted() {
+        this.$ws
+            .private(`generating-dated-pdc-reports-accounting.${this.$page.props.auth.user.id}`)
+            .listen(".generating-pdc-reports", (e) => {
+                this.progressBar = e;
+            });
     },
 };
 </script>

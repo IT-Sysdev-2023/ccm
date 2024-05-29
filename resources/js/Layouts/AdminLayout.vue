@@ -159,7 +159,7 @@ const placement = "bottom";
                     }">
                         <RobotOutlined />
                         <span>
-                            <Link :href="route('alta.reports')">Alta Cita</Link>
+                            <Link :href="route('alta.reports')">Alta Citta</Link>
                         </span>
                     </a-menu-item>
                 </a-sub-menu>

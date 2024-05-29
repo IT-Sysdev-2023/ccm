@@ -125,9 +125,6 @@ class TransactionService extends ExcelWriter
 
         $excel_row = 5;
 
-        ExcelGenerateEvents::dispatch('-', 'Generating Excel of', 0, $this->record->count(), Auth::user(), 0, $recordCount);
-
-        sleep(2);
 
         $this->record->each(function ($item, string $department) use (&$excel_row, $header, &$grandTotal, $recordCount, $recordSearch) {
 
@@ -249,9 +246,6 @@ class TransactionService extends ExcelWriter
         $writer->save($filePath);
 
         $downloadExcel = route('download.excel', ['filename' => $filename]);
-
-        sleep(1);
-
 
         return Inertia::render('Components/TransactionPartials/ResultDatedPdcreports', [
             'downloadExcel' => $downloadExcel,

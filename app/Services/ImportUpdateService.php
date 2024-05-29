@@ -360,8 +360,6 @@ class ImportUpdateService
 
         $noChecks = intval(count($checks)) + intval(count($checkEnCash));
 
-        dd($noChecks);
-
         $count = 1;
         $countPersistent = 1;
         $issueNumber = null;

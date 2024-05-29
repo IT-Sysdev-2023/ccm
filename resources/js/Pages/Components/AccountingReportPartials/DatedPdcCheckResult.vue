@@ -33,6 +33,7 @@
 export default {
     props: {
         downloadExcel: Object,
+        redirect: Number,
 
     },
     methods: {
@@ -40,7 +41,11 @@ export default {
             window.location.href = this.downloadExcel;
         },
         returnBack() {
-            this.$inertia.get(route('datedpcchecks.accounting'));
+            if(this.redirect == 1){
+                this.$inertia.get(route('datedpcchecks.accounting'));
+            }else{
+                this.$inertia.get(route('reports.dpdc'));
+            }
         }
     }
 }

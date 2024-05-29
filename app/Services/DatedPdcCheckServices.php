@@ -55,8 +55,10 @@ class DatedPdcCheckServices extends ExcelWriter
         return $this;
     }
 
-    public function writeResult($dataFrom, $dataStatus, $dateRange, $dataType, $bunit)
+    public function writeResult($dataFrom, $dataStatus, $dateRange, $dataType, $bunit, $redirections)
     {
+
+        // dd($dateRange);
 
         $header = 7;
         $masterHeader = 2;
@@ -64,37 +66,37 @@ class DatedPdcCheckServices extends ExcelWriter
         $dateHeader = [];
         // dd($dataFrom, $dataStatus, $dateRange, $dataType);
 
-        if (($dataStatus == '0' || $dataStatus == null) && $dataType == '1' && ($dateRange == null || $dateRange[0] == 'Invalid Date')) {
+        if (($dataStatus == '0' || $dataStatus == null) && $dataType == '1' && ($dateRange == null || $dateRange[0] == 'Invalid Date' || $dateRange[0] == null )) {
 
             $bStatusHeader = 'ALL DATED CHECKS';
 
             $dateHeader = " As of . " . today()->toFormattedDateString();
 
-        } else if (($dataStatus == '0' || $dataStatus == null) && $dataType == '2' && ($dateRange == null || $dateRange[0] == 'Invalid Date') && $dataFrom == '') {
+        } else if (($dataStatus == '0' || $dataStatus == null) && $dataType == '2' && ($dateRange == null || $dateRange[0] == 'Invalid Date' || $dateRange[0] == null  ) && $dataFrom == '') {
 
             $bStatusHeader = 'ALL PENDING CHECKS';
 
             $dateHeader = " As of . " . today()->toFormattedDateString();
 
-        } else if ($dataStatus == '1' && $dataType == '1' && ($dateRange == null || $dateRange[0] == 'Invalid Date')) {
+        } else if ($dataStatus == '1' && $dataType == '1' && ($dateRange == null || $dateRange[0] == 'Invalid Date' || $dateRange[0] == null )) {
 
             $bStatusHeader = 'PENDING DATED CHECKS';
 
             $dateHeader = " As of . " . today()->toFormattedDateString();
 
-        } else if ($dataStatus == '2' && $dataType == '1' && ($dateRange == null || $dateRange[0] == 'Invalid Date')) {
+        } else if ($dataStatus == '2' && $dataType == '1' && ($dateRange == null || $dateRange[0] == 'Invalid Date' || $dateRange[0] == null )) {
 
             $bStatusHeader = 'POST DATED PENDING CHECKS';
 
             $dateHeader = " As of . " . today()->toFormattedDateString();
 
-        } else if ($dataStatus == '1' && $dataType == '2' && ($dateRange == null || $dateRange[0] == 'Invalid Date')) {
+        } else if ($dataStatus == '1' && $dataType == '2' && ($dateRange == null || $dateRange[0] == 'Invalid Date' || $dateRange[0] == null )) {
 
             $bStatusHeader = 'DEPOSITED DATED CHECKS';
 
             $dateHeader = " As of . " . today()->toFormattedDateString();
 
-        } else if ($dataStatus == '2' && $dataType == '2' && ($dateRange == null || $dateRange[0] == 'Invalid Date')) {
+        } else if ($dataStatus == '2' && $dataType == '2' && ($dateRange == null || $dateRange[0] == 'Invalid Date' || $dateRange[0] == null )) {
             $bStatusHeader = 'POST DATED DEPOSITED CHECKS';
 
             $dateHeader = " As of . " . today()->toFormattedDateString();
@@ -312,6 +314,7 @@ class DatedPdcCheckServices extends ExcelWriter
 
         return Inertia::render('Components/AccountingReportPartials/DatedPdcCheckResult', [
             'downloadExcel' => $downloadExcel,
+            'redirect' => $redirections
         ]);
 
     }

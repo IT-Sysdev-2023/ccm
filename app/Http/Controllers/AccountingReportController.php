@@ -92,6 +92,7 @@ class AccountingReportController extends Controller
     }
     public function startGeneratingAccountingReports(Request $request)
     {
+        // dd($request->dateRange);
         $bunit = BusinessUnit::whereNotNull('loc_code_atp')
             ->whereNotNull('b_atpgetdata')
             ->whereNotNull('b_encashstart')
@@ -136,7 +137,7 @@ class AccountingReportController extends Controller
                 }
             })->get();
 
-        return (new DatedPdcCheckServices())->record($data)->writeResult($request->dataFrom, $request->dataStatus, $request->dateRange, $request->dataType, $bunit);
+        return (new DatedPdcCheckServices())->record($data)->writeResult($request->dataFrom, $request->dataStatus, $request->dateRange, $request->dataType, $bunit, $request->redAcct);
     }
     public function innerDepositedCheckReports(Request $request)
     {

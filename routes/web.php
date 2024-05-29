@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function () {
     Route::get('dated/pdc/checks/reports', [ReportController::class, 'datedpdcchecksreports'])->name('reports.dpdc');
     Route::get('deposited/checks/reports', [ReportController::class, 'depositedCheckReports'])->name('deposited.checks');
     Route::get('bounce/checks/reports', [ReportController::class, 'bounceCheckReports'])->name('bounce.checks.report');
-    Route::get('dated/pdc/checks/report', [ReportController::class, 'get_dated_pdc_checks_rep'])->name('get.dpdc');
+    Route::get('dated/pdc/generate/report', [ReportController::class, 'generateExcelDatedChecksPdc'])->name('generate.datedpdc.excel');
     Route::get('generate/report/excel', [ReportController::class, 'generate_reps_to_excel'])->name('excel.dpdc');
     Route::get('start/generating/depositedchecks', [ReportController::class, 'startGeneratingDepositedChecks'])->name('startgenerate.depchecks');
     Route::get('start/generating/bouncechecks', [ReportController::class, 'startGeneratingBounceCheckReport'])->name('startgenerate.bounceChecks');

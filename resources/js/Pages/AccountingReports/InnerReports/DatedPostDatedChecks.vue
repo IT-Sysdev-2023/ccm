@@ -103,19 +103,23 @@
                         </div>
                     </div>
                     <div class="mt-6">
-                        <a-button class="mr-1"type="primary" @click="startGeneratingExcel"
+                        <a-button class="mr-1" type="primary" @click="startGeneratingExcel"
                             :disabled="data.data?.length <= 0 || data.data === undefined" :loading="isLoading">
                             <template #icon>
                                 <CloudUploadOutlined />
                             </template>
                             {{
                                 isLoading ?
-                                    'Generating checks in progress..' :
-                                    'Generate dated and pdc checks reports' }}
+                                    'Generating cCheck Reports in Progress...' :
+                                    'Generate Dated and Pdc Checks Reports' }}
                         </a-button>
-                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                        placeholder="Search Checks" :loading="isFetching" />
+
                     </div>
+
+                </div>
+                <div class="flex justify-end">
+                    <a-input-search v-model:value="query.search" style="width: 310px;" class="mb-1"
+                        placeholder="Search Checks" :loading="isFetching" />
                 </div>
                 <a-table class="mt-10" size="small" bordered :data-source="data.data" :columns="columns"
                     :pagination="false">
@@ -239,6 +243,7 @@ export default {
             this.isLoading = true;
             this.isProgressing = true;
             this.$inertia.get(route('start.generate.rep.accouting'), {
+                redAcct: 1,
                 dataType: this.fetch.dataType,
                 dataFrom: this.fetch.dataFrom,
                 dataStatus: this.fetch.dataStatus,

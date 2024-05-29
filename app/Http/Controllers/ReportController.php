@@ -13,6 +13,7 @@ use App\Services\AltaChecksReportServices;
 use App\Services\RedeemPdcReportServices;
 use App\Services\ReportBounceCheckService;
 use App\Services\ReportDepositedCheckService;
+use App\Services\DatedPdcCheckServices;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -122,18 +123,11 @@ class ReportController extends Controller
 
         return $data;
     }
-    public function datedpdcchecksreports()
+    public function datedpdcchecksreports(Request $request)
     {
+    //  dd($request->all());
 
         $bunit = BusinessUnit::whereNotNull('loc_code_atp')->get();
-
-        return Inertia::render('Reports/DatedPdcReports', [
-            'bunit' => $bunit,
-            'columns' => ColumnsHelper::$datedPdcReportTableColumn,
-        ]);
-    }
-    public function get_dated_pdc_checks_rep(Request $request)
-    {
 
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->reportQuery($request->bu, $request->search)
@@ -157,32 +151,22 @@ class ReportController extends Controller
                 $query->has('dsCheck.check');
             })->paginate(10)->withQueryString();
 
-        $data->transform(function ($item) {
-            $item->check_received = Date::parse($item->check_received)->toFormattedDateString();
-            $item->check_date = Date::parse($item->check_date)->toFormattedDateString();
-            $item->check_amount = NumberHelper::currency($item->check_amount);
-            return $item;
-        });
-        return response()->json([
-            'data' => $data->items(),
-            'pagination' => [
-                'current' => $data->currentPage(),
-                'total' => $data->total(),
-                'pageSize' => $data->perPage(),
-            ],
+        return Inertia::render('Reports/DatedPdcReports', [
+            'data' => $data,
+            'bunit' => $bunit,
+            'bunitBackend' => empty($request->bu) ? null : intval($request->bu),
+            'typeBackend' => $request->ch_type,
+            'reportTypeBackend' => $request->repporttype,
+            'dateRangeBackend' => empty([$request->dt_from, $request->dt_to]) ? null : [$request->dt_from, $request->dt_to],
+            'columns' => ColumnsHelper::$datedPdcReportTableColumn,
         ]);
     }
-
-    public function generate_reps_to_excel(Request $request)
+    public function generateExcelDatedChecksPdc(Request $request)
     {
 
-        ini_set('max_execution_time', 3600);
-        ini_set('memory_limit', '-1');
-        set_time_limit(3600);
+        $bname = BusinessUnit::where('businessunit_id', '=', $request->bu)->get();
 
-        $bname = BusinessUnit::where('businessunit_id', '=', $request->bu)->first();
-
-        $q = NewSavedChecks::joinChecksCustomerBanksDepartment()->reportQuery($request->bu, $request->search)
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()->reportQuery($request->bu, $request->search)
             ->when($request->ch_type == '1', function (Builder $query) {
                 $query->whereColumn('check_date', '>', 'check_received');
             })
@@ -197,266 +181,16 @@ class ReportController extends Controller
             })
             ->when($request->repporttype == '2', function (Builder $query) {
                 $query->has('dsCheck.check');
-            });
+            })->get();
 
-        $data = $q->get();
+            // dd($request->dt_from, $request->dt_to);
 
-        $spreadsheet = new Spreadsheet();
 
-        $title = '';
-        $h_type = '';
 
-        if ($request->ch_type == 1) {
-            $this->headerRow->concat(["PDC GAP(DAYS)"]);
-        }
+        return (new DatedPdcCheckServices())->record($data)->writeResult($request->bu, $request->ch_type, [$request->dt_from, $request->dt_to], $request->repporttype, $bname, $request->redAdmin);
 
-        if ($request->ch_type === '2' && $request->repporttype === '0') {
-            $h_type = 'ALL DATED CHECKS';
-            $title = 'AllDATEDCHECKS';
-        } else if ($request->ch_type === '1' && $request->repporttype === '0') {
-            $h_type = 'ALL PENDING CHECKS';
-            $title = 'ALLPDC';
-        } else if ($request->ch_type === '1' && $request->repporttype === '1') {
-            $h_type = 'PENDING PDC';
-            $title = 'PENDINGPDC';
-        } else if ($request->ch_type === '1' && $request->repporttype === '2') {
-            $h_type = 'PENDING DATED CHECKS';
-            $title = 'PENDINGDATEDCHECKS';
-        } else if ($request->ch_type === '2' && $request->repporttype === '1') {
-            $h_type = 'PENDING DATED CHECKS';
-            $title = 'DEPOSITEDDATEDCHECKS';
-        } else if ($request->ch_type === '2' && $request->repporttype === '2') {
-            $h_type = 'DEPOSITED DATED CHECKS';
-            $title = 'DEPOSITEDDATEDCHECKS';
-        } elseif (!$request->dt_from && !$request->dt_to && $request->ch_type === '1' && $request->repporttype === 0) {
-            $h_type = 'ALL DATED CHECKS';
-            $title = 'AllDATEDCHECKS';
-        } else if (!$request->dt_from && !$request->dt_to && $request->ch_type === '2' && $request->repporttype === 0) {
-            $h_type = 'ALL PENDING CHECKS';
-            $title = 'ALLPDC';
-        } else if (!$request->dt_from && !$request->dt_to && $request->ch_type === '1' && $request->repporttype === '1') {
-            $h_type = 'PENDING PDC';
-            $title = 'PENDINGPDC';
-        } else if (!$request->dt_from && !$request->dt_to && $request->ch_type === '1' && $request->repporttype === '2') {
-            $h_type = 'PENDING DATED CHECKS';
-            $title = 'PENDINGDATEDCHECKS';
-        } else if (!$request->dt_from && !$request->dt_to && $request->ch_type === '2' && $request->repporttype === '1') {
-            $h_type = 'DEPOSITED DATED CHECKS';
-            $title = 'DEPOSITEDDATEDCHECKS';
-        } else if (!$request->dt_from && !$request->dt_to && $request->ch_type === '2' && $request->repporttype === '2') {
-            $h_type = 'PENDING DATED CHECKS';
-            $title = 'PENDINGDATEDCHECKS';
-        }
 
-        if ($request->ch_type === '1') {
-            $spreadsheet->getActiveSheet()->getStyle('A5:P5')->applyFromArray([
-                'font' => [
-                    'bold' => true,
-                ],
-                'borders' => [
-                    'allBorders' => [
-                        'borderStyle' => Border::BORDER_THIN,
-                    ],
-                ],
-            ]);
 
-        } else if ($request->ch_type === '2') {
-            $spreadsheet->getActiveSheet()->getStyle('A5:O5')->applyFromArray([
-                'font' => [
-                    'bold' => true,
-                ],
-                'borders' => [
-                    'allBorders' => [
-                        'borderStyle' => Border::BORDER_THIN,
-                    ],
-                ],
-            ]);
-
-        }
-
-        $spreadsheet->getActiveSheet()->getStyle('E3:O3')->applyFromArray([
-            'font' => [
-                'bold' => true,
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
-            ],
-        ]);
-        $spreadsheet->getActiveSheet()->getStyle('A1:O1')->applyFromArray([
-            'font' => [
-                'bold' => true,
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
-            ],
-        ]);
-        $spreadsheet->getActiveSheet()->getStyle('A2:O2')->applyFromArray([
-            'font' => [
-                'bold' => true,
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
-            ],
-        ]);
-
-        $row = 6;
-        $column = 6;
-
-        foreach ($data as $report) {
-            $deposited_status = DB::table('new_ds_checks')
-                ->where('checks_id', '=', $report->checks_id)
-                ->select('ds_no', 'status', 'date_deposit')
-                ->first();
-
-            $ds_number = '';
-            $deposit_date = '';
-            $days = '';
-
-            if ($deposited_status === null) {
-                $deposited_status = 'PENDING DEPOSIT';
-            } else if ($deposited_status->status === 'BOUNCED') {
-                $bounce_status = DB::table('new_bounce_check')
-                    ->where('checks_id', '=', $report->checks_id)
-                    ->orderBy('new_bounce_check.id', 'desc')
-                    ->first();
-
-                if ($bounce_status->status === 'SETTLE CHECK') {
-                    $replacement_type = db::table('new_check_replacement')
-                        ->where('bounce_id', $bounce_status->id)
-                        ->orderBy('new_check_replacement.date_time', 'desc')
-                        ->first();
-
-                    if ($replacement_type->mode == 'RE-DEPOSIT') {
-                        $redeposited_status = DB::table('new_ds_checks')
-                            ->where('checks_id', '=', $report->checks_id)
-                            ->select('ds_no', 'status', 'date_deposit')
-                            ->orderBy('id', 'desc')
-                            ->first();
-
-                        $deposited_status = $replacement_type->mode . ' CLEARED';
-                        $ds_number = $redeposited_status->ds_no;
-                        $deposit_date = $redeposited_status->date_deposit;
-                    } else {
-                        $deposited_status = 'REPLACED TO ' . $replacement_type->mode;
-                    }
-                } else {
-
-                }
-            } else {
-                $ds_number = $deposited_status->ds_no;
-                $deposit_date = $deposited_status->date_deposit;
-                $deposited_status = 'CHECK CLEARED';
-            }
-
-            $redeem = DB::table('new_check_replacement')
-                ->where('checks_id', $report->checks_id)
-                ->first();
-
-            if ($redeem == null) {
-
-            } else {
-                if ($redeem->status == 'REDEEMED') {
-                    $deposited_status = 'REDEEMED';
-                }
-            }
-
-            if ($request->ch_type === '1') {
-                $datetime1 = strtotime($report->check_date);
-                $datetime2 = strtotime($report->check_received);
-
-                $secs = $datetime1 - $datetime2;
-                $days = $secs / 86400;
-            } else if ($request->ch_type === '2') {
-                $days = '';
-            }
-
-            $reportData = [
-                date('F-d-Y', strtotime($report->check_date)),
-                date('F-d-Y', strtotime($report->check_received)),
-                $report->bankbranchname,
-                $report->account_no,
-                $report->account_name,
-                $report->fullname,
-                $report->approving_officer,
-                $report->check_class,
-                $report->check_category,
-                $report->department,
-                $report->check_no,
-                NumberHelper::currency($report->check_amount),
-                $deposited_status,
-                $ds_number,
-                date('F-d-Y', strtotime($deposit_date)),
-                $days,
-            ];
-
-            $spreadsheet->getActiveSheet()->fromArray($reportData, null, "A$row");
-
-            if ($request->ch_type === '1') {
-                foreach (range('A6', 'P6') as $column) {
-                    $cellAddress = $column . $row;
-                    $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
-                    $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                            ],
-                        ],
-                    ]);
-                }
-            } else if ($request->ch_type === '2') {
-                foreach (range('A', 'O') as $column) {
-                    $cellAddress = $column . $row;
-                    $spreadsheet->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
-                    $spreadsheet->getActiveSheet()->getStyle($cellAddress)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                            ],
-                        ],
-                    ]);
-                }
-            }
-
-            $row++;
-        }
-
-        // dd($request->dt_from, $request->dt_to);
-
-        if (!$request->dt_from && !$request->dt_to) {
-            // dd(1);
-        } else {
-            $dt_to = Carbon::parse($request->dt_to);
-            $dt_from = Carbon::parse($request->dt_from);
-            $dt_to_f = $dt_to->format('M d, Y');
-            $dt_from_f = $dt_from->format('M d, Y');
-
-        }
-
-        $spreadsheet->getActiveSheet()->fromArray($this->headerRow->all(), null, 'A5');
-        $spreadsheet->getActiveSheet()->getCell('E3')->setValue('BUSINESS UNIT : ' . ' ' . $bname->bname);
-        $spreadsheet->getActiveSheet()->getCell('E1')->setValue('REPORT TYPE : ' . ' ' . $h_type);
-        if (!$request->dt_from && !$request->dt_to) {
-            $spreadsheet->getActiveSheet()->getCell('E2')->setValue('AS OF:  ' . strtoupper(date('F-d-Y')));
-        } else {
-            $spreadsheet->getActiveSheet()->getCell('E2')->setValue('FROM: ' . strtoupper(date('F-d-Y', strtotime($request->dt_from))) . '  TO: ' . strtoupper(date('F-d-Y', strtotime($request->dt_to))) . ' AS OF:  ' . strtoupper(date('F-d-Y')));
-        }
-
-        $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($tempFilePath);
-
-        if (!$request->dt_from && !$request->dt_to) {
-            $filename = $bname->bname . $title . '-All -' . $title . now()->format('M, d Y') . '.xlsx';
-        } else {
-            $filename = $bname->bname . $title . ' from ' . $dt_from_f . ' to ' . $dt_to_f . ' as of ' . now()->format('M, d Y') . '.xlsx';
-
-        }
-
-        // Download the file
-        return response()->download($tempFilePath, $filename, [], 'inline');
     }
 
     public function depositedCheckReports(Request $request)
