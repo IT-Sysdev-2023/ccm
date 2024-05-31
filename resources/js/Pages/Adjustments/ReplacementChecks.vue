@@ -58,6 +58,7 @@
         <pagination :datarecords="data" class="mt-10"></pagination>
     </a-card>
     <a-modal v-model:open="openModalCash" style="width: 50%;" title="Replacement Checks" :footer="false">
+        <!-- {{recordCash}} -->
         <table class="tableModal">
             <thead>
                 <th colspan="2">CHECK REPLACED TO CASH</th>
@@ -75,13 +76,13 @@
 
         </table>
         <p class="mt-2 ml-2  text-gray-600">Penalty.</p>
-        <a-input v-model:value.lazy="recordCash.penalty" autofocus placeholder="Lazy usage" />
+        <a-input v-model:value.lazy="recordCash.penalty" autofocus placeholder="Lazy usage" allowClear />
         <p class="mt-2 ml-2  text-gray-600">Ar Ds.</p>
-        <a-input v-model:value.lazy="recordCash.ar_ds" autofocus placeholder="Lazy usage" />
+        <a-input v-model:value.lazy="recordCash.ar_ds" autofocus placeholder="Lazy usage" allowClear />
         <p class="mt-2 ml-2  text-gray-600">Reason.</p>
-        <a-textarea v-model:value="recordCash.reason" placeholder="Basic usage" :rows="4" />
+        <a-textarea v-model:value="recordCash.reason" placeholder="Basic usage" :rows="4" allowClear />
         <div class="flex mt-2">
-            <a-button block type="primary" danger>
+            <a-button block type="primary" danger @click="cancelCashAdjustments(recordCash)">
                 <template #icon>
                     <DisconnectOutlined />
                 </template>
@@ -120,11 +121,11 @@
 
         </table>
         <p class="mt-2 ml-2  text-gray-600">Penalty</p>
-        <a-input v-model:value.lazy="recordDeposit.penalty" autofocus placeholder="Lazy usage" />
+        <a-input v-model:value.lazy="recordDeposit.penalty" autofocus placeholder="Lazy usage" allowClear />
         <p class="mt-2 ml-2  text-gray-600">Ar Ds.</p>
-        <a-input class="mt-3" v-model:value.lazy="recordDeposit.ar_ds" autofocus placeholder="Lazy usage" />
+        <a-input class="mt-3" v-model:value.lazy="recordDeposit.ar_ds" autofocus placeholder="Lazy usage" allowClear />
         <p class="mt-2 ml-2  text-gray-600">Reason.</p>
-        <a-textarea v-model:value="recordDeposit.reason" placeholder="Basic usage" :rows="4" />
+        <a-textarea v-model:value="recordDeposit.reason" placeholder="Basic usage" :rows="4" allowClear />
         <div class="flex mt-2">
             <a-button block type="primary" danger @click="cancelReplacement(recordDeposit.replacement_id)">
                 <template #icon>
@@ -149,25 +150,24 @@
             </thead>
         </table>
         <p class="mt-2 ml-2  text-gray-600">Replace Check No.</p>
-        <a-input class="mb-3" v-model:value.lazy="recordCheckCash.check_no" autofocus placeholder="Lazy usage" />
+        <a-input class="mb-3" v-model:value.lazy="recordCheckCash.check_no" autofocus placeholder="Lazy usage"
+            allowClear />
         <p class="mt-1 ml-2  text-gray-600">Replace Check Amount.</p>
-        <a-input class="mb-3" v-model:value.lazy="recordCheckCash.check_amount" autofocus placeholder="Lazy usage" />
+        <a-input class="mb-3" v-model:value.lazy="recordCheckCash.check_amount" autofocus placeholder="Lazy usage"
+            allowClear />
         <p class="mt-1 ml-2  text-gray-600">Replace Cash Amount.</p>
-        <a-input class="mb-3" v-model:value.lazy="recordCheckCash.cash" autofocus placeholder="Lazy usage" />
+        <a-input class="mb-3" v-model:value.lazy="recordCheckCash.cash" autofocus placeholder="Lazy usage" allowClear />
         <p class="mt-1 ml-2  text-gray-600">Ar Ds.</p>
-        <a-input class="mb-3" v-model:value.lazy="recordCheckCash.ar_ds" autofocus placeholder="Lazy usage" />
+        <a-input class="mb-3" v-model:value.lazy="recordCheckCash.ar_ds" autofocus placeholder="Lazy usage"
+            allowClear />
         <p class="mt-1 ml-2  text-gray-600">Penalty.</p>
-        <a-input class="mb-3" v-model:value.lazy="recordCheckCash.penalty" autofocus placeholder="Lazy usage" />
+        <a-input class="mb-3" v-model:value.lazy="recordCheckCash.penalty" autofocus placeholder="Lazy usage"
+            allowClear />
         <p class="mt-1 ml-2  text-gray-600">Reason for return.</p>
-        <a-textarea class="mb-3" v-model:value="recordCheckCash.reason" placeholder="Basic usage" :rows="4" />
+        <a-textarea class="mb-3" v-model:value="recordCheckCash.reason" placeholder="Basic usage" :rows="4"
+            allowClear />
         <div class="flex mt-2">
-            <a-button block type="primary" danger>
-                <template #icon>
-                    <DisconnectOutlined />
-                </template>
-                Cancel Replacement
-            </a-button>
-            <a-button block class="ml-2" type="primary">
+            <a-button block class="ml-2" type="primary" @click="updateCashAndCheck">
                 <template #icon>
                     <SaveOutlined />
                 </template>
@@ -178,29 +178,33 @@
     </a-modal>
     <a-modal v-model:open="openModalCheck" style="width: 50%;" title="Replacement Checks" :footer="false">
         <table class="tableModal">
-            <!-- {{ dataSelected }} -->
+
             <thead>
                 <th colspan="2" class="">CHECK REPLACED TO NEW CHECK</th>
             </thead>
         </table>
         <p class="mt-2 ml-2  text-gray-600">Replace Check No.</p>
-        <a-input class="mb-3" v-model:value.lazy="recordCheck.check_no" autofocus placeholder="Lazy usage" />
+        <a-input class="mb-3" v-model:value.lazy="recordCheck.check_no" autofocus placeholder="Enter Replace Check No."
+            allowClear />
         <p class="mt-1 ml-2  text-gray-600">Replace Check Amount.</p>
-        <a-input class="mb-3" v-model:value.lazy="recordCheck.check_amount" autofocus placeholder="Lazy usage" />
+        <a-input class="mb-3" v-model:value.lazy="recordCheck.check_amount" autofocus placeholder="Enter Replace Amount"
+            allowClear />
         <p class="mt-1 ml-2  text-gray-600">Ar Ds.</p>
-        <a-input class="mb-3" v-model:value.lazy="recordCheck.ar_ds" autofocus placeholder="Lazy usage" />
+        <a-input class="mb-3" v-model:value.lazy="recordCheck.ar_ds" autofocus placeholder="Enter Ar Ds" allowClear />
         <p class="mt-1 ml-2  text-gray-600">Penalty.</p>
-        <a-input class="mb-3" v-model:value.lazy="recordCheck.penalty" autofocus placeholder="Lazy usage" />
+        <a-input class="mb-3" v-model:value.lazy="recordCheck.penalty" autofocus placeholder="Enter Penalty"
+            allowClear />
         <p class="mt-1 ml-2  text-gray-600">Reason for return.</p>
-        <a-textarea class="mb-3" v-model:value="recordCheck.reason" placeholder="Basic usage" :rows="4" />
+        <a-textarea class="mb-3" v-model:value="recordCheck.reason" placeholder="Enter here the reason" :rows="4"
+            allowClear />
         <div class="flex mt-2">
-            <a-button block type="primary" danger>
+            <a-button block type="primary" danger @click="cancelCheckAdjustments(recordCheck)">
                 <template #icon>
                     <DisconnectOutlined />
                 </template>
                 Cancel Replacement
             </a-button>
-            <a-button block class="ml-2" type="primary">
+            <a-button block class="ml-2" type="primary" @click="updateCheck">
                 <template #icon>
                     <SaveOutlined />
                 </template>
@@ -425,13 +429,52 @@ export default {
                     }
                 });
         },
-        updateCashChecks(){
+        updateCashChecks() {
             this.recordCash.put(route('update.cash.checks'), {
                 onSuccess: () => {
                     this.openModalCash = false;
                     message.success('Successfully Updated')
                 }
             });
+        },
+        cancelCashAdjustments(data) {
+            // console.log(data);
+            this.$inertia.put(route('cancel.cash.checks'), {
+                replacement_id: data.replacement_id,
+                rep_status: data.replacement_status,
+            }, {
+                onSuccess: () => {
+                    this.openModalCash = false;
+                    message.success('Canceled SuccessFully')
+                }
+            })
+        },
+        updateCashAndCheck() {
+            this.recordCheckCash.put(route('update.cash.check'), {
+                onSuccess: () => {
+                    this.openModalCashAndCheck = false;
+                    message.success('Successfully Updated')
+                }
+            })
+        },
+        updateCheck() {
+            this.recordCheck.put(route('update.check.checks'), {
+                onSuccess: () => {
+                    this.openModalCheck = false;
+                    message.success('Successfully Updated')
+                }
+            })
+        },
+        cancelCheckAdjustments(data) {
+            this.$inertia.put(route('cancel.check.adjustments'), {
+                replacement_id: data.replacement_id,
+                repStatus: data.replacement_status,
+            }, {
+                onSuccess: () => {
+                    this.openModalCheck = false;
+                    message.success('Successfully Updated')
+                }
+            })
         }
     }
 }

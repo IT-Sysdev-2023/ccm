@@ -232,8 +232,100 @@ class AdjustmentController extends Controller
                 'reason' => $request->reason,
             ]);
     }
-    public function cancelCashAdjustments()
+    public function cancelCashAdjustments(Request $request)
     {
-        
+        DB::transaction(function () use ($request) {
+            $replacements = NewCheckReplacement::where('id', $request->replacement_id)
+                ->first();
+
+            if ($request->rep_status == 'BOUNCED') {
+                NewBounceCheck::where('id', '=', $replacements->bounce_id)
+                    ->update(['status' => '']);
+
+                Checks::where('checks_id', $replacements->checks_id)
+                    ->update(['check_status' => 'BOUNCE', 'cash' => null]);
+
+                NewCheckReplacement::where('id', $request->replacement_id)
+                    ->delete();
+            } else {
+                NewSavedChecks::where('checks_id', '=', $replacements->checks_id)
+                    ->update(['status' => '']);
+
+                Checks::where('checks_id', $replacements->checks_id)
+                    ->update(['check_status' => 'CLEARED', 'cash' => null]);
+
+                NewCheckReplacement::where('id', $request->replacement_id)
+                    ->delete();
+            }
+        });
+    }
+    public function updateCashAndCheckAdjustments(Request $request)
+    {
+        DB::transaction(function () use ($request) {
+            NewCheckReplacement::where('id', $request->replacement_id)
+                ->update([
+                    'check_amount_paid' => str_replace(",", "", $request->check_amount),
+                    'penalty' => str_replace(",", "", $request->penalty),
+                    'ar_ds' => $request->ar_ds,
+                    'reason' => $request->reason,
+                    'cash' => str_replace(",", "", $request->cash),
+                ]);
+
+            Checks::where('checks_id', $request->rep_check_id)
+                ->update([
+                    'check_no' => $request->check_no,
+                    'check_amount' => str_replace(",", "", $request->check_amount),
+                    'cash' => str_replace(",", "", $request->cash),
+                ]);
+        });
+    }
+    public function updateCheckForAdjustments(Request $request)
+    {
+        DB::transaction(function () use ($request) {
+            NewCheckReplacement::where('id', $request->replacement_id)
+                ->update([
+                    'check_amount_paid' => str_replace(",", "", $request->check_amount),
+                    'penalty' => str_replace(",", "", $request->penalty),
+                    'ar_ds' => $request->ar_ds,
+                    'reason' => $request->reason,
+                ]);
+
+            Checks::where('checks_id', $request->rep_check_id)
+                ->update([
+                    'check_no' => $request->check_no,
+                    'check_amount' => str_replace(",", "", $request->check_amount),
+                ]);
+        });
+    }
+    public function cancelCheckAdjustments(Request $request)
+    {
+        $replacement = NewCheckReplacement::where('id', $request->replacement_id)
+            ->first();
+
+        if ($request->repStatus == 'BOUNCED') {
+            NewBounceCheck::where('id', '=', $replacement->bounce_id)
+                ->update(['status' => '']);
+
+            Checks::where('checks_id', $request->rep_check_id)
+                ->delete();
+
+            NewSavedChecks::where('checks_id', $request->rep_check_id)
+                ->delete();
+
+            NewCheckReplacement::where('id', $request->replacement_id)
+                ->delete();
+        } else {
+            NewSavedChecks::where('checks_id', '=', $replacement->checks_id)
+                ->update(['status' => '']);
+
+            Checks::where('checks_id', $request->rep_check_id)
+                ->delete();
+
+            NewSavedChecks::where('checks_id', $request->rep_check_id)
+                ->delete();
+
+            NewCheckReplacement::where('id', $request->replacement_id)
+                ->delete();
+        }
     }
 }
