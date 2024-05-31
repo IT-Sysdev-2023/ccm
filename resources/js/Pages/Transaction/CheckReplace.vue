@@ -385,7 +385,7 @@ export default {
                 },
                 {
                     title: "Pending Amount",
-                    dataIndex: "balance",
+                    dataIndex: "balanced",
                     key: "age",
                 },
                 {
@@ -400,7 +400,7 @@ export default {
                 },
                 {
                     title: "Balance",
-                    dataIndex: "balanced",
+                    dataIndex: "balance",
                     key: "address",
                 },
                 {

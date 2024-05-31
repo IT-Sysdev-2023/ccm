@@ -20,7 +20,7 @@ const placement = "bottom";
 
 <template>
     <a-layout style="min-height: 100vh; background-color: green;">
-        <a-layout-sider v-model:collapsed="collapsed" collapsible>
+        <a-layout-sider v-model:collapsed="collapsed" collapsible width="250px">
             <div class="flex  mt-10 justify-center mb-5">
 
                 <img v-if="!collapsed" style="height: 50px; border-radius: 50%"

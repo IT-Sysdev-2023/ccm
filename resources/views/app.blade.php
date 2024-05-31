@@ -22,7 +22,7 @@
 <body class="antialiased" >
     @inertia
     <style>
-        /* @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Oswald&family=Poppins&family=Roboto+Condensed:wght@300&display=swap'); */
+        
 
         * {
 

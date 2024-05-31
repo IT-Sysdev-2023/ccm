@@ -78,7 +78,7 @@ export default {
         handleChangeBunit(value) {
             this.$inertia.get(route('deposit.adjustment'), {
                 bunitId: value,
-                datedYear: dayjs(this.yearBackend).format('YYYY'),
+                datedYear: this.yearValue ? dayjs(this.yearBackend).format('YYYY') : null,
 
             })
         },

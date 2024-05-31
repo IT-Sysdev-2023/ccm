@@ -225,7 +225,7 @@ export default {
         handleChangeBunit(value) {
             this.$inertia.get(route('checks.adjustment'), {
                 bunitId: value,
-                datedYear: dayjs(this.yearBackend).format('YYYY'),
+                datedYear: this.yearBackend ? dayjs(this.yearBackend).format('YYYY') : null,
 
             })
         },

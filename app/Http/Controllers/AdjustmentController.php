@@ -176,7 +176,64 @@ class AdjustmentController extends Controller
             'bunit' => $bunitData,
             'columns' => ColumnsHelper::$replaced_check_columns,
             'data' => $data,
-            'bunitBackend' => empty($request->bunit) ? null : intval($request->bunit)
+            'bunitBackend' => empty($request->bunit) ? null : intval($request->bunit),
         ]);
+    }
+
+    public function updateRedepositChecks(Request $request)
+    {
+        DB::transaction(function () use ($request) {
+            NewCheckReplacement::where('id', $request->replacement_id)->first()
+                ->update([
+                    'penalty' => str_replace(",", "", $request->penalty),
+                    'ar_ds' => $request->ar_ds,
+                    'reason' => $request->reason,
+                ]);
+
+            $checks = NewCheckReplacement::where('id', $request->replacement_id)
+                ->select('checks_id')
+                ->first();
+
+            NewDsChecks::where('checks_id', $checks->checks_id)
+                ->where('status', '!=', 'BOUNCED')
+                ->update(['ds_no' => $request->ar_ds]);
+        });
+    }
+    public function cancelRedepositChecks(Request $request)
+    {
+        DB::transaction(function () use ($request) {
+
+            $replacement = NewCheckReplacement::where('id', $request->replacement_id)
+                ->first();
+
+            NewSavedChecks::where('checks_id', $replacement->checks_id)
+                ->update(['status' => 'BOUNCED']);
+
+            Checks::where('checks_id', $replacement->checks_id)
+                ->update(['check_status' => 'BOUNCE']);
+
+            NewBounceCheck::where('id', '=', $replacement->bounce_id)
+                ->update(['status' => '']);
+
+            NewDsChecks::where('checks_id', $replacement->checks_id)
+                ->where('status', '!=', 'BOUNCED')
+                ->delete();
+
+            NewCheckReplacement::where('id', $request->replacement_id)
+                ->delete();
+        });
+    }
+    public function updateCashAdjustments(Request $request)
+    {
+        NewCheckReplacement::where('id', $request->replacement_id)->first()
+            ->update([
+                'penalty' => str_replace(",", "", $request->penalty),
+                'ar_ds' => $request->ar_ds,
+                'reason' => $request->reason,
+            ]);
+    }
+    public function cancelCashAdjustments()
+    {
+        
     }
 }

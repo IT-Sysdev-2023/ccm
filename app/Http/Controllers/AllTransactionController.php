@@ -664,36 +664,45 @@ class AllTransactionController extends Controller
 
     public function replacedPartialPaymentTable(Request $request)
     {
+        // dd($request->all());
 
         $result = [];
         if ($request->bouncedId == 0) {
+
             $data = NewCheckReplacement::join('users', 'users.id', '=', 'new_check_replacement.user')
-                ->where('new_check_replacement.checks_id', $request->checksId)->cursor();
+                ->where('new_check_replacement.checks_id', $request->checksId)
+                ->where('new_check_replacement.mode', 'PARTIAL')
+                ->cursor();
 
             $result = [];
+
             $cash = 0;
             $c = 0;
             $balance = 0;
+            $balanced = 0;
             $amount = 0;
 
-            $data->each(function ($item) use (&$result, &$cash, &$c, &$balance, &$amount) {
+            $data->each(function ($item) use (&$result, &$cash, &$c, &$balance,  &$balanced, &$amount) {
+                if ($c === 0) {
 
-                $balanced = 0;
-
-                if ($c = 0) {
                     $amount = $item->check_amount;
-                    $balance = $item->cash - $item->check_amount;
+
+                    $balance =  $item->check_amount - $item->cash ;
+
                     if ($item->check_amount_paid != 0) {
+                        // dd(1);
                         $balance = $item->check_amount - $item->check_amount_paid;
                     }
                 } else {
                     $amount = $balanced;
-                    $balance = $item->cash - $balance;
+
+                    // dd($amount);
+                    $balance = $balance -  $item->cash;
                     if ($item->check_amount_paid != 0) {
-                        $balance = $item->check_amount_paid - $balance;
+                        $balance = $balance - $item->check_amount_paid;
                     }
                 }
-
+                
                 $balanced = $amount - $cash;
 
                 $partialCheckNo = Checks::where('checks_id', $item->rep_check_id)->first();
@@ -705,8 +714,7 @@ class AllTransactionController extends Controller
                         'check_paid' => number_format($item->check_amount_paid, 2),
                         'balance' => number_format($balance, 2),
                         'penalty' => number_format($item->penalty, 2),
-                        'checkNumber' => $partialCheckNo->check_no,
-                        'partial_check_amount' => NumberHelper::float($partialCheckNo->check_amount),
+                        'checkNumber' => $partialCheckNo->check_no . ' [Check Amount: ( ' . number_format($partialCheckNo->check_amount, 2) . ') ]',
                         'ar_ds' => $item->ar_ds,
                         'name' => $item->name,
                     ];
@@ -732,33 +740,38 @@ class AllTransactionController extends Controller
             });
 
         } else {
-
+            // dd(1);
             $data = NewCheckReplacement::join('users', 'users.id', '=', 'new_check_replacement.user')
                 ->where('new_check_replacement.bounce_id', $request->bouncedId)->cursor();
 
             $result = [];
             $cash = 0;
             $c = 0;
-            $balance = 0;
             $amount = 0;
 
-            $data->each(function ($item) use (&$result, &$cash, &$c, &$balance, &$amount) {
-                $balanced = 0;
+            $balance = 0;
+            $balanced = 0;
 
-                if ($c = 0) {
+            $data->each(function ($item) use (&$result, &$balance, &$balanced,  &$cash, &$c, &$amount) {
+                if ($c === 0) {
+
                     $amount = $item->check_amount;
-                    $balance = $item->cash - $item->check_amount;
+
+                    $balance =  $item->check_amount - $item->cash ;
+
                     if ($item->check_amount_paid != 0) {
+                        // dd(1);
                         $balance = $item->check_amount - $item->check_amount_paid;
                     }
                 } else {
                     $amount = $balanced;
-                    $balance = $item->cash - $balance;
+
+                    // dd($amount);
+                    $balance = $balance -  $item->cash;
                     if ($item->check_amount_paid != 0) {
-                        $balance = $item->check_amount_paid - $balance;
+                        $balance = $balance - $item->check_amount_paid;
                     }
                 }
-
                 $balanced = $amount - $cash;
 
                 $partialCheckNo = Checks::where('checks_id', $item->rep_check_id)->first();
