@@ -57,7 +57,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('users', [UserController::class, 'index'])->name('users.index');
-    Route::get('settings', [UserController::class, 'settings'])->name('settings');
+    Route::get('settings', [UserController::class, 'settings'])->name('mySettings.accouting');
     Route::put('update/username', [UserController::class, 'updateUsername'])->name('username.edit');
     Route::put('update/user/', [UserController::class, 'updateUser'])->name('users.update');
     Route::post('create/user', [UserController::class, 'createUser'])->name('users.store');
@@ -192,6 +192,7 @@ Route::middleware('auth')->group(function () {
     })->name('download.excel');
 
     Route::get('start/importing/checks', [ImportUpdateController::class, 'startImportChecks'])->name('start.importing.checks');
+    Route::put('reset/password', [AuthenticatedSessionController::class ,'newPassword'])->name('new.password');
 });
 
 require __DIR__ . '/auth.php';

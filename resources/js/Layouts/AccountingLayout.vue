@@ -37,7 +37,8 @@ const showingNavigationDropdown = ref(false);
                         :href="route('accounting.dashboard')" :class="{
                             'bg-nav':
                                 route().current('accounting.dashboard'),
-                        }"><DashboardOutlined /> Dashboard</Link>
+                        }">
+                    <DashboardOutlined /> Dashboard</Link>
                     <Link class="hov px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black rounded "
                         :href="route('reports.accounting')" :class="{
                             'bg-nav':
@@ -47,13 +48,23 @@ const showingNavigationDropdown = ref(false);
                                 route().current('bounce.checks.accounting') ||
                                 route().current('redeem.reports.accounting')
                             ,
-                        }"><PaperClipOutlined /> Reports</Link>
+                        }">
+                    <PaperClipOutlined /> Reports</Link>
                     <Link
                         class="hov rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
-                        href="#"><AliwangwangOutlined /> About Us</Link>
+                        :href="route('mySettings.accouting')" :class="{
+                            'bg-nav':
+                                route().current('mySettings.accouting'),
+                        }">
+                    <SettingOutlined /> My Setting</Link>
                     <Link
                         class="hov rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
-                        :href="route('logout')" method="post"><LogoutOutlined /> Logout</Link>
+                        href="#">
+                    <AliwangwangOutlined /> About Us</Link>
+                    <Link
+                        class="hov rounded px-4 py-2 mt-2 text-sm bg-transparent md:mt-8 md:ml-4 text-black focus:outline-none focus:shadow-outline"
+                        :href="route('logout')" method="post">
+                    <LogoutOutlined /> Logout</Link>
 
                 </nav>
             </div>
@@ -83,6 +94,7 @@ const showingNavigationDropdown = ref(false);
 <script>
 import { mapState, mapActions } from 'pinia'
 import { useOnlineUsersStore } from '@/stores/online-users'
+import { SettingOutlined } from '@ant-design/icons-vue';
 
 export default {
     data() {
@@ -118,6 +130,7 @@ export default {
     background: #706767;
     color: white
 }
+
 .bg-cream {
     background-color: white;
 }

@@ -1,68 +1,58 @@
 <template>
+
     <Head title="My Setting"></Head>
-        <a-row :gutter="[16, 16]">
-            <a-col :span="8" style="margin: 0 auto;">
-                <a-card class="flex justify-center items-center" style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-              width: 100% ; height: 70vh">
-                    <div class="max-w-xs text-center">
-                        <img class="mx-auto mb-4 h-56 w-56 rounded-full outline outline-2 outline-white outline-offset-2"
-                            :src="`/storage/users-image/${$page.props.auth.user.id}`"
-                            alt="profile picture" />
-                        <h4 class="text-xl font-semibold text-black">{{ $page.props.auth.user.name }}</h4>
-                        <h3 class="font-semibold text-slate-600">{{ $page.props.auth.user.username }}
-                            <span v-if="!isEditUsername">
-                                <FormOutlined @click="editUsername" />
-                            </span>
-                            <span v-else>
-                                <CloseOutlined @click="editUsername" />
-                            </span>
-                        </h3>
-                        <a-card class="mt-5 mb-3" v-if="isEditUsername"
-                            style="box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;">
-                            <p class="font-bold text-start ml-2">
-                                <user-outlined /> Username
-                            </p>
-                            <a-input v-model:value="editUser.username" placeholder="Username" class="mb-3" />
+    <div class="flex justify-center py-10">
+        <div class="max-w-xs text-center">
+            <img class="mx-auto mb-4 h-56 w-56 rounded-full outline outline-2 outline-white outline-offset-2"
+                :src="`/storage/users-image/${$page.props.auth.user.id}`" alt="profile picture" />
+            <h3>{{ $page.props.auth.user.name }} </h3>
+            <p class="font-bold text-gray-600 mt-2"> -- {{ $page.props.auth.user.username }} --</p>
 
-                            <a-button type="primary" ghost @click="updateUsername" :loading="editUser.processing">
-                                <template #icon>
-                                    <SaveOutlined />
-                                </template>{{ editUser.processing ? 'Updating...' : 'Update' }}
-                            </a-button>
-                        </a-card>
-                        <span class="inline-block text-start text-slate-500">
-                            <p class="underline" @click="editPass" style="cursor: pointer">Change password?</p>
-                        </span>
+            <div class="flex mt-5 mb-4">
+                <a-button block @click="editUsername" class="mr-1">
+                    <user-outlined /> Edit Username
+                </a-button>
+                <a-button block @click="editPass">
+                    <UnlockOutlined /> Change Password
+                </a-button>
+            </div>
+            <a-card class="mt-5 mb-3" v-if="isEditUsername"
+                style="box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;">
+                <p class="font-bold text-start ml-2">
+                    <user-outlined /> Username
+                </p>
+                <a-input v-model:value="editUser.username" placeholder="Username" class="mb-3" />
 
-                        <a-card class="mt-5 mb-3" v-if="isEditPass"
-                            style="box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;">
-                            <p class="font-bold text-start ml-2">
-                                <user-outlined /> Password
-                            </p>
-                            <a-input-password v-model:value="editPassword.password" placeholder="input password"
-                                class="mb-3" />
+                <a-button type="primary" ghost @click="updateUsername" :loading="editUser.processing">
+                    <template #icon>
+                        <SaveOutlined />
+                    </template>{{ editUser.processing ? 'Updating username...' : 'Update Username' }}
+                </a-button>
+            </a-card>
 
-                            <a-button type="primary" ghost @click="udpatePassword">
-                                <template #icon>
-                                    <SaveOutlined />
-                                </template> Change
-                            </a-button>
-                        </a-card>
-                    </div>
-                </a-card>
-            </a-col>
-            <a-col :span="14" style="margin: 0 auto;">
+            <a-card class="mt-5 mb-3" v-if="isEditPass" style="box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;">
+                <p class="font-bold text-start ml-2">
+                    <UnlockOutlined /> Password
+                </p>
+                <a-input-password v-model:value="editPassword.password" placeholder="input password" class="mb-3" />
 
-            </a-col>
-        </a-row>
+                <a-button type="primary" ghost @click="udpatePassword">
+                    <template #icon>
+                        <SaveOutlined />
+                    </template>{{ editPassword.processing ? "Updating Password..." : "Update Password" }}
+                </a-button>
+            </a-card>
+        </div>
+
+    </div>
 </template>
 
 <script>
 import { message } from 'ant-design-vue';
 import { useForm } from "@inertiajs/vue3";
-import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
+import AccountingLayout from "@/Layouts/AccountingLayout.vue";
 export default {
-    layout: TreasuryLayout,
+    layout: AccountingLayout,
     data() {
         return {
             isEditUsername: false,
@@ -73,7 +63,7 @@ export default {
             }),
 
             editPassword: useForm({
-                password: null
+                password: ''
             }),
         }
     },
@@ -98,7 +88,13 @@ export default {
             });
         },
         udpatePassword() {
-
+            this.editPassword.put(route('new.password'),
+                {
+                    onSuccess: () => {
+                        this.isEditPass = false;
+                        this.editPassword.reset();
+                    }
+                })
         }
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Hash;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -25,8 +26,6 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-
-
     /**
      * Handle an incoming authentication request.
      */
@@ -37,14 +36,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if(Auth::user()->usertype_id === 1){
+        if (Auth::user()->usertype_id === 1) {
             return redirect(RouteServiceProvider::ADMIN_HOME);
-        }else if(Auth::user()->usertype_id === 2){
+        } else if (Auth::user()->usertype_id === 2) {
             return redirect(RouteServiceProvider::ACCOUNTING_HOME);
-        }else if(Auth::user()->usertype_id === 9){
+        } else if (Auth::user()->usertype_id === 9) {
             return redirect(RouteServiceProvider::TREASURY_HOME);
-        }else{
-               return redirect('notfound');
+        } else {
+            return redirect('notfound');
         }
     }
 
@@ -60,5 +59,19 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
+    }
+
+    public function newPassword(Request $request)
+    {
+        // dd($request->all());
+        $request->validate([
+            'password' => 'required|string|min:6',
+        ]);
+
+        $user = Auth::user();
+
+        $user->password = Hash::make($request->password);
+
+        $user->save();
     }
 }

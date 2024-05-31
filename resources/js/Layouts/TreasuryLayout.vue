@@ -331,15 +331,6 @@ const hide = () => {
                             <Link class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
                                 :class="{
                                     'bg-blue-600 text-white':
-                                        route().current('settings'),
-                                    'text-white':
-                                        !route().current('settings'),
-                                }" :href="route('settings')">
-                            <SettingOutlined /> My Settings
-                            </Link>
-                            <Link class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
-                                :class="{
-                                    'bg-blue-600 text-white':
                                         route().current('about.us'),
                                     'text-white':
                                         !route().current('about.us'),
@@ -352,8 +343,10 @@ const hide = () => {
                                 <div class="flex items-center justify-center" style="
                                         cursor: pointer;
                                     ">
-                               <span class="text-white mr-2" style="font-size: 14px;"> Howdy! {{  $page.props.auth.user.username }}</span> <img :src="`/storage/users-image/${$page.props.auth.user.id}`"
-                                        alt="Profile Picture" class="rounded-full" style="height: 30px;" />
+                                    <span class="text-white mr-2" style="font-size: 14px;"> Howdy! {{
+                                        $page.props.auth.user.username }}</span>
+                                    <img :src="`/storage/users-image/${$page.props.auth.user.id}`" alt="Profile Picture"
+                                        class="rounded-full" style="height: 30px;" />
                                 </div>
                                 <template #overlay>
                                     <div class="max-w-xs p-4 rounded-md mr-2" style="background: #001529;width: 500px;">
@@ -393,6 +386,12 @@ const hide = () => {
                                         </ul>
                                         <div class="mt-5">
 
+                                            <a-button block @click="showMySetting" class="mb-2">
+                                                <template #icon>
+                                                    <SettingOutlined />
+                                                </template>
+                                                My Setting
+                                            </a-button>
                                             <a-button block @click="logout">
                                                 <template #icon>
                                                     <LogoutOutlined />
@@ -446,17 +445,77 @@ const hide = () => {
             </div>
         </div>
     </div>
+    <a-modal v-model:open="openMySetting" style="width: 30%;" title="My Settings" :footer="false">
+        <div class="flex justify-center">
+            <div class="max-w-xs text-center">
+                <img class="mx-auto mb-4 h-56 w-56 rounded-full outline outline-2 outline-white outline-offset-2"
+                    :src="`/storage/users-image/${$page.props.auth.user.id}`" alt="profile picture" />
+                <h3>{{ $page.props.auth.user.name }} </h3>
+                <p class="font-bold text-gray-600 mt-2"> -- {{ $page.props.auth.user.username }} --</p>
+
+                <div class="flex mt-5 mb-4">
+                    <a-button block @click="editUsername" class="mr-1">
+                        <user-outlined /> Edit Username
+                    </a-button>
+                    <a-button block @click="editPass">
+                        <UnlockOutlined /> Change Password
+                    </a-button>
+                </div>
+                <a-card class="mt-5 mb-3" v-if="isEditUsername"
+                    style="box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;">
+                    <p class="font-bold text-start ml-2">
+                        <user-outlined /> Username
+                    </p>
+                    <a-input v-model:value="editUser.username" placeholder="Username" class="mb-3" />
+
+                    <a-button type="primary" ghost @click="updateUsername" :loading="editUser.processing">
+                        <template #icon>
+                            <SaveOutlined />
+                        </template>{{ editUser.processing ? 'Updating username...' : 'Update Username' }}
+                    </a-button>
+                </a-card>
+
+                <a-card class="mt-5 mb-3" v-if="isEditPass"
+                    style="box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;">
+                    <p class="font-bold text-start ml-2">
+                        <UnlockOutlined /> Password
+                    </p>
+                    <a-input-password v-model:value="editPassword.password" placeholder="input password" class="mb-3" />
+
+                    <a-button type="primary" ghost @click="udpatePassword">
+                        <template #icon>
+                            <SaveOutlined />
+                        </template>{{editPassword.processing ? "Updating Password..." : "Update Password"}}
+                    </a-button>
+                </a-card>
+            </div>
+
+        </div>
+    </a-modal>
 </template>
 
 <script>
 import { mapState, mapActions } from 'pinia'
 import { useOnlineUsersStore } from '@/stores/online-users'
+import { SettingOutlined } from "@ant-design/icons-vue";
+import { useForm } from "@inertiajs/vue3";
+import { message } from 'ant-design-vue';
 
 export default {
     data() {
         return {
             currentTime: "",
             dataws: [],
+            openMySetting: false,
+            isEditUsername: false,
+            isEditPass: false,
+
+            editUser: useForm({
+                username: null
+            }),
+            editPassword: useForm({
+                password: '',
+            }),
         };
     },
 
@@ -496,6 +555,36 @@ export default {
 
             setTimeout(this.showTime, 1000);
         },
+        showMySetting() {
+            this.openMySetting = true;
+        },
+        editUsername() {
+            this.isEditUsername = !this.isEditUsername;
+            this.isEditPass = false;
+            this.editUser.username = this.$page.props.auth.user.username
+        },
+        editPass() {
+            this.isEditPass = !this.isEditPass;
+            this.isEditUsername = false;
+        },
+        updateUsername() {
+            this.editUser.put(route('username.edit'), {
+                onSuccess: () => {
+                    this.editUser.reset();
+                    this.isEditUsername = false;
+                    message.success('Username Updated successfully')
+                }
+            });
+        },
+        udpatePassword() {
+            this.editPassword.put(route('new.password') ,
+        {
+            onSuccess: () => {
+                this.isEditPass  = false;
+                this.editPassword.reset();
+            }
+        }  )
+        }
     },
     mounted() {
         this.showTime();
