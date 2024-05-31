@@ -21,11 +21,7 @@ class AdjustmentController extends Controller
 
         // dd($request->all());
 
-        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
-            ->whereNotNull('b_atpgetdata')
-            ->whereNotNull('b_encashstart')
-            ->where('businessunit_id', '!=', 61)
-            ->get();
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')->get();
 
         $data = NewSavedChecks::join('checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
@@ -69,11 +65,7 @@ class AdjustmentController extends Controller
 
     public function depositAdjustments(Request $request)
     {
-        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
-            ->whereNotNull('b_atpgetdata')
-            ->whereNotNull('b_encashstart')
-            ->where('businessunit_id', '!=', 61)
-            ->get();
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')->get();
 
         $data = NewDsChecks::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
@@ -106,11 +98,7 @@ class AdjustmentController extends Controller
     }
     public function bounceChecksAdjustments(Request $request)
     {
-        $bunit = BusinessUnit::whereNotNull('loc_code_atp')
-            ->whereNotNull('b_atpgetdata')
-            ->whereNotNull('b_encashstart')
-            ->where('businessunit_id', '!=', 61)
-            ->get();
+        $bunit = BusinessUnit::whereNotNull('loc_code_atp')->get();
 
         $data = NewBounceCheck::join('checks', 'checks.checks_id', '=', 'new_bounce_check.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
@@ -156,11 +144,7 @@ class AdjustmentController extends Controller
     }
     public function replacementAdjustments(Request $request)
     {
-        $bunitData = BusinessUnit::whereNotNull('loc_code_atp')
-            ->whereNotNull('b_atpgetdata')
-            ->whereNotNull('b_encashstart')
-            ->where('businessunit_id', '!=', 61)
-            ->get();
+        $bunitData = BusinessUnit::whereNotNull('loc_code_atp')->get();
 
         $data = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
@@ -328,4 +312,19 @@ class AdjustmentController extends Controller
                 ->delete();
         }
     }
+    // public function altaCittaCheckAdjustments()
+    // {
+    //     $data = NewSavedChecks::join('checks', 'checks.checks_id', '=', 'new_saved_checks.checks_id')
+    //         ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+    //         ->join('department', 'department.department_id', '=', 'checks.department_from')
+    //         ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
+    //         ->where('checks.businessunit_id', '61')
+    //         ->select('checks.*', 'customers.*', 'department.*', 'banks.*')
+    //         ->paginate(10)->withQueryString();
+
+    //     return Inertia::render('Adjustments/AltaCittaDetails', [
+    //         'data' => $data,
+    //         'columns' => ColumnsHelper::$alta_citta_columns,
+    //     ]);
+    // }
 }

@@ -1144,5 +1144,35 @@ class ColumnsHelper
             'align' => 'center',
         ],
     ];
+    public static $alta_citta_columns = [
+        [
+            'title' => 'Check Received',
+            'dataIndex' => 'check_received',
+            'align' => 'center',
+        ],
+        [
+            'title' => 'Check Date',
+            'dataIndex' => 'check_date',
+            'align' => 'center',
+        ],
+        [
+            'title' => 'Customer Name',
+            'dataIndex' => 'fullname',
+            'align' => 'center',
+        ],
+        [
+            'title' => 'Check Number',
+            'dataIndex' => 'check_no',
+        ],
+        [
+            'title' => 'Amount',
+            'dataIndex' => 'check_amount',
+        ],
+        [
+            'title' => 'Action',
+            'key' => 'action',
+            'align' => 'center',
+        ],
+    ];
 
 }

@@ -133,6 +133,7 @@ Route::middleware('auth')->group(function () {
     Route::put('update/cash-check/checks', [AdjustmentController::class, 'updateCashAndCheckAdjustments'])->name('update.cash.check');
     Route::put('update/check/checks', [AdjustmentController::class, 'updateCheckForAdjustments'])->name('update.check.checks');
     Route::put('cancel/check-adjustments/checks', [AdjustmentController::class, 'cancelCheckAdjustments'])->name('cancel.check.adjustments');
+    Route::get('alta-cita/checks', [AdjustmentController::class, 'altaCittaCheckAdjustments'])->name('alta-citta.adjustments');
 
 
     Route::get('check/for/clearing', [CheckReceivingController::class, 'getCheckForClearing'])->name('check_for.clearing');
