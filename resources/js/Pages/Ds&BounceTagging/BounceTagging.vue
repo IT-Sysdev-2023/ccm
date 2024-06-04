@@ -26,6 +26,12 @@
                 <a-table :dataSource="data.data" :columns="columns" :pagination="false" :loading="loading"
                     class="components-table-demo-nested" bordered size="small">
                     <template #bodyCell="{ column, record }">
+                        <template v-if="Object.keys(record).includes(column.dataIndex)">
+                            <span v-html="highlightText(record[column.dataIndex], query.search)
+                                ">
+                            </span>
+                        </template>
+
                         <template v-if="column.key === 'action'">
                             <a-button type="primary" class="mx-1" size="small" ref="ref4" v-on:click="
                                 confirmBounceTagg(record.checks_id)
@@ -67,12 +73,21 @@ import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import debounce from "lodash/debounce";
 import CheckModalDetail from "@/Components/CheckModalDetail.vue";
+// import highlightText from "@/Mixin/highlightText";
+import { highlighten } from "@/Mixin/highlighten.js";
 export default {
     layout: TreasuryLayout,
     props: {
         data: Object,
         columns: Array,
         sel_year: String,
+    },
+    setup() {
+        const { highlightText } = highlighten();
+
+        return {
+            highlightText
+        };
     },
     data() {
         return {

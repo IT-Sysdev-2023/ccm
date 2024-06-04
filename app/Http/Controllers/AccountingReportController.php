@@ -6,6 +6,7 @@ use App\Helper\ColumnsHelper;
 use App\Models\BusinessUnit;
 use App\Models\Checks;
 use App\Models\NewBounceCheck;
+use App\Models\NewCheckReplacement;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
 use App\Services\BounceChequesAccountingReportService;
@@ -220,7 +221,7 @@ class AccountingReportController extends Controller
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('status', '=', '')
             ->groupBy('date_deposit', 'ds_no', 'name')
-            ->limit(10)
+            // ->limit(10)
             ->get();
 
         return (new DepositedChecksServices)->record($data)->writeResult($request->dateFrom, $request->dateTo, $bunit);
@@ -445,8 +446,7 @@ class AccountingReportController extends Controller
             ->where('businessunit_id', $request->user()->businessunit_id)
             ->get();
 
-        $data = DB::table('new_check_replacement')
-            ->join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
+        $data = NewCheckReplacement::join('checks', 'checks.checks_id', '=', 'new_check_replacement.checks_id')
             ->join('department', 'department.department_id', '=', 'checks.department_from')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
