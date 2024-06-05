@@ -1,8 +1,14 @@
 <template>
-    <a-modal title="Add manual checks Modal" :footer="null" width="90%" style="top: 50px"
+    <a-modal title="" :footer="null" width="90%" style="top: 50px; "
         :after-close="() => manual_check_form.clearErrors()" wrap-class-name="full-modal">
-        <a-card>
+        <a-card style="height: 500px;">
+            <p class="text-center font-bold p-5">
+            <h3>
+                Add Manual Checks
+            </h3>
+            </p>
             <a-row :gutter="[16, 16]">
+
                 <a-col :span="8">
                     <a-breadcrumb>
                         <a-breadcrumb-item href="">
@@ -27,7 +33,7 @@
                             ">
                         {{ manual_check_form.errors.accountnumber }}
                     </div>
-                    <a-breadcrumb class="mt-3">
+                    <a-breadcrumb class="mt-5">
                         <a-breadcrumb-item href="">
                             <CalendarOutlined />
                         </a-breadcrumb-item>
@@ -43,13 +49,14 @@
                             ">
                         {{ manual_check_form.errors.checkdate }}
                     </div>
-                    <a-breadcrumb class="mt-3">
+                    <a-breadcrumb class="mt-5">
                         <a-breadcrumb-item href="">
                             <MoneyCollectOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Currency</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-select placeholder="Select Currency" v-model:value="manual_check_form.currency" style="width: 100%">
+                    <a-select placeholder="Select Currency" v-model:value="manual_check_form.currency"
+                        style="width: 100%">
                         <a-select-option v-for="(item, key) in currency" v-model:value="item.currency_id">{{
                             item.currency_name
                             }}</a-select-option>
@@ -62,16 +69,16 @@
                             ">
                         {{ manual_check_form.errors.currency }}
                     </div>
-                    <a-breadcrumb class="mt-3">
+                    <a-breadcrumb class="mt-5">
                         <a-breadcrumb-item href="">
                             <BankOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check From</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-select show-search placeholder="Search Check From" :default-active-first-option="false"
-                        v-model:value="manual_check_form.checkfrom" style="width: 100%" :show-arrow="false" :filter-option="false"
-                        :not-found-content="isRetrieving ? undefined : null" :options="checkOption"
-                        @search="handleSearchCheckFrom">
+                        v-model:value="manual_check_form.checkfrom" style="width: 100%" :show-arrow="false"
+                        :filter-option="false" :not-found-content="isRetrieving ? undefined : null"
+                        :options="checkOption" @search="handleSearchCheckFrom">
                         <template v-if="isRetrieving" #notFoundContent>
                             <a-spin size="small" />
                         </template>
@@ -84,7 +91,7 @@
                             ">
                         {{ manual_check_form.errors.checkfrom }}
                     </div>
-                    <a-breadcrumb class="mt-3">
+                    <a-breadcrumb class="mt-5">
                         <a-breadcrumb-item href="">
                             <UsergroupAddOutlined />
                         </a-breadcrumb-item>
@@ -115,9 +122,9 @@
                         <a-breadcrumb-item>Customer Name</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-select show-search placeholder="Search customer name" :default-active-first-option="false"
-                        v-model:value="manual_check_form.customer" style="width: 100%" :show-arrow="false" :filter-option="false"
-                        :not-found-content="isRetrieving ? undefined : null" :options="customerOption"
-                        @search="handleSearchCustomer">
+                        v-model:value="manual_check_form.customer" style="width: 100%" :show-arrow="false"
+                        :filter-option="false" :not-found-content="isRetrieving ? undefined : null"
+                        :options="customerOption" @search="handleSearchCustomer">
                         <template v-if="isRetrieving" #notFoundContent>
                             <a-spin size="small" />
                         </template>
@@ -131,7 +138,7 @@
                         {{ manual_check_form.errors.customer }}
                     </div>
 
-                    <a-breadcrumb class="mt-3">
+                    <a-breadcrumb class="mt-5">
                         <a-breadcrumb-item href="">
                             <MoneyCollectOutlined />
                         </a-breadcrumb-item>
@@ -154,13 +161,14 @@
                             ">
                         {{ manual_check_form.errors.checkamount }}
                     </div>
-                    <a-breadcrumb class="mt-3">
+                    <a-breadcrumb class="mt-5">
                         <a-breadcrumb-item href="">
                             <BankOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Class</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-select placeholder="Select Currency" v-model:value="manual_check_form.checkclass" style="width: 100%">
+                    <a-select placeholder="Select Currency" v-model:value="manual_check_form.checkclass"
+                        style="width: 100%">
                         <a-select-option v-for="(item, key) in checkClass" v-model:value="item.check_class">{{
                             item.check_class
                             }}</a-select-option>
@@ -173,7 +181,7 @@
                             ">
                         {{ manual_check_form.errors.checkclass }}
                     </div>
-                    <a-breadcrumb class="mt-3">
+                    <a-breadcrumb class="mt-5">
                         <a-breadcrumb-item href="">
                             <MoneyCollectOutlined />
                         </a-breadcrumb-item>
@@ -196,16 +204,16 @@
                             ">
                         {{ manual_check_form.errors.checknumber }}
                     </div>
-                    <a-breadcrumb class="mt-3">
+                    <a-breadcrumb class="mt-5">
                         <a-breadcrumb-item href="">
                             <BankOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Bank Name</a-breadcrumb-item>
                     </a-breadcrumb>
                     <a-select show-search placeholder="Search bank name" :default-active-first-option="false"
-                        v-model:value="manual_check_form.bankname" style="width: 100%" :show-arrow="false" :filter-option="false"
-                        :not-found-content="isRetrieving ? undefined : null" :options="bankOption"
-                        @search="handleSearchBank">
+                        v-model:value="manual_check_form.bankname" style="width: 100%" :show-arrow="false"
+                        :filter-option="false" :not-found-content="isRetrieving ? undefined : null"
+                        :options="bankOption" @search="handleSearchBank">
                         <template v-if="isRetrieving" #notFoundContent>
                             <a-spin size="small" />
                         </template>
@@ -236,13 +244,14 @@
                             ">
                         {{ manual_check_form.errors.checkreceived }}
                     </div>
-                    <a-breadcrumb class="mt-3">
+                    <a-breadcrumb class="mt-5">
                         <a-breadcrumb-item href="">
                             <HomeOutlined />
                         </a-breadcrumb-item>
                         <a-breadcrumb-item>Check Category</a-breadcrumb-item>
                     </a-breadcrumb>
-                    <a-select placeholder="Select Currency" v-model:value="manual_check_form.checkcategory" style="width: 100%">
+                    <a-select placeholder="Select Currency" v-model:value="manual_check_form.checkcategory"
+                        style="width: 100%">
                         <a-select-option v-for="(item, key) in category" v-model:value="item.check_category">{{
                             item.check_category
                             }}</a-select-option>
@@ -255,7 +264,7 @@
                             ">
                         {{ manual_check_form.errors.checkcategory }}
                     </div>
-                    <a-breadcrumb class="mt-3">
+                    <a-breadcrumb class="mt-5">
                         <a-breadcrumb-item href="">
                             <UsergroupAddOutlined />
                         </a-breadcrumb-item>

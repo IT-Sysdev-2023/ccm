@@ -14,9 +14,9 @@
                 <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
                 <a-breadcrumb-item>Check Manual Entry</a-breadcrumb-item>
             </a-breadcrumb>
-            <a-card>
-                <div class="flex justify-between">
-                    <a-button class="mb-3" @click="modalAddChecksManual" type="primary" style="width: 350px">
+
+                <div class="flex justify-between mb-5 mt-4">
+                    <a-button @click="modalAddChecksManual" type="primary" style="width: 350px">
                         <template #icon>
                             <PlusSquareOutlined />
                         </template>
@@ -42,7 +42,6 @@
                     </template>
                 </a-table>
                 <pagination class="mt-6" :datarecords="data" />
-            </a-card>
         </div>
     </div>
 
