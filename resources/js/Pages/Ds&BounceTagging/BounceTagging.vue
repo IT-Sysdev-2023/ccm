@@ -16,41 +16,40 @@
                     <a-breadcrumb-item>Deposited Checks</a-breadcrumb-item>
                 </a-breadcrumb>
             </div>
-
             <div style="display: flex; justify-content: space-between" class="mb-3">
-                <a-date-picker @change="onDateChange" v-model:value="dtYear" picker="year" style="width: 250px" />
-                <a-input-search v-model:value="query.search" class="mx-2" placeholder="Input Check Number"
+
+                <a-date-picker v-model:value="form.year" picker="year" style="width: 250px" />
+                <a-input-search v-model:value="form.search" class="mx-2" placeholder="Search here.."
                     style="width: 350px" />
+
             </div>
-            <a-card>
-                <a-table :dataSource="data.data" :columns="columns" :pagination="false" :loading="loading"
-                    class="components-table-demo-nested" bordered size="small">
-                    <template #bodyCell="{ column, record }">
-                        <template v-if="Object.keys(record).includes(column.dataIndex)">
-                            <span v-html="highlightText(record[column.dataIndex], query.search)
-                                ">
-                            </span>
-                        </template>
-
-                        <template v-if="column.key === 'action'">
-                            <a-button type="primary" class="mx-1" size="small" ref="ref4" v-on:click="
-                                confirmBounceTagg(record.checks_id)
-                                ">
-                                <template #icon>
-                                    <TagsOutlined />
-                                </template>
-                            </a-button>
-
-                            <a-button size="small" v-on:click="openModalDetails(record)">
-                                <template #icon>
-                                    <SettingOutlined />
-                                </template>
-                            </a-button>
-                        </template>
+            <a-table :dataSource="data.data" :columns="columns" :pagination="false" :loading="isTableLoading" bordered
+                size="small">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex">
+                        <span v-html="highlightText(record[column.dataIndex], form.search)
+                            ">
+                        </span>
                     </template>
-                </a-table>
-                <pagination class="mt-6" :datarecords="data" />
-            </a-card>
+
+                    <template v-if="column.key === 'action'">
+                        <a-button type="primary" class="mx-1" size="small" ref="ref4" v-on:click="
+                            confirmBounceTagg(record.checks_id)
+                            ">
+                            <template #icon>
+                                <TagsOutlined />
+                            </template>
+                        </a-button>
+
+                        <a-button size="small" v-on:click="openModalDetails(record)">
+                            <template #icon>
+                                <SettingOutlined />
+                            </template>
+                        </a-button>
+                    </template>
+                </template>
+            </a-table>
+            <pagination class="mt-6" :datarecords="data" />
         </div>
 
         <CheckModalDetail v-model:open="openDetails" :datarecords="selectDataDetails"></CheckModalDetail>
@@ -65,6 +64,7 @@
             </div>
         </a-modal>
     </div>
+
 </template>
 
 <script>
@@ -72,6 +72,7 @@ import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import debounce from "lodash/debounce";
+import pickBy from "lodash/pickBy";
 import CheckModalDetail from "@/Components/CheckModalDetail.vue";
 // import highlightText from "@/Mixin/highlightText";
 import { highlighten } from "@/Mixin/highlighten.js";
@@ -80,7 +81,7 @@ export default {
     props: {
         data: Object,
         columns: Array,
-        sel_year: String,
+        filters: Object,
     },
     setup() {
         const { highlightText } = highlighten();
@@ -91,15 +92,7 @@ export default {
     },
     data() {
         return {
-            query: {
-                search: '',
-            },
             colors: 'red',
-            dataSource: [],
-            isSearchLoading: false,
-            loading: false,
-            dtYear: dayjs(this.sel_year),
-            c_page: "",
             openDetails: false,
             selectDataDetails: [],
             tagAsBounced: false,
@@ -107,47 +100,33 @@ export default {
             checksId: null,
             isLoadingbutton: false,
             showAtootltip: false,
-            page: 1,
-            query: {
-                search: "",
+            isTableLoading: false,
+            form: {
+                search: this.filters.search,
+                year: this.filters.year ? dayjs(this.filters.year) : dayjs()
             },
         };
     },
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
-                try {
-                    this.loading = true;
-                    this.$inertia.get(
-                        route("bounce.tagging"),
-                        {
-                            // page: this.page,
-                            dt_year: this.dtYear.format("YYYY"),
-                            search: this.query.search,
-                        },
-                        { preserveState: true }
-                    );
-                } catch (error) {
-                    console.log(error);
-                } finally {
-                    this.loading = false;
-                }
-            }, 600),
+                this.isTableLoading = true;
+                const formattedDate = this.form.year ? this.form.year.format('YYYY') : null;
+                this.$inertia.get(route("bounce.tagging"), {
+                    ...pickBy(this.form), year: formattedDate
+                }, {
+                    preserveState: true,
+                    onSuccess: () => {
+                        this.isTableLoading = false;
+                    }
+                });
+            }, 500),
         },
     },
     methods: {
-        onDateChange(dateObj, dateStr) {
-            this.$inertia.get(route("bounce.tagging"), {
-                dt_year: dateStr,
-            });
-        },
         onDateChangeReturn(dateObj, dateStr) {
             this.returnDate = dateObj;
-        },
-
-        handleTableChange(pagination) {
-            this.getBounceTagging(pagination);
         },
 
         openModalDetails(data) {

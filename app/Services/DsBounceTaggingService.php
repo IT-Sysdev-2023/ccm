@@ -53,12 +53,11 @@ class DsBounceTaggingService
             ->count();
 
         $ds_checks_table = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
-                return $query; // Add other columns as needed
-            })
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname',
+            ], 'LIKE', '%' . $request->searchQuery)
             ->orderBy('checks.check_received', 'DESC')
             ->paginate(300);
 
@@ -72,7 +71,7 @@ class DsBounceTaggingService
         });
 
         $getAmount = $ds_checks_table->where('done', true);
-        $totalAmountActive = $getAmount->sum(fn($item) => $item->check_amount);
+        $totalAmountActive = $getAmount->sum(fn ($item) => $item->check_amount);
 
         return Inertia::render('Ds&BounceTagging/DsTagging', [
             'due_dates' => $due_dates,
@@ -88,7 +87,7 @@ class DsBounceTaggingService
     {
         ini_set('memory_limit', '-1');
 
-        $datedYear = $request->dt_year ?? now()->toDateString();
+        $datedYear = $request->year ?? now()->toDateString();
 
         $data = NewDsChecks::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
@@ -97,15 +96,32 @@ class DsBounceTaggingService
             ->join('department', 'department.department_id', 'checks.department_from')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('new_ds_checks.status', '=', '')
-            ->select('checks.*', 'customers.*', 'users.*', 'new_ds_checks.ds_no', 'new_ds_checks.user', 'new_ds_checks.date_time', 'new_ds_checks.date_deposit', 'department.department', 'banks.*')
-            ->where('checks.check_no', 'like', '%' . $request->search . '%')
+            ->select(
+                'checks.*',
+                'customers.*',
+                'users.*',
+                'new_ds_checks.ds_no',
+                'new_ds_checks.user',
+                'new_ds_checks.date_time',
+                'new_ds_checks.date_deposit',
+                'department.department',
+                'banks.*',
+            )
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname',
+                'new_ds_checks.ds_no',
+            ], 'LIKE', '%' . $request->search)
             ->whereYear('checks.check_received', $datedYear)
             ->orderBy('new_ds_checks.date_time', 'desc')
             ->orderBy('checks.check_received', 'desc')->paginate(10)->withQueryString();
 
+
         $data->transform(function ($value) {
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            $value->date_deposit = Date::parse($value->date_deposit)->toFormattedDateString();
             $value->check_amount = NumberHelper::currency($value->check_amount);
             return $value;
         });
@@ -113,7 +129,7 @@ class DsBounceTaggingService
         return Inertia::render('Ds&BounceTagging/BounceTagging', [
             'data' => $data,
             'columns' => ColumnsHelper::$get_bounce_tagging_columns,
-            'sel_year' => $datedYear,
+            'filters' => $request->only(['year', 'search']),
         ]);
     }
 
@@ -139,9 +155,7 @@ class DsBounceTaggingService
                 'date_time' => $request->date,
                 'user' => Auth::user()->id,
             ]);
-
         });
-
     }
     public function submiCheckDs(Request $request): RedirectResponse
     {
@@ -164,7 +178,6 @@ class DsBounceTaggingService
                     'status' => '',
                     'date_time' => now(),
                 ]);
-
             });
         });
 
