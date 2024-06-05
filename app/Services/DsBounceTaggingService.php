@@ -46,22 +46,20 @@ class DsBounceTaggingService
 
     public function indexDsTagging(Request $request)
     {
-        // dd($query);
-        // dd(1);
         $due_dates = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
             ->whereDate('checks.check_date', today()->toDateString())
             ->count();
 
-        $ds_checks_table = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
+        $data = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
             ->whereAny([
                 'checks.check_no',
                 'checks.check_amount',
                 'customers.fullname',
-            ], 'LIKE', '%' . $request->searchQuery)
+            ], 'LIKE', '%' . $request->search . '%')
             ->orderBy('checks.check_received', 'DESC')
             ->paginate(300);
 
-        $ds_checks_table->transform(function ($value) {
+        $data->transform(function ($value) {
             $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST-DATED';
             $value->done = empty($value->done) ? false : true;
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
@@ -70,7 +68,7 @@ class DsBounceTaggingService
             return $value;
         });
 
-        $getAmount = $ds_checks_table->where('done', true);
+        $getAmount = $data->where('done', true);
         $totalAmountActive = $getAmount->sum(fn ($item) => $item->check_amount);
 
         return Inertia::render('Ds&BounceTagging/DsTagging', [
@@ -79,8 +77,9 @@ class DsBounceTaggingService
                 'totalSum' => (float) $totalAmountActive,
                 'count' => $getAmount->count(),
             ],
-            'ds_c_table' => $ds_checks_table,
+            'data' => $data,
             'columns' => ColumnsHelper::$columns_ds_tagging,
+            'filters' => $request->only(['search']),
         ]);
     }
     public function get_bounce_tagging(Request $request)

@@ -1,8 +1,10 @@
 export function highlighten() {
 
-    const highlightText = (text, searchQuery) => {
-        if (!searchQuery) return text;
-        if (text != null) {
+    const highlightText = (textVar, searchQuery) => {
+        if (!searchQuery) return textVar;
+
+        if (textVar !== null) {
+            const text = textVar.toString();
             const regex = new RegExp(searchQuery, "gi");
             return text.replace(
                 regex,

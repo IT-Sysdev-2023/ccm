@@ -74,7 +74,6 @@ import { message } from "ant-design-vue";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
 import CheckModalDetail from "@/Components/CheckModalDetail.vue";
-// import highlightText from "@/Mixin/highlightText";
 import { highlighten } from "@/Mixin/highlighten.js";
 export default {
     layout: TreasuryLayout,
@@ -85,10 +84,7 @@ export default {
     },
     setup() {
         const { highlightText } = highlighten();
-
-        return {
-            highlightText
-        };
+        return { highlightText };
     },
     data() {
         return {

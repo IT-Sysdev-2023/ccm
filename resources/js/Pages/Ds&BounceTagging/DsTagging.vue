@@ -17,7 +17,6 @@
             </a-breadcrumb>
 
             <a-row :gutter="[16, 16]">
-
                 <a-col :span="4">
                     <p class="text-center mb-1 font-bold">check count</p>
                     <a-card style="width: 100%; height: 90px" class="mb-5">
@@ -32,7 +31,6 @@
                                                 display: flex;
                                                 justify-content: center;
                                             " />
-                                <!-- <a-avatar shape="square" size="large" src="../../../../public/icons/abacus.png" /> -->
                             </a-badge>
                             <p class="ml-10 font-bold">
                                 {{ total.count }}
@@ -83,7 +81,7 @@
                 <a-col :span="11">
                     <a-card style="width: 100%" class="mb-5 mt-5">
                         <div>
-                            <a-input-search v-model:value="query.search" block class="mb-5" placeholder="Search Checks"
+                            <a-input-search v-model:value="form.search" block class="mb-5" placeholder="Search Checks"
                                 :loading="isFetching" />
                         </div>
                         <a-row :gutter="[16, 16]" class="mt-2">
@@ -124,14 +122,20 @@
                     </a-card>
                 </a-col>
             </a-row>
-            <a-table :data-source="ds_c_table.data" :pagination="false" :columns="columns" size="small"
+            <a-table :data-source="data.data" :pagination="false" :columns="columns" size="small"
                 :scroll="{ x: 100, y: 470 }" class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
                     _record.type === 'POST-DATED'
                         ? 'POST-DATED'
                         : 'DATED'
                     ">
 
-                <template #bodyCell="{ column, record, index }">
+                <template #bodyCell="{ column, record }">
+                    <!-- <p style="color: red;">{{ column.dataIndex }}</p> -->
+                    <template v-if="column.dataIndex">
+                        <span v-html="highlightText(record[column.dataIndex], form.search)
+                            ">
+                        </span>
+                    </template>
                     <template v-if="column.key === 'select'">
                         <a-switch v-model:checked="record.done" @change="handleSwitchChange(record)" size="small">
                             <template #checkedChildren><check-outlined /></template>
@@ -141,7 +145,7 @@
                     </template>
                 </template>
             </a-table>
-            <pagination class="mt-6" :datarecords="ds_c_table" />
+            <pagination class="mt-6" :datarecords="data" />
         </div>
     </div>
 </template>
@@ -152,15 +156,19 @@ import { Head } from "@inertiajs/vue3";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import Pagination from "@/Components/Pagination.vue"
-import axios from "axios";
 import debounce from "lodash/debounce";
+import { highlighten } from "@/Mixin/highlighten.js";
 
 export default {
     layout: TreasuryLayout,
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
     data() {
         return {
-            query: {
-                search: '',
+            form: {
+                search: this.filters.search,
             },
             switchValues: [],
             countDs: 0,
@@ -178,25 +186,26 @@ export default {
     props: {
         pagination: Object,
         columns: Array,
-        ds_c_table: Object,
+        data: Object,
         type: Object,
         total: Object,
         due_dates: Number,
+        filters: Object,
     },
     computed: {},
     methods: {
         switchRecord() {
             window.alert('click');
-            this.switchValues = this.ds_c_table.data.map((value) =>
+            this.switchValues = this.data.data.map((value) =>
                 value.done === "" ? false : true
             );
         },
         async submitToConButton() {
             this.isLoadingbutton = true;
-            const selected = this.ds_c_table.data.filter((value) => value.done);
+            const selected = this.data.data.filter((value) => value.done);
 
             if (
-                !this.ds_c_table.data.some((value) => value.done === true) &&
+                !this.data.data.some((value) => value.done === true) &&
                 !this.dsNo &&
                 this.dateDeposit == null
             ) {
@@ -208,7 +217,7 @@ export default {
                     duration: 5,
                 });
             } else if (
-                !this.ds_c_table.data.some((value) => value.done === true) &&
+                !this.data.data.some((value) => value.done === true) &&
                 this.dsNo &&
                 this.dateDeposit == null
             ) {
@@ -220,7 +229,7 @@ export default {
                     duration: 5,
                 });
             } else if (
-                !this.ds_c_table.data.some((value) => value.done === true) &&
+                !this.data.data.some((value) => value.done === true) &&
                 !this.dsNo &&
                 this.dateDeposit != null
             ) {
@@ -232,7 +241,7 @@ export default {
                     duration: 5,
                 });
             } else if (
-                this.ds_c_table.data.some((value) => value.done === true) &&
+                this.data.data.some((value) => value.done === true) &&
                 !this.dsNo &&
                 this.dateDeposit == null
             ) {
@@ -240,7 +249,7 @@ export default {
                 this.isTooltipVisibleDt = true;
                 this.isTooltipVisibleNo = true;
             } else if (
-                this.ds_c_table.data.some((value) => value.done === true) &&
+                this.data.data.some((value) => value.done === true) &&
                 this.dsNo &&
                 this.dateDeposit == null
             ) {
@@ -248,7 +257,7 @@ export default {
                 this.isTooltipVisibleNo = false;
                 this.isLoadingbutton = false;
             } else if (
-                !this.ds_c_table.data.some((value) => value.done === true) &&
+                !this.data.data.some((value) => value.done === true) &&
                 this.dsNo &&
                 this.dateDeposit != null
             ) {
@@ -260,7 +269,7 @@ export default {
                     duration: 5,
                 });
             } else if (
-                this.ds_c_table.data.some((value) => value.done === true) &&
+                this.data.data.some((value) => value.done === true) &&
                 this.dsNo &&
                 this.dateDeposit !== null
             ) {
@@ -324,17 +333,17 @@ export default {
         },
     },
     created() {
-        this.switchValues = this.ds_c_table.data.map((value) =>
+        this.switchValues = this.data.data.map((value) =>
             value.done === "" ? false : true
         );
     },
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
                     this.$inertia.get(route("ds_tagging"), {
-                        searchQuery: this.query.search,
+                        search: this.form.search,
                     }, {
                         preserveState: true,
                         onSuccess: () => {
@@ -345,7 +354,7 @@ export default {
                         }
                     }
                     );
-            }, 600),
+            }, 500),
         },
     },
 };
