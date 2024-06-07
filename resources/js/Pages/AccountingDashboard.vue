@@ -6,54 +6,108 @@
             <a-col :span="17">
                 <a-row :gutter="[16, 16]">
                     <a-col :span="8">
-                        <div class="page">
+                        <div class="page ">
                             <div class="margin"></div>
-                            <p>Dated Checks</p>
-                            <p>100</p>
+                            <p class="mt-10">Checks</p>
+                            <!-- <br> -->
+                            <br>
+                            {{ checkCount.toLocaleString() }}
                         </div>
                     </a-col>
                     <a-col :span="8">
                         <div class="page">
                             <div class="margin"></div>
-                            <p>Dated Checks</p>
-                            <p>100</p>
+                            <p class="mt-10">Post Dated Checks</p>
+                            <br>
+                            {{ pdcCount.toLocaleString() }}
                         </div>
                     </a-col>
                     <a-col :span="8">
                         <div class="page">
                             <div class="margin"></div>
-                            <p>Dated Checks</p>
-                            <p>100</p>
+                            <p class="mt-10">Dated Checks </p>
+                            <br>
+                            <p>{{ datedCount.toLocaleString() }}</p>
                         </div>
                     </a-col>
                     <a-col :span="8">
                         <div class="page">
                             <div class="margin"></div>
-                            <p>Dated Checks</p>
-                            <p>100</p>
+                            <p class="mt-10">Deposited Count</p>
+                            <br>
+                            <p>{{ depositedCount.toLocaleString() }}</p>
                         </div>
                     </a-col>
                     <a-col :span="8">
                         <div class="page">
                             <div class="margin"></div>
-                            <p>Dated Checks</p>
-                            <p>100</p>
+                            <p class="mt-10">Dated Checks</p>
+                            <br>
+                            <p>{{ bouncedCount.toLocaleString() }}</p>
                         </div>
                     </a-col>
                     <a-col :span="8">
                         <div class="page">
                             <div class="margin"></div>
-                            <p>Dated Checks</p>
-                            <p>100</p>
+                            <p class="mt-10">Dated Checks</p>
+                            <br>
+                            <p>{{ replacementCount.toLocaleString() }}</p>
                         </div>
                     </a-col>
 
                 </a-row>
             </a-col>
             <a-col :span="7">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa dolor blanditiis non totam hic ducimus
-                recusandae asperiores perspiciatis, sit itaque rerum, commodi nemo eos maxime voluptate vitae explicabo
-                consequatur quae.
+                <a-card class="">
+                    <div class="flex mb-1">
+                        <p class="font-bold">
+                            <InfoCircleTwoTone class="mr-3" />
+                            If you have concerns please look for luisa -
+                            <PhoneOutlined /> 1815<br>
+                        </p>
+                    </div>
+                    <div class="flex mb-4">
+
+                        <p class="font-bold">
+                            <InfoCircleTwoTone class="mr-3" />
+                            Or contact this ip phones below !
+
+                        </p>
+                    </div>
+                    <a-timeline>
+                        <a-timeline-item  >
+                            <PhoneOutlined /> 1951
+                        </a-timeline-item>
+                        <a-timeline-item>
+                            <PhoneOutlined /> 1815
+                        </a-timeline-item>
+                        <a-timeline-item>
+                            <PhoneOutlined /> 1821
+                        </a-timeline-item>
+                        <a-timeline-item>
+                            <PhoneOutlined /> 1844
+                        </a-timeline-item>
+                        <a-timeline-item>
+                            <PhoneOutlined /> 1847
+                        </a-timeline-item>
+                        <a-timeline-item>
+                            <PhoneOutlined /> 1953
+                        </a-timeline-item>
+                        <a-timeline-item>
+                            <PhoneOutlined /> 1819
+                        </a-timeline-item>
+                        <a-timeline-item>
+                            <PhoneOutlined /> 1822
+                        </a-timeline-item>
+                        <a-timeline-item>
+                            <PhoneOutlined /> 1854
+                        </a-timeline-item>
+                        <a-timeline-item>
+                            <PhoneOutlined /> 1850
+                        </a-timeline-item>
+                    </a-timeline>
+
+                </a-card>
             </a-col>
         </a-row>
 
@@ -79,7 +133,6 @@ export default {
 <style scoped>
 .page {
     position: relative;
-    display: flex;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
@@ -131,11 +184,11 @@ export default {
     top: 0;
 }
 
-.page p {
+/* .page p {
     margin: 0;
     text-indent: 1rem;
     padding-bottom: 1.2rem;
     color: black;
     line-height: 20px;
-}
+} */
 </style>

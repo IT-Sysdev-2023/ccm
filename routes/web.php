@@ -41,6 +41,7 @@ Route::fallback(function () {
     return Inertia::render('NotFoundPage/NotFound', [
         'previousUrl' =>  $previousUrl
     ]);
+
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -153,6 +154,7 @@ Route::middleware('auth')->group(function () {
     //Transaction
     Route::prefix('transaction')->group(function () {
         Route::get('check/manual/entry', [AllTransactionController::class, 'getCheckManualEntry'])->name('manual_entry.checks');
+        Route::get('create/merge/checks', [AllTransactionController::class, 'createMergeChecks'])->name('create.merge.checks');
         Route::post('check/manual/entry/store', [AllTransactionController::class, 'checkManualEntryStore'])->name('manual_entry_store.checks');
         Route::get('merge/checks', [AllTransactionController::class, 'getMergeChecks'])->name('mergechecks.checks');
         Route::post('merge/checks/store', [AllTransactionController::class, 'getMergeCheckStore'])->name('mergecheckstore.checks');

@@ -14,50 +14,42 @@
                 <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
                 <a-breadcrumb-item>Merge Checks</a-breadcrumb-item>
             </a-breadcrumb>
-            <a-card>
-                <div class="flex justify-between">
-                    <a-button class="mb-3" @click="modalMergeChecks" style="width: 350px;" type="primary"
-                        :disabled="checkedRecords.length < 2">
-                        <template #icon>
-                            <PlusSquareOutlined />
-                        </template>
-                        Merge a checks
-                    </a-button>
 
-                    <a-input-search v-model:value="query.search" style="width: 400px;" placeholder="Search Checks"
-                        :loading="isFetching" />
-                </div>
-                <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
-                    :pagination="false">
-                    <template #bodyCell="{ column, record, index }">
-                        <template v-if="column.key === 'check_box'">
-                            <a-switch size="small" v-model:checked="record.isChecked"
-                                @change="merginCheckSwitch(record)">
-                                <template #checkedChildren><check-outlined /></template>
-                                <template #unCheckedChildren><close-outlined /></template>
-                            </a-switch>
-                        </template>
-                        <template v-if="column.key === 'action'">
-                            <a-button size="small" class="mx-2" @click="openUpDetails(record)">
-                                <template #icon>
-                                    <SettingOutlined />
-                                </template>
-                            </a-button>
-                        </template>
+            <div class="flex justify-between">
+                <a-button class="mb-3" @click="createMergeChecks(checkedRecords)" style="width: 350px;" type="primary"
+                    :disabled="checkedRecords.length < 2">
+                    <template #icon>
+                        <PlusSquareOutlined />
                     </template>
-                </a-table>
-                <pagination class="mt-6" :datarecords="data" />
-            </a-card>
+                    Merge a checks
+                </a-button>
+
+                <a-input-search v-model:value="query.search" style="width: 400px;" placeholder="Search Checks"
+                    :loading="isFetching" />
+            </div>
+            <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
+                :pagination="false">
+                <template #bodyCell="{ column, record, index }">
+                    <!-- {{ index }} -->
+                    <template v-if="column.key === 'check_box'">
+                        <a-switch v-model:checked="record.isChecked" @change="merginCheckSwitch">
+                            <template #checkedChildren><check-outlined /></template>
+                            <template #unCheckedChildren><close-outlined /></template>
+                        </a-switch>
+                    </template>
+                    <template v-if="column.key === 'action'">
+                        <a-button class="mx-2" @click="openUpDetails(record)">
+                            <template #icon>
+                                <SettingOutlined />
+                            </template>
+                        </a-button>
+                    </template>
+                </template>
+            </a-table>
+            <pagination class="mt-6" :datarecords="data" />
+
         </div>
     </div>
-    <MergeCheckModal v-model:open="openModal"
-        :currency="currency"
-        :category="category"
-        :check_class="check_class"
-        :checkAmount="checkAmount"
-        :penaltyProps="penalty"
-    />
-
     <CheckModalDetail v-model:open="openDetails" :datarecords="selectDataDetails"></CheckModalDetail>
 </template>
 
@@ -66,7 +58,6 @@
 import Pagination from "@/Components/Pagination.vue"
 import debounce from "lodash/debounce";
 import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-import MergeCheckModal from "@/Pages/Transaction/Modals/MergeCheckModal.vue"
 export default {
     layout: TreasuryLayout,
     data() {
@@ -81,7 +72,12 @@ export default {
             checkedRecords: [],
             openModal: false,
             checkAmount: 0,
-            penalty: 0
+            penalty: 0,
+            storedLocal: {},
+            isCheckLocal: null,
+            records: {
+                isChecked: null
+            }
 
         }
     },
@@ -92,6 +88,9 @@ export default {
         category: Object,
         check_class: Object,
     },
+    mounted() {
+
+    },
     methods: {
         openUpDetails(dataIn) {
             this.openDetails = true;
@@ -99,19 +98,17 @@ export default {
         },
         merginCheckSwitch() {
             this.checkedRecords = this.data.data.filter(record => record.isChecked);
-
-            return this.checkedRecords.length;
         },
-        modalMergeChecks() {
-            // console.log(this.checkedRecords)
-            this.checkAmount = this.checkedRecords.map(record => parseFloat(record.check_amount)).reduce((acc, subtotal) => { return acc + subtotal }, 0);
 
-            parseFloat(this.checkAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })
-            this.penalty = this.checkAmount * parseFloat(.02);
-            this.openModal = true;
-        },
+        createMergeChecks(data){
+            this.$inertia.get(route('create.merge.checks'), {
+                checkAmount: data.map(record => record.check_amount),
+                checkData: {...data}
+            })
+        }
 
     },
+
     watch: {
         query: {
             deep: true,
@@ -135,4 +132,3 @@ export default {
 
 }
 </script>
-

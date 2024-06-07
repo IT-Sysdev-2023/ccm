@@ -126,7 +126,7 @@ class AllTransactionController extends Controller
                 return $query;
             })
             ->whereColumn('check_date', '>', 'check_received')
-            ->paginate(500)->withQueryString();
+            ->paginate(10)->withQueryString();
 
         return Inertia::render('Transaction/MergeChecks', [
             'data' => $data,
@@ -136,8 +136,10 @@ class AllTransactionController extends Controller
             'check_class' => $check_class,
         ]);
     }
+    #MergeCheckStoreRequest
     public function getMergeCheckStore(MergeCheckStoreRequest $request)
     {
+        // dd($request->all());
         $request->validated();
 
         $checkType = '';
@@ -158,7 +160,7 @@ class AllTransactionController extends Controller
                 'check_no' => $request->checknumber,
                 'customer_id' => $request->customer,
                 'bank_id' => $request->bankname,
-                'department_from' => $request->check_from,
+                'department_from' => $request->checkfrom,
                 'currency_id' => $request->currency,
                 'check_date' => $request->checkdate,
                 'check_amount' => NumberHelper::float($request->checkamount),
@@ -179,9 +181,15 @@ class AllTransactionController extends Controller
                 'check_type' => $request->checkdate,
                 'user' => $request->user()->id,
                 'date_time' => today()->toDateString(),
+                'status' => '',
+                'ds_status' => '',
+                'receive_status' => '',
+                'done' => ''
             ]);
 
-            foreach ($request->checkedItems as $check) {
+
+
+            foreach ($request->isCheckProps as $check) {
 
                 $mergeCheckAmount = NumberHelper::float($request->checkamount);
 
@@ -209,7 +217,7 @@ class AllTransactionController extends Controller
             }
         });
 
-        return redirect()->route('mergechecks.checks');
+        return redirect()->back();
     }
     public function getBounceChecks(Request $request)
     {
@@ -1410,5 +1418,28 @@ class AllTransactionController extends Controller
         return (new TransactionService())
             ->record($data)
             ->writeResultDuePdc($dateRange, $buname);
+    }
+
+    public function createMergeChecks(Request $request)
+    {
+
+        $currency = Currency::orderBy('currency_name')->get();
+        $category = Checks::select('check_category')->where('check_category', '!=', '')->groupBy('check_category')->get();
+        $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
+
+        $checkAmount = array_sum($request->checkAmount);
+
+        $penaltyAmount =  $checkAmount * (float)0.02;
+
+        $checkData = $request->checkData;
+
+        return Inertia::render('Transaction/MergeCheckCreate/MergeCreate',[
+            'totalAmount' => $checkAmount,
+            'penaltyAmount' => $penaltyAmount,
+            'checkData' => $checkData,
+            'currency' => $currency,
+            'category' => $category,
+            'check_class'=> $check_class,
+        ]);
     }
 }
