@@ -34,46 +34,49 @@
                     to: '#87d068',
                 }" :percent="progressBar.percentage" status="active" />
             </div>
-            <div class="text-center mb-4 mt-4">
+            <div class="text-center mb-10 mt-4">
                 <h2>{{ buname.bname }}</h2>
             </div>
-            <a-card>
-                <div class="flex justify-between mb-10">
-                    <div>
-                        <a-range-picker @change="handleDateGenerate" v-model:value="dateRange" />
-                        <a-button class="ml-2" @click="startGenerating" type="primary" :loading="isLoading"
-                            :disabled="!data.data.length">
-                            <template #icon>
-                                <UploadOutlined />
-                            </template>
-                            {{
-                                isLoading
-                                    ? "Generating due post dated check report..."
-                                    : "Generate Due Post Dated Check Report Excel"
-                            }}
-                        </a-button>
-                    </div>
-                    <div>
-
-
-                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                            placeholder="Search Checks" :loading="isFetching" />
-
-                    </div>
-                </div>
-                <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false">
-                    <template #bodyCell="{ column, record }">
-                        <template v-if="column.key === 'details'">
-                            <a-button size="small" class="mx-1" @click="openUpDetails(record)">
-                                <template #icon>
-                                    <SettingOutlined />
-                                </template>
-                            </a-button>
+            <div class="flex justify-between mb-10">
+                <div>
+                    <a-range-picker @change="handleDateGenerate" v-model:value="form.dateRange" />
+                    <a-button class="ml-2" type="primary" :loading="isLoading"
+                        :disabled="!data.data.length">
+                        <template #icon>
+                            <UploadOutlined />
                         </template>
+                        {{
+                            isLoading
+                                ? "Generating due post dated check report..."
+                                : "Generate Due Post Dated Check Report Excel"
+                        }}
+                    </a-button>
+                </div>
+                <div>
+
+
+                    <a-input-search v-model:value="form.search" style="width: 350px;" class="mb-5"
+                        placeholder="Search Checks" :loading="isFetching" />
+
+                </div>
+            </div>
+            <a-table :data-source="data.data" :columns="columns" bordered size="small" :pagination="false">
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex">
+                        <span v-html="highlightText(record[column.dataIndex], form.search)
+                            ">
+                        </span>
                     </template>
-                </a-table>
-                <pagination class="mt-6" :datarecords="data" />
-            </a-card>
+                    <template v-if="column.key === 'details'">
+                        <a-button class="mx-1" @click="openUpDetails(record)">
+                            <template #icon>
+                                <SettingOutlined />
+                            </template>
+                        </a-button>
+                    </template>
+                </template>
+            </a-table>
+            <pagination class="mt-6 mb-10" :datarecords="data" />
         </div>
     </div>
 
@@ -87,26 +90,27 @@ import Pagination from "@/Components/Pagination.vue";
 import { InfoCircleTwoTone } from "@ant-design/icons-vue";
 import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 import debounce from "lodash/debounce";
+import { highlighten } from "@/Mixin/highlighten.js";
+
 export default {
     layout: TreasuryLayout,
     props: {
-        data: Array,
+        data: Object,
         columns: Array,
-        dateRangeValue: Object,
-        buname: Array,
+        buname: Object,
+        filters: Object
+
+    },
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
     },
     data() {
         return {
-            query: {
-                search: ''
+            form: {
+                search: this.filters.search,
+                dateRange: this.filters.date_from ? [dayjs(this.filters.date_from),  dayjs(this.filters.date_to)]: null,
             },
-            statusValue: this.status,
-            dateRange: this.dateRangeValue?.length > 0
-                ? [
-                    dayjs(this.dateRangeValue[0]),
-                    dayjs(this.dateRangeValue[1]),
-                ]
-                : null,
             isLoading: false,
             openDetails: false,
             selectDataDetails: [],
@@ -125,26 +129,14 @@ export default {
             this.openDetails = true;
             this.selectDataDetails = inData;
         },
-        handleDateGenerate(obj, str) {
-            this.$inertia.get(route("duePdcReports.checks"), {
-                date_from: str[0],
-                date_to: str[1],
-            });
-        },
+
         startGenerating() {
             this.isProgressShowing = true;
             this.isLoading = true;
-            this.$inertia.post(
-                route("generate_duepdcrep.checks"),
+            this.$inertia.post(route("generate_duepdcrep.checks"),
                 {
-                    date_from:
-                        this.dateRangeValue?.length > 0
-                            ? dayjs(this.dateRangeValue[0]).format("YYYY-MM-DD")
-                            : "",
-                    date_to:
-                        this.dateRangeValue?.length > 0
-                            ? dayjs(this.dateRangeValue[1]).format("YYYY-MM-DD")
-                            : "",
+                    date_from: this.filters.date_from ? dayjs(this.filters.date_from).format("YYYY-MM-DD") : null,
+                    date_to: this.filters.date_to ? dayjs(this.filters.date_to).format("YYYY-MM-DD") : null,
                 },
                 {
                     onFinish: () => {
@@ -162,20 +154,14 @@ export default {
             });
     },
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
                     this.$inertia.get(route("duePdcReports.checks"), {
-                        searchQuery: this.query.search,
-                        date_from:
-                            this.dateRangeValue?.length > 0
-                                ? dayjs(this.dateRangeValue[0]).format("YYYY-MM-DD")
-                                : "",
-                        date_to:
-                            this.dateRangeValue?.length > 0
-                                ? dayjs(this.dateRangeValue[1]).format("YYYY-MM-DD")
-                                : "",
+                        search: this.form.search,
+                        date_from: this.form.dateRange ? dayjs(this.form.dateRange[0]).format('YYYY-MM-DD') : null,
+                        date_to: this.form.dateRange ? dayjs(this.form.dateRange[1]).format('YYYY-MM-DD') : null,
                     }, {
                         preserveState: true,
                         onSuccess: () => {

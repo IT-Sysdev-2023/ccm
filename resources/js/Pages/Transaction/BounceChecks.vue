@@ -13,36 +13,33 @@
                 <a-breadcrumb-item>Trasactions</a-breadcrumb-item>
                 <a-breadcrumb-item>Bounced Checks </a-breadcrumb-item>
             </a-breadcrumb>
-            <a-card>
-                <div class="flex justify-end">
-                    <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                        placeholder="Search Checks" :loading="isFetching" />
-                </div>
-                <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
-                    :pagination="false">
-                    <template #bodyCell="{ column, record, index }">
-                        <template v-if="column.key === 'check_box'">
-                            <a-switch size="small" v-model:checked="record.isChecked" @change="computedAmount(record)">
-                                <template #checkedChildren><check-outlined /></template>
-                                <template #unCheckedChildren><close-outlined /></template>
-                            </a-switch>
-                        </template>
-                        <template v-if="column.key === 'action'">
-                            <a-button size="small" class="" @click="openUpDetails(record)">
-                                <template #icon>
-                                    <SettingOutlined />
-                                </template>
-                            </a-button>
-                            <a-button size="small" class="mx-1" @click="openUpDetailsFolder(record)">
-                                <template #icon>
-                                    <AuditOutlined />
-                                </template>
-                            </a-button>
-                        </template>
+            <div class="flex justify-end">
+                <a-input-search v-model:value="form.search" style="width: 350px;" class="mb-5"
+                    placeholder="Search Checks" :loading="isFetching" />
+            </div>
+            <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
+                :pagination="false">
+                <template #bodyCell="{ column, record, index }">
+                    <template v-if="column.dataIndex">
+                        <span v-html="highlightText(record[column.dataIndex], form.search)
+                            ">
+                        </span>
                     </template>
-                </a-table>
-                <pagination class="mt-6" :datarecords="data" />
-            </a-card>
+                    <template v-if="column.key === 'action'">
+                        <a-button class="" @click="openUpDetails(record)">
+                            <template #icon>
+                                <SettingOutlined />
+                            </template>
+                        </a-button>
+                        <a-button class="mx-1" @click="openUpDetailsFolder(record)">
+                            <template #icon>
+                                <AuditOutlined />
+                            </template>
+                        </a-button>
+                    </template>
+                </template>
+            </a-table>
+            <pagination class="mt-6" :datarecords="data" />
         </div>
     </div>
     <a-modal v-model:open="openModalReplace" title="Replacement Checks Configuration" :footer="null"
@@ -218,13 +215,13 @@
                         <a-row :gutter="[16, 16]">
                             <a-col :span="12">
                                 <a-button block class="mb-10 mt-5" @click="() =>
-                                        cash_form.reset(
-                                            'rep_cash_penalty',
-                                            'rep_ar_ds',
-                                            'repDatePicker',
-                                            'rep_date',
-                                            'rep_reason'
-                                        )
+                                    cash_form.reset(
+                                        'rep_cash_penalty',
+                                        'rep_ar_ds',
+                                        'repDatePicker',
+                                        'rep_date',
+                                        'rep_reason'
+                                    )
                                     " type="primary" danger>
                                     <template #icon>
                                         <ClearOutlined />
@@ -1217,13 +1214,13 @@
                         <a-row :gutter="[16, 16]">
                             <a-col :span="12">
                                 <a-button block class="mb-10 mt-5" @click="() =>
-                                        re_deposit_form.reset(
-                                            'rep_penalty',
-                                            'rep_ar_ds',
-                                            'repDatePicker',
-                                            'rep_date',
-                                            'rep_reason'
-                                        )
+                                    re_deposit_form.reset(
+                                        'rep_penalty',
+                                        'rep_ar_ds',
+                                        'repDatePicker',
+                                        'rep_date',
+                                        'rep_reason'
+                                    )
                                     " type="primary" danger>
                                     <template #icon>
                                         <ClearOutlined />
@@ -1870,6 +1867,7 @@ import { useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import debounce from "lodash/debounce";
 import { message } from "ant-design-vue";
+import { highlighten } from "@/Mixin/highlighten.js";
 export default {
     layout: TreasuryLayout,
     props: {
@@ -1879,9 +1877,13 @@ export default {
         check_class: Object,
         category: Object,
     },
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
     data() {
         return {
-            query: {
+            form: {
                 search: ''
             },
             isFetching: false,
@@ -2329,12 +2331,12 @@ export default {
         }, 1000),
     },
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
                     this.$inertia.get(route("bounce.checks"), {
-                        searchQuery: this.query.search,
+                        search: this.form.search,
                     }, {
                         preserveState: true,
                         onSuccess: () => {

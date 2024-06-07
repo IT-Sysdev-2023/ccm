@@ -24,7 +24,7 @@
                     Merge a checks
                 </a-button>
 
-                <a-input-search v-model:value="query.search" style="width: 400px;" placeholder="Search Checks"
+                <a-input-search v-model:value="form.search" style="width: 400px;" placeholder="Search Checks"
                     :loading="isFetching" />
             </div>
             <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
@@ -62,8 +62,8 @@ export default {
     layout: TreasuryLayout,
     data() {
         return {
-            query: {
-                search: '',
+            form: {
+                search: this.filters.search,
             },
             isFetching: false,
             isLoadingTable: false,
@@ -87,6 +87,7 @@ export default {
         currency: Object,
         category: Object,
         check_class: Object,
+        filters: Object,
     },
     mounted() {
 
@@ -110,12 +111,12 @@ export default {
     },
 
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
                     this.$inertia.get(route("mergechecks.checks"), {
-                        searchQuery: this.query.search,
+                        search: this.form.search,
                     }, {
                         preserveState: true,
                         onSuccess: () => {

@@ -134,6 +134,7 @@ class AllTransactionController extends Controller
             'currency' => $currency,
             'category' => $category,
             'check_class' => $check_class,
+            'filters' => $request->only(['search'])
         ]);
     }
     #MergeCheckStoreRequest
@@ -230,12 +231,12 @@ class AllTransactionController extends Controller
             ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('new_bounce_check.status', '=', '')
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
-                return $query;
-            })
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname',
+
+            ], 'LIKE', '%' . $request->search . '%')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->select('new_bounce_check.*', 'new_bounce_check.id as bounceId', 'checks.*', 'customers.*', 'banks.bankbranchname', 'department.department')
             ->paginate(10)->withQueryString();
@@ -554,12 +555,11 @@ class AllTransactionController extends Controller
             ->join('users', 'users.id', '=', 'new_check_replacement.user')
             ->where('new_check_replacement.status', '!=', '')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
-                return $query;
-            })
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname'
+            ], 'like', '%' . $request->search . '%')
             ->orderBy('new_check_replacement.id', 'desc')
             ->select('*', 'new_check_replacement.date_time');
 
@@ -825,13 +825,11 @@ class AllTransactionController extends Controller
             ->where('checks.check_status', 'PARTIAL')
             ->where('new_check_replacement.mode', 'PARTIAL')
             ->select('checks.*', 'customers.*', 'new_check_replacement.status', 'new_check_replacement.*', 'banks.bankbranchname', 'department.department')
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
-                return $query;
-            })
-            // ->groupBy('new_check_replacement.checks_id')
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname'
+            ], 'LIKE', '%' . $request->search . '%')
             ->paginate(10)->withQueryString();
 
         $data->transform(function ($value) {
@@ -859,14 +857,13 @@ class AllTransactionController extends Controller
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             return $value;
         });
-        // dd(1);
-
         return Inertia::render('Transaction/PartialPayments', [
             'data' => $data,
             'columns' => ColumnsHelper::$partial_payment_columns,
             'currency' => $currency,
             'category' => $category,
             'check_class' => $check_class,
+            'filters' => $request->only(['search']),
 
         ]);
     }
@@ -1335,38 +1332,49 @@ class AllTransactionController extends Controller
     }
     public function getDatedPdcReports(Request $request)
     {
+
         $data = NewSavedChecks::filter($request->only(['status']), $request->user()->businessunit_id)
-            ->select('*', 'checks.check_type as check-type', 'new_saved_checks.check_type as new_check_type')
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
-                return $query;
-            })
+            ->select(
+                'checks.check_no',
+                'checks.checks_id',
+                'checks.check_category',
+                'checks.check_class',
+                'checks.check_date',
+                'checks.check_received',
+                'customers.fullname',
+                'checks.check_amount',
+                'department.department',
+                'checks.approving_officer',
+                'checks.account_no',
+                'checks.account_name',
+                'checks.check_type',
+                'banks.bankbranchname',
+                'checks.check_status'
+            )
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname'
+            ], 'LIKE', '%' . $request->search . '%')
             ->whereBetween('checks.check_received', [$request->date_from, $request->date_to])
             ->paginate(10)->withQueryString();
 
-        $data->transform(function ($value) use ($request) {
-            $typeStatus = '';
 
-            if ($value->new_check_type <= today()) {
-                $typeStatus = 'DATED';
-            } else {
-                $typeStatus = 'POST DATED';
-            }
-
-            $value->status = $typeStatus;
-
+        $data->transform(function ($value) {
+            $value->typeStatus = $value->new_check_type <= today() ? 'DATED' : 'POST DATED';
             return $value;
         });
-        // dd((!empty($request->date_from) && !empty($request->date_to)) ? [$request->date_from, $request->date_to] : '', );
 
         return Inertia::render('Transaction/DatedCheckPdcReports', [
-            'filters' => $request->all('date_from', 'date_to', 'status'),
             'data' => $data,
             'columns' => ColumnsHelper::$datedpdcreportcheck_columns,
-            'status' => $request->status,
-            'dateRangeValue' => (!empty($request->date_from) && !empty($request->date_to)) ? [$request->date_from, $request->date_to] : '',
+            'filters' => $request->only([
+                'search',
+                'status',
+                'date_from',
+                'date_to',
+            ])
+
         ]);
     }
     public function generate_report(Request $request)
@@ -1392,18 +1400,17 @@ class AllTransactionController extends Controller
         $buname = BusinessUnit::where('businessunit_id', $request->user()->businessunit_id)->first();
 
         $data = NewSavedChecks::filterDPdcReports($dateRange, $request->user()->businessunit_id)
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
-                return $query;
-            })
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname'
+            ], 'LIKE', '%' . $request->search . '%')
             ->paginate(10)->withQueryString();
 
         return Inertia::render('Transaction/DuePostDatedCheckReport', [
             'data' => $data,
             'columns' => ColumnsHelper::$due_pdc_reports_columns,
-            'dateRangeValue' => $dateRange[0] === null ? null : $dateRange,
+            'filters' => $request->only(['search', 'date_from', 'date_to']),
             'buname' => $buname,
         ]);
     }
@@ -1433,13 +1440,13 @@ class AllTransactionController extends Controller
 
         $checkData = $request->checkData;
 
-        return Inertia::render('Transaction/MergeCheckCreate/MergeCreate',[
+        return Inertia::render('Transaction/MergeCheckCreate/MergeCreate', [
             'totalAmount' => $checkAmount,
             'penaltyAmount' => $penaltyAmount,
             'checkData' => $checkData,
             'currency' => $currency,
             'category' => $category,
-            'check_class'=> $check_class,
+            'check_class' => $check_class,
         ]);
     }
 }

@@ -9,46 +9,47 @@
                 <a-breadcrumb-item><a href="">Transaction </a></a-breadcrumb-item>
                 <a-breadcrumb-item>Partial Payments</a-breadcrumb-item>
             </a-breadcrumb>
-            <a-card>
-                <div class="flex justify-end">
-                    <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                        placeholder="Search Checks" :loading="isFetching" />
-                </div>
-                <a-table :data-source="data.data" :pagination="false" :columns="columns" size="small" bordered>
-                    <template #bodyCell="{ column, record }">
-                        <template v-if="column.key === 'action'">
-                            <a-button size="small" class="mx-1" @click="openUpDetails(record)">
-                                <template #icon>
-                                    <SettingOutlined />
-                                </template>
-                            </a-button>
-                            <a-button size="small" class="mx-1" @click="partialPaymentNotNull(record)"
-                                v-if="record.bounce_id != 0">
-                                <template #icon>
-                                    <IdcardOutlined />
-                                </template>
-                            </a-button>
-                            <a-button size="small" class="mx-1" @click="partialPaymentNull(record)" v-else>
-                                <template #icon>
-                                    <IdcardFilled />
-                                </template>
-                            </a-button>
-                            <a-button v-if="record.bounce_id != 0" size="small" class="mx-1"
-                                @click="partialPaymentCheckNotNull(record)">
-                                <template #icon>
-                                    <CreditCardFilled />
-                                </template>
-                            </a-button>
-                            <a-button v-else size="small" class="mx-1" @click="partialPaymentCheckNull(record)">
-                                <template #icon>
-                                    <CreditCardFilled />
-                                </template>
-                            </a-button>
-                        </template>
+            <div class="flex justify-end">
+                <a-input-search v-model:value="form.search" style="width: 350px;" class="mb-5"
+                    placeholder="Search Checks" :loading="isFetching" />
+            </div>
+            <a-table :data-source="data.data" :pagination="false" :columns="columns" size="small" bordered>
+                <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex">
+                        <span v-html="highlightText(record[column.dataIndex], form.search)
+                            ">
+                        </span>
                     </template>
-                </a-table>
-                <pagination class="mt-6" :datarecords="data"></pagination>
-            </a-card>
+                    <template v-if="column.key === 'action'">
+                        <a-button class="mx-1" @click="openUpDetails(record)">
+                            <template #icon>
+                                <SettingOutlined />
+                            </template>
+                        </a-button>
+                        <a-button class="mx-1" @click="partialPaymentNotNull(record)" v-if="record.bounce_id != 0">
+                            <template #icon>
+                                <IdcardOutlined />
+                            </template>
+                        </a-button>
+                        <a-button class="mx-1" @click="partialPaymentNull(record)" v-else>
+                            <template #icon>
+                                <IdcardFilled />
+                            </template>
+                        </a-button>
+                        <a-button v-if="record.bounce_id != 0" class="mx-1" @click="partialPaymentCheckNotNull(record)">
+                            <template #icon>
+                                <CreditCardFilled />
+                            </template>
+                        </a-button>
+                        <a-button v-else class="mx-1" @click="partialPaymentCheckNull(record)">
+                            <template #icon>
+                                <CreditCardFilled />
+                            </template>
+                        </a-button>
+                    </template>
+                </template>
+            </a-table>
+            <pagination class="mt-6 mb-6" :datarecords="data"></pagination>
         </div>
     </div>
     <a-modal v-model:open="openModalPPayment" title="Partial payment modal" width="100%" style="top: 10px"
@@ -637,7 +638,6 @@
             </a-col>
         </a-row>
     </a-modal>
-
     <CheckModalDetail v-model:open="openDetails" :datarecords="selectDataDetails"></CheckModalDetail>
 </template>
 
@@ -649,19 +649,28 @@ import { useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
 import debounce from "lodash/debounce";
+import { highlighten } from "@/Mixin/highlighten.js";
+
 export default {
     layout: TreasuryLayout,
+
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
+
     props: {
         data: Object,
         columns: Array,
         currency: Object,
         check_class: Object,
         category: Object,
+        filters: Object,
     },
     data() {
         return {
-            query: {
-                start: '',
+            form: {
+                search: this.filters.search,
             },
             isFetching: false,
             openModalPPayment: false,
@@ -1110,12 +1119,12 @@ export default {
         }, 1000),
     },
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
                     this.$inertia.get(route("partial_payments.checks"), {
-                        searchQuery: this.query.search,
+                        search: this.form.search,
                     }, {
                         preserveState: true,
                         onSuccess: () => {

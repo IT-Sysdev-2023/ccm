@@ -656,8 +656,8 @@ class ColumnsHelper
         ],
         [
             'title' => 'Status',
-            'key' => 'status',
-            'dataIndex' => 'status',
+            'key' => 'typeStatus',
+            'dataIndex' => 'typeStatus',
         ],
         [
             'title' => 'Details',
