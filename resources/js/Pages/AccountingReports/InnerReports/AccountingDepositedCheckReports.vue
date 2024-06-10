@@ -51,27 +51,30 @@
                             <a-breadcrumb-item>Select Date</a-breadcrumb-item>
                         </a-breadcrumb>
 
-                        <a-range-picker v-model:value="dateValue" @change="handleChangeDateRange" class="mb-2"
-                            style="width: 350px;" />
+                        <a-range-picker v-model:value="form.dateRange" class="mb-2" style="width: 350px;" />
                     </div>
                     <div class="mt-5">
-                        <a-button class="mr-1" type="primary" @click="startGeneratingDepositedChecks" :loading="isLoading"
-                            :disabled="data.data.length <= 0">
+                        <a-button class="mr-1" type="primary" @click="startGeneratingDepositedChecks"
+                            :loading="isLoading" :disabled="data.data.length <= 0">
                             <template #icon>
                                 <CloudDownloadOutlined />
                             </template>
                             {{
                                 !isLoading ?
-                                    'Generate deposited checks reports' : 'Generating deposit inprogress...'
+                                    'Generate deposited checks reports' : 'Generating Deposit Reports In Progress...'
                             }}
                         </a-button>
-                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                        placeholder="Search Checks" :loading="isFetching" />
+                        <a-input-search v-model:value="form.search" style="width: 350px;" class="mb-5"
+                            placeholder="Search Checks" :loading="isFetching" />
                     </div>
                 </div>
 
                 <a-table :data-source="data.data" :columns="columns" size="small" :pagination="false" bordered>
                     <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex">
+                            <span v-html="highlightText(record[column.dataIndex], form.search)">
+                            </span>
+                        </template>
                         <template v-if="column.key === 'details'">
                             <a-button size="small" @click="details(record)" :loading="isLoadingBtn">
                                 <template #icon>
@@ -89,6 +92,7 @@
     <a-modal v-model:open="isOpenModal" title="Basic Modal" style="width: 900px;" :footer="false">
         <a-table :data-source="selectDataDetails" :columns="selectedColumns" size="small" bordered>
             <template #bodyCell="{ column, record }">
+
                 <template v-if="column.key === 'details'">
                     <a-button size="small" @click="detailsSelected(record)">
                         <template #icon>
@@ -108,6 +112,7 @@
 import dayjs from 'dayjs';
 import debounce from "lodash/debounce";
 import AccountingLayout from '@/Layouts/AccountingLayout.vue';
+import { highlighten } from "@/Mixin/highlighten.js";
 export default {
     layout: AccountingLayout,
     props: {
@@ -115,11 +120,20 @@ export default {
         columns: Array,
         dateRangeBackend: Object,
         bunit: Object,
+        filters: Object
     },
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
+
     data() {
         return {
-            query: {
-                search: ''
+            form: {
+                search: this.filters.search,
+                dateRange: this.filters.dateRange ? [
+                    dayjs(this.filters.dateRange[0]),
+                    dayjs(this.filters.dateRange[1])] : null,
             },
             isOpenModal: false,
             selectDataDetails: [],
@@ -128,7 +142,6 @@ export default {
             isLoading: false,
             isFetching: false,
             selectedIsOpen: false,
-            dateValue: this.dateRangeBackend ? [this.dateRangeBackend[0] ? dayjs(this.dateRangeBackend[0]) : null, this.dateRangeBackend[1] ? dayjs(this.dateRangeBackend[1]) : null] : null,
             progressBar: {
                 currentRow: 0,
                 percentage: 0,
@@ -211,31 +224,27 @@ export default {
                     console.error('Error fetching image details:', error);
                 });
         },
-        handleChangeDateRange(dateObject, datestr) {
-            this.$inertia.get(route('deposited.reports.accounting'), {
-                dateFrom: datestr[0],
-                dateTo: datestr[1],
-            });
-        },
+
         startGeneratingDepositedChecks() {
             this.isLoading = true;
             this.isProgressing = true;
             this.$inertia.get(route('start.generate.rep,deposited.accouting'), {
-                dateFrom: dayjs(this.dateValue[0]).format('YYYY-MM-DD'),
-                dateTo: dayjs(this.dateValue[1]).format('YYYY-MM-DD'),
+                dateRange: this.filters.dateRange ? [
+                    dayjs(this.filters.dateRange[0]).format('YYYY-MM-DD'),
+                    dayjs(this.filters.dateRange[1]).format('YYYY-MM-DD')] : null
             });
         }
     },
     watch: {
-
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
                     this.$inertia.get(route("deposited.reports.accounting"), {
-                        searchQuery: this.query.search,
-                        dateFrom: dayjs(this.dateValue[0]).format('YYYY-MM-DD'),
-                        dateTo: dayjs(this.dateValue[1]).format('YYYY-MM-DD'),
+                        search: this.form.search,
+                        dateRange: this.form.dateRange ? [
+                            dayjs(this.form.dateRange[0]).format('YYYY-MM-DD'),
+                            dayjs(this.form.dateRange[1]).format('YYYY-MM-DD')] : null
                     }, {
                         preserveState: true,
                         onSuccess: () => {
