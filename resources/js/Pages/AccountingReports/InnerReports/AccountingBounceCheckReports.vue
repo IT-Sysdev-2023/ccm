@@ -45,8 +45,7 @@
                                 </a-breadcrumb-item>
                                 <a-breadcrumb-item>Select Date Range</a-breadcrumb-item>
                             </a-breadcrumb>
-                            <a-range-picker class="mr-1" v-model:value="fetch.dateRange"
-                                @change="handleChangeDateRange" />
+                            <a-range-picker class="mr-1" v-model:value="form.dateRange" />
                         </div>
                         <div>
                             <a-breadcrumb>
@@ -55,9 +54,8 @@
                                 </a-breadcrumb-item>
                                 <a-breadcrumb-item>Select Status</a-breadcrumb-item>
                             </a-breadcrumb>
-                            <a-select placeholder="Select Status" v-model:value="fetch.dataStatus"
-                                @change="handleChangeDataStatus" style="width: 210px" :loading="isFetching"
-                                :disabled="isFetching">
+                            <a-select placeholder="Select Status" v-model:value="form.dataStatus" style="width: 210px"
+                                :loading="isFetching" :disabled="isFetching">
                                 <a-select-option value="0">View All</a-select-option>
                                 <a-select-option value="1">Pending Deposit Cheques</a-select-option>
                                 <a-select-option value="2">Settled Cheques</a-select-option>
@@ -74,13 +72,18 @@
                                 isLoading ? 'Generating Cheques in Progress..' : 'Generate Bounce Cheques Reports'
                             }}
                         </a-button>
-                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
-                        placeholder="Search Checks" :loading="isFetching" />
+                        <a-input-search v-model:value="form.search" style="width: 350px;" class="mb-5"
+                            placeholder="Search Checks" :loading="isFetching" />
                     </div>
                 </div>
                 <a-table class="mt-10" :data-source="data.data" :columns="columns" size="small" bordered
                     :pagination="false">
                     <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex">
+                            <span v-html="highlightText(record[column.dataIndex], form.search)
+                                ">
+                            </span>
+                        </template>
                         <template v-if="column.key === 'details'">
                             <a-button size="small" @click="details(record)">
                                 <template #icon>
@@ -101,27 +104,34 @@
 import debounce from "lodash/debounce";
 import dayjs from 'dayjs';
 import AccountingLayout from '@/Layouts/AccountingLayout.vue';
+import { highlighten } from "@/Mixin/highlighten.js";
 export default {
     layout: AccountingLayout,
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
     props: {
         data: Object,
         bunit: Object,
         columns: Array,
         dateRangeBackend: Array,
         dataSatusBackend: Number,
+        filters: Object
     },
     data() {
         return {
-            query: {
-                search: '',
+            form: {
+                search: this.filters.search,
+                dateRange: this.filters.dateRange ? [
+                    dayjs(this.filters.dateRange[0]), dayjs(this.filters.dateRange[1])] : null,
+                dataStatus: this.filters.status
+
             },
             isGeneratingShow: false,
             isLoading: false,
             isFetching: false,
-            fetch: {
-                dataStatus: this.dataSatusBackend,
-                dateRange: this.dateRangeBackend ? [this.dateRangeBackend[0] ? dayjs(this.dateRangeBackend[0]) : null, this.dateRangeBackend[1] ? dayjs(this.dateRangeBackend[1]) : null] : null,
-            },
+
             isOpenModal: false,
             selectedDataDetails: [],
             progressBar: {
@@ -138,29 +148,12 @@ export default {
             this.isOpenModal = true;
             this.selectDataDetails = data;
         },
-
-        handleChangeDateRange(dateobj, dateStr) {
-            this.isFetching = true,
-                this.$inertia.get(route('bounce.checks.accounting'), {
-                    dateFrom: dateStr[0],
-                    dateTo: dateStr[1],
-                });
-        },
-        handleChangeDataStatus() {
-            this.isFetching = true;
-            this.$inertia.get(route('bounce.checks.accounting'), {
-                bounceStatus: this.fetch.dataStatus,
-                dateFrom: this.dateRangeBackend[0],
-                dateTo: this.dateRangeBackend[1],
-            });
-        },
         startGeneratingExcel() {
             this.isLoading = true;
             this.isGeneratingShow = true;
             this.$inertia.get(route('start.bounce.accounting'), {
-                bounceStatus: this.dataSatusBackend,
-                dateFrom: this.dateRangeBackend[0],
-                dateTo: this.dateRangeBackend[1],
+                status: this.filters.status,
+                dateRange: this.filters.dateRange ? [dayjs(this.filters.dateRange[0]).format('YYYY-MM-DD'), dayjs(this.filters.dateRange[1]).format('YYYY-MM-DD')] : null,
             });
         }
     },
@@ -172,16 +165,16 @@ export default {
             });
     },
     watch: {
-
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
                     this.$inertia.get(route("bounce.checks.accounting"), {
-                        searchQuery: this.query.search,
-                        bounceStatus: this.dataSatusBackend,
-                        dateFrom: this.dateRangeBackend[0],
-                        dateTo: this.dateRangeBackend[1],
+                        search: this.form.search,
+                        status: this.form.dataStatus,
+                        dateRange: this.form.dateRange ? [
+                            dayjs(this.form.dateRange[0]).format('YYYY-DD-MM'),
+                            dayjs(this.form.dateRange[1]).format('YYYY-DD-MM')] : null,
                     }, {
                         preserveState: true,
                         onSuccess: () => {
