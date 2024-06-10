@@ -21,7 +21,7 @@ trait ChecksTraits
 
     public function scopeWhereCheckNo(Builder $builder, $filter): Builder
     {
-        return $builder->where('check_no', 'like', '%' . $filter . '%');
+        return $builder->whereAny(['check_no', 'check_amount', 'customers.fullname'], 'like', '%' . $filter . '%');
     }
 
     public function scopeWhereDateChecks($query, $date): Builder

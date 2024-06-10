@@ -25,15 +25,15 @@ class CheckReceivingController extends Controller
             ->orderBy('check_date', 'ASC')->get();
 
         $q = Checks::joinCheckRecCustomerDepartmentBanks()
-            ->whereDateChecks($request->generate_date)
-            ->whereCheckNo($request->searchQuery)
+            ->whereDateChecks($request->date)
+            ->whereCheckNo($request->search)
             ->whereDateTimeNotZero()
             ->whereColumn('check_date', '<=', 'check_received')
             ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
             ->orderBy('check_date', 'ASC');
 
 
-        $q = match ($request->check_status) {
+        $q = match ($request->status) {
             'CLEARED' => $q->where('check_status', 'CLEARED'),
             'PENDING' => $q->where('check_status', 'PENDING'),
             'CASH' => $q->where('check_status', 'CASH'),
@@ -47,9 +47,11 @@ class CheckReceivingController extends Controller
         return Inertia::render('CheckReceiving/CheckForClearing', [
             'data' => $data,
             'columns' => ColumnsHelper::$check_for_clearing_columns,
-            'date' => $request->generate_date ?? now(),
-            'value' => $request->check_status,
-            'search' => $request->searchQuery,
+            'filters' => $request->only([
+                'search',
+                'date',
+                'status'
+            ]),
             'dataFn' => $dataChecksFn,
         ]);
     }
