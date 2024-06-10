@@ -58,6 +58,9 @@
                 </a-row>
             </a-col>
             <a-col :span="7">
+                <p id="MyClockDisplay" class="clock text-end mb-5">
+                    {{ currentTime }}
+                </p>
                 <a-card class="">
                     <div class="flex mb-1">
                         <p class="font-bold">
@@ -75,7 +78,7 @@
                         </p>
                     </div>
                     <a-timeline>
-                        <a-timeline-item  >
+                        <a-timeline-item>
                             <PhoneOutlined /> 1951
                         </a-timeline-item>
                         <a-timeline-item>
@@ -126,11 +129,55 @@ export default {
         depositedCount: Number,
         bouncedCount: Number,
         replacementCount: Number,
+    },
+    data() {
+        return {
+            currentTime: "",
+        }
+    },
+    methods: {
+        showTime() {
+            var date = new Date();
+            var h = date.getHours(); // 0 - 23
+            var m = date.getMinutes(); // 0 - 59
+            var s = date.getSeconds(); // 0 - 59
+            var session = "AM";
+
+            if (h == 0) {
+                h = 12;
+            }
+
+            if (h > 12) {
+                h = h - 12;
+                session = "PM";
+            }
+
+            h = h < 10 ? "0" + h : h;
+            m = m < 10 ? "0" + m : m;
+            s = s < 10 ? "0" + s : s;
+
+            var time = h + ":" + m + ":" + s + " " + session;
+            this.currentTime = time;
+
+            setTimeout(this.showTime, 1000);
+        },
+    },
+    mounted() {
+        this.showTime()
     }
 }
 </script>
 
 <style scoped>
+.clock {
+    color: #707070;
+    font-size: 25px;
+    font-family: "Chakra Petch", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 4px;
+}
+
 .page {
     position: relative;
     justify-content: center;

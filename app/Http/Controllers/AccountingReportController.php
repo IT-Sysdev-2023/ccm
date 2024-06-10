@@ -263,7 +263,6 @@ class AccountingReportController extends Controller
                 ->whereFilter($request->search)
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->paginate(10)->withQueryString();
-            // dd(2);
 
         } elseif ($request->dateRange == null && $request->status == "1") {
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
