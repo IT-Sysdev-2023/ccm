@@ -86,7 +86,7 @@
                         </div>
                         <a-row :gutter="[16, 16]" class="mt-2">
                             <a-col :span="8">
-                                <a-tooltip :color="colors" :open="isTooltipVisibleNo" title="Ds Number is required">
+                                <a-tooltip :open="isTooltipVisibleNo" title="Ds Number is required">
                                     <a-input placeholder="Ds Number" v-model:value="dsNo">
 
                                         <template #suffix>
@@ -105,7 +105,7 @@
                                 </a-tooltip>
                             </a-col>
                             <a-col :span="8">
-                                <a-tooltip :color="colors" :open="isTooltipVisibleDt" title="Return Date is required ">
+                                <a-tooltip  :open="isTooltipVisibleDt" title="Return Date is required ">
                                     <a-date-picker v-model:value="dateDeposit" style="width: 100%" />
                                 </a-tooltip>
                             </a-col>
@@ -170,7 +170,6 @@ export default {
             form: {
                 search: this.filters.search,
             },
-            switchValues: [],
             countDs: 0,
             totalAmount: 0,
             dataAmount: [],
@@ -194,12 +193,6 @@ export default {
     },
     computed: {},
     methods: {
-        switchRecord() {
-            window.alert('click');
-            this.switchValues = this.data.data.map((value) =>
-                value.done === "" ? false : true
-            );
-        },
         async submitToConButton() {
             this.isLoadingbutton = true;
             const selected = this.data.data.filter((value) => value.done);
@@ -311,32 +304,19 @@ export default {
                 oldCount: this.defaultTotal.count,
             }, {
                 onSuccess: () => {
-                    if (data.done) {
-                        setTimeout(() => {
-                            message.success({
-                                content: "Checked Successfully!",
-                                key,
-                                duration: 2,
-                            });
-                        }, 100);
-                    } else {
-                        setTimeout(() => {
-                            message.warning({
-                                content: "Uncheck Successfully!",
-                                key,
-                                duration: 2,
-                            });
-                        }, 100);
-                    }
-                }
+                    data.done ? message.success('Check Successfully') : message.info('UnCheck Successfully');
+                },
+                preserveState: true,
+                preserveScroll: true,
             });
         },
     },
-    created() {
-        this.switchValues = this.data.data.map((value) =>
-            value.done === "" ? false : true
-        );
-    },
+    // created() {
+    //     this.switchValues = this.data.data.map((value) =>
+    //         value.done === "" ? false : true
+    //     );
+    //     console.log(this.switchValues)
+    // },
     watch: {
         form: {
             deep: true,

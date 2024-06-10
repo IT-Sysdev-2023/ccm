@@ -13,10 +13,10 @@
             <a-card>
                 <div class="flex justify-between">
                     <div>
-                        <a-date-picker v-model:value="generateDate" class="mb-3 text-center" style="width: 150px"
-                            @change="handleGenerateTable" />
-                        <a-select ref="select" class="mx-2 text-center" v-model:value="checkStatus"
-                            placeholder="Legend Here" style="width: 170px" @change="handleChangeStatus">
+                        <a-date-picker v-model:value="form.generateDate" class="mb-3 text-center"
+                            style="width: 150px" />
+                        <a-select ref="select" class="mx-2 text-center" v-model:value="form.checkStatus"
+                            placeholder="Legend Here" style="width: 170px">
                             <a-select-option style="
                                         background-color: rgba(
                                             129,
@@ -65,34 +65,39 @@
                         </a-select>
                     </div>
                     <div>
-                        <a-input-search v-model:value="query.search" class="mx-2" placeholder="Input Check Number"
+                        <a-input-search v-model:value="form.search" class="mx-2" placeholder="Input Check Number"
                             style="width: 350px" />
                         <a-button type="primary" style="width: 300px" @click="savedLeasingChecks" :disabled="dataFn.find(
                             (item) =>
                                 item.is_exist === true &&
                                 item.check_status === 'PENDING'
                         )
-                                ? false
-                                : true
+                            ? false
+                            : true
                             ">
                             <template #icon>
                                 <SaveOutlined />
                             </template>
-                            save leasing checks
+                            {{ isLoading ? 'Saving Leasing Checks...' : 'Save Leasing Checks' }}
                         </a-button>
                     </div>
                 </div>
                 <a-table :loading="isloadingTbl" :dataSource="data.data" :pagination="false" bordered size="small"
                     :columns="columns" :row-class-name="(_record, index) =>
-                            _record.check_status == 'PENDING'
-                                ? 'PENDING'
-                                : _record.check_status == 'CASH'
-                                    ? 'CASH'
-                                    : _record.check_status === 'BOUNCE'
-                                        ? 'BOUNCE'
-                                        : 'CLEARED'
+                        _record.check_status == 'PENDING'
+                            ? 'PENDING'
+                            : _record.check_status == 'CASH'
+                                ? 'CASH'
+                                : _record.check_status === 'BOUNCE'
+                                    ? 'BOUNCE'
+                                    : 'CLEARED'
                         ">
                     <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex">
+                            <span v-html="highlightText(record[column.dataIndex], form.search)
+                                ">
+                            </span>
+                        </template>
                         <template v-if="column.key === 'check_box'">
                             <template v-if="record.check_status === 'PENDING'">
                                 <a-switch v-model:checked="record.is_exist" @change="handleSwitchChange(record)"
@@ -127,9 +132,14 @@ import debounce from "lodash/debounce";
 import Pagination from "@/Components/Pagination.vue";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
+import { highlighten } from "@/Mixin/highlighten.js";
 
 export default {
     layout: TreasuryLayout,
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
     props: {
         data: Object,
         columns: Array,
@@ -137,47 +147,23 @@ export default {
         value: Object,
         pagination: Object,
         dataFn: Object,
+        filters: Object
     },
     data() {
         return {
-            generateDate: dayjs(this.date),
-            checkStatus: this.value,
             isloadingTbl: false,
             showModalDetails: false,
             selectDataDetails: {},
-            query: {
-                search: "",
+            isLoading: false,
+            form: {
+                search: this.filters.search,
+                generateDate: dayjs(this.filters.date),
+                checkStatus: this.filters.status,
             },
         };
     },
     methods: {
-        handleGenerateTable(obj, str) {
-            this.$inertia.get(route("leasing.checks"), {
-                generate_date: str,
-            });
-        },
-        handlePaginate(page = 1) {
-            this.isloadingTbl = true;
-            this.$inertia.get(
-                route("leasing.checks"),
-                {
-                    page: page,
-                    generate_date: this.generateDate.format("YYYY-MM-DD"),
-                    check_status: this.checkStatus,
-                },
-                {
-                    preserveScroll: true,
-                }
-            );
-        },
-        handleChangeStatus(page = 1) {
-            this.isloadingTbl = true;
-            this.$inertia.get(route("leasing.checks"), {
-                page: page,
-                generate_date: this.generateDate.format("YYYY-MM-DD"),
-                check_status: this.checkStatus,
-            });
-        },
+
         datedDetails(inData) {
             this.showModalDetails = true;
             this.selectDataDetails = inData;
@@ -218,27 +204,18 @@ export default {
         },
     },
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
-                try {
-                    this.isloadingTbl = true;
-                    this.$inertia.get(
-                        route("leasing.checks"),
-                        {
-                            page: this.page,
-                            generate_date:
-                                this.generateDate.format("YYYY-MM-DD"),
-                            check_status: this.checkStatus,
-                            searchQuery: this.query.search,
-                        },
-                        { preserveState: true }
-                    );
-                } catch (error) {
-                } finally {
-                    this.isloadingTbl = false;
-                }
-            }, 600),
+                this.$inertia.get(route("leasing.checks"), {
+                    search: this.form.search,
+                    date: dayjs(this.form.generateDate).format('YYYY-MM-DD') ?? dayjs(),
+                    status: this.form.checkStatus
+                },
+                    { preserveState: true }
+                );
+
+            }, 400),
         },
     },
 };
@@ -263,5 +240,4 @@ export default {
 .CASH {
     background-color: rgba(206, 121, 255, 0.274);
 }
-
 </style>

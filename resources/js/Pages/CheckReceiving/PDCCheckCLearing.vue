@@ -1,35 +1,23 @@
 <template>
+
     <Head title="Post Dated Checks" />
 
-        <div class="py-2">
-            <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-                <a-breadcrumb class="mt-1 mb-3">
-                    <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
-                    <a-breadcrumb-item
-                        ><a href="">Check Receiving </a></a-breadcrumb-item
-                    >
-                    <a-breadcrumb-item> Post Dated Checks</a-breadcrumb-item>
-                </a-breadcrumb>
+    <div class="py-2">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+            <a-breadcrumb class="mt-1 mb-3">
+                <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
+                <a-breadcrumb-item><a href="">Check Receiving </a></a-breadcrumb-item>
+                <a-breadcrumb-item> Post Dated Checks</a-breadcrumb-item>
+            </a-breadcrumb>
 
-                <a-card>
-                    <div class="flex justify-between">
-                        <div>
-                            <a-date-picker
-                                v-model:value="generateDate"
-                                class="mb-3 text-center"
-                                style="width: 150px"
-                                @change="handleGenerateTable"
-                            />
-                            <a-select
-                                ref="select"
-                                class="mx-2 text-center"
-                                v-model:value="checkStatus"
-                                placeholder="Legend Here"
-                                style="width: 170px"
-                                @change="handleChangeStatus"
-                            >
-                                <a-select-option
-                                    style="
+            <a-card>
+                <div class="flex justify-between">
+                    <div>
+                        <a-date-picker v-model:value="form.generateDate" class="mb-3 text-center"
+                            style="width: 150px" />
+                        <a-select ref="select" class="mx-2 text-center" v-model:value="form.checkStatus"
+                            placeholder="Legend Here" style="width: 170px">
+                            <a-select-option style="
                                         background-color: rgba(
                                             129,
                                             252,
@@ -37,13 +25,8 @@
                                             0.185
                                         );
                                         color: black;
-                                    "
-                                    class="text-center"
-                                    value="ALL"
-                                    >ALL</a-select-option
-                                >
-                                <a-select-option
-                                    style="
+                                    " class="text-center" value="ALL">ALL</a-select-option>
+                            <a-select-option style="
                                         background-color: rgba(
                                             153,
                                             171,
@@ -51,13 +34,8 @@
                                             0.185
                                         );
                                         color: black;
-                                    "
-                                    class="text-center mt-1"
-                                    value="PENDING"
-                                    >Pending</a-select-option
-                                >
-                                <a-select-option
-                                    style="
+                                    " class="text-center mt-1" value="PENDING">Pending</a-select-option>
+                            <a-select-option style="
                                         background-color: rgba(
                                             121,
                                             224,
@@ -65,13 +43,8 @@
                                             0.274
                                         );
                                         color: black;
-                                    "
-                                    class="text-center mt-1"
-                                    value="CLEARED"
-                                    >Confirmed</a-select-option
-                                >
-                                <a-select-option
-                                    style="
+                                    " class="text-center mt-1" value="CLEARED">Confirmed</a-select-option>
+                            <a-select-option style="
                                         background-color: rgba(
                                             255,
                                             121,
@@ -79,13 +52,8 @@
                                             0.274
                                         );
                                         color: black;
-                                    "
-                                    class="text-center mt-1"
-                                    value="BOUNCE"
-                                    >Bounce</a-select-option
-                                >
-                                <a-select-option
-                                    style="
+                                    " class="text-center mt-1" value="BOUNCE">Bounce</a-select-option>
+                            <a-select-option style="
                                         background-color: rgba(
                                             123,
                                             85,
@@ -93,96 +61,62 @@
                                             0.301
                                         );
                                         color: black;
-                                    "
-                                    class="text-center mt-1"
-                                    value="CASH"
-                                    >Replace Cash</a-select-option
-                                >
-                            </a-select>
-                        </div>
-                        <div>
-                            <a-input-search
-                                v-model:value="query.search"
-                                class="mx-2"
-                                placeholder="Input Check Number"
-                                style="width: 350px"
-                            />
-                            <a-button
-                                type="primary"
-                                style="width: 300px"
-                                @click="savedPDcChecks"
-                                :disabled="
-                                    dataFn.find(
-                                        (item) =>
-                                            item.is_exist === true &&
-                                            item.check_status === 'PENDING'
-                                    )
-                                        ? false
-                                        : true
-                                "
-                            >
-                                <template #icon>
-                                    <SaveOutlined />
-                                </template>
-                                save post dated checks
-                            </a-button>
-                        </div>
+                                    " class="text-center mt-1" value="CASH">Replace Cash</a-select-option>
+                        </a-select>
                     </div>
-                    <a-table
-                        size="small"
-                        bordered
-                        :dataSource="data.data"
-                        :columns="columns"
-                        :pagination="false"
-                        :row-class-name="
-                            (_record, index) =>
-                                _record.check_status == 'PENDING'
-                                    ? 'PENDING'
-                                    : _record.check_status == 'CASH'
-                                    ? 'CASH'
-                                    : _record.check_status === 'BOUNCE'
+                    <div>
+                        <a-input-search v-model:value="form.search" class="mx-2" placeholder="Input Check Number"
+                            style="width: 350px" />
+                        <a-button type="primary" style="width: 300px" @click="savedPDcChecks"
+                            :disabled="dataFn.find((item) => item.is_exist === true && item.check_status === 'PENDING') ? false : true">
+                            <template #icon>
+                                <SaveOutlined />
+                            </template>
+                         {{  isLoading ? 'Saving Pdc Checks...' : 'Save Post Dated Checks' }}
+                        </a-button>
+                    </div>
+                </div>
+                <a-table size="small" bordered :dataSource="data.data" :columns="columns" :pagination="false"
+                    :row-class-name="(_record, index) =>
+                        _record.check_status == 'PENDING'
+                            ? 'PENDING'
+                            : _record.check_status == 'CASH'
+                                ? 'CASH'
+                                : _record.check_status === 'BOUNCE'
                                     ? 'BOUNCE'
                                     : 'CLEARED'
-                        "
-                    >
-                        <template #bodyCell="{ column, record }">
-                            <template v-if="column.key === 'check_box'">
-                                <template
-                                    v-if="record.check_status === 'PENDING'"
-                                >
-                                    <a-switch
-                                        v-model:checked="record.is_exist"
-                                        @change="handleSwitchChange(record)"
-                                        size="small"
-                                    >
-                                        <template #checkedChildren
-                                            ><check-outlined
-                                        /></template>
-                                        <template #unCheckedChildren
-                                            ><close-outlined
-                                        /></template>
-                                    </a-switch>
-                                </template>
-                            </template>
-                            <template v-if="column.key === 'details'">
-                                <a-button
-                                    size="square"
-                                    @click="datedDetails(record)"
-                                >
-                                    <template #icon>
-                                        <SettingOutlined />
-                                    </template>
-                                </a-button>
+                        ">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex">
+                            <span v-html="highlightText(record[column.dataIndex], form.search)
+                                ">
+                            </span>
+                        </template>
+                        <template v-if="column.key === 'check_box'">
+                            <template v-if="record.check_status === 'PENDING'">
+                                <a-switch v-model:checked="record.is_exist" @change="handleSwitchChange(record)"
+                                    size="small">
+                                    <template #checkedChildren><check-outlined /></template>
+                                    <template #unCheckedChildren><close-outlined /></template>
+                                </a-switch>
                             </template>
                         </template>
-                    </a-table>
-                    <div class="flex justify-end">
-                        <pagination class="mt-6" :datarecords="data" />
-                    </div>
-                </a-card>
-            </div>
+                        <template v-if="column.key === 'details'">
+                            <a-button size="square" @click="datedDetails(record)">
+                                <template #icon>
+                                    <SettingOutlined />
+                                </template>
+                            </a-button>
+                        </template>
+                    </template>
+                </a-table>
+                <div class="flex justify-end">
+                    <pagination class="mt-6" :datarecords="data" />
+                </div>
+            </a-card>
         </div>
-        <CheckModalDetail v-model:open="showModalDetails" :datarecords="selectDataDetails"></CheckModalDetail>
+    </div>
+    <CheckModalDetail v-model:open="showModalDetails" :datarecords="selectDataDetails"></CheckModalDetail>
 </template>
 
 <script>
@@ -192,9 +126,14 @@ import debounce from "lodash/debounce";
 import Pagination from "@/Components/Pagination.vue";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
+import { highlighten } from "@/Mixin/highlighten.js";
 
 export default {
     layout: TreasuryLayout,
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
     data() {
         return {
             generateDate: dayjs(this.date),
@@ -202,8 +141,11 @@ export default {
             isloadingTbl: false,
             showModalDetails: false,
             selectDataDetails: {},
-            query: {
-                search: "",
+            isLoading: false,
+            form: {
+                search: this.filters.search,
+                generateDate: dayjs(this.filters.date),
+                checkStatus: this.filters.status,
             },
         };
     },
@@ -214,35 +156,9 @@ export default {
         value: Object,
         pagination: Object,
         dataFn: Object,
+        filters: Object
     },
     methods: {
-        handleGenerateTable(obj, str) {
-            this.$inertia.get(route("pdc_clearing.checks"), {
-                generate_date: str,
-            });
-        },
-        handlePaginate(page = 1) {
-            this.isloadingTbl = true;
-            this.$inertia.get(
-                route("pdc_clearing.checks"),
-                {
-                    page: page,
-                    generate_date: this.generateDate.format("YYYY-MM-DD"),
-                    check_status: this.checkStatus,
-                },
-                {
-                    preserveScroll: true,
-                }
-            );
-        },
-        handleChangeStatus(page = 1) {
-            this.isloadingTbl = true;
-            this.$inertia.get(route("pdc_clearing.checks"), {
-                page: page,
-                generate_date: this.generateDate.format("YYYY-MM-DD"),
-                check_status: this.checkStatus,
-            });
-        },
         datedDetails(inData) {
             this.showModalDetails = true;
             this.selectDataDetails = inData;
@@ -269,12 +185,10 @@ export default {
         },
         savedPDcChecks() {
             const selected = this.dataFn.filter((value) => value.is_exist);
-            this.$inertia.post(
-                route("datedleaspdc.checks"),
-                {
+            this.isLoading = true;
+            this.$inertia.post(route("datedleaspdc.checks"),{
                     selected,
-                },
-                {
+                },{
                     onSuccess: (e) => {
                         const messageLabel = e.props.flash?.success;
                         message.success(messageLabel);
@@ -284,27 +198,18 @@ export default {
         },
     },
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
-                try {
-                    this.isloadingTbl = true;
-                    this.$inertia.get(
-                        route("pdc_clearing.checks"),
-                        {
-                            page: this.page,
-                            generate_date:
-                                this.generateDate.format("YYYY-MM-DD"),
-                            check_status: this.checkStatus,
-                            searchQuery: this.query.search,
-                        },
-                        { preserveState: true }
-                    );
-                } catch (error) {
-                } finally {
-                    this.isloadingTbl = false;
-                }
-            }, 600),
+                this.$inertia.get(
+                    route("pdc_clearing.checks"), {
+                    search: this.form.search,
+                    date: dayjs(this.form.generateDate).format('YYYY-MM-DD') ?? dayjs(),
+                    status: this.form.checkStatus
+                }, { preserveState: true }
+                );
+
+            }, 400),
         },
     },
 };
@@ -328,5 +233,4 @@ export default {
 .CASH {
     background-color: rgba(206, 121, 255, 0.274);
 }
-
 </style>

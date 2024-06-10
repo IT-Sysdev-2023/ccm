@@ -11,15 +11,20 @@
 
             <a-card>
                 <div class="flex justify-end">
-                    <a-input-search v-model:value="query.search" style="width: 400px;" class="mb-5"
+                    <a-input-search v-model:value="form.search" style="width: 400px;" class="mb-5"
                         placeholder="Search Checks" :loading="isFetching" />
                 </div>
-                <a-table :pagination="false" :data-source="data.data" :loading="isLoadingTbl"
-                    class="components-table-demo-nested" :columns="columns" size="small" bordered>
+                <a-table :pagination="false" :data-source="data.data" :loading="isLoadingTbl" :columns="columns"
+                    size="small" bordered>
 
                     <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex">
+                            <span v-html="highlightText(record[column.dataIndex], form.search)
+                                ">
+                            </span>
+                        </template>
                         <template v-if="column.key === 'action'">
-                            <a-button @click="detailedChecks(record)" size="small" >
+                            <a-button @click="detailedChecks(record)" size="small">
                                 <template #icon>
                                     <SettingOutlined />
                                 </template>
@@ -27,7 +32,7 @@
                         </template>
                     </template>
                 </a-table>
-                <pagination class="mt-6" :datarecords="data" />
+                <pagination class="mt-6 mb-10" :datarecords="data" />
             </a-card>
         </div>
     </div>
@@ -39,18 +44,20 @@
 import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 import { ref } from "vue";
 import debounce from "lodash/debounce";
-import Pagination from "@/Components/Pagination.vue"
+import { highlighten } from "@/Mixin/highlighten.js";
+
 
 export default {
     layout: TreasuryLayout,
-    components: {
-        Pagination,
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
     },
 
     data() {
         return {
-            query: {
-                search: '',
+            form: {
+                search: this.filters.search,
             },
             isOpenModal: false,
             selectDataDetails: {},
@@ -59,9 +66,9 @@ export default {
         };
     },
     props: {
-        data: Array,
+        data: Object,
         columns: Array,
-        pagination: Object,
+        filters: Object
     },
     methods: {
         detailedChecks(selectData) {
@@ -70,12 +77,12 @@ export default {
         },
     },
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
                     this.$inertia.get(route("dated.checks"), {
-                        searchQuery: this.query.search,
+                        search: this.form.search,
                     }, {
                         preserveState: true,
                         onSuccess: () => {
@@ -166,5 +173,4 @@ body {
     padding: 8px;
     /* Adjust padding as needed */
 }
-
 </style>

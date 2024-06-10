@@ -25,6 +25,7 @@ class DsBounceTaggingService
 
     public function updateSwitch(Request $request)
     {
+        // dd($request->all());
         $this->newSavedChecks->findChecks($request->id)
             ->update([
                 'done' => $request->isCheck ? "check" : "",
@@ -67,6 +68,7 @@ class DsBounceTaggingService
             $value->check_amount = NumberHelper::float($value->check_amount);
             return $value;
         });
+
 
         $getAmount = $data->where('done', true);
         $totalAmountActive = $getAmount->sum(fn ($item) => $item->check_amount);
@@ -115,6 +117,8 @@ class DsBounceTaggingService
             ->whereYear('checks.check_received', $datedYear)
             ->orderBy('new_ds_checks.date_time', 'desc')
             ->orderBy('checks.check_received', 'desc')->paginate(10)->withQueryString();
+
+
 
 
         $data->transform(function ($value) {

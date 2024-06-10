@@ -16,8 +16,9 @@
             </a-breadcrumb>
 
             <div class="flex justify-between">
+                <!-- {{ isCheckCount }} -->
                 <a-button class="mb-3" @click="createMergeChecks(checkedRecords)" style="width: 350px;" type="primary"
-                    :disabled="checkedRecords.length < 2">
+                    :disabled="isCheckCount < 2">
                     <template #icon>
                         <PlusSquareOutlined />
                     </template>
@@ -28,25 +29,31 @@
                     :loading="isFetching" />
             </div>
             <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
-                :pagination="false">
+                row-key="key" :pagination="false">
                 <template #bodyCell="{ column, record, index }">
-                    <!-- {{ index }} -->
+                    <template v-if="column.dataIndex">
+                        <span v-html="highlightText(record[column.dataIndex], form.search)
+                            ">
+                        </span>
+                    </template>
                     <template v-if="column.key === 'check_box'">
-                        <a-switch v-model:checked="record.isChecked" @change="merginCheckSwitch">
+                        <a-switch v-model:checked="record.is_check" @change="merginCheckSwitch(record, index)">
                             <template #checkedChildren><check-outlined /></template>
                             <template #unCheckedChildren><close-outlined /></template>
                         </a-switch>
                     </template>
+
                     <template v-if="column.key === 'action'">
                         <a-button class="mx-2" @click="openUpDetails(record)">
                             <template #icon>
                                 <SettingOutlined />
                             </template>
                         </a-button>
+
                     </template>
                 </template>
             </a-table>
-            <pagination class="mt-6" :datarecords="data" />
+            <pagination class="mt-6 mb-10" :datarecords="data" />
 
         </div>
     </div>
@@ -54,12 +61,20 @@
 </template>
 
 
+
 <script>
 import Pagination from "@/Components/Pagination.vue"
 import debounce from "lodash/debounce";
 import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
+import { message } from "ant-design-vue";
+import { highlighten } from "@/Mixin/highlighten.js";
+
 export default {
     layout: TreasuryLayout,
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
     data() {
         return {
             form: {
@@ -75,9 +90,7 @@ export default {
             penalty: 0,
             storedLocal: {},
             isCheckLocal: null,
-            records: {
-                isChecked: null
-            }
+            checkCount: false,
 
         }
     },
@@ -88,28 +101,35 @@ export default {
         category: Object,
         check_class: Object,
         filters: Object,
+        isCheckCount: Number,
     },
-    mounted() {
 
-    },
     methods: {
+
         openUpDetails(dataIn) {
             this.openDetails = true;
             this.selectDataDetails = dataIn;
         },
-        merginCheckSwitch() {
-            this.checkedRecords = this.data.data.filter(record => record.isChecked);
+        merginCheckSwitch(record) {
+            this.$inertia.put(route('update.merge.switch'), {
+                id: record.checks_id,
+                isCheck: record.is_check
+            }, {
+                onSuccess: () => {
+                    record.is_check ? message.success('Checked SuccessFully') : message.info('Un Checked SuccessFully')
+                }
+            })
         },
 
-        createMergeChecks(data){
+        createMergeChecks(data) {
             this.$inertia.get(route('create.merge.checks'), {
                 checkAmount: data.map(record => record.check_amount),
-                checkData: {...data}
+                checkData: { ...data }
             })
-        }
+        },
+
 
     },
-
     watch: {
         form: {
             deep: true,
