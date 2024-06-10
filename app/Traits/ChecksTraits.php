@@ -19,7 +19,7 @@ trait ChecksTraits
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id');
     }
 
-    public function scopeWhereCheckNo(Builder $builder, $filter): Builder
+    public function scopeWhereFilter(Builder $builder, $filter): Builder
     {
         return $builder->whereAny(['check_no', 'check_amount', 'customers.fullname'], 'like', '%' . $filter . '%');
     }
