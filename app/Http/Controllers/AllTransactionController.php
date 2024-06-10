@@ -119,14 +119,20 @@ class AllTransactionController extends Controller
         $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
 
         $data = NewSavedChecks::joinChecksCustomer()->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
-                return $query;
-            })
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname',
+            ], 'LIKE', '%' . $request->search . '%')
             ->whereColumn('check_date', '>', 'check_received')
             ->paginate(10)->withQueryString();
+
+        $data->transform(function ($item) {
+            $item->is_check = empty($item->is_check) ? false : true;
+            return $item;
+        });
+
+        $isCheckCount = $data->where('is_check', true);
 
         return Inertia::render('Transaction/MergeChecks', [
             'data' => $data,
@@ -134,7 +140,15 @@ class AllTransactionController extends Controller
             'currency' => $currency,
             'category' => $category,
             'check_class' => $check_class,
-            'filters' => $request->only(['search'])
+            'filters' => $request->only(['search']),
+            'isCheckCount' => $isCheckCount->count(),
+        ]);
+    }
+    public function isCheckUncheckMerge(Request $request)
+    {
+        // dd($request->all());
+        NewSavedChecks::where('checks_id', $request->id)->update([
+            'is_check' => $request->isCheck ? "1" : "",
         ]);
     }
     #MergeCheckStoreRequest

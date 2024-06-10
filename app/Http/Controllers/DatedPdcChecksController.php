@@ -21,11 +21,11 @@ class DatedPdcChecksController extends Controller
 
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%');
-                return $query; // Add other columns as needed
-            })
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname'
+            ], 'LIKE', '%' . $request->search . '%')
             ->whereColumn('checks.check_date', '>', 'checks.check_received')
             ->paginate(10)->withQueryString();
 
@@ -46,33 +46,35 @@ class DatedPdcChecksController extends Controller
             'currency' => $currency,
             'category' => $category,
             'check_class' => $check_class,
+            'filters' => $request->only(['search'])
         ]);
     }
     public function dated_index(Request $request)
     {
+        // dd($request->all());
 
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%') // Add other columns as needed
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%');
-
-                return $query; // Add other columns as needed
-            })
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname'
+            ],  'LIKE', '%' . $request->search . '%')
             ->whereColumn('check_date', '<=', 'check_received')
             ->paginate(10)->withQueryString();
 
-        $data->transform(function ($value) {
-            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
-            $value->check_amount = NumberHelper::currency($value->check_amount);
-            return $value;
-        });
+
+            $data->transform(function ($value) {
+                $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+                $value->check_amount = NumberHelper::currency($value->check_amount);
+                return $value;
+                });
+            // dd($data);
 
         return Inertia::render('Dated&PdcChecks/DatedChecks', [
             'data' => $data,
             'columns' => ColumnsHelper::$dated_check_columns,
-
+            'filters' => $request->only(['search'])
         ]);
     }
     public function pdc_cash_replacement(Request $request)

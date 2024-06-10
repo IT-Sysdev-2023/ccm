@@ -12,12 +12,17 @@
 
             <a-card>
                 <div class="flex justify-end">
-                    <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
+                    <a-input-search v-model:value="form.search" style="width: 350px;" class="mb-5"
                         placeholder="Search Checks" :loading="isFetching" />
                 </div>
                 <a-table :loading="isLoadingTbl" :pagination="false" :dataSource="data.data"
                     class="components-table-demo-nested" :columns="columns" size="small" bordered>
                     <template #bodyCell="{ column, record, index }">
+                        <template v-if="column.dataIndex">
+                            <span v-html="highlightText(record[column.dataIndex], form.search)
+                                ">
+                            </span>
+                        </template>
                         <template v-if="column.key === 'action'">
                             <a-button size="small" @click="openModaldated(record)">
                                 <template #icon>
@@ -1214,6 +1219,7 @@
             </a-col>
         </a-row>
     </a-modal>
+
 </template>
 <script>
 import TreasuryLayout from '@/Layouts/TreasuryLayout.vue';
@@ -1222,13 +1228,18 @@ import Pagination from "@/Components/Pagination.vue"
 import dayjs from 'dayjs';
 import { useForm } from '@inertiajs/vue3';
 import { message } from 'ant-design-vue';
-import debounce from 'lodash/debounce'
+import debounce from 'lodash/debounce';
+import { highlighten } from "@/Mixin/highlighten.js";
 export default {
     layout: TreasuryLayout,
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
     data() {
         return {
-            query: {
-                search: ''
+            form: {
+                search: this.filters.search
             },
             isActive: null,
             isModalOpen: false,
@@ -1328,11 +1339,12 @@ export default {
         }
     },
     props: {
-        data: Array,
+        data: Object,
         columns: Array,
-        currency: Array,
-        category: Array,
-        check_class: Array
+        currency: Object,
+        category: Object,
+        check_class: Object,
+        filters: Object,
     },
     methods: {
         openModaldated(data) {
@@ -1582,12 +1594,12 @@ export default {
 
     },
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
                     this.$inertia.get(route("pdc.checks"), {
-                        searchQuery: this.query.search,
+                        search: this.form.search,
                     }, {
                         preserveState: true,
                         onSuccess: () => {
