@@ -77,7 +77,7 @@
                             <template #icon>
                                 <SaveOutlined />
                             </template>
-                            save dated checks
+                          {{ isLoading ? 'Saving Dated Checks...' : 'Save Dated Checks'}}
                         </a-button>
                     </div>
                 </div>
@@ -154,7 +154,7 @@ export default {
             checkStatus: this.value,
             showModalDetails: false,
             selectDataDetails: {},
-            page: 1,
+            isLoading: false,
             form: {
                 search: this.filters.search,
                 generateDate: dayjs(this.filters.date),
@@ -190,6 +190,7 @@ export default {
         },
         savedDatedChecks() {
             const selected = this.dataFn.filter((value) => value.is_exist);
+            this.isLoading = true;
             this.$inertia.post(
                 route("datedleaspdc.checks"),
                 {

@@ -26,7 +26,7 @@ class CheckReceivingController extends Controller
 
         $q = Checks::joinCheckRecCustomerDepartmentBanks()
             ->whereDateChecks($request->date)
-            ->whereCheckNo($request->search)
+            ->whereFilter($request->search)
             ->whereDateTimeNotZero()
             ->whereColumn('check_date', '<=', 'check_received')
             ->where('checksreceivingtransaction.businessunit_id', $request->user()->businessunit_id)
@@ -169,15 +169,15 @@ class CheckReceivingController extends Controller
             ->orderBy('check_date', 'ASC')->cursor();
 
         $q = Checks::joinCheckRecCustomerDepartmentBanks()
-            ->whereDateChecks($request->generate_date)
-            ->whereCheckNo($request->searchQuery)
+            ->whereDate('checks.check_received', $request->date)
+            ->whereFilter($request->search)
             ->whereColumn('check_date', '>', 'check_received')
             ->where('leasing_docno', '!=', '')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->orderBy('check_date', 'ASC');
 
 
-        $q = match ($request->check_status) {
+        $q = match ($request->status) {
             'CLEARED' => $q->where('check_status', 'CLEARED'),
             'PENDING' => $q->where('check_status', 'PENDING'),
             'CASH' => $q->where('check_status', 'CASH'),
@@ -191,8 +191,11 @@ class CheckReceivingController extends Controller
         return Inertia::render('CheckReceiving/LeasingChecks', [
             'data' => $data,
             'columns' => ColumnsHelper::$leasing_checks_columns,
-            'date' => $request->generate_date ?? today(),
-            'value' => $request->check_status,
+            'filters' => $request->only([
+                'search',
+                'date',
+                'status'
+            ]),
             'dataFn' => $dataChecksFn,
         ]);
 
