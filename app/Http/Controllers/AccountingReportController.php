@@ -45,13 +45,11 @@ class AccountingReportController extends Controller
             ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
             ->join('department', 'department.department_id', '=', 'checks.department_from')
             ->where('department.department', 'like', '%' . $request->dataFrom . '%') // Assuming 'department' refers to 'department_name'
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%') // Add other columns as needed
-                    ->orWhere('banks.bankbranchname', 'like', '%' . $request->searchQuery . '%');
-
-                return $query; // Add other columns as needed
-            }) // Added 'like' operator
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'banks.bankbranchname',
+            ], 'like', '%' . $request->search . '%') // Added 'like' operator
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->when($request->dataType == '1', function ($query) {
                 $query->where('check_date', '<=', DB::raw('check_received'));
@@ -263,7 +261,6 @@ class AccountingReportController extends Controller
                 ->whereFilter($request->search)
                 ->select('*', 'new_bounce_check.date_time', 'new_bounce_check.id')
                 ->paginate(10)->withQueryString();
-            // dd(2);
 
         } elseif ($request->dateRange == null && $request->status == "1") {
             $data = NewBounceCheck::join('checks', 'new_bounce_check.checks_id', '=', 'checks.checks_id')
@@ -416,12 +413,11 @@ class AccountingReportController extends Controller
             ->join('users', 'users.id', '=', 'new_check_replacement.user')
             ->where('checks.businessunit_id', $request->user()->businessunit_id)
             ->where('new_check_replacement.status', '=', 'REDEEMED')
-            ->where(function ($query) use ($request) {
-                $query->where('checks.check_no', 'like', '%' . $request->searchQuery . '%')
-                    ->orWhere('checks.check_amount', 'like', '%' . $request->searchQuery . '%') // Add other columns as needed
-                    ->orWhere('customers.fullname', 'like', '%' . $request->searchQuery . '%'); // Add other columns as needed
-                return $query; // Add other columns as needed
-            })
+            ->whereAny([
+                'checks.check_no',
+                'checks.check_amount',
+                'customers.fullname',
+            ], 'like', '%' . $request->search . '%')
             ->whereBetween('new_check_replacement.date_time', [$request->dateFrom, $request->dateTo])
             ->select('*', 'new_check_replacement.date_time')
             ->paginate(10)->withQueryString();
@@ -429,6 +425,7 @@ class AccountingReportController extends Controller
         return Inertia::render('AccountingReports/InnerReports/RedeemPdcCheckReports', [
             'bunit' => $bunit,
             'data' => $data,
+            'filters' => $request->only(['search']),
             'columns' => ColumnsHelper::$innerRedeemPdcReportsColumns,
             'dateRangeBackend' => empty([$request->dateFrom, $request->dateTo]) ? null : [$request->dateFrom, $request->dateTo],
         ]);

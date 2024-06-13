@@ -33,7 +33,7 @@
                     </template>
 
                     <template v-if="column.key === 'action'">
-                        <a-button type="primary" class="mx-1" size="small" ref="ref4" v-on:click="
+                        <a-button type="primary" class="mx-1"  ref="ref4" v-on:click="
                             confirmBounceTagg(record.checks_id)
                             ">
                             <template #icon>
@@ -41,7 +41,7 @@
                             </template>
                         </a-button>
 
-                        <a-button size="small" v-on:click="openModalDetails(record)">
+                        <a-button  v-on:click="openModalDetails(record)">
                             <template #icon>
                                 <SettingOutlined />
                             </template>

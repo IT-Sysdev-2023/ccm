@@ -118,12 +118,16 @@
 
                 </div>
                 <div class="flex justify-end">
-                    <a-input-search v-model:value="query.search" style="width: 310px;" class="mb-1"
+                    <a-input-search v-model:value="form.search" style="width: 310px;" class="mb-1"
                         placeholder="Search Checks" :loading="isFetching" />
                 </div>
                 <a-table class="mt-10" size="small" bordered :data-source="data.data" :columns="columns"
                     :pagination="false">
                     <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex">
+                            <span v-html="highlightText(record[column.dataIndex], form.search)">
+                            </span>
+                        </template>
                         <template v-if="column.key === 'details'">
                             <a-button size="small" @click="details(record)">
                                 <template #icon>
@@ -145,6 +149,7 @@
 </template>
 <script>
 import debounce from "lodash/debounce";
+import { highlighten } from "@/Mixin/highlighten.js";
 import AccountingLayout from '@/Layouts/AccountingLayout.vue';
 import dayjs from 'dayjs';
 export default {
@@ -158,10 +163,15 @@ export default {
         dataFromBackend: String,
         dataRangeBackend: Array,
         bunit: Object,
+        filters: Object,
+    },
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
     },
     data() {
         return {
-            query: {
+            form: {
                 search: ''
             },
             isOpenModal: false,
@@ -252,7 +262,7 @@ export default {
         }
     },
     watch: {
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
@@ -261,7 +271,7 @@ export default {
                         dataFrom: this.fetch.dataFrom,
                         dataStatus: this.fetch.dataStatus,
                         dateRange: this.fetch.dateRange !== null ? [dayjs(this.fetch.dateRange[0]).format('YYYY-MM-DD'), dayjs(this.fetch.dateRange[1]).format('YYYY-MM-DD')] : null,
-                        searchQuery: this.query.search,
+                        search: this.form.search,
                     }, {
                         preserveState: true,
                         onSuccess: () => {
