@@ -128,16 +128,14 @@
                         ? 'POST-DATED'
                         : 'DATED'
                     ">
-
                 <template #bodyCell="{ column, record }">
-                    <!-- <p style="color: red;">{{ column.dataIndex }}</p> -->
                     <template v-if="column.dataIndex">
                         <span v-html="highlightText(record[column.dataIndex], form.search)
                             ">
                         </span>
                     </template>
                     <template v-if="column.key === 'select'">
-                        <a-switch v-model:checked="record.done" @change="handleSwitchChange(record)" size="small">
+                        <a-switch v-model:checked="record.done" @change="handleSwitchChange(record)">
                             <template #checkedChildren><check-outlined /></template>
 
                             <template #unCheckedChildren><close-outlined /></template>
@@ -311,12 +309,6 @@ export default {
             });
         },
     },
-    // created() {
-    //     this.switchValues = this.data.data.map((value) =>
-    //         value.done === "" ? false : true
-    //     );
-    //     console.log(this.switchValues)
-    // },
     watch: {
         form: {
             deep: true,

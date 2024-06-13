@@ -57,12 +57,16 @@
                             </template>
                             Generate Redeem Cheque Reports
                         </a-button>
-                        <a-input-search v-model:value="query.search" style="width: 350px;" class="mb-5"
+                        <a-input-search v-model:value="form.search" style="width: 350px;" class="mb-5"
                             placeholder="Search Checks" :loading="isFetching" />
                     </div>
                 </div>
                 <a-table :data-source="data.data" :columns="columns" size="small" bordered :pagination="false">
                     <template #bodyCell="{ column, record }">
+                        <template v-if="column.dataIndex">
+                            <span v-html="highlightText(record[column.dataIndex], form.search)">
+                            </span>
+                        </template>
                         <template v-if="column.key === 'details'">
                             <template v-if="record.mode === 'CASH'">
                                 <a-button size="small" class="mx-2" @click="openModalCashButton(record)">
@@ -392,6 +396,7 @@
 import dayjs from 'dayjs';
 import debounce from "lodash/debounce";
 import AccountingLayout from '@/Layouts/AccountingLayout.vue';
+import { highlighten } from "@/Mixin/highlighten.js";
 export default {
     layout: AccountingLayout,
     props: {
@@ -399,6 +404,11 @@ export default {
         bunit: Object,
         columns: Array,
         dateRangeBackend: Array,
+        filters: Object,
+    },
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
     },
     data() {
         return {
@@ -408,8 +418,8 @@ export default {
             openModalPartial: false,
             openModalReDeposit: false,
             isGeneratingShow: false,
-            query: {
-                search: '',
+            form: {
+                search: this.filters.search,
             },
             progressBar: {
                 currentRow: 0,
@@ -538,13 +548,12 @@ export default {
             });
     },
     watch: {
-
-        query: {
+        form: {
             deep: true,
             handler: debounce(async function () {
                 this.isFetching = true,
                     this.$inertia.get(route("redeem.reports.accounting"), {
-                        searchQuery: this.query.search,
+                        search: this.form.search,
                         dateFrom: this.dateRangeBackend[0],
                         dateTo: this.dateRangeBackend[1],
                     }, {

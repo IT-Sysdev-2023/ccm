@@ -164,6 +164,7 @@ export default {
     },
     mounted() {
         this.showTime()
+        
     }
 }
 </script>

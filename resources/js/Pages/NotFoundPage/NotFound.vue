@@ -1,225 +1,217 @@
 <template>
-    <div class="flex items-center justify-center" style="height: 100vh; background: #1a1a1a;">
-        <div class="section-banner">
-            <div class="text-white">
-                Not found
-            </div>
-            <div id="star-1">
-                <div class="curved-corner-star">
-                    <div id="curved-corner-bottomright"></div>
-                    <div id="curved-corner-bottomleft"></div>
-                </div>
-                <div class="curved-corner-star">
-                    <div id="curved-corner-topright"></div>
-                    <div id="curved-corner-topleft"></div>
-                </div>
-            </div>
-
-            <div id="star-2">
-                <div class="curved-corner-star">
-                    <div id="curved-corner-bottomright"></div>
-                    <div id="curved-corner-bottomleft"></div>
-                </div>
-                <div class="curved-corner-star">
-                    <div id="curved-corner-topright"></div>
-                    <div id="curved-corner-topleft"></div>
-                </div>
-            </div>
-
-            <div id="star-3">
-                <div class="curved-corner-star">
-                    <div id="curved-corner-bottomright"></div>
-                    <div id="curved-corner-bottomleft"></div>
-                </div>
-                <div class="curved-corner-star">
-                    <div id="curved-corner-topright"></div>
-                    <div id="curved-corner-topleft"></div>
-                </div>
-            </div>
-
-            <div id="star-4">
-                <div class="curved-corner-star">
-                    <div id="curved-corner-bottomright"></div>
-                    <div id="curved-corner-bottomleft"></div>
-                </div>
-                <div class="curved-corner-star">
-                    <div id="curved-corner-topright"></div>
-                    <div id="curved-corner-topleft"></div>
-                </div>
-            </div>
-
-            <div id="star-5">
-                <div class="curved-corner-star">
-                    <div id="curved-corner-bottomright"></div>
-                    <div id="curved-corner-bottomleft"></div>
-                </div>
-                <div class="curved-corner-star">
-                    <div id="curved-corner-topright"></div>
-                    <div id="curved-corner-topleft"></div>
-                </div>
-            </div>
-
-            <div id="star-6">
-                <div class="curved-corner-star">
-                    <div id="curved-corner-bottomright"></div>
-                    <div id="curved-corner-bottomleft"></div>
-                </div>
-                <div class="curved-corner-star">
-                    <div id="curved-corner-topright"></div>
-                    <div id="curved-corner-topleft"></div>
-                </div>
-            </div>
-
-            <div id="star-7">
-                <div class="curved-corner-star">
-                    <div id="curved-corner-bottomright"></div>
-                    <div id="curved-corner-bottomleft"></div>
-                </div>
-                <div class="curved-corner-star">
-                    <div id="curved-corner-topright"></div>
-                    <div id="curved-corner-topleft"></div>
-                </div>
+    <div class="container">
+        <h1 class="first-four">4</h1>
+        <div class="cog-wheel1">
+            <div class="cog1">
+                <div class="top"></div>
+                <div class="down"></div>
+                <div class="left-top"></div>
+                <div class="left-down"></div>
+                <div class="right-top"></div>
+                <div class="right-down"></div>
+                <div class="left"></div>
+                <div class="right"></div>
             </div>
         </div>
+        <div class="cog-wheel2">
+            <div class="cog2">
+                <div class="top"></div>
+                <div class="down"></div>
+                <div class="left-top"></div>
+                <div class="left-down"></div>
+                <div class="right-top"></div>
+                <div class="right-down"></div>
+                <div class="left"></div>
+                <div class="right"></div>
+            </div>
+        </div>
+        <h1 class="second-four">4</h1>
+        <p class="wrong-para">Uh Oh! Page not found!</p>
     </div>
-
 </template>
+<script>
+import gsap from 'gsap';
 
-<style>
-.section-banner {
-    height: 400px;
-    width: 400px;
-    position: relative;
-    transition: left 0.3s linear;
-    background: url('/images/globe.jpg');
-    background-size: cover;
-    background-position: left;
-    bottom: 0px;
-    border-radius: 50%;
-    animation: earthRotate 30s linear 0s infinite;
-    box-shadow: 0px 0 20px RGBA(255, 255, 255, 0.2), -5px 0px 8px #c3f4ff inset,
-        15px 2px 25px #000 inset, -24px -2px 34px #c3f4ff99 inset,
-        250px 0px 44px #00000066 inset, 150px 0px 38px #000000aa inset;
-}
+export default {
+    mounted() {
+        let t1 = gsap.timeline();
+        let t2 = gsap.timeline();
+        let t3 = gsap.timeline();
 
-@keyframes earthRotate {
-    0% {
-        background-position: 0 0;
+        t1.to(".cog1", {
+            transformOrigin: "50% 50%",
+            rotation: "+=360",
+            repeat: -1,
+            ease: "none",
+            duration: 8
+        });
+
+        t2.to(".cog2", {
+            transformOrigin: "50% 50%",
+            rotation: "-=360",
+            repeat: -1,
+            ease: "none",
+            duration: 8
+        });
+
+        t3.fromTo(".wrong-para", {
+            opacity: 0
+        }, {
+            opacity: 1,
+            duration: 1,
+            stagger: {
+                repeat: -1,
+                yoyo: true
+            }
+        });
     }
+};
+</script>
+<style scoped>
+/* @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet"); */
 
-    100% {
-        background-position: 400px 0;
-    }
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.curved-corner-star {
-    display: flex;
-    position: relative;
-}
-
-#curved-corner-bottomleft,
-#curved-corner-bottomright,
-#curved-corner-topleft,
-#curved-corner-topright {
-    width: 4px;
-    height: 5px;
+body {
     overflow: hidden;
+    background-color: #f4f6ff;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Poppins", sans-serif;
+    position: relative;
+    left: 6vmin;
+    text-align: center;
+}
+
+.cog-wheel1,
+.cog-wheel2 {
+    transform: scale(0.7);
+}
+
+.cog1,
+.cog2 {
+    width: 40vmin;
+    height: 40vmin;
+    border-radius: 50%;
+    border: 6vmin solid #f3c623;
     position: relative;
 }
 
-#curved-corner-bottomleft:before,
-#curved-corner-bottomright:before,
-#curved-corner-topleft:before,
-#curved-corner-topright:before {
-    content: "";
-    display: block;
-    width: 200%;
-    height: 200%;
+
+.cog2 {
+    border: 6vmin solid #4f8a8b;
+}
+
+.top,
+.down,
+.left,
+.right,
+.left-top,
+.left-down,
+.right-top,
+.right-down {
+    width: 10vmin;
+    height: 10vmin;
+    background-color: #f3c623;
     position: absolute;
-    border-radius: 50%;
 }
 
-#curved-corner-bottomleft:before {
-    bottom: 0;
-    left: 0;
-    box-shadow: -5px 5px 0 0 white;
+.cog2 .top,
+.cog2 .down,
+.cog2 .left,
+.cog2 .right,
+.cog2 .left-top,
+.cog2 .left-down,
+.cog2 .right-top,
+.cog2 .right-down {
+    background-color: #4f8a8b;
 }
 
-#curved-corner-bottomright:before {
-    bottom: 0;
-    right: 0;
-    box-shadow: 5px 5px 0 0 white;
+.top {
+    top: -14vmin;
+    left: 9vmin;
 }
 
-#curved-corner-topleft:before {
-    top: 0;
-    left: 0;
-    box-shadow: -5px -5px 0 0 white;
+.down {
+    bottom: -14vmin;
+    left: 9vmin;
 }
 
-#curved-corner-topright:before {
-    top: 0;
-    right: 0;
-    box-shadow: 5px -5px 0 0 white;
+.left {
+    left: -14vmin;
+    top: 9vmin;
 }
 
-@keyframes twinkling {
-
-    0%,
-    100% {
-        opacity: 0.1;
-    }
-
-    50% {
-        opacity: 1;
-    }
+.right {
+    right: -14vmin;
+    top: 9vmin;
 }
 
-#star-1 {
+.left-top {
+    transform: rotateZ(-45deg);
+    left: -8vmin;
+    top: -8vmin;
+}
+
+.left-down {
+    transform: rotateZ(45deg);
+    left: -8vmin;
+    top: 25vmin;
+}
+
+.right-top {
+    transform: rotateZ(45deg);
+    right: -8vmin;
+    top: -8vmin;
+}
+
+.right-down {
+    transform: rotateZ(-45deg);
+    right: -8vmin;
+    top: 25vmin;
+}
+
+.cog2 {
+    position: relative;
+    left: -10.2vmin;
+    bottom: 10vmin;
+}
+
+h1 {
+    color: #142833;
+}
+
+.first-four {
+    position: relative;
+    left: 6vmin;
+    font-size: 40vmin;
+}
+
+.second-four {
+    position: relative;
+    right: 18vmin;
+    z-index: -1;
+    font-size: 40vmin;
+}
+
+.wrong-para {
+    font-family: "Montserrat", sans-serif;
     position: absolute;
-    left: -20px;
-    animation: twinkling 3s infinite;
-}
-
-#star-2 {
-    position: absolute;
-    left: -40px;
-    top: 30px;
-    animation: twinkling 2s infinite;
-}
-
-#star-3 {
-    position: absolute;
-    left: 350px;
-    top: 90px;
-    animation: twinkling 4s infinite;
-}
-
-#star-4 {
-    position: absolute;
-    left: 200px;
-    top: 290px;
-    animation: twinkling 3s infinite;
-}
-
-#star-5 {
-    position: absolute;
-    left: 50px;
-    top: 270px;
-    animation: twinkling 1.5s infinite;
-}
-
-#star-6 {
-    position: absolute;
-    left: 250px;
-    top: -50px;
-    animation: twinkling 4s infinite;
-}
-
-#star-7 {
-    position: absolute;
-    left: 290px;
-    top: 60px;
-    animation: twinkling 2s infinite;
+    bottom: 15vmin;
+    padding: 3vmin 12vmin 3vmin 3vmin;
+    font-weight: 600;
+    color: #092532;
 }
 </style>
