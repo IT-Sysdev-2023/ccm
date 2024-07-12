@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UsersCreateRequest;
 use App\Models\BusinessUnit;
 use App\Models\Company;
 use App\Models\Department;
@@ -56,26 +57,12 @@ class UserController extends Controller
 
     public function updateUsername(Request $request)
     {
-        // dd($request->all());
         User::where('id', $request->user()->id)->update(['username' => $request->username]);
-
         return redirect()->back();
     }
-    public function createUser(Request $request)
+
+    public function createUser(UsersCreateRequest $request)
     {
-
-        // dd($request->name);
-
-        $request->validate([
-            'name' => 'required',
-            'empid' => 'required',
-            'username' => 'required',
-            'ContactNo' => 'required',
-            'company_id' => 'required',
-            'department_id' => 'required',
-            'usertype_id' => 'required',
-            'businessunit_id' => 'required',
-        ]);
 
         User::create([
             'name' => $request->name,
@@ -121,7 +108,6 @@ class UserController extends Controller
     {
         $query = $request->input('query');
 
-        // Use your model to fetch data based on the $query
         $results = Company::where('company', 'like', "%$query%")
             ->limit(5)
             ->get();
@@ -133,7 +119,6 @@ class UserController extends Controller
     {
         $query = $request->input('query');
 
-        // Use your model to fetch data based on the $query
         $results = BusinessUnit::where('bname', 'like', "%$query%")
             ->limit(5)
             ->get();
@@ -145,7 +130,6 @@ class UserController extends Controller
     {
         $query = $request->input('query');
 
-        // Use your model to fetch data based on the $query
         $results = Department::where('department', 'like', "%$query%")
             ->limit(5)
             ->get();
@@ -155,7 +139,6 @@ class UserController extends Controller
 
     public function exportExcel()
     {
-        // dd(1);
         $users = User::join('company', 'company.company_id', '=', 'users.company_id')
             ->join('department', 'department.department_id', '=', 'users.department_id')
             ->join('businessunit', 'businessunit.businessunit_id', '=', 'users.businessunit_id')
@@ -163,8 +146,6 @@ class UserController extends Controller
             ->select('users.*', 'company.*', 'department.*', 'businessunit.*', 'usertype.*')
             ->orderBy('users.updated_at', 'desc')
             ->cursor();
-
-        // Create a new Spreadsheet object
         $spreadsheet = new Spreadsheet();
 
         $headerRow = [
@@ -222,39 +203,30 @@ class UserController extends Controller
 
             $row++;
         }
-
-        // Create a temporary file to store the spreadsheet
         $tempFilePath = tempnam(sys_get_temp_dir(), 'excel_');
         $writer = new Xlsx($spreadsheet);
         $writer->save($tempFilePath);
 
         $filename = 'UsersData_' . now()->format('M, d Y') . '.xlsx';
 
-        // Download the file
         return response()->download($tempFilePath, $filename)->deleteFileAfterSend(true);
     }
 
     public function resignReactive(Request $request)
     {
-        // dd($request->user);
         $user = User::findOrFail($request->userId);
-
-        // dd($user->toArray());
 
         if ($user->user_status == 'active') {
             $user->user_status = 'resigned';
         } else {
             $user->user_status = 'active';
         }
-
         $user->update();
-
         return redirect()->back();
     }
 
     public function userDetails($id)
     {
-        // dd(1);
         $user = User::where('id', $id)->with([
             'company' => function ($query) {
                 $query->select('company_id', 'company', 'acroname');
@@ -272,14 +244,14 @@ class UserController extends Controller
                 $query->select('app_id', 'photo', 'hobbies', 'home_address', 'specialSkills');
             },
         ])->first();
-        // dd($user->toArray());
 
         if ($user && $user->employee3 && $user->employee3->applicant && $user->employee3->applicant->photo) {
 
             $photoPath = $user->employee3->applicant->photo;
             $photoContent = file_get_contents('http://172.16.161.34:8080/hrms' . $photoPath);
-            // dd($photoContent);
+
             $extension = pathinfo($photoPath, PATHINFO_EXTENSION);
+
             $filename = $user->id;
 
             $path = 'users-image/' . $filename;

@@ -54,14 +54,12 @@ const handleOpen = (val) => {
     </a-float-button>
 
     <div class="py-0">
-        <!-- <div class="max-w-8xl mx-auto sm:px-6 lg:px-8"> -->
             <a-breadcrumb>
                 <a-breadcrumb-item>Dashboard</a-breadcrumb-item>
                 <a-breadcrumb-item><a href="">User</a></a-breadcrumb-item>
                 <a-breadcrumb-item>Tables</a-breadcrumb-item>
             </a-breadcrumb>
             <div class="">
-                <!-- {{  get_users.data }} -->
                 <a-tabs v-model:activeKey="activeKey" class="mt-4">
                     <a-tab-pane key="1">
                         <template #tab>
@@ -300,8 +298,6 @@ const handleOpen = (val) => {
                                             }}
                                         </a-button>
                                     </div>
-
-                                    <!-- Repeat the above pattern for the rest of your form fields -->
                                 </div>
                             </form>
                         </a-card>
