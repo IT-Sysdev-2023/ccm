@@ -87,14 +87,6 @@ const placement = "bottom";
                             <Link :href="route('replace.checks.adjustments')">Replacement </Link>
                         </span>
                     </a-menu-item>
-                    <!-- <a-menu-item key="14" :class="{
-                        'bg-blue-500 text-white': route().current('alta-citta.adjustments'),
-                    }">
-                        <RollbackOutlined />
-                        <span>
-                            <Link :href="route('alta-citta.adjustments')">Alta Citta </Link>
-                        </span>
-                    </a-menu-item> -->
                 </a-sub-menu>
                 <a-sub-menu>
                     <template #title>
@@ -179,6 +171,7 @@ const placement = "bottom";
             </a-menu>
         </a-layout-sider>
         <a-layout>
+            <!-- <img src="/storage/users-image/15" alt="image"> -->
             <div style="height: 50px; background: #001529">
                 <div class="flex items-center justify-between" style="
                         width: 99%;

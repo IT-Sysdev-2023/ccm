@@ -9,9 +9,11 @@ use Illuminate\Http\Request;
 
 class DsBounceTaggingController extends Controller
 {
+    // public $dsBounceTaggingService;
 
     public function __construct(public DsBounceTaggingService $dsBounceTaggingService)
     {
+        // $this->dsBounceTaggingService = $dsBounceTaggingService;
     }
     public function indexBounceTagging(Request $request)
     {

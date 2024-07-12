@@ -16,6 +16,7 @@ class AltaChecksReportServices extends ExcelWriter
 {
     protected $record;
     protected $border;
+    protected $generateUserHeader;
     protected $borderFBN;
     protected $singleBorderWithBgColor;
 

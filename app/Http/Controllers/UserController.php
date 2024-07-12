@@ -10,6 +10,7 @@ use App\Models\UserType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -116,7 +117,7 @@ class UserController extends Controller
         return redirect()->back();
     }
 
-    public function searchCompany(Request $request): Response
+    public function searchCompany(Request $request)
     {
         $query = $request->input('query');
 
@@ -128,7 +129,7 @@ class UserController extends Controller
         return response()->json($results);
     }
 
-    public function searchBunit(Request $request): Response
+    public function searchBunit(Request $request)
     {
         $query = $request->input('query');
 
@@ -140,7 +141,7 @@ class UserController extends Controller
         return response()->json($results);
     }
 
-    public function searchDepartment(Request $request): Response
+    public function searchDepartment(Request $request)
     {
         $query = $request->input('query');
 
@@ -249,11 +250,11 @@ class UserController extends Controller
         $user->update();
 
         return redirect()->back();
-
     }
 
     public function userDetails($id)
     {
+        // dd(1);
         $user = User::where('id', $id)->with([
             'company' => function ($query) {
                 $query->select('company_id', 'company', 'acroname');
@@ -268,14 +269,16 @@ class UserController extends Controller
                 $query->select('emp_no', 'emp_id', 'emp_type', 'position');
             },
             'employee3.applicant' => function ($query) {
-                $query->select('app_id', 'photo', 'hobbies', 'home_address','specialSkills');
+                $query->select('app_id', 'photo', 'hobbies', 'home_address', 'specialSkills');
             },
         ])->first();
+        // dd($user->toArray());
 
         if ($user && $user->employee3 && $user->employee3->applicant && $user->employee3->applicant->photo) {
 
             $photoPath = $user->employee3->applicant->photo;
             $photoContent = file_get_contents('http://172.16.161.34:8080/hrms' . $photoPath);
+            // dd($photoContent);
             $extension = pathinfo($photoPath, PATHINFO_EXTENSION);
             $filename = $user->id;
 
@@ -294,4 +297,11 @@ class UserController extends Controller
         ]);
     }
 
+    public function getUsersApplicantEmployee3()
+    {
+
+        $users = DB::connection('pis')->table('applicant')->limit(100)->get();
+
+        dd($users);
+    }
 }

@@ -16,7 +16,7 @@ use App\Models\User;
 class GenerateDepositedChecks implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    protected $percentage;
     /**
      * Create a new event instance.
      */

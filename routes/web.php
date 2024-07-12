@@ -68,6 +68,7 @@ Route::middleware('auth')->group(function () {
         Route::get('export/excel', [UserController::class, 'exportExcel'])->name('users.excel');
         Route::post('resign/reactive', [UserController::class, 'resignReactive'])->name('users.resrec');
         Route::get('search/employee', [UserController::class, 'searchAnEmployeeName'])->name('searchAnEmployeeName');
+        Route::get('search/applicant', [UserController::class, 'getUsersApplicantEmployee3'])->name('searchApplicant');
     });
 
     //Reports
@@ -117,12 +118,12 @@ Route::middleware('auth')->group(function () {
     });
     //Search Engine
     Route::prefix('search')->group(function () {
-        Route::get('search/checkfrom/', [SearchInputController::class, 'searchCheckFrom'])->name('search.checkfrom');
-        Route::get('search/bank/name', [SearchInputController::class, 'searchBankName'])->name('search.bankName');
-        Route::get('search/customer/name', [SearchInputController::class, 'searchCustomerName'])->name('search.customerName');
-        Route::get('search/employee/name', [SearchInputController::class, 'searchEmployee'])->name('search.employeeName');
-        Route::get('search/bunit/name', [SearchInputController::class, 'searchBunit'])->name('search.bunit');
-        Route::get('search/company/name', [SearchInputController::class, 'searchCompany'])->name('search.company');
+        Route::get('checkfrom/', [SearchInputController::class, 'searchCheckFrom'])->name('search.checkfrom');
+        Route::get('bank/name', [SearchInputController::class, 'searchBankName'])->name('search.bankName');
+        Route::get('customer/name', [SearchInputController::class, 'searchCustomerName'])->name('search.customerName');
+        Route::get('employee/name', [SearchInputController::class, 'searchEmployee'])->name('search.employeeName');
+        Route::get('bunit/name', [SearchInputController::class, 'searchBunit'])->name('search.bunit');
+        Route::get('company/name', [SearchInputController::class, 'searchCompany'])->name('search.company');
     });
     //Adjustments
     Route::prefix('adjustments')->group(function () {

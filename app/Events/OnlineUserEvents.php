@@ -21,6 +21,7 @@ class OnlineUserEvents implements ShouldBroadcastNow
     public function __construct(protected User $user)
     {
         $this->user = $user;
+        dd($this->user);
     }
 
     /**

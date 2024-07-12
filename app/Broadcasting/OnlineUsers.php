@@ -21,9 +21,9 @@ class OnlineUsers
      */
     public function join(User $user)
     {
-        $disk = Storage::disk('public');
+    
 
-        $image = $disk->url("users-image/$user->id");
+        $image = "/storage/users-image/$user->id";
 
         return [
             'id' => $user->id,

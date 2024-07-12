@@ -25,7 +25,7 @@
                     <template v-if="column.key === 'action'">
                         <a-button @click="editSettings(record)" size="small">
                             <template #icon>
-                                <SettingOutlined />
+                                <FormOutlined />
                             </template>
                         </a-button>
                     </template>
@@ -86,7 +86,7 @@
 </template>
 <script>
 import AdminLayout from "@/Layouts/AdminLayout.vue";
-import { SaveOutlined } from "@ant-design/icons-vue";
+import { EditFilled, EditOutlined, SaveOutlined } from "@ant-design/icons-vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";

@@ -20,7 +20,6 @@ class SearchInputController extends Controller
             ->get();
 
         return response()->json($result);
-
     }
 
     public function searchBankName(Request $request)
@@ -39,9 +38,12 @@ class SearchInputController extends Controller
     {
 
         $result = DB::connection('pis')
-            ->table('employee3')
-            ->where('name', 'like', '%' . $request->search . '%')
-            ->limit(5)
+            ->table('applicant')
+            ->join('employee3', 'applicant.app_id', '=', 'employee3.emp_id')
+            // ->where('employee3.name', 'like', '%' . $request->search . '%')
+            ->where('name', 'like', '%' . 'Palban, Jessan' . '%')
+            // ->select('employee3.name')
+            // ->limit()
             ->get();
 
         return response()->json($result);
@@ -63,5 +65,4 @@ class SearchInputController extends Controller
 
         return response()->json($results);
     }
-
 }
