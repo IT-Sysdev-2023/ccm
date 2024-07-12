@@ -19,6 +19,7 @@ use Inertia\Inertia;
 class DsBounceTaggingService
 {
 
+
     public function __construct(public NewSavedChecks $newSavedChecks)
     {
     }

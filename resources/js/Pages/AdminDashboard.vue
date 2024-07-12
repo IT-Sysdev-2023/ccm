@@ -44,6 +44,7 @@
 
             </a-col>
             <a-col :span="10">
+                <!-- <img src="/storage/users-image/79" alt=""> -->
                 <a-tabs v-model:activeKey="activeKey">
                     <a-tab-pane key="1">
                         <template #tab>

@@ -549,7 +549,7 @@ export default {
                 });
         },
         settDetails(id) {
-            window.location.href = "/user/details/" + id;
+            window.location.href = "/users/details/" + id;
         },
 
         debouncedSearchUsers: debounce(async function (query) {

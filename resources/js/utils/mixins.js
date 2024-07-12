@@ -15,7 +15,7 @@ export const onlineUsers = {
 				return true
 			}
 
-			for (const permission of permissions) {
+			for (const permission of permissions) {nb 
 				if (this.permissions.includes(permission)) {
 					return true
 				}
