@@ -9,9 +9,9 @@ class UsersCreateRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -30,6 +30,18 @@ class UsersCreateRequest extends FormRequest
                 'department_id' => ['required'],
                 'usertype_id' => ['required'],
                 'businessunit_id' => ['required'],
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Employee Name is required!.',
+            'username.required' => 'Username is required!.',
+            'ContactNo.required' => 'Contact No. is required!.',
+            'company_id.required' => 'Company is required!.',
+            'department_id.required' => 'Department is required!.',
+            'usertype_id.required' => 'Usertype is required!.',
+            'businessunit_id.required' => 'Business Unit is required!.',
         ];
     }
 }

@@ -63,6 +63,7 @@ class UserController extends Controller
 
     public function createUser(UsersCreateRequest $request)
     {
+        $request->validated();
 
         User::create([
             'name' => $request->name,

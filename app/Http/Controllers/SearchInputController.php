@@ -38,14 +38,10 @@ class SearchInputController extends Controller
     {
 
         $result = DB::connection('pis')
-            ->table('applicant')
-            ->join('employee3', 'applicant.app_id', '=', 'employee3.emp_id')
-            // ->where('employee3.name', 'like', '%' . $request->search . '%')
-            ->where('name', 'like', '%' . 'Palban, Jessan' . '%')
-            // ->select('employee3.name')
-            // ->limit()
+            ->table('employee3')
+            ->where('name', 'like', '%' .$request->search.'%')
+            ->limit(8)
             ->get();
-
         return response()->json($result);
     }
 

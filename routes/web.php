@@ -37,9 +37,9 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 Route::middleware('guest')->get('/', [AuthenticatedSessionController::class, 'create'])->name('index');
 
 Route::fallback(function () {
-    $previousUrl = url()->previous();
+    // $previousUrl = url()->previous();
     return Inertia::render('NotFoundPage/NotFound', [
-        'previousUrl' =>  $previousUrl
+        // 'previousUrl' =>  $previousUrl
     ]);
 
 });
