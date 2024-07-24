@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 trait NewSavedChecksTraits
@@ -23,13 +23,11 @@ trait NewSavedChecksTraits
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
             ->where('new_saved_checks.status', '')
             ->where('checks.businessunit_id', $id)
-            ->whereNotExists(function ($query) {
-                $query->select(DB::raw(1))
+            ->whereNotExists(function ($subQuery) {
+                $subQuery->select(DB::raw(1))
                     ->from('new_ds_checks')
-                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+                    ->whereColumn('checks.checks_id', 'new_ds_checks.checks_id');
             });
-
-         
     }
 
     public function scopeJoinChecksCustomerBanksDepartment(Builder $builder)
@@ -43,11 +41,11 @@ trait NewSavedChecksTraits
     public function scopeEmptyStatusNoCheckWhereBu(Builder $builder, $id)
     {
         return $builder->where('new_saved_checks.status', "")
-        ->whereNotExists(function ($query) {
-            $query->select(DB::raw(1))
-                ->from('new_ds_checks')
-                ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
-        })
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('new_ds_checks')
+                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+            })
             ->where('checks.businessunit_id', $id);
     }
 
@@ -73,7 +71,6 @@ trait NewSavedChecksTraits
                     $query->where('checks.check_date', '>', DB::raw('check_received'));
                 }
             });
-
     }
 
     public function scopeFilterDPdcReports($query, $dateRange, $buid)
@@ -94,6 +91,5 @@ trait NewSavedChecksTraits
                     $query;
                 }
             });
-
     }
 }

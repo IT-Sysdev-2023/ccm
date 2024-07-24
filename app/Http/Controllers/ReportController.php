@@ -270,6 +270,7 @@ class ReportController extends Controller
     }
     public function startGeneratingBounceCheckReport(Request $request)
     {
+
         $dateRange = [$request->dateRangeArr0, $request->dateRangeArr1];
 
         $data = [];

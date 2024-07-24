@@ -24,14 +24,14 @@
 
         <div class="flex justify-between">
 
-
             <div>
                 <a-range-picker class="mt-5 mr-2" v-model:value="dateRangeValue" />
                 <!-- {{ bunit }} -->
                 <a-select ref="select" style="width: 200px" v-model:value="bunitCode" placeholder="Business Unit"
                     class="mr-2">
-                    <a-select-option v-for="(item, key) in bunit" :key="key" v-model:value="item.businessunit_id">{{
-                        item.bname }}</a-select-option>
+                    <a-select-option v-for="(item, key) in bunit" :key="key" v-model:value="item.businessunit_id">
+                        {{ item.bname }}
+                    </a-select-option>
                 </a-select>
                 <a-select ref="select" style="width: 200px" v-model:value="bounceStatus" placeholder="Bounce Status"
                     class="mr-2">
@@ -110,9 +110,9 @@ export default {
         };
     },
     methods: {
-        details(data){
+        details(data) {
             this.isOpenModal = true,
-            this.selectDataDetails = data;
+                this.selectDataDetails = data;
         },
         fetchBounceData() {
             this.isFetching = true;
@@ -133,7 +133,7 @@ export default {
         startGeneratingBounceChecks() {
             this.isGeneratingShow = true;
             this.isLoading = true;
-            this.$inertia.get(route('startgenerate.bounceChecks'), {
+            this.$inertia.get(route('bounce.generate.reports'), {
                 dateRangeArr0: this.dateRangeValue[0] === undefined ? null : dayjs(this.dateRangeValue[0]).format(
                     "YYYY-MM-DD"
                 ),

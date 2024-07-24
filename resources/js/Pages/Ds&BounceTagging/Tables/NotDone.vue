@@ -1,0 +1,110 @@
+<template>
+    <div class="flex justify-end">
+        <a-input-search style="width: 300px;" v-model:value="form.search" block class="mb-3" placeholder="Search Checks"
+            :loading="isFetching" />
+    </div>
+    <a-table :data-source="records.data" :pagination="false" :columns="columns" size="small"
+        class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
+            _record.type === 'POST-DATED'
+                ? 'POST-DATED'
+                : 'DATED'
+            ">
+        <template #bodyCell="{ column, record }">
+            <template v-if="column.dataIndex">
+                <span v-html="highlightText(record[column.dataIndex], form.search)
+                    ">
+                </span>
+            </template>
+            <template v-if="column.key === 'select'">
+                <a-switch v-model:checked="record.done" @change="handleSwitchChange(record)">
+                    <template #checkedChildren><check-outlined /></template>
+                    <template #unCheckedChildren><close-outlined /></template>
+                </a-switch>
+            </template>
+        </template>
+    </a-table>
+    <pagination-resource class="mt-6" :datarecords="records" />
+</template>
+<script>
+import { highlighten } from "@/Mixin/highlighten.js";
+import { message } from "ant-design-vue";
+import debounce from "lodash/debounce";
+import { notification } from 'ant-design-vue';
+
+export default {
+    props: {
+        records: Object,
+        columns: Array,
+        filters: Object,
+        total: Object,
+        defTolal: Number
+    },
+    setup() {
+        const { highlightText } = highlighten();
+        return { highlightText };
+    },
+    data() {
+        return {
+            form: {
+                search: this.filters.search,
+            },
+        }
+    },
+    methods: {
+        async handleSwitchChange(data) {
+
+            message
+                .loading('Action in progress..')
+                .then(
+                    this.$inertia.put(route("update.switch"), {
+                        id: data.checks_id,
+                        isCheck: data.done,
+                    }, {
+                        onSuccess: () => {
+                            notification['success']({
+                                message: 'Check',
+                                description:
+                                    'Check Tag Successfully',
+                            })
+                        },
+                        preserveState: true,
+                        preserveScroll: true,
+                    })
+                )
+
+        },
+    },
+    watch: {
+        form: {
+            deep: true,
+            handler: debounce(async function () {
+                this.isFetching = true,
+                    this.$inertia.get(route("ds_tagging"), {
+                        search: this.form.search,
+                    }, {
+                        preserveState: true,
+                        onSuccess: () => {
+                            this.isFetching = false;
+                        },
+                        onError: () => {
+                            this.isFetching = false; // Ensure the flag is reset on error
+                        }
+                    }
+                    );
+            }, 500),
+        },
+    },
+}
+</script>
+
+<style>
+.DATED {
+    background-color: rgba(113, 179, 253, 0.192);
+    /* Set background color for DATED type */
+}
+
+.POST-DATED {
+    background-color: rgba(253, 132, 132, 0.233);
+    /* Set background color for POST-DATED type */
+}
+</style>

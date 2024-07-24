@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class NewSavedChecks extends Model
 {
     use NewSavedChecksTraits;
-    
+
     use HasFactory;
     protected $table = 'new_saved_checks';
     public $timestamps = false;
@@ -31,5 +31,27 @@ class NewSavedChecks extends Model
     public function employee()
     {
         // return $this->belongsTo(Employee3::class, 'checks_id', 'checks_id');
+    }
+    public function scopeWhereSearchFilter($query, $request)
+    {
+        return $query->whereAny([
+            'checks.check_no',
+            'checks.check_amount',
+            'customers.fullname',
+        ], 'LIKE', '%' . $request->search . '%');
+    }
+    public function scopeSelectFilter($query)
+    {
+        return $query->select([
+            'checks.checks_id',
+            'check_date',
+            'done',
+            'done',
+            'check_no',
+            'check_received',
+            'check_amount',
+            'check_category',
+            'fullname',
+        ]);
     }
 }

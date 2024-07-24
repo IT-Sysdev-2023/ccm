@@ -1,13 +1,13 @@
 <template>
     <a-row class="flex justify-between" align="middle">
         <a-col>
-            <a-typography-text>{{ `Showing ${datarecords.from || 0} to ${datarecords.to || 0} of ${datarecords?.total.toLocaleString()}
+            <a-typography-text>{{ `Showing ${datarecords.meta.from || 0} to ${datarecords.meta.to || 0} of ${datarecords.meta.total.toLocaleString()}
                 records` }}
             </a-typography-text>
         </a-col>
         <a-col>
             <a-config-provider>
-                <template v-for="(link, key) in datarecords.links" :key="`link-${key}`">
+                <template v-for="(link, key) in datarecords.meta.links" :key="`link-${key}`">
                     <a-button style="border-radius: 2px;" :type="link.active ? 'primary' : 'default'"
                         v-html="link.label" @click="paginate(link)" />
                 </template>

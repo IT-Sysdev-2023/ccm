@@ -79,9 +79,9 @@ Route::middleware('auth')->group(function () {
         Route::get('dated/pdc/generate', [ReportController::class, 'generateExcelDatedChecksPdc'])->name('generate.datedpdc.excel');
         Route::get('generate/report', [ReportController::class, 'generate_reps_to_excel'])->name('excel.dpdc');
         Route::get('start/generating', [ReportController::class, 'startGeneratingDepositedChecks'])->name('startgenerate.depchecks');
-        Route::get('start/generating', [ReportController::class, 'startGeneratingBounceCheckReport'])->name('startgenerate.bounceChecks');
+        Route::get('start/generating/bounce', [ReportController::class, 'startGeneratingBounceCheckReport'])->name('bounce.generate.reports');
         Route::get('redeem/check', [ReportController::class, 'redeemCheckReportsAdmin'])->name('redeem.reports.admin');
-        Route::get('start/generating', [ReportController::class, 'startGeneratingRedeemReports'])->name('start.generate.redeem.reports');
+        Route::get('start/generating/redeem', [ReportController::class, 'startGeneratingRedeemReports'])->name('start.generate.redeem.reports');
         Route::get('alta-cita', [ReportController::class, 'checksInAltaReports'])->name('alta.reports');
         Route::get('alta-cita/details', [ReportController::class, 'altaCitaDetails'])->name('alta.details');
         Route::get('start/generate', [ReportController::class, 'startGenerateAltaReports'])->name('start.generate.alta');

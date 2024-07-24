@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Helper\ColumnsHelper;
 use App\Helper\NumberHelper;
+use App\Http\Resources\NewSavedCheckResource;
 use App\Models\CheckHistory;
 use App\Models\Checks;
 use App\Models\NewBounceCheck;
@@ -26,65 +27,43 @@ class DsBounceTaggingService
 
     public function updateSwitch(Request $request)
     {
-        // dd($request->all());
         $this->newSavedChecks->findChecks($request->id)
             ->update([
                 'done' => $request->isCheck ? "check" : "",
             ]);
-
-        $amount = $request->oldAmount;
-        $count = $request->oldCount;
-
-        if ($request->isCheck) {
-            $count++;
-            $amount += NumberHelper::float($request->checkAmount);
-        } else {
-            $count--;
-            $amount -= NumberHelper::float($request->checkAmount);
-        }
-
         return redirect()->back();
     }
 
     public function indexDsTagging(Request $request)
     {
-        $due_dates = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
-            ->whereDate('checks.check_date', today()->toDateString())
-            ->count();
+        $filter = (is_null($request->tab) || $request->tab == '1') ? '' : 'check';
 
         $data = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
-            ->whereAny([
-                'checks.check_no',
-                'checks.check_amount',
-                'customers.fullname',
-            ], 'LIKE', '%' . $request->search . '%')
-            ->orderBy('checks.check_received', 'DESC')
-            ->paginate(300);
-
-        $data->transform(function ($value) {
-            $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST-DATED';
-            $value->done = empty($value->done) ? false : true;
-            $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
-            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
-            $value->check_amount = NumberHelper::float($value->check_amount);
-            return $value;
-        });
-
-
-        $getAmount = $data->where('done', true);
-        $totalAmountActive = $getAmount->sum(fn ($item) => $item->check_amount);
+            ->whereSearchFilter($request)
+            ->selectFilter()
+            ->where('done', $filter)
+            ->orderBy('checks.check_received', 'DESC');
 
         return Inertia::render('Ds&BounceTagging/DsTagging', [
-            'due_dates' => $due_dates,
+            'due_dates' => self::duedatesCounts($request),
             'total' => [
-                'totalSum' => (float) $totalAmountActive,
-                'count' => $getAmount->count(),
+                'totalSum' => (float) $data->sum('check_amount'),
+                'count' => $data->count(),
             ],
-            'data' => $data,
+            'data' => NewSavedCheckResource::collection($data->paginate(10)->withQueryString()),
             'columns' => ColumnsHelper::$columns_ds_tagging,
             'filters' => $request->only(['search']),
+            'tab' => $request->tab ?? '1',
         ]);
     }
+
+    public static function duedatesCounts($request)
+    {
+        return NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
+            ->whereDate('checks.check_date', today()->toDateString())
+            ->count();
+    }
+
     public function get_bounce_tagging(Request $request)
     {
         ini_set('memory_limit', '-1');

@@ -328,7 +328,7 @@ const hide = () => {
                                     </a-menu>
                                 </template>
                             </a-dropdown>
-                            <Link class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
+                            <!-- <Link class="inline-block px-3 p-4 mt-2 text-sm text-gray-900 transition-all duration-200"
                                 :class="{
                                     'bg-blue-600 text-white':
                                         route().current('about.us'),
@@ -336,7 +336,7 @@ const hide = () => {
                                         !route().current('about.us'),
                                 }" :href="route('about.us')">
                             <AliwangwangOutlined /> About Us
-                            </Link>
+                            </Link> -->
                         </div>
                         <div class="flex items-center  justify-end gap-3 mt-2">
                             <a-dropdown placement="bottom" arrow>

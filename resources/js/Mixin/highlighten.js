@@ -4,9 +4,9 @@ export function highlighten() {
         if (!searchQuery) return textVar;
 
         if (textVar !== null) {
-            const text = textVar.toString();
+            const text = textVar?.toString();
             const regex = new RegExp(searchQuery, "gi");
-            return text.replace(
+            return text?.replace(
                 regex,
                 (match) =>
                     `<span style="background-color: yellow">${match}</span>`
