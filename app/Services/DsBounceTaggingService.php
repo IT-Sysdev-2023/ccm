@@ -31,6 +31,7 @@ class DsBounceTaggingService
             ->update([
                 'done' => $request->isCheck ? "check" : "",
             ]);
+            
         return redirect()->back();
     }
 

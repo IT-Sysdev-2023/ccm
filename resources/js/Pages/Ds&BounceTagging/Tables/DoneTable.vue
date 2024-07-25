@@ -3,7 +3,7 @@
         <a-input-search style="width: 300px;" v-model:value="form.search" block class="mb-3" placeholder="Search Checks"
             :loading="isFetching" />
     </div>
-    <a-table :data-source="records.data" :pagination="false" :columns="columns" size="small"
+    <a-table :data-source="records.data" :loading="isLoading" :pagination="false" :columns="columns" size="small"
         class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
             _record.type === 'POST-DATED'
                 ? 'POST-DATED'
@@ -49,6 +49,7 @@ export default {
             form: {
                 search: this.filters.search,
             },
+            isLoading: false,
         }
     },
     methods: {
@@ -58,9 +59,12 @@ export default {
                 isCheck: data.done,
             }, {
                 onStart: () => {
-                    message.loading('Action in progress..')
+                    this.isLoading = true;
+                    message.loading('Action in progress..', 0)
                 },
                 onSuccess: () => {
+                    this.isLoading = false;
+                    message.destroy(),
                     notification['success']({
                         message: 'Uncheck',
                         description:
@@ -70,9 +74,6 @@ export default {
                 preserveState: true,
                 preserveScroll: true,
             })
-
-
-
         },
     },
     watch: {

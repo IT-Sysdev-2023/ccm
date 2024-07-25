@@ -3,7 +3,7 @@
         <a-input-search style="width: 300px;" v-model:value="form.search" block class="mb-3" placeholder="Search Checks"
             :loading="isFetching" />
     </div>
-    <a-table :data-source="records.data" :pagination="false" :columns="columns" size="small"
+    <a-table :data-source="records.data" :loading="loadingTable" :pagination="false" :columns="columns" size="small"
         class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
             _record.type === 'POST-DATED'
                 ? 'POST-DATED'
@@ -48,30 +48,32 @@ export default {
             form: {
                 search: this.filters.search,
             },
+            loadingTable: false,
         }
     },
     methods: {
         async handleSwitchChange(data) {
 
-            message
-                .loading('Action in progress..')
-                .then(
-                    this.$inertia.put(route("update.switch"), {
-                        id: data.checks_id,
-                        isCheck: data.done,
-                    }, {
-                        onSuccess: () => {
-                            notification['success']({
-                                message: 'Check',
-                                description:
-                                    'Check Tag Successfully',
-                            })
-                        },
-                        preserveState: true,
-                        preserveScroll: true,
+            this.$inertia.put(route("update.switch"), {
+                id: data.checks_id,
+                isCheck: data.done,
+            }, {
+                onStart: () => {
+                    this.loadingTable = true;
+                    message.loading('Action in progress..', 0)
+                },
+                onSuccess: () => {
+                    message.destroy();
+                    this.loadingTable = false;
+                    notification['success']({
+                        message: 'Check',
+                        description:
+                            'Check Tag Successfully',
                     })
-                )
-
+                },
+                preserveState: true,
+                preserveScroll: true,
+            })
         },
     },
     watch: {
