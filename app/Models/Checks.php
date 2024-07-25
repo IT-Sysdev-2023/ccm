@@ -21,6 +21,7 @@ class Checks extends Model
 
     protected $primaryKey = 'checks_id';
     public $timestamps = false;
+    
     protected $dates = ['deleted_at'];
 
     protected $casts = [
@@ -50,7 +51,7 @@ class Checks extends Model
 
     public function customer()
     {
-        return $this->belongsTo('App\Models\Customer', 'customer_id', 'customer_id');
+        return $this->belongsTo(Customer::class, 'customer_id', 'customer_id');
     }
 
     public function bank()
@@ -85,4 +86,6 @@ class Checks extends Model
     {
         return $this->belongsTo(NewDsChecks::class, 'checks_id');
     }
+
+
 }

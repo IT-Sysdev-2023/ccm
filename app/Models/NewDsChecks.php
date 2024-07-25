@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\NewDsCheckTraits;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class NewDsChecks extends Model
 {
-      use HasFactory;
+    use NewDsCheckTraits;
+    use HasFactory;
 
     protected $table = 'new_ds_checks';
     public $timestamps = false;
@@ -20,19 +22,15 @@ class NewDsChecks extends Model
     }
     public function user()
     {
-        return $this->belongsTo('App\Models\User', 'user', 'id');
+        return $this->belongsTo(User::class, 'id', 'user');
     }
     public function bank()
     {
-        return $this->belongsTo('App\Models\Bank', 'bank_id', 'bank_id');
-    }
-    public function customer()
-    {
-        return $this->belongsTo('App\Models\Customer', 'customer_id', 'customer_id');
+        return $this->belongsTo(Bank::class, 'bank_id', 'bank_id');
     }
     public function department()
     {
-        return $this->belongsTo('App\Models\Department', 'department_id', 'department_from');
+        return $this->belongsTo(Department::class, 'department_id', 'department_from');
     }
 
 }

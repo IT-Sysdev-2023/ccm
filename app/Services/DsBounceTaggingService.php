@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Helper\ColumnsHelper;
 use App\Helper\NumberHelper;
+use App\Http\Resources\NewDsCheckResource;
 use App\Http\Resources\NewSavedCheckResource;
 use App\Models\CheckHistory;
 use App\Models\Checks;
@@ -31,7 +32,7 @@ class DsBounceTaggingService
             ->update([
                 'done' => $request->isCheck ? "check" : "",
             ]);
-            
+
         return redirect()->back();
     }
 
@@ -71,47 +72,25 @@ class DsBounceTaggingService
 
         $datedYear = $request->year ?? now()->toDateString();
 
-        $data = NewDsChecks::join('checks', 'new_ds_checks.checks_id', '=', 'checks.checks_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->join('users', 'new_ds_checks.user', 'users.id')
-            ->join('banks', 'banks.bank_id', '=', 'checks.bank_id')
-            ->join('department', 'department.department_id', 'checks.department_from')
-            ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->where('new_ds_checks.status', '=', '')
-            ->select(
-                'checks.*',
-                'customers.*',
-                'users.*',
-                'new_ds_checks.ds_no',
-                'new_ds_checks.user',
-                'new_ds_checks.date_time',
-                'new_ds_checks.date_deposit',
-                'department.department',
-                'banks.*',
-            )
-            ->whereAny([
-                'checks.check_no',
-                'checks.check_amount',
-                'customers.fullname',
-                'new_ds_checks.ds_no',
-            ], 'LIKE', '%' . $request->search)
-            ->whereYear('checks.check_received', $datedYear)
+        $data = NewDsChecks::with(
+            'check:checks_id,customer_id,check_date,date_deposit,check_no,check_amount,check_received,check_no',
+            'check.customer:customer_id,fullname',
+            'user:id,',
+        )->whereHas(
+            'check',
+            fn ($query) =>
+            $query->where('businessunit_id',  $request->user()->businessunit_id)
+                ->whereYear('check_received', $datedYear)
+        )->where('new_ds_checks.status', '=', '')
+            ->selectFilter()
+            ->searchFilter($request)
             ->orderBy('new_ds_checks.date_time', 'desc')
-            ->orderBy('checks.check_received', 'desc')->paginate(10)->withQueryString();
+            ->paginate(10)
+            ->withQueryString();
 
-
-
-
-        $data->transform(function ($value) {
-            $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
-            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
-            $value->date_deposit = Date::parse($value->date_deposit)->toFormattedDateString();
-            $value->check_amount = NumberHelper::currency($value->check_amount);
-            return $value;
-        });
 
         return Inertia::render('Ds&BounceTagging/BounceTagging', [
-            'data' => $data,
+            'data' => NewDsCheckResource::collection($data),
             'columns' => ColumnsHelper::$get_bounce_tagging_columns,
             'filters' => $request->only(['year', 'search']),
         ]);

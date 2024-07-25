@@ -33,23 +33,23 @@
                     </template>
 
                     <template v-if="column.key === 'action'">
-                        <a-button type="primary" class="mx-1"  ref="ref4" v-on:click="
+                        <a-button class="mx-1" ref="ref4" v-on:click="
                             confirmBounceTagg(record.checks_id)
                             ">
                             <template #icon>
-                                <TagsOutlined />
+                                <TagFilled />
                             </template>
                         </a-button>
 
-                        <a-button  v-on:click="openModalDetails(record)">
+                        <a-button @click="details(record.checks_id)">
                             <template #icon>
-                                <SettingOutlined />
+                                <FolderFilled />
                             </template>
                         </a-button>
                     </template>
                 </template>
             </a-table>
-            <pagination class="mt-6" :datarecords="data" />
+            <pagination-resource class="mt-6" :datarecords="data" />
         </div>
 
         <CheckModalDetail v-model:open="openDetails" :datarecords="selectDataDetails"></CheckModalDetail>
@@ -75,6 +75,7 @@ import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
 import CheckModalDetail from "@/Components/CheckModalDetail.vue";
 import { highlighten } from "@/Mixin/highlighten.js";
+import axios from "axios";
 export default {
     layout: TreasuryLayout,
     props: {
@@ -125,9 +126,11 @@ export default {
             this.returnDate = dateObj;
         },
 
-        openModalDetails(data) {
-            this.openDetails = true;
-            this.selectDataDetails = data;
+        details(check_id) {
+            axios.get(route(`get.check.details`, check_id)).then(response => {
+                this.openDetails = true;
+                this.selectDataDetails = response.data;
+            })
         },
         confirmBounceTagg(checks_id) {
             this.checksId = checks_id;
@@ -161,20 +164,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-.product-table {
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-}
-
-.product-table tr {
-    border: 1px solid #ddd;
-}
-
-.product-table td {
-    border: 1px solid #ddd;
-}
-</style>

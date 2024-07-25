@@ -17,7 +17,7 @@ use App\Http\Controllers\AccountingReportController;
 use App\Http\Controllers\AdjustmentController;
 use App\Http\Controllers\AppSettingController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-
+use App\Http\Controllers\DetailsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -201,6 +201,11 @@ Route::middleware('auth')->group(function () {
         Route::put('update/insti', [AppSettingController::class, 'updateInsti'])->name('update.inst');
     });
 
+    //Details Controller
+
+    Route::prefix('details')->group(function () {
+        Route::get('checks/{id}', [DetailsController::class ,'details'])->name('get.check.details');
+    });
     Route::get('/download/excel/{filename}', function ($filename) {
         $filePath = storage_path('app/' . $filename);
         return response()->download($filePath);

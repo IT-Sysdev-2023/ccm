@@ -39,4 +39,26 @@ trait ChecksTraits
     {
         return $builder->where('date_time', '!=', '0000-00-00');
     }
+
+    public function scopeSelectFilter($query)
+    {
+       return $query->select(
+            'checks_id',
+            'customer_id',
+            'businessunit_id',
+            'department_from',
+            'check_no',
+            'check_class',
+            'check_category',
+            'check_date',
+            'check_received',
+            'check_type',
+            'bank_id',
+            'approving_officer',
+            'check_amount',
+            'check_status',
+            'account_no',
+            'account_name',
+        );
+    }
 }
