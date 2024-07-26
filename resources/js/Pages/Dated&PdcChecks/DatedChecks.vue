@@ -24,9 +24,9 @@
                             </span>
                         </template>
                         <template v-if="column.key === 'action'">
-                            <a-button @click="detailedChecks(record)" size="small">
+                            <a-button @click="details(record.checks_id)">
                                 <template #icon>
-                                    <SettingOutlined />
+                                    <FolderFilled />
                                 </template>
                             </a-button>
                         </template>
@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <CheckModalDetail v-model:open="isOpenModal" :datarecords="selectDataDetails"></CheckModalDetail>
+    <CheckModalDetail  :datarecords="selectDataDetails"/>
 </template>
 
 <script>
@@ -71,9 +71,11 @@ export default {
         filters: Object
     },
     methods: {
-        detailedChecks(selectData) {
-            this.isOpenModal = true;
-            this.selectDataDetails = selectData;
+        details(check_id) {
+            axios.get(route(`get.check.details`, check_id)).then(response => {
+                this.isOpenModal = true;
+                this.selectDataDetails = response.data;
+            })
         },
     },
     watch: {

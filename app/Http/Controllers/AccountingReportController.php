@@ -10,7 +10,7 @@ use App\Models\NewCheckReplacement;
 use App\Models\NewDsChecks;
 use App\Models\NewSavedChecks;
 use App\Services\BounceChequesAccountingReportService;
-use App\Services\DatedPdcCheckServices;
+use App\Services\DatedPdcCheckExcelServices;
 use App\Services\DepositedChecksServices;
 use App\Services\RedeemPdcReportServices;
 use Illuminate\Http\Request;
@@ -134,7 +134,7 @@ class AccountingReportController extends Controller
                 }
             })->get();
 
-        return (new DatedPdcCheckServices())->record($data)->writeResult($request->dataFrom, $request->dataStatus, $request->dateRange, $request->dataType, $bunit, $request->redAcct);
+        return (new DatedPdcCheckExcelServices())->record($data)->writeResult($request->dataFrom, $request->dataStatus, $request->dateRange, $request->dataType, $bunit, $request->redAcct);
     }
     public function innerDepositedCheckReports(Request $request)
     {

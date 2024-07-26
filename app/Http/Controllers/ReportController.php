@@ -13,7 +13,7 @@ use App\Services\AltaChecksReportServices;
 use App\Services\RedeemPdcReportServices;
 use App\Services\ReportBounceCheckService;
 use App\Services\ReportDepositedCheckService;
-use App\Services\DatedPdcCheckServices;
+use App\Services\DatedPdcCheckExcelServices;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -187,7 +187,7 @@ class ReportController extends Controller
 
 
 
-        return (new DatedPdcCheckServices())->record($data)->writeResult($request->bu, $request->ch_type, [$request->dt_from, $request->dt_to], $request->repporttype, $bname, $request->redAdmin);
+        return (new DatedPdcCheckExcelServices())->record($data)->writeResult($request->bu, $request->ch_type, [$request->dt_from, $request->dt_to], $request->repporttype, $bname, $request->redAdmin);
 
 
 

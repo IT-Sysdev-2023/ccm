@@ -33,9 +33,17 @@ trait NewSavedChecksTraits
     public function scopeJoinChecksCustomerBanksDepartment(Builder $builder)
     {
         return $builder->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
-            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
-            ->join('banks', 'checks.bank_id', '=', 'banks.bank_id')
-            ->join('department', 'department.department_id', '=', 'checks.department_from');
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id');
+    }
+    public function scopeSelectFilterDated($query)
+    {
+        return $query->select(
+            'fullname',
+            'checks.checks_id',
+            'check_no',
+            'checks.check_date',
+            'checks.check_amount',
+        );
     }
 
     public function scopeEmptyStatusNoCheckWhereBu(Builder $builder, $id)
@@ -91,5 +99,27 @@ trait NewSavedChecksTraits
                     $query;
                 }
             });
+    }
+    public function scopeWhereSearchFilter($query, $request)
+    {
+        return $query->whereAny([
+            'checks.check_no',
+            'checks.check_amount',
+            'customers.fullname',
+        ], 'LIKE', '%' . $request->search . '%');
+    }
+    public function scopeSelectFilter($query)
+    {
+        return $query->select([
+            'checks.checks_id',
+            'check_date',
+            'done',
+            'done',
+            'check_no',
+            'check_received',
+            'check_amount',
+            'check_category',
+            'fullname',
+        ]);
     }
 }

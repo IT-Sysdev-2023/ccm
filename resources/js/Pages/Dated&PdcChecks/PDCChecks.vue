@@ -15,8 +15,8 @@
                     <a-input-search v-model:value="form.search" style="width: 350px;" class="mb-5"
                         placeholder="Search Checks" :loading="isFetching" />
                 </div>
-                <a-table :loading="isLoadingTbl" :pagination="false" :dataSource="data.data"
-                    class="components-table-demo-nested" :columns="columns" size="small" bordered>
+                <a-table :loading="isLoadingTbl" :pagination="false" :dataSource="data.records.data"
+                    class="components-table-demo-nested" :columns="data.columns" size="small" bordered>
                     <template #bodyCell="{ column, record, index }">
                         <template v-if="column.dataIndex">
                             <span v-html="highlightText(record[column.dataIndex], form.search)
@@ -24,28 +24,29 @@
                             </span>
                         </template>
                         <template v-if="column.key === 'action'">
-                            <a-button size="small" @click="openModaldated(record)">
+                            <a-button class="mx-2" @click="replace(record)">
                                 <template #icon>
-                                    <!-- <FullscreenOutlined /> -->
-                                    <SettingOutlined />
+                                    <SettingFilled />
                                 </template>
                             </a-button>
-                            <a-button type="primary" class="mx-2" size="small" @click="showModalReplace(record)">
+                            <a-button @click="openModaldated(record)">
                                 <template #icon>
-                                    <FileSyncOutlined />
+                                    <!-- <FullscreenOutlined /> -->
+                                    <FolderFilled />
                                 </template>
                             </a-button>
                         </template>
                     </template>
                 </a-table>
-                <pagination class="mt-6" :datarecords="data" />
+                <pagination class="mt-6" :datarecords="data.records" />
             </a-card>
         </div>
     </div>
-
     <CheckModalDetail v-model:open="isModalOpen" :datarecords="selectDataDetails"></CheckModalDetail>
 
-    <a-modal v-model:open="openModalReplace" title="Replacement Checks Configuration" :footer="null"
+    <CheckSetupModal v-model:visible="openSetup" :record="record" />
+
+    <!-- <a-modal v-model:open="openModalReplace" title="Replacement Checks Configuration" :footer="null"
         :after-close="afterClose" style="top: 20px; width: 100%;" wrap-class-name="full-modal">
         <a-row :gutter="[16, 16]">
             <a-col :span="6">
@@ -1218,7 +1219,7 @@
                 </a-card>
             </a-col>
         </a-row>
-    </a-modal>
+    </a-modal> -->
 
 </template>
 <script>
@@ -1230,6 +1231,7 @@ import { useForm } from '@inertiajs/vue3';
 import { message } from 'ant-design-vue';
 import debounce from 'lodash/debounce';
 import { highlighten } from "@/Mixin/highlighten.js";
+import { FolderFilled } from '@ant-design/icons-vue';
 export default {
     layout: TreasuryLayout,
     setup() {
@@ -1241,6 +1243,8 @@ export default {
             form: {
                 search: this.filters.search
             },
+            record: {},
+            openSetup: false,
             isActive: null,
             isModalOpen: false,
             isFetching: false,
@@ -1340,10 +1344,6 @@ export default {
     },
     props: {
         data: Object,
-        columns: Array,
-        currency: Object,
-        category: Object,
-        check_class: Object,
         filters: Object,
     },
     methods: {
@@ -1352,19 +1352,9 @@ export default {
             this.selectDataDetails = data;
         },
 
-        showModalReplace(dataIn) {
-            this.selectDataDetails = dataIn;
-            this.cash_form.rep_check_id = dataIn.checks_id;
-            this.check_form.rep_check_id = dataIn.checks_id;
-            this.cash_form.rep_cash_amount = dataIn.check_amount;
-            this.check_form.rep_check_amount = dataIn.check_amount;
-            this.cash_check_form.rep_check_id = dataIn.checks_id;
-            this.cash_check_form.rep_check_amount = dataIn.check_amount;
-            this.partial_cash_form.rep_cash_amount = dataIn.check_amount;
-            this.partial_cash_form.rep_check_id = dataIn.checks_id;
-            this.partial_check_form.rep_check_amount = dataIn.check_amount;
-            this.partial_check_form.rep_check_id = dataIn.checks_id;
-            this.openModalReplace = true;
+        replace(record) {
+            this.record = record;
+            this.openSetup = true;
         },
         checkButtonType() {
             this.isActive = 'check';

@@ -17,6 +17,11 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class DepositedChecksServices extends ExcelWriter
 {
     protected $record;
+    protected $generateUserHeader;
+    protected $border;
+    protected $borderFBN;
+    protected $generateReportHeader;
+    protected $singleBorderWithBgColor;
 
     public function __construct()
     {

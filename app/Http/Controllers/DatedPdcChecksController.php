@@ -4,123 +4,81 @@ namespace App\Http\Controllers;
 
 use App\Helper\ColumnsHelper;
 use App\Helper\NumberHelper;
+use App\Http\Requests\CashReplacementRequest;
 use App\Models\Checks;
 use App\Models\Currency;
 use App\Models\NewCheckReplacement;
 use App\Models\NewSavedChecks;
+use App\Services\DatedPdcCheckServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
+
 
 class DatedPdcChecksController extends Controller
 {
+    public function __construct(public DatedPdcCheckServices $datedPdcChecks)
+    {
+    }
     public function pdc_index(Request $request)
     {
+        return inertia('Dated&PdcChecks/PDCChecks', [
+            'data' => $this->datedPdcChecks->getPostDatedChecks($request),
+            'filters' => $request->only(['search'])
+        ]);
+    }
 
+    public function dated_index(Request $request)
+    {
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
-            ->whereAny([
-                'checks.check_no',
-                'checks.check_amount',
-                'customers.fullname'
-            ], 'LIKE', '%' . $request->search . '%')
-            ->whereColumn('checks.check_date', '>', 'checks.check_received')
+            ->selectFilterDated()
+            ->whereColumn('check_date', '<=', 'check_received')
             ->paginate(10)->withQueryString();
 
-        $currency = Currency::orderBy('currency_name')->get();
-        $category = Checks::select('check_category')->where('check_category', '!=', '')->groupBy('check_category')->get();
-        $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
-
         $data->transform(function ($value) {
-            $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
             $value->check_amount = NumberHelper::currency($value->check_amount);
             return $value;
         });
 
-        return Inertia::render('Dated&PdcChecks/PDCChecks', [
-            'data' => $data,
-            'columns' => ColumnsHelper::$pdc_check_columns,
-            'currency' => $currency,
-            'category' => $category,
-            'check_class' => $check_class,
-            'filters' => $request->only(['search'])
-        ]);
-    }
-    public function dated_index(Request $request)
-    {
-        // dd($request->all());
-
-        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
-            ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
-            ->whereAny([
-                'checks.check_no',
-                'checks.check_amount',
-                'customers.fullname'
-            ],  'LIKE', '%' . $request->search . '%')
-            ->whereColumn('check_date', '<=', 'check_received')
-            ->paginate(10)->withQueryString();
-
-
-            $data->transform(function ($value) {
-                $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
-                $value->check_amount = NumberHelper::currency($value->check_amount);
-                return $value;
-                });
-            // dd($data);
-
-        return Inertia::render('Dated&PdcChecks/DatedChecks', [
+        return inertia('Dated&PdcChecks/DatedChecks', [
             'data' => $data,
             'columns' => ColumnsHelper::$dated_check_columns,
             'filters' => $request->only(['search'])
         ]);
     }
-    public function pdc_cash_replacement(Request $request)
+
+    public function pdc_cash_replacement(CashReplacementRequest $request)
     {
+        // dd($request->all());
+        $request->validated();
 
-        $request->validate([
-            'rep_cash_penalty' => 'required|numeric',
-            'rep_ar_ds' => 'required|string',
-            'rep_reason' => 'required|string',
-            'rep_date' => 'required|date',
-        ], [
-            'rep_cash_penalty.required' => 'The cash penalty field is required.',
-            'rep_cash_penalty.numeric' => 'The cash penalty must be a number.',
-            'rep_ar_ds.required' => 'The AR DS field is required.',
-            'rep_ar_ds.string' => 'The AR DS must be a string.',
-            'rep_reason.required' => 'The reason field is required.',
-            'rep_reason.string' => 'The reason must be a string.',
-            'rep_date.required' => 'The date field is required.',
-            'rep_date.date' => 'The date must be a valid date format.',
-        ]);
-
-        $data = Checks::where('checks_id', $request->rep_check_id)->first();
+        $data = Checks::where('checks_id', $request->id)->first();
 
         DB::transaction(function () use ($request, $data) {
             NewCheckReplacement::create([
                 'bounce_id' => 0,
                 'rep_check_id' => 0,
                 'check_amount_paid' => 0,
-                'checks_id' => $request->rep_check_id,
+                'checks_id' => $request->id,
                 'check_amount' => NumberHelper::float($data->check_amount),
-                'cash' => NumberHelper::float($request->rep_cash_amount),
-                'penalty' => NumberHelper::float($request->rep_cash_penalty),
-                'ar_ds' => $request->rep_ar_ds,
-                'reason' => $request->rep_reason,
+                'cash' => NumberHelper::float($request->amount),
+                'penalty' => $request->penalty,
+                'ar_ds' => $request->ards,
+                'reason' => $request->reason,
                 'mode' => "CASH",
                 'status' => "REDEEMED",
                 'user' => Auth::user()->id,
-                'date_time' => $request->rep_date,
+                'date_time' => $request->date,
             ]);
 
-            Checks::where('checks_id', $request->rep_check_id)->update(['check_status' => 'CASH', 'cash' => NumberHelper::float($request->rep_cash_amount)]);
-            NewSavedChecks::where('checks_id', $request->rep_check_id)->update(['status' => 'REDEEM']);
+            Checks::where('checks_id', $request->id)->update(['check_status' => 'CASH', 'cash' => NumberHelper::float($request->amount)]);
+            NewSavedChecks::where('checks_id', $request->id)->update(['status' => 'REDEEM']);
         });
-
-        return redirect()->back();
     }
+
     public function pdc_check_replacement(Request $request)
     {
 
@@ -170,7 +128,6 @@ class DatedPdcChecksController extends Controller
             $check_type = "POST DATED";
         } else {
             $check_type = "DATED CHECK";
-
         }
 
         DB::transaction(function () use ($request, $check_type) {
@@ -226,7 +183,6 @@ class DatedPdcChecksController extends Controller
         });
 
         return redirect()->back();
-
     }
 
     public function pdc_check_cash_replacement(Request $request)
@@ -340,7 +296,6 @@ class DatedPdcChecksController extends Controller
 
             NewSavedChecks::where('checks_id', $request->rep_check_id)->update(['status' => 'REDEEM']);
         });
-
     }
 
     public function pdc_partial_replacement_cash(Request $request)
@@ -381,11 +336,9 @@ class DatedPdcChecksController extends Controller
 
             Checks::where('checks_id', $request->rep_check_id)->update(['check_status' => 'PARTIAL']);
             NewSavedChecks::where('checks_id', $request->rep_check_id)->update(['status' => 'REDEEM']);
-
         });
 
         return redirect()->back();
-
     }
     public function pdc_partial_replacement_check(Request $request)
     {
@@ -436,7 +389,6 @@ class DatedPdcChecksController extends Controller
             $check_type = "POST DATED";
         } else {
             $check_type = "DATED CHECK";
-
         }
 
         DB::transaction(function () use ($request, $check_type) {
@@ -493,6 +445,5 @@ class DatedPdcChecksController extends Controller
         });
 
         return redirect()->back();
-
     }
 }

@@ -32,26 +32,5 @@ class NewSavedChecks extends Model
     {
         // return $this->belongsTo(Employee3::class, 'checks_id', 'checks_id');
     }
-    public function scopeWhereSearchFilter($query, $request)
-    {
-        return $query->whereAny([
-            'checks.check_no',
-            'checks.check_amount',
-            'customers.fullname',
-        ], 'LIKE', '%' . $request->search . '%');
-    }
-    public function scopeSelectFilter($query)
-    {
-        return $query->select([
-            'checks.checks_id',
-            'check_date',
-            'done',
-            'done',
-            'check_no',
-            'check_received',
-            'check_amount',
-            'check_category',
-            'fullname',
-        ]);
-    }
+
 }
