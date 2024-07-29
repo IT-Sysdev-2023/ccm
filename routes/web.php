@@ -14,6 +14,7 @@ use App\Http\Controllers\DsBounceTaggingController;
 use App\Http\Controllers\DatedPdcChecksController;
 use App\Http\Controllers\CheckReceivingController;
 use App\Http\Controllers\AccountingReportController;
+use App\Http\Controllers\AddCredentialController;
 use App\Http\Controllers\AdjustmentController;
 use App\Http\Controllers\AppSettingController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -211,6 +212,10 @@ Route::middleware('auth')->group(function () {
         return response()->download($filePath);
     })->name('download.excel');
 
+
+    Route::prefix('credetials')->group(function () {
+        Route::post('add-customer', [AddCredentialController::class, 'addCustomer'])->name('add.customer');
+    });
 
     Route::put('reset/password', [AuthenticatedSessionController::class, 'newPassword'])->name('new.password');
 

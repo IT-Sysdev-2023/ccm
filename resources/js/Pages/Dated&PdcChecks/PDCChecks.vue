@@ -31,7 +31,6 @@
                             </a-button>
                             <a-button @click="openModaldated(record)">
                                 <template #icon>
-                                    <!-- <FullscreenOutlined /> -->
                                     <FolderFilled />
                                 </template>
                             </a-button>
@@ -42,72 +41,15 @@
             </a-card>
         </div>
     </div>
+
     <CheckModalDetail v-model:open="isModalOpen" :datarecords="selectDataDetails"></CheckModalDetail>
 
-    <CheckSetupModal v-model:visible="openSetup" :record="record" />
+    <CheckSetupModal v-model:open="openSetup" :record="record" />
 
     <!-- <a-modal v-model:open="openModalReplace" title="Replacement Checks Configuration" :footer="null"
         :after-close="afterClose" style="top: 20px; width: 100%;" wrap-class-name="full-modal">
         <a-row :gutter="[16, 16]">
-            <a-col :span="6">
-                <a-card>
-                    <table class="table">
-                        <thead>
-                            <th class="thh" colspan="2">Check Information</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th>Check Number</th>
-                                <td>{{ selectDataDetails.check_no }}</td>
-                            </tr>
-                            <tr>
-                                <th>Check Amount</th>
-                                <td>{{ selectDataDetails.check_amount }}</td>
-                            </tr>
-                            <tr>
-                                <th>Check Date</th>
-                                <td>{{ selectDataDetails.check_date }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </a-card>
-                <a-card class="mt-1">
-                    <p class="text-center font-bold">Please Select Type Of Payment</p>
-                    <a-button class="mt-2" block @click="cashButtonType" :class="{ 'active': isActive === 'cash' }">
-                        <template #icon>
-                            <DollarCircleOutlined />
-                        </template>
-                        Cash
-                    </a-button>
-                    <a-button class="mt-2" block @click="checkButtonType" :class="{ 'active': isActive === 'check' }">
-                        <template #icon>
-                            <CreditCardOutlined />
-                        </template>
-                        Check
-                    </a-button>
-                    <a-button class="mt-2" block @click="cashCheckButtonType"
-                        :class="{ 'active': isActive === 'check&cash' }">
-                        <template #icon>
-                            <IdcardOutlined />
-                        </template>
 
-                        Check and cash
-                    </a-button>
-                    <a-button class="mt-2" block @click="partialPayCashButtton"
-                        :class="{ 'active': isActive === 'partialpaycash' }">
-                        <template #icon>
-                            <ApartmentOutlined />
-                        </template>
-                        Partial Payment Cash
-                    </a-button>
-                    <a-button class="mt-2" block @click="partialPayCheckButtton"
-                        :class="{ 'active': isActive === 'partialpaycheck' }">
-                        <template #icon>
-                            <PartitionOutlined />
-                        </template>
-                        Partial Payment Check
-                    </a-button>
-                </a-card>
             </a-col>
             <a-col :span="18">
                 <a-card class="flex justify-center" style="height: 100%; ">
@@ -1263,15 +1205,6 @@ export default {
             appoffOption: [],
             customerOption: [],
             accountOption: [],
-
-            cash_form: useForm({
-                rep_check_id: '',
-                rep_cash_amount: '',
-                rep_cash_penalty: '',
-                rep_ar_ds: '',
-                rep_reason: '',
-                rep_date: '',
-            }),
             check_form: useForm({
                 rep_check_id: '',
                 checkFrom_id: null,
@@ -1356,33 +1289,6 @@ export default {
             this.record = record;
             this.openSetup = true;
         },
-        checkButtonType() {
-            this.isActive = 'check';
-            this.checkShow = true;
-            this.defaultShow = false;
-            this.cashShow = false;
-            this.cashChecShow = false;
-            this.partialPayCheck = false;
-            this.partialPayCash = false;
-        },
-        cashButtonType() {
-            this.isActive = 'cash';
-            this.checkShow = false;
-            this.defaultShow = false;
-            this.cashShow = true;
-            this.cashChecShow = false;
-            this.partialPayCheck = false;
-            this.partialPayCash = false;
-        },
-        cashCheckButtonType() {
-            this.isActive = 'check&cash';
-            this.checkShow = false;
-            this.defaultShow = false;
-            this.cashShow = false;
-            this.cashCheckShow = true;
-            this.partialPayCheck = false;
-            this.partialPayCash = false;
-        },
         partialPayCashButtton() {
             this.isActive = 'partialpaycash';
             this.checkShow = false;
@@ -1400,24 +1306,6 @@ export default {
             this.cashCheckShow = false;
             this.partialPayCheck = true;
             this.partialPayCash = false;
-        },
-        submit_cash_replacement() {
-            this.isLoadingbutton = true;
-            this.cash_form.transform((data) => ({
-                ...data,
-                rep_date: dayjs(data.rep_date).format('YYYY-MM-DD')
-            })).
-                post(route('pdc_cash.replacement'), {
-                    onSuccess: () => {
-                        this.openModalReplace = false;
-                        this.cash_form.reset();
-                        this.openModalReplace = false;
-                        message.success({
-                            content: "Successfully replaced the cash!",
-                            duration: 3,
-                        });
-                    }
-                })
         },
         submitReplacementCheck() {
             this.check_form.transform((data) => ({

@@ -10,6 +10,8 @@ export function searchFunctionMixin() {
     const optionsBunit = ref([]);
     const optionsDepartment = ref([]);
     const optionsCompany = ref([]);
+    const optionsBank = ref([]);
+    const optionsCustomer = ref([]);
 
     const debouncedSearchEmployee = debounce(async function (query) {
         try {
@@ -108,6 +110,48 @@ export function searchFunctionMixin() {
         }
     }, 1000);
 
+    const debounceBank = debounce(async function (query) {
+        try {
+            if (query.trim().length) {
+
+                isRetrieving.value = true;
+
+                optionsBank.value = [];
+
+                const { data } = await axios.get(route('search.bankName', { search: query }))
+
+                optionsBank.value = data.map(bank => ({
+                    title: bank.bankbranchname,
+                    value: bank.bank_id,
+                    label: bank.bankbranchname
+                }))
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            isRetrieving.value = false;
+        }
+    }, 1000);
+
+    const debounceCustomer = debounce(async function (query) {
+        try {
+            if (query.trim().length) {
+                isRetrieving.value = true;
+                optionsCustomer.value = [];
+                const { data } = await axios.get(route('search.customerName', { search: query }))
+                optionsCustomer.value = data.map(customer => ({
+                    title: customer.fullname,
+                    value: customer.customer_id,
+                    label: customer.fullname
+                }))
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            isRetrieving.value = false;
+        }
+    }, 1000);
+
     return {
         isRetrieving,
         optionsEmployee,
@@ -117,7 +161,11 @@ export function searchFunctionMixin() {
         debouncedDepartment,
         optionsDepartment,
         debouncedCompany,
+        debounceCustomer,
         optionsCompany,
+        optionsBank,
+        optionsCustomer,
+        debounceBank,
     };
 }
 

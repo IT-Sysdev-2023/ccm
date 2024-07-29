@@ -34,7 +34,6 @@
                             Cash
                         </span>
                     </template>
-                    <!-- {{ modal }} -->
                     <Cash :record="record"/>
                 </a-tab-pane>
                 <a-tab-pane key="2">
@@ -44,7 +43,7 @@
                             Check
                         </span>
                     </template>
-                    Tab 2
+                    <Check :id="record.checks_id"/>
                 </a-tab-pane>
                 <a-tab-pane key="3">
                     <template #tab>
