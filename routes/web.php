@@ -215,6 +215,8 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('credetials')->group(function () {
         Route::post('add-customer', [AddCredentialController::class, 'addCustomer'])->name('add.customer');
+        Route::post('add-bank', [AddCredentialController::class, 'addBank'])->name('add.bank');
+        Route::post('add-class', [AddCredentialController::class, 'addClass'])->name('add.class');
     });
 
     Route::put('reset/password', [AuthenticatedSessionController::class, 'newPassword'])->name('new.password');

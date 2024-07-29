@@ -4,14 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\AppSetting;
 use App\Models\Customer;
+use App\Services\CredentialsServices;
 use Illuminate\Http\Request;
 
 class AddCredentialController extends Controller
 {
-    //
+    public function __construct(public CredentialsServices $credentials)
+    {
+
+    }
+
     public function addCustomer(Request $request)
     {
-       $cusCode = $this->generateCustomerCode();
+
+       $cusCode = $this->credentials->addCustomer();
 
        $create = Customer::create([
             'cus_code' => $cusCode,
@@ -21,20 +27,24 @@ class AddCredentialController extends Controller
         ]);
 
         return response()->json($create);
-
     }
 
-    public function generateCustomerCode()
+    public function addBank(Request $request)
     {
-        $code = 0;
 
-        $cman = Customer::orderByDesc('cus_code')->first();
-        if ($cman != null) {
-            $code = $cman->cus_code;
-            return ++$code;
-        } else {
-            $data = AppSetting::where('app_key', 'app_customercode_start')->get();
-            return $data[0]['app_value'];
-        }
+       $data = $this->credentials->addBankName($request);
+
+       return response()->json($data);
     }
+
+    public function addClass(Request $request)
+    {
+
+       $data = $this->credentials->addCheckClass($request);
+
+       return response()->json($data);
+    }
+
+
+
 }

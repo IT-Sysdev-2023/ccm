@@ -12,6 +12,8 @@ class Bank extends Model
     protected $table = 'banks';
     protected $primaryKey = 'bank_id';
 
+    protected $guarded = [];
+
     public function user()
     {
         return $this->belongsTo('App\Molels\User', 'id', 'id');

@@ -10,7 +10,9 @@ class Department extends Model
     use HasFactory;
     protected $table = 'department';
     protected $primaryKey = 'department_id';
+    
     public $timestamps = false;
+
     protected $guarded = [];
 
     public function user()

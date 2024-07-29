@@ -34,9 +34,9 @@ class DatedPdcDBServices
         });
     }
 
-    public function pdcCheckReplacement($request, $type, $custId)
+    public function pdcCheckReplacement($request, $type, $custId, $bankId, $classId)
     {
-        DB::transaction(function () use ($request, $type, $custId) {
+        DB::transaction(function () use ($request, $type, $custId, $bankId , $classId) {
             $data = Checks::create([
                 'checksreceivingtransaction_id' => 0,
                 'businessunit_id' => $request->user()->businessunit_id,
@@ -46,12 +46,12 @@ class DatedPdcDBServices
                 'user' => $request->user()->id,
                 'check_status' => 'CLEARED',
                 'check_no' => $request->checkNo,
-                'bank_id' => $request->bankName,
+                'bank_id' => $bankId,
                 'department_from' => $request->checkFrom,
                 'currency_id' => $request->currency,
                 'check_date' => $request->checkDate,
                 'check_amount' => NumberHelper::float($request->amount),
-                'check_class' => $request->checkClass,
+                'check_class' => $classId,
                 'check_category' => $request->checkCat,
                 'check_received' => $request->checkRec,
                 'account_name' => $request->accName,

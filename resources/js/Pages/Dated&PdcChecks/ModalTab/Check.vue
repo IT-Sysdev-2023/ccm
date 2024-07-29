@@ -38,7 +38,29 @@
                     </a-input-group>
                 </a-form-item>
                 <a-form-item label="Bank Name">
-                    <a-input v-model:value="form.bankName" placeholder="Enter Here..." />
+                    <a-input-group compact style="width: 100%;">
+                        <a-select style="width: calc(100% - 31px)" show-search placeholder="Search here..."
+                            :default-active-first-option="false" v-model:value="form.bankName" :show-arrow="false"
+                            :filter-option="false" :not-found-content="isRetrieving ? undefined : null
+                                " :options="optionsBank" @search="debounceBank">
+                            <template v-if="isRetrieving" #notFoundContent>
+                                <a-spin size="small" />
+                            </template>
+                        </a-select>
+
+                        <a-tooltip title="Add Bank?">
+                            <a-popconfirm title="Add Bank" ok-text="Add" cancel-text="No" @confirm="addBank">
+                                <template #description>
+                                    <a-input v-model:value="add.bankName" placeholder="Enter Here..." />
+                                </template>
+                                <a-button>
+                                    <template #icon>
+                                        <PlusOutlined />
+                                    </template>
+                                </a-button>
+                            </a-popconfirm>
+                        </a-tooltip>
+                    </a-input-group>
                 </a-form-item>
                 <a-form-item label="Currency">
                     <a-input v-model:value="form.currency" placeholder="Enter Here..." />
@@ -68,7 +90,29 @@
                     <a-input v-model:value="form.checkFrom" placeholder="Enter Here..." />
                 </a-form-item>
                 <a-form-item label="Check Class">
-                    <a-input v-model:value="form.checkClass" placeholder="Enter Here..." />
+                    <a-input-group compact style="width: 100%;">
+                        <a-select style="width: calc(100% - 31px)" show-search placeholder="Search here..."
+                            :default-active-first-option="false" v-model:value="form.checkClass" :show-arrow="false"
+                            :filter-option="false" :not-found-content="isRetrieving ? undefined : null
+                                " :options="optionsDepartment" @search="debouncedDepartment">
+                            <template v-if="isRetrieving" #notFoundContent>
+                                <a-spin size="small" />
+                            </template>
+                        </a-select>
+
+                        <a-tooltip title="Add Class?">
+                            <a-popconfirm title="Add Class" ok-text="Add" cancel-text="No" @confirm="addClass">
+                                <template #description>
+                                    <a-input v-model:value="add.checkClass" placeholder="Enter Here..." />
+                                </template>
+                                <a-button>
+                                    <template #icon>
+                                        <PlusOutlined />
+                                    </template>
+                                </a-button>
+                            </a-popconfirm>
+                        </a-tooltip>
+                    </a-input-group>
                 </a-form-item>
                 <a-form-item label="Check Category">
                     <a-input v-model:value="form.checkCat" placeholder="Enter Here..." />
@@ -116,8 +160,8 @@ export default {
                 checkDate: '',
                 checkRec: '',
                 checkCat: '',
-                checkClass: '',
-                bankName: '',
+                checkClass: null,
+                bankName: null,
                 currency: '',
                 custName: null,
                 reason: '',
@@ -127,6 +171,8 @@ export default {
             }),
             add: {
                 customer: '',
+                bankName: '',
+                checkClass: ''
             },
         }
     },
@@ -157,7 +203,30 @@ export default {
                     label: data.fullname,
                 };
             })
-        }
+        },
+        async addBank() {
+            await axios.post(route('add.bank'), {
+                bankName: this.add.bankName
+            }).then(response => {
+                const data = response.data;
+                this.form.bankName = {
+                    value: data.bank_id,
+                    label: data.bankbranchname,
+                };
+            })
+        },
+        async addClass() {
+            await axios.post(route('add.class'), {
+                checkClass: this.add.checkClass
+            }).then(response => {
+                const data = response.data;
+                this.form.checkClass = {
+                    value: data.department_id,
+                    label: data.department,
+                };
+            })
+        },
+
 
     }
 }

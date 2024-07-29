@@ -61,28 +61,26 @@ class DatedPdcChecksController extends Controller
         $this->dbservices->pdcCashReplacement($request, $oldAmount);
 
         return redirect()->back();
-    } 
+    }
 
-    public function pdc_check_replacement(CheckReplacementRequest $request)
+    public function pdc_check_replacement(Request $request)
     {
-        $request->validated();
 
-        if (is_array($request->custName)) {
-            $custId =  $request->custName['value'];
-        } else {
-            $custId =  $request->custName;
-        }
+        $custId =  is_array($request->custName) ? $request->custName['value'] : $request->custName;
+
+        $bankId =  is_array($request->bankName) ? $request->bankName['value'] : $request->bankName;
+
+        $classId =  is_array($request->checkClass) ? $request->checkClass['value'] : $request->checkClass;
 
         $type = $request->checkDate > today()->toDateString() ? "POST DATED" : "DATED CHECK";
 
-        $this->dbservices->pdcCheckReplacement($request, $type, $custId);
+        $this->dbservices->pdcCheckReplacement($request, $type, $custId, $bankId, $classId);
 
         return redirect()->back();
     }
 
     public function pdc_check_cash_replacement(Request $request)
     {
-        // dd($request->all());
         $request->validate(
             [
                 'checkFrom_id' => 'required',
