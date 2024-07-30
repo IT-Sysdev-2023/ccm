@@ -22,6 +22,7 @@ class CheckReplacementRequest extends FormRequest
             "checkNo" => 'required',
             "checkDate" => 'required|date',
             "checkRec" => 'required|date',
+            "checkFrom" => 'required',
             "checkCat" => 'required',
             "checkClass" => 'required',
             "bankName" => 'required',

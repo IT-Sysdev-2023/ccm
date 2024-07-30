@@ -14,7 +14,7 @@
                     <a-input-search v-model:value="form.search" style="width: 400px;" class="mb-5"
                         placeholder="Search Checks" :loading="isFetching" />
                 </div>
-                <a-table :pagination="false" :data-source="data.data" :loading="isLoadingTbl" :columns="columns"
+                <a-table :pagination="true" :data-source="data" :loading="isLoadingTbl" :columns="columns"
                     size="small" bordered>
 
                     <template #bodyCell="{ column, record }">
@@ -32,12 +32,12 @@
                         </template>
                     </template>
                 </a-table>
-                <pagination class="mt-6 mb-10" :datarecords="data" />
+                <!-- <pagination class="mt-6 mb-10" :datarecords="data" /> -->
             </a-card>
         </div>
     </div>
 
-    <CheckModalDetail  :datarecords="selectDataDetails"/>
+    <CheckModalDetail v-model:open="isOpenModal"  :datarecords="selectDataDetails"/>
 </template>
 
 <script>

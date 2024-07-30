@@ -21,8 +21,7 @@ class DatedPdcCheckServices
                 'checks.check_amount',
                 'customers.fullname'
             ], 'LIKE', '%' . $request->search . '%')
-            ->whereColumn('checks.check_date', '>', 'checks.check_received')
-            ->paginate(10)->withQueryString();
+            ->whereColumn('checks.check_date', '>', 'checks.check_received')->get();
 
         $currency = Currency::orderBy('currency_name')->get();
 

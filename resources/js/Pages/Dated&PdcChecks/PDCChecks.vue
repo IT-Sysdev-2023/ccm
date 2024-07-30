@@ -15,8 +15,8 @@
                     <a-input-search v-model:value="form.search" style="width: 350px;" class="mb-5"
                         placeholder="Search Checks" :loading="isFetching" />
                 </div>
-                <a-table :loading="isLoadingTbl" :pagination="false" :dataSource="data.records.data"
-                    class="components-table-demo-nested" :columns="data.columns" size="small" bordered>
+                <a-table :loading="isLoadingTbl" :dataSource="data.records" class="components-table-demo-nested"
+                    :columns="data.columns" size="small" bordered>
                     <template #bodyCell="{ column, record, index }">
                         <template v-if="column.dataIndex">
                             <span v-html="highlightText(record[column.dataIndex], form.search)
@@ -37,19 +37,14 @@
                         </template>
                     </template>
                 </a-table>
-                <pagination class="mt-6" :datarecords="data.records" />
             </a-card>
         </div>
     </div>
 
     <CheckModalDetail v-model:open="isModalOpen" :datarecords="selectDataDetails"></CheckModalDetail>
 
-    <CheckSetupModal v-model:open="openSetup"
-    :record="record"
-    :currency="data.currency"
-    :check-class="data.check_class"
-    :category="data.category"
-    />
+    <CheckSetupModal v-model:open="openSetup" :record="record" :currency="data.currency" :check-class="data.check_class"
+        :category="data.category" />
 
     <!-- <a-modal v-model:open="openModalReplace" title="Replacement Checks Configuration" :footer="null"
         :after-close="afterClose" style="top: 20px; width: 100%;" wrap-class-name="full-modal">
@@ -1179,14 +1174,17 @@ import { message } from 'ant-design-vue';
 import debounce from 'lodash/debounce';
 import { highlighten } from "@/Mixin/highlighten.js";
 import { FolderFilled } from '@ant-design/icons-vue';
+import { data } from 'autoprefixer';
 export default {
     layout: TreasuryLayout,
+
     setup() {
         const { highlightText } = highlighten();
         return { highlightText };
     },
     data() {
         return {
+            currentPage: 1,
             form: {
                 search: this.filters.search
             },

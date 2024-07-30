@@ -33,11 +33,12 @@ class DatedPdcChecksController extends Controller
 
     public function dated_index(Request $request)
     {
+
         $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
             ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
+            ->WhereSearchFilter($request)
             ->selectFilterDated()
-            ->whereColumn('check_date', '<=', 'check_received')
-            ->paginate(10)->withQueryString();
+            ->whereColumn('check_date', '<=', 'check_received')->get();
 
         $data->transform(function ($value) {
             $value->check_date = Date::parse($value->check_date)->toFormattedDateString();

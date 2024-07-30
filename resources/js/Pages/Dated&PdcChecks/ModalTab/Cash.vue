@@ -34,7 +34,6 @@
     </a-form>
 </template>
 <script>
-import pickBy from 'lodash/pickBy';
 import { message, notification } from 'ant-design-vue';
 import { useForm } from '@inertiajs/vue3';
 export default {
@@ -72,9 +71,9 @@ export default {
                     this.isSubmitting = false;
                     this.isDisable = true;
                     notification['success']({
-                        message: 'Notification Title',
+                        message: 'Success',
                         description:
-                            'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+                            'Replacement check successfully',
                     });
                     setTimeout(() => {
                         window.location.reload();

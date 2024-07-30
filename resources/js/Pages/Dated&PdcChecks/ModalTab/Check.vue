@@ -1,20 +1,25 @@
 <template>
     <a-form layout="horizontal">
+
         <a-row :gutter="[16, 16]">
             <a-col :span="12">
-                <a-form-item label="Account No">
+                <a-form-item label="Account No" has-feedback :help="error.account"
+                    :validate-status="error.account ? 'error' : ''">
                     <a-input allow-clear v-model:value="form.account" placeholder="Enter Here..." />
                 </a-form-item>
-                <a-form-item  label="Check No">
-                    <a-input  allow-clear v-model:value="form.checkNo" placeholder="Enter Here..." />
+                <a-form-item label="Check No"  has-feedback :help="error.checkNo"
+                :validate-status="error.checkNo ? 'error' : ''">
+                    <a-input allow-clear v-model:value="form.checkNo" placeholder="Enter Here..." />
                 </a-form-item>
-                <a-form-item  allow-clear label="Check Date">
+                <a-form-item allow-clear label="Check Date" has-feedback :help="error.checkDate"
+                :validate-status="error.checkDate ? 'error' : ''">
                     <a-date-picker style="width: 100%;" @change="changeCheckDate" />
                 </a-form-item>
 
-                <a-form-item label="Customer Name">
+                <a-form-item label="Customer Name" has-feedback :help="error.custName"
+                :validate-status="error.custName ? 'error' : ''">
                     <a-input-group compact style="width: 100%;">
-                        <a-select  allow-clear style="width: calc(100% - 31px)" show-search placeholder="Search here..."
+                        <a-select allow-clear style="width: calc(100% - 31px)" show-search placeholder="Search here..."
                             :default-active-first-option="false" v-model:value="form.custName" :show-arrow="false"
                             :filter-option="false" :not-found-content="isRetrieving ? undefined : null
                                 " :options="optionsCustomer" @search="debounceCustomer">
@@ -37,7 +42,8 @@
                         </a-tooltip>
                     </a-input-group>
                 </a-form-item>
-                <a-form-item label="Bank Name">
+                <a-form-item label="Bank Name" has-feedback :help="error.bankName"
+                :validate-status="error.bankName ? 'error' : ''">
                     <a-input-group compact style="width: 100%;">
                         <a-select style="width: calc(100% - 31px)" show-search placeholder="Search here..."
                             :default-active-first-option="false" v-model:value="form.bankName" :show-arrow="false"
@@ -62,20 +68,28 @@
                         </a-tooltip>
                     </a-input-group>
                 </a-form-item>
-                <a-form-item label="Currency">
-                    <a-select placeholder="Select Currency" ref="select" v-model:value="form.currency" style="width: 100%">
-                        <a-select-option  allow-clear v-for="item in currency" :value="item.currency_id">{{ item.currency_name }}</a-select-option>
+                <a-form-item label="Currency" has-feedback :help="error.currency"
+                :validate-status="error.currency ? 'error' : ''">
+                    <a-select placeholder="Select Currency" ref="select" v-model:value="form.currency"
+                        style="width: 100%">
+                        <a-select-option allow-clear v-for="item in currency" :value="item.currency_id">{{
+                            item.currency_name
+                        }}</a-select-option>
                     </a-select>
                 </a-form-item>
-                <a-form-item label="Replacement Date.">
-                    <a-date-picker  style="width: 100%;" @change="changeRepDate" />
+                <a-form-item label="Replacement Date." has-feedback :help="error.repDate"
+                :validate-status="error.repDate ? 'error' : ''">
+                    <a-date-picker style="width: 100%;" @change="changeRepDate" />
                 </a-form-item>
-                <a-form-item label="Reason For Return">
-                    <a-textarea  allow-clear :rows="4" show-count v-model:value="form.reason" placeholder="Enter Reason" />
+                <a-form-item label="Reason For Return" has-feedback :help="error.reason"
+                :validate-status="error.reason ? 'error' : ''">
+                    <a-textarea allow-clear :rows="4" show-count v-model:value="form.reason"
+                        placeholder="Enter Reason" />
                 </a-form-item>
             </a-col>
             <a-col :span="12">
-                <a-form-item label="Account Name">
+                <a-form-item label="Account Name" has-feedback :help="error.accName"
+                :validate-status="error.accName ? 'error' : ''">
                     <a-select allow-clear show-search placeholder="Search here..." :default-active-first-option="false"
                         v-model:value="form.accName" style="width: 100%" :show-arrow="false" :filter-option="false"
                         :not-found-content="isRetrieving ? undefined : null
@@ -85,16 +99,21 @@
                         </template>
                     </a-select>
                 </a-form-item>
-                <a-form-item label="Check Received">
-                    <a-date-picker  style="width: 100%;" @change="changeCheckReceived" />
+                <a-form-item label="Check Received" has-feedback :help="error.checkRec"
+                :validate-status="error.checkRec ? 'error' : ''">
+                    <a-date-picker style="width: 100%;" @change="changeCheckReceived" />
                 </a-form-item>
-                <a-form-item label="Check Class">
-                    <a-select  allow-clear placeholder="Select Class" ref="select" v-model:value="form.checkClass" style="width: 100%">
-                        <a-select-option v-for="item in checkClass" :value="item.check_class">{{ item.check_class }}</a-select-option>
+                <a-form-item label="Check Class" has-feedback :help="error.checkClass"
+                :validate-status="error.checkClass ? 'error' : ''">
+                    <a-select allow-clear placeholder="Select Class" ref="select" v-model:value="form.checkClass"
+                        style="width: 100%">
+                        <a-select-option v-for="item in checkClass" :value="item.check_class">{{ item.check_class
+                            }}</a-select-option>
                     </a-select>
                 </a-form-item>
 
-                <a-form-item label="Check From">
+                <a-form-item label="Check From" has-feedback :help="error.checkFrom"
+                :validate-status="error.checkFrom ? 'error' : ''">
                     <a-input-group compact style="width: 100%;">
                         <a-select style="width: calc(100% - 31px)" show-search placeholder="Search here..."
                             :default-active-first-option="false" v-model:value="form.checkFrom" :show-arrow="false"
@@ -105,7 +124,7 @@
                             </template>
                         </a-select>
 
-                        <a-tooltip title="Add Class?">
+                        <a-tooltip title="Add Check From?" >
                             <a-popconfirm title="Add Class" ok-text="Add" cancel-text="No" @confirm="addFrom">
                                 <template #description>
                                     <a-input v-model:value="add.checkFrom" placeholder="Enter Here..." />
@@ -119,12 +138,17 @@
                         </a-tooltip>
                     </a-input-group>
                 </a-form-item>
-                <a-form-item label="Check Category">
-                    <a-select placeholder="Select Category" ref="select" v-model:value="form.checkCat" style="width: 100%">
-                        <a-select-option  allow-clear v-for="item in category" :value="item.check_category">{{ item.check_category }}</a-select-option>
+                <a-form-item label="Check Category" has-feedback :help="error.checkCat"
+                :validate-status="error.checkCat ? 'error' : ''">
+                    <a-select placeholder="Select Category" ref="select" v-model:value="form.checkCat"
+                        style="width: 100%">
+                        <a-select-option allow-clear v-for="item in category" :value="item.check_category">{{
+                            item.check_category
+                        }}</a-select-option>
                     </a-select>
                 </a-form-item>
-                <a-form-item label="Approving Officer">
+                <a-form-item label="Approving Officer" has-feedback :help="error.appOfficer"
+                :validate-status="error.appOfficer ? 'error' : ''">
                     <a-select show-search placeholder="Search here..." :default-active-first-option="false"
                         v-model:value="form.appOfficer" style="width: 100%" :show-arrow="false" :filter-option="false"
                         :not-found-content="isRetrieving ? undefined : null
@@ -134,13 +158,16 @@
                         </template>
                     </a-select>
                 </a-form-item>
-                <a-form-item label="Penalty Amount">
-                    <a-input  allow-clear v-model:value="form.penAmount" placeholder="Enter Here..." />
+                <a-form-item label="Penalty Amount" has-feedback :help="error.penAmount"
+                :validate-status="error.penAmount ? 'error' : ''">
+                    <a-input allow-clear v-model:value="form.penAmount" placeholder="Enter Here..." />
                 </a-form-item>
-                <a-form-item label="Check Amount">
-                    <a-input  allow-clear v-model:value="form.checkAmount" placeholder="Enter Here..." />
+                <a-form-item label="Check Amount" has-feedback :help="error.checkAmount"
+                :validate-status="error.checkAmount ? 'error' : ''">
+                    <a-input allow-clear v-model:value="form.checkAmount" placeholder="Enter Here..." />
                 </a-form-item>
-                <a-button class="mt-2" block type="primary" @click="submit">
+                <a-button class="mt-2" block type="primary" @click="submit" :loading="isSubmitting"
+                    :disabled="isDisable">
                     <template #icon>
                     </template>
                     Submit Check Replacement
@@ -153,7 +180,7 @@
 import { useForm } from '@inertiajs/vue3';
 import { searchFunctionMixin } from '@/Mixin/FilterQuery';
 import axios from 'axios';
-import { fromPairs } from 'lodash';
+import { message, notification } from 'ant-design-vue';
 
 
 export default {
@@ -193,6 +220,10 @@ export default {
                 bankName: '',
                 checkClass: ''
             },
+            isSubmitting: false,
+            isDisable: false,
+            inputError: '',
+            error: {},
         }
     },
     methods: {
@@ -209,7 +240,30 @@ export default {
             this.form.transform((data) => ({
                 ...data
             })).post(route('pdc_check.replacement'), {
-
+                onStart: () => {
+                    this.isSubmitting = true;
+                    message.loading('Action in progress..', 0)
+                },
+                onSuccess: () => {
+                    message.destroy();
+                    this.isSubmitting = false;
+                    this.isDisable = true;
+                    notification['success']({
+                        message: 'Success',
+                        description:
+                            'Replacement of the check successfully',
+                    });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 200);
+                },
+                onError: (errors) => {
+                    console.log(errors)
+                    this.isSubmitting = false;
+                    message.destroy();
+                    this.inputError = 'error';
+                    this.error = errors;
+                }
             })
         },
         async addCustomer() {
@@ -245,8 +299,6 @@ export default {
                 };
             })
         },
-
-
     }
 }
 </script>
