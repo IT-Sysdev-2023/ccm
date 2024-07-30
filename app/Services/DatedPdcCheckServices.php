@@ -43,6 +43,22 @@ class DatedPdcCheckServices
             'check_class' => $class,
             'columns' => ColumnsHelper::$pdc_check_columns,
         ];
+    }
+    public function getDatedCheckData($request)
+    {
 
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
+            ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
+            ->WhereSearchFilter($request)
+            ->selectFilterDated()
+            ->whereColumn('check_date', '<=', 'check_received')->get();
+
+        $data->transform(function ($value) {
+            $value->check_date = Date::parse($value->check_date)->toFormattedDateString();
+            $value->check_amount = NumberHelper::currency($value->check_amount);
+            return $value;
+        });
+
+        return $data;
     }
 }
