@@ -25,8 +25,10 @@ class DatedPdcCheckServices
             ->paginate(10)->withQueryString();
 
         $currency = Currency::orderBy('currency_name')->get();
+
         $category = Checks::select('check_category')->where('check_category', '!=', '')->groupBy('check_category')->get();
-        $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
+
+        $class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
 
         $data->transform(function ($value) {
             $value->check_received = Date::parse($value->check_received)->toFormattedDateString();
@@ -39,7 +41,7 @@ class DatedPdcCheckServices
             'records' => $data,
             'currency' => $currency,
             'category' => $category,
-            'check_class' => $check_class,
+            'check_class' => $class,
             'columns' => ColumnsHelper::$pdc_check_columns,
         ];
 

@@ -44,7 +44,12 @@
 
     <CheckModalDetail v-model:open="isModalOpen" :datarecords="selectDataDetails"></CheckModalDetail>
 
-    <CheckSetupModal v-model:open="openSetup" :record="record" />
+    <CheckSetupModal v-model:open="openSetup"
+    :record="record"
+    :currency="data.currency"
+    :check-class="data.check_class"
+    :category="data.category"
+    />
 
     <!-- <a-modal v-model:open="openModalReplace" title="Replacement Checks Configuration" :footer="null"
         :after-close="afterClose" style="top: 20px; width: 100%;" wrap-class-name="full-modal">

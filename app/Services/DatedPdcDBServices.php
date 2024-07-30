@@ -34,9 +34,9 @@ class DatedPdcDBServices
         });
     }
 
-    public function pdcCheckReplacement($request, $type, $custId, $bankId, $classId)
+    public function pdcCheckReplacement($request, $type, $custId, $bankId, $fromId)
     {
-        DB::transaction(function () use ($request, $type, $custId, $bankId , $classId) {
+        DB::transaction(function () use ($request, $type, $custId, $bankId , $fromId) {
             $data = Checks::create([
                 'checksreceivingtransaction_id' => 0,
                 'businessunit_id' => $request->user()->businessunit_id,
@@ -50,8 +50,8 @@ class DatedPdcDBServices
                 'department_from' => $request->checkFrom,
                 'currency_id' => $request->currency,
                 'check_date' => $request->checkDate,
-                'check_amount' => NumberHelper::float($request->amount),
-                'check_class' => $classId,
+                'check_amount' => NumberHelper::formatterFloat($request->amount),
+                'check_class' => $fromId,
                 'check_category' => $request->checkCat,
                 'check_received' => $request->checkRec,
                 'account_name' => $request->accName,
@@ -67,6 +67,10 @@ class DatedPdcDBServices
                 'check_type' => $request->checkDate,
                 'user' => $request->user()->id,
                 'date_time' => today()->toDateString(),
+                'status' => '',
+                'ds_status' => '',
+                'receive_status' => '',
+                'done' => '',
             ]);
 
             NewCheckReplacement::create([
@@ -75,10 +79,10 @@ class DatedPdcDBServices
                 'cash' => 0,
                 'rep_check_id' => $data->checks_id,
                 'reason' => $request->reason,
-                'penalty' => NumberHelper::float($request->penAmount),
+                'penalty' => NumberHelper::formatterFloat($request->penAmount),
                 'ar_ds' => $request->rep_ar_ds,
-                'check_amount' => NumberHelper::float($request->amount),
-                'check_amount_paid' => NumberHelper::float($request->amount),
+                'check_amount' => NumberHelper::formatterFloat($request->amount),
+                'check_amount_paid' => NumberHelper::formatterFloat($request->amount),
                 'mode' => "CHECK",
                 'status' => "REDEEMED",
                 'user' => $request->user()->id,

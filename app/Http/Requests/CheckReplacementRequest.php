@@ -14,7 +14,6 @@ class CheckReplacementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "amount" => 'required',
             "account" => 'required',
             "accName" => 'required',
             "checkAmount" => 'required',

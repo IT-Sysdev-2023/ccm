@@ -1,7 +1,6 @@
 <template>
     <a-modal  mask style="width: 65%; top: 50px;" title="Basic Modal" :footer="null">
         <a-card>
-
             <a-row class="mb-3">
                 <a-col :span="10">
                     <a-descriptions size="small" layout="horizontal" bordered>
@@ -43,7 +42,7 @@
                             Check
                         </span>
                     </template>
-                    <Check :id="record.checks_id"/>
+                    <Check :id="record.checks_id" :currency="currency" :check-class="checkClass" :category="category"/>
                 </a-tab-pane>
                 <a-tab-pane key="3">
                     <template #tab>
@@ -81,6 +80,9 @@
 export default {
     props: {
         record: Object,
+        currency: Object,
+        checkClass: Object,
+        category: Object
     },
     data() {
         return {
