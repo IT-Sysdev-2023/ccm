@@ -46,30 +46,11 @@ class DsBounceTaggingService
             ->where('done', $filter)
             ->orderBy('checks.check_received', 'DESC');
 
-        return Inertia::render('Ds&BounceTagging/DsTagging', [
-            'due_dates' => self::duedatesCounts($request),
-            'total' => [
-                'totalSum' => (float) $data->sum('check_amount'),
-                'count' => $data->count(),
-            ],
-            'data' => NewSavedCheckResource::collection($data->paginate(10)->withQueryString()),
-            'columns' => ColumnsHelper::$columns_ds_tagging,
-            'filters' => $request->only(['search']),
-            'tab' => $request->tab ?? '1',
-        ]);
-    }
-
-    public static function duedatesCounts($request)
-    {
-        return NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
-            ->whereDate('checks.check_date', today()->toDateString())
-            ->count();
+        return $data;
     }
 
     public function get_bounce_tagging(Request $request)
     {
-        ini_set('memory_limit', '-1');
-
         $datedYear = $request->year ?? now()->toDateString();
 
         $data = NewDsChecks::with(
@@ -88,12 +69,7 @@ class DsBounceTaggingService
             ->paginate(10)
             ->withQueryString();
 
-
-        return Inertia::render('Ds&BounceTagging/BounceTagging', [
-            'data' => NewDsCheckResource::collection($data),
-            'columns' => ColumnsHelper::$get_bounce_tagging_columns,
-            'filters' => $request->only(['year', 'search']),
-        ]);
+        return $data;
     }
 
     public function tagCheckBounce(Request $request)

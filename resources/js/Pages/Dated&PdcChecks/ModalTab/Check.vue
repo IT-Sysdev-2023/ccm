@@ -176,18 +176,18 @@
                     </a-form-item>
                 </div>
 
-                <a-button class="mt-2" block type="primary" @click="submit" :loading="isSubmitting"
+                <a-button class="mt-2" block type="primary" @click="submit" :loading="form.processing"
                     :disabled="isDisable">
                     <template #icon>
                     </template>
                     <span v-if="type == 1">
-                        {{ isSubmitting ? "Submitting form in progress..." : "Submit Check Replacement" }}
+                        {{ form.processing ? "Submitting form in progress..." : "Submit Check Replacement" }}
                     </span>
                     <span v-else-if="type == 2">
-                        {{ isSubmitting ? "Submitting form in progress..." : "Submit Check Cash Replacement" }}
+                        {{ form.processing ? "Submitting form in progress..." : "Submit Check Cash Replacement" }}
                     </span>
                     <span v-else>
-                        {{ isSubmitting ? "Submitting form in progress..." : "Submit Partial Check Replacement" }}
+                        {{ form.processing ? "Submitting form in progress..." : "Submit Partial Check Replacement" }}
                     </span>
                 </a-button>
             </a-col>
@@ -242,7 +242,6 @@ export default {
                 bankName: '',
                 checkClass: ''
             },
-            isSubmitting: false,
             isDisable: false,
             inputError: '',
             error: {},
@@ -275,12 +274,11 @@ export default {
                 ...pickBy(data)
             })).post(route(routeUrl), {
                 onStart: () => {
-                    this.isSubmitting = true;
                     message.loading('Action in progress..', 0)
                 },
                 onSuccess: () => {
                     message.destroy();
-                    this.isSubmitting = false;
+                    this.$emit('close');
                     this.isDisable = true;
                     notification['success']({
                         message: 'Success',
@@ -291,10 +289,7 @@ export default {
                     }, 200);
                 },
                 onError: (errors) => {
-                    console.log(errors)
-                    this.isSubmitting = false;
                     message.destroy();
-                    this.inputError = 'error';
                     this.error = errors;
                 }
             })

@@ -30,10 +30,19 @@ trait NewSavedChecksTraits
             });
     }
 
-    public function scopeJoinChecksCustomerBanksDepartment(Builder $builder)
+    public function scopeJoinChecksCustomerBanksDepartments(Builder $builder)
     {
-        return $builder->select('checks.checks_id', 'checks.check_no', 'checks.check_date', 'checks.check_amount','customers.fullname')
+        return $builder->select(
+            'checks.checks_id',
+            'checks.check_no',
+            'checks.check_date',
+            'checks.check_amount',
+            'checks.check_received',
+             'department.department',
+            'customers.fullname'
+        )
             ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
+            ->join('department', 'department.department_id', 'checks.department_from')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id');
     }
     public function scopeSelectFilterDated($query)

@@ -73,10 +73,12 @@
                 </a-tab-pane>
                 <a-tab-pane key="2">
                     <template #tab>
-                        <span>
-                            <android-outlined />
-                            All Checked Checks
-                        </span>
+                        <a-badge :count="total.count" :number-style="{ backgroundColor: '#52c41a' }">
+                            <span>
+                                <android-outlined />
+                                Checked Total
+                            </span>
+                        </a-badge>
                     </template>
                     <DoneTable :filters="filters" :records="data" :columns="columns" :total="total"
                         :def-total="defaultTotal" />
@@ -112,7 +114,6 @@ export default {
         };
     },
     props: {
-        pagination: Object,
         columns: Array,
         data: Object,
         type: Object,

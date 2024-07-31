@@ -14,7 +14,7 @@ class DatedPdcCheckServices
 {
     public function getPostDatedChecks(Request $request)
     {
-        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartments()
             ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
             ->whereSearchFilter($request)
             ->whereColumn('checks.check_date', '>', 'checks.check_received')->get();
@@ -44,7 +44,7 @@ class DatedPdcCheckServices
     }
     public function getDatedCheckData($request)
     {
-        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartments()
             ->emptyStatusNoCheckWhereBu($request->user()->businessunit_id)
             ->WhereSearchFilter($request)
             ->selectFilterDated()

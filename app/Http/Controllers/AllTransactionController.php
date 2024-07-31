@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helper\ColumnsHelper;
+use App\Services\AllTransactionServices;
+use App\Services\TransactionDbServices;
 use App\Helper\NumberHelper;
 use App\Http\Requests\CashReplacementRequest;
 use App\Http\Requests\CheckCashReplacementRequest;
@@ -30,87 +32,34 @@ use Inertia\Inertia;
 
 class AllTransactionController extends Controller
 {
+    public function __construct(public AllTransactionServices $transactionServices, public TransactionDbServices $transactionDbService)
+    {
+    }
     public function getCheckManualEntry(Request $request)
     {
-        $currency = Currency::orderBy('currency_name')->get();
-        $category = Checks::select('check_category')->where('check_category', '!=', '')->groupBy('check_category')->get();
-        $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
-
-        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
-            ->where('checks.businessunit_id', $request->user()->businessunit_id)
-            ->where('checks.is_manual_entry', true)
-            ->where('new_saved_checks.status', '')
-            ->whereAny([
-                'checks.check_no',
-                'checks.check_amount',
-                'department.department',
-                'customers.fullname',
-            ], 'LIKE', '%' . $request->search . '%')
-            ->orderBy('checks.check_received')
-            ->paginate(10)->withQueryString();
-
-        $data->transform(function ($value) {
-            $value->type = Date::parse($value->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST DATED';
-            return $value;
-        });
+        $data = $this->transactionServices->getManualEntryServices($request);
 
         return Inertia::render('Transaction/CheckManualEntry', [
-            'data' => $data,
+            'data' => $data->record,
             'columns' => ColumnsHelper::$check_manual_column,
-            'currency' => $currency,
-            'category' => $category,
-            'check_class' => $check_class,
+            'select' => $data->select,
             'filters' => $request->only(['search'])
         ]);
     }
+
     public function checkManualEntryStore(ManualEntryStoreRequest $request)
     {
         $request->validated();
-        $checkType = "";
 
-        if ($request->checkdate > today()->toDateString()) {
-            $checkType = "POST DATED";
-        } else {
-            $checkType = "DATED CHECK";
-        }
-        DB::transaction(function () use ($request, $checkType) {
-            $data = Checks::create([
-                'businessunit_id' => $request->user()->businessunit_id,
-                'check_type' => $checkType,
-                'check_status' => "CLEARED",
-                'user' => $request->user()->id,
-                'date_time' => today()->toDateString(),
-                'check_no' => $request->checknumber,
-                'customer_id' => $request->customer,
-                'bank_id' => $request->bankname,
-                'department_from' => $request->checkfrom,
-                'currency_id' => $request->currency,
-                'check_date' => $request->checkdate,
-                'check_amount' => NumberHelper::float($request->checkamount),
-                'check_class' => $request->checkclass,
-                'check_category' => $request->checkcategory,
-                'check_received' => $request->checkreceived,
-                'account_no' => $request->accountnumber,
-                'account_name' => $request->accountname,
-                'approving_officer' => $request->approvingOfficer,
-                'is_manual_entry' => 1,
-                'checksreceivingtransaction_id' => 0,
-                'check_bounced_id' => 0,
-                'is_exist' => 0,
-            ]);
+        $custId =  is_array($request->customer) ? $request->customer['value'] : $request->customer;
 
-            NewSavedChecks::create([
-                'checks_id' => $data->checks_id,
-                'check_type' => $request->checkdate,
-                'user' => $request->user()->id,
-                'date_time' => today()->toDateString(),
-                'status' => '',
-                'ds_status' => '',
-                'receive_status' => '',
-                'done' => '',
-            ]);
-        });
-        return redirect()->back();
+        $bankId =  is_array($request->bankname) ? $request->bankname['value'] : $request->bankname;
+
+        $fromId =  is_array($request->checkfrom) ? $request->checkfrom['value'] : $request->checkfrom;
+
+        $type = $request->checkdate > today()->toDateString() ? "POST DATED" : "DATED CHECK";
+
+        return $this->transactionDbService->setCheckManualEntryStore($request, $type, $bankId, $custId, $fromId);
     }
     public function getMergeChecks(Request $request)
     {

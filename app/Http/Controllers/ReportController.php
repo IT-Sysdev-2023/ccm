@@ -129,7 +129,7 @@ class ReportController extends Controller
 
         $bunit = BusinessUnit::whereNotNull('loc_code_atp')->get();
 
-        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartments()
             ->reportQuery($request->bu, $request->search)
             ->when($request->ch_type == '1', function (Builder $query) {
                 $query->whereColumn('check_date', '>', 'check_received');
@@ -166,7 +166,7 @@ class ReportController extends Controller
 
         $bname = BusinessUnit::where('businessunit_id', '=', $request->bu)->get();
 
-        $data = NewSavedChecks::joinChecksCustomerBanksDepartment()->reportQuery($request->bu, $request->search)
+        $data = NewSavedChecks::joinChecksCustomerBanksDepartments()->reportQuery($request->bu, $request->search)
             ->when($request->ch_type == '1', function (Builder $query) {
                 $query->whereColumn('check_date', '>', 'check_received');
             })

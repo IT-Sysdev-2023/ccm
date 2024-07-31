@@ -15,8 +15,8 @@
                     <a-input-search v-model:value="form.search" style="width: 350px;" class="mb-5"
                         placeholder="Search Checks" :loading="isFetching" />
                 </div>
-                <a-table :loading="isLoadingTbl" :dataSource="data.records"
-                    :columns="data.columns" size="small" bordered>
+                <a-table :loading="isLoadingTbl" :dataSource="data.records" :columns="data.columns" size="small"
+                    bordered>
                     <template #bodyCell="{ column, record, index }">
                         <template v-if="column.dataIndex">
                             <span v-html="highlightText(record[column.dataIndex], form.search)
@@ -44,7 +44,7 @@
     <CheckModalDetail v-model:open="isModalOpen" :datarecords="selectDataDetails"></CheckModalDetail>
 
     <CheckSetupModal v-model:open="openSetup" :record="record" :currency="data.currency" :check-class="data.check_class"
-        :category="data.category" />
+        :category="data.category" @close-modal="closeModal" />
 
 </template>
 <script>
@@ -89,6 +89,9 @@ export default {
             this.record = record;
             this.openSetup = true;
         },
+        closeModal() {
+            this.openSetup = false;
+        }
 
     },
     watch: {

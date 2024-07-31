@@ -45,7 +45,8 @@
         </div>
     </div>
 
-    <ManualEntryModal v-model:open="openModal" :currency="currency" :category="category" :checkClass="check_class" />
+    <ManualEntryModal v-model:open="openModal" :select="select" @close-modal="closeModal" />
+
     <CheckModalDetail v-model:open="openDetails" :datarecords="selectDataDetails"></CheckModalDetail>
 
 </template>
@@ -77,13 +78,13 @@ export default {
     props: {
         data: Array,
         columns: Array,
-        currency: Array,
-        category: Array,
-        check_class: Array,
+        select: Object,
         filters: Object,
     },
     methods: {
-
+        closeModal() {
+      this.openModal = false;
+    },
         modalAddChecksManual() {
             this.openModal = true;
         },
