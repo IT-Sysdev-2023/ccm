@@ -27,10 +27,8 @@ class DatedPdcChecksController extends Controller
 
     public function dated_index(Request $request)
     {
-        $data = $this->datedPdcChecks->getDatedCheckData($request);
-
         return inertia('Dated&PdcChecks/DatedChecks', [
-            'data' => $data,
+            'data' => $this->datedPdcChecks->getDatedCheckData($request),
             'columns' => ColumnsHelper::$dated_check_columns,
             'filters' => $request->only(['search'])
         ]);

@@ -32,7 +32,8 @@ trait NewSavedChecksTraits
 
     public function scopeJoinChecksCustomerBanksDepartment(Builder $builder)
     {
-        return $builder->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
+        return $builder->select('checks.checks_id', 'checks.check_no', 'checks.check_date', 'checks.check_amount','customers.fullname')
+            ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
             ->join('customers', 'checks.customer_id', '=', 'customers.customer_id');
     }
     public function scopeSelectFilterDated($query)

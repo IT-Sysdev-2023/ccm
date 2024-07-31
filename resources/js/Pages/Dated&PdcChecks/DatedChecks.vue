@@ -32,11 +32,9 @@
                         </template>
                     </template>
                 </a-table>
-                <!-- <pagination class="mt-6 mb-10" :datarecords="data" /> -->
             </a-card>
         </div>
     </div>
-
     <CheckModalDetail v-model:open="isOpenModal"  :datarecords="selectDataDetails"/>
 </template>
 
