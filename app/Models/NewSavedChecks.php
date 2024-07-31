@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use App\Traits\NewSavedChecksTraits;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+
 
 class NewSavedChecks extends Model
 {
@@ -17,8 +15,6 @@ class NewSavedChecks extends Model
     protected $table = 'new_saved_checks';
     public $timestamps = false;
     protected $guarded = [];
-
-
 
     public function check()
     {

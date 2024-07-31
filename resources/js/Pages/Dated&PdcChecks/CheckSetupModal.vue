@@ -1,6 +1,6 @@
 <template>
-    <a-modal  mask style="width: 65%; top: 50px;" title="Basic Modal" :footer="null">
-        <a-card>
+    <a-modal mask style="width: 100%; top: 5px;" :footer="null">
+        <a-card class="mt-7">
             <a-row class="mb-3">
                 <a-col :span="10">
                     <a-descriptions size="small" layout="horizontal" bordered>
@@ -14,8 +14,8 @@
                 </a-col>
                 <a-col :span="14">
                     <div class="flex justify-center">
-                        <a-statistic title="Check Amount" :value="record.check_amount" :precision="2"
-                            class="demo-class" :value-style="{ color: '#3FA2F6' }">
+                        <a-statistic title="Check Amount" :value="record.check_amount" :precision="2" class="demo-class"
+                            :value-style="{ color: '#3FA2F6' }">
                             <template #prefix>
                                 <LikeFilled />
                             </template>
@@ -26,6 +26,21 @@
             <hr>
             <br>
             <a-tabs v-model:activeKey="activeKey" type="card" tab-position="left">
+                <a-tab-pane key="6">
+                    <template #tab>
+                        <span>
+                            <ArrowDownOutlined />
+                            Select Type Below
+                        </span>
+                    </template>
+                    <a-typography-title :level="5">
+                        <ToolFilled /> Select Type
+                    </a-typography-title>
+                    <br>
+                    <a-result status="404" title="Select Check Type" sub-title="Select Type first in the side bar below to continue!">
+
+                    </a-result>
+                </a-tab-pane>
                 <a-tab-pane key="1">
                     <template #tab>
                         <span>
@@ -33,7 +48,11 @@
                             Cash
                         </span>
                     </template>
-                    <Cash :record="record"/>
+                    <a-typography-title :level="5">
+                        <ToolFilled /> Cash
+                    </a-typography-title>
+                    <br>
+                    <Cash :record="record" :type="1" />
                 </a-tab-pane>
                 <a-tab-pane key="2">
                     <template #tab>
@@ -42,7 +61,12 @@
                             Check
                         </span>
                     </template>
-                    <Check :id="record.checks_id" :currency="currency" :check-class="checkClass" :category="category"/>
+                    <a-typography-title :level="5">
+                        <ToolFilled /> Check
+                    </a-typography-title>
+                    <br>
+                    <Check :amount="record.check_amount" :id="record.checks_id" :currency="currency"
+                        :check-class="checkClass" :category="category" :type="1" />
                 </a-tab-pane>
                 <a-tab-pane key="3">
                     <template #tab>
@@ -51,7 +75,12 @@
                             Check & Cash
                         </span>
                     </template>
-                    Tab 2
+                    <a-typography-title :level="5">
+                        <ToolFilled /> Check and Cash
+                    </a-typography-title>
+                    <br>
+                    <Check :amount="record.check_amount" :id="record.checks_id" :currency="currency"
+                        :check-class="checkClass" :category="category" :type="2" />
                 </a-tab-pane>
                 <a-tab-pane key="4">
                     <template #tab>
@@ -60,7 +89,11 @@
                             Partial Payment Cash
                         </span>
                     </template>
-                    Tab 2
+                    <a-typography-title :level="5">
+                        <ToolFilled /> Partial Payment Cash
+                    </a-typography-title>
+                    <br>
+                    <Cash :record="record" :type="2" />
                 </a-tab-pane>
                 <a-tab-pane key="5">
                     <template #tab>
@@ -69,7 +102,12 @@
                             Partial Payment Check
                         </span>
                     </template>
-                    Tab 2
+                    <a-typography-title :level="5">
+                        <ToolFilled /> Partial Payment Check
+                    </a-typography-title>
+                    <br>
+                    <Check :amount="record.check_amount" :id="record.checks_id" :currency="currency"
+                        :check-class="checkClass" :category="category" :type="3" />
                 </a-tab-pane>
             </a-tabs>
         </a-card>
@@ -86,7 +124,7 @@ export default {
     },
     data() {
         return {
-            activeKey: '1',
+            activeKey: '6',
         }
     }
 }

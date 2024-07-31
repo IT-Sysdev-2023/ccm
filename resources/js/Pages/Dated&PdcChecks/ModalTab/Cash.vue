@@ -36,10 +36,12 @@
 <script>
 import { message, notification } from 'ant-design-vue';
 import { useForm } from '@inertiajs/vue3';
+import { pickBy } from 'lodash';
 export default {
     props: {
         record: Object,
         modal: Boolean,
+        type: Number,
     },
     data() {
         return {
@@ -59,9 +61,13 @@ export default {
     },
     methods: {
         submit() {
+            
+            const routeUrl = this.type == 1 ? 'pdc_cash.replacement' : 'pdc_cash_partial.replacement';
+            const desc = this.type == 1 ? 'Replaced Cash Successfully' : 'Replaced Partial Cash Successfully';
+
             this.form.transform((data) => ({
-                ...data
-            })).post(route('pdc_cash.replacement'), {
+                ...pickBy(data)
+            })).post(route(routeUrl), {
                 onStart: () => {
                     this.isSubmitting = true;
                     message.loading('Action in progress..', 0)
@@ -72,8 +78,7 @@ export default {
                     this.isDisable = true;
                     notification['success']({
                         message: 'Success',
-                        description:
-                            'Replacement check successfully',
+                        description: desc,
                     });
                     setTimeout(() => {
                         window.location.reload();

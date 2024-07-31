@@ -13,25 +13,27 @@ class PartialPaymentCashRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'rep_cash_penalty' => 'required|numeric',
-            'rep_ar_ds' => 'required|string',
-            'rep_reason' => 'required|string',
-            'rep_date' => 'required|date'
+       return [
+            'penalty' => 'required|numeric',
+            'amount' => 'required|',
+            'ards' => 'required|string',
+            'reason' => 'required|string',
+            'date' => 'required|date',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'rep_cash_penalty.required' => 'The cash penalty field is required.',
-            'rep_cash_penalty.numeric' => 'The cash penalty must be a number.',
-            'rep_ar_ds.required' => 'The AR DS field is required.',
-            'rep_ar_ds.string' => 'The AR DS must be a string.',
-            'rep_reason.required' => 'The reason field is required.',
-            'rep_reason.string' => 'The reason must be a string.',
-            'rep_date.required' => 'The date field is required.',
-            'rep_date.date' => 'The date field is required.'
+            'penalty.required' => 'The cash penalty field is required.',
+            'penalty.numeric' => 'The cash penalty must be a number.',
+            'ards.required' => 'The AR DS field is required.',
+            'ards.string' => 'The AR DS must be a string.',
+            'reason.required' => 'The reason field is required.',
+            'reason.string' => 'The reason must be a string.',
+            'date.required' => 'The date field is required.',
+            'date.date' => 'The date must be a valid date format.',
+            'amount.required' => 'The Check Amount Field is Required.',
         ];
     }
 }

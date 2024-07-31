@@ -4,11 +4,10 @@ namespace App\Models;
 
 use App\Helper\NumberHelper;
 use App\Traits\ChecksTraits;
-use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Date;
+
 
 
 class Checks extends Model
@@ -21,7 +20,7 @@ class Checks extends Model
 
     protected $primaryKey = 'checks_id';
     public $timestamps = false;
-    
+
     protected $dates = ['deleted_at'];
 
     protected $casts = [
@@ -32,10 +31,7 @@ class Checks extends Model
 
     ];
 
-    protected function serializeDate(DateTimeInterface $date): string
-    {
-        return $date->toFormattedDateString();
-    }
+
 
     public function checkAmount(): Attribute
     {

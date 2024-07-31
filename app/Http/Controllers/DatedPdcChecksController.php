@@ -3,21 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helper\ColumnsHelper;
-use App\Helper\NumberHelper;
 use App\Http\Requests\CashReplacementRequest;
 use App\Http\Requests\CheckCashReplacementRequest;
 use App\Http\Requests\CheckReplacementRequest;
-use App\Http\Requests\PartialPaymentCashRequest;
 use App\Models\Checks;
-use App\Models\Currency;
-use App\Models\NewCheckReplacement;
-use App\Models\NewSavedChecks;
 use App\Services\DatedPdcCheckServices;
 use App\Services\DatedPdcDBServices;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 
 
 class DatedPdcChecksController extends Controller
@@ -75,23 +67,22 @@ class DatedPdcChecksController extends Controller
     {
         $request->validated();
 
-        $type = self::getCheckType($request->rep_check_date);
+        $type = self::getCheckType($request->checkDate);
 
         return $this->dbservices->pdcCheckCashreplacement($request, $type);
     }
 
-    public function pdc_partial_replacement_cash(PartialPaymentCashRequest $request)
+    public function pdc_partial_replacement_cash(CashReplacementRequest $request)
     {
         $request->validated();
 
         return $this->dbservices->pdcPartialCashReplacement($request);
     }
-    public function pdc_partial_replacement_check(Request $request)
+    public function pdc_partial_replacement_check(CheckReplacementRequest $request)
     {
-
         $request->validated();
 
-        $type = self::getCheckType($request->rep_check_date);
+        $type = self::getCheckType($request->checkDate);
 
         return $this->dbservices->partialPdcCheckReplacement($request, $type);
     }
