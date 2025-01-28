@@ -48,7 +48,7 @@ class DsBounceTaggingController extends Controller
             ->whereDate('checks.check_date', today()->toDateString())
             ->count();
     }
-    
+
     public function updateSwitch(Request $request)
     {
         return $this->dsBounceTaggingService->updateSwitch($request);
