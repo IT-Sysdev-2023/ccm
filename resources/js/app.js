@@ -11,6 +11,12 @@ import Antd from 'ant-design-vue';
 import ToastPlugin from 'vue-toast-notification';
 import VueApexCharts from "vue3-apexcharts";
 import { createPinia } from 'pinia';
+import { setTwoToneColor } from '@ant-design/icons-vue'
+
+const primaryColor = '#4040c8'
+
+setTwoToneColor(primaryColor)
+
 
 const appName = import.meta.env.APP_NAME || 'Check Clearing And Monitoring System';
 
@@ -28,12 +34,13 @@ createInertiaApp({
    app.use(VueApexCharts);
 
    // Adding global property $ws
+   app.config.globalProperties.primaryColor = primaryColor
    app.config.globalProperties.$ws = ws;
 
    app.mount(el);
 },
     progress: {
-        color: '#3f8fff',
+        color: primaryColor,
         showSpinner: true
     },
 });

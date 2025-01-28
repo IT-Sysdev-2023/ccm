@@ -270,7 +270,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function getUsersApplicantEmployee3()
+    public function getUsersApplicantEmployee3(Request $request)
     {
 
         $users = DB::connection('pis')->table('applicant')->limit(100)->get();

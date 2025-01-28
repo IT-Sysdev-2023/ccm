@@ -63,6 +63,7 @@ class AllTransactionController extends Controller
     }
     public function getMergeChecks(Request $request)
     {
+
         $currency = Currency::orderBy('currency_name')->get();
         $category = Checks::select('check_category')->where('check_category', '!=', '')->groupBy('check_category')->get();
         $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();
@@ -73,8 +74,7 @@ class AllTransactionController extends Controller
                 'checks.check_amount',
                 'customers.fullname',
             ], 'LIKE', '%' . $request->search . '%')
-            ->whereColumn('check_date', '>', 'check_received')
-            ->paginate(10)->withQueryString();
+            ->whereColumn('check_date', '>', 'check_received')->get();
 
         $data->transform(function ($item) {
             $item->is_check = empty($item->is_check) ? false : true;
@@ -95,7 +95,6 @@ class AllTransactionController extends Controller
     }
     public function isCheckUncheckMerge(Request $request)
     {
-        // dd($request->all());
         NewSavedChecks::where('checks_id', $request->id)->update([
             'is_check' => $request->isCheck ? "1" : "",
         ]);
@@ -103,7 +102,6 @@ class AllTransactionController extends Controller
     #MergeCheckStoreRequest
     public function getMergeCheckStore(MergeCheckStoreRequest $request)
     {
-        // dd($request->all());
         $request->validated();
 
         $checkType = '';
@@ -1392,7 +1390,6 @@ class AllTransactionController extends Controller
 
     public function createMergeChecks(Request $request)
     {
-
         $currency = Currency::orderBy('currency_name')->get();
         $category = Checks::select('check_category')->where('check_category', '!=', '')->groupBy('check_category')->get();
         $check_class = Checks::select('check_class')->where('check_class', '!=', '')->groupBy('check_class')->get();

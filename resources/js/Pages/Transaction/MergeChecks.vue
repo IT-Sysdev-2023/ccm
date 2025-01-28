@@ -16,9 +16,8 @@
             </a-breadcrumb>
 
             <div class="flex justify-between">
-                <!-- {{ isCheckCount }} -->
                 <a-button class="mb-3" @click="createMergeChecks(checkedRecords)" style="width: 350px;" type="primary"
-                    :disabled="isCheckCount < 2">
+                    :disabled="checkedRecords.length < 2">
                     <template #icon>
                         <PlusSquareOutlined />
                     </template>
@@ -28,8 +27,9 @@
                 <a-input-search v-model:value="form.search" style="width: 400px;" placeholder="Search Checks"
                     :loading="isFetching" />
             </div>
-            <a-table :loading="isLoadingTable" :dataSource="data.data" :columns="columns" size="small" bordered
-                row-key="key" :pagination="false">
+            {{ checkedRecords }}
+            <a-table :loading="isLoadingTable" :dataSource="data" :columns="columns" size="small" bordered
+                row-key="key">
                 <template #bodyCell="{ column, record, index }">
                     <template v-if="column.dataIndex">
                         <span v-html="highlightText(record[column.dataIndex], form.search)
@@ -37,7 +37,7 @@
                         </span>
                     </template>
                     <template v-if="column.key === 'check_box'">
-                        <a-switch v-model:checked="record.is_check" @change="merginCheckSwitch(record, index)">
+                        <a-switch v-model:checked="record.isChecked" @change="merginCheckSwitch">
                             <template #checkedChildren><check-outlined /></template>
                             <template #unCheckedChildren><close-outlined /></template>
                         </a-switch>
@@ -53,7 +53,6 @@
                     </template>
                 </template>
             </a-table>
-            <pagination class="mt-6 mb-10" :datarecords="data" />
 
         </div>
     </div>
@@ -101,7 +100,6 @@ export default {
         category: Object,
         check_class: Object,
         filters: Object,
-        isCheckCount: Number,
     },
 
     methods: {
@@ -110,15 +108,9 @@ export default {
             this.openDetails = true;
             this.selectDataDetails = dataIn;
         },
-        merginCheckSwitch(record) {
-            this.$inertia.put(route('update.merge.switch'), {
-                id: record.checks_id,
-                isCheck: record.is_check
-            }, {
-                onSuccess: () => {
-                    record.is_check ? message.success('Checked SuccessFully') : message.info('Un Checked SuccessFully')
-                }
-            })
+        merginCheckSwitch() {
+            // console.log(red);
+            this.checkedRecords = this.data.filter(item => item.isChecked);
         },
 
         createMergeChecks(data) {

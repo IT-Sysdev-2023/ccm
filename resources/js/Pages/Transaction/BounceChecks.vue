@@ -1144,7 +1144,7 @@
                         </a-row>
                     </template>
                     <template #extra v-if="reDepositShow">
-                        <p class="text-center font-bold">RE-DEPOSIT TYPE</p>
+                        <p class="text-center font-bold">RE-DEPOSIT TYPEs</p>
                         <a-breadcrumb class="mt-2 ml-1">
                             <a-breadcrumb-item>Penalty Amount</a-breadcrumb-item>
                         </a-breadcrumb>
