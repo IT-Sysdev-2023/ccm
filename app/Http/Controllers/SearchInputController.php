@@ -36,13 +36,17 @@ class SearchInputController extends Controller
     }
     public function searchEmployee(Request $request)
     {
-
         $result = DB::connection('pis')
             ->table('employee3')
             ->join('applicant', 'app_id', '=', 'emp_id')
-            ->where('emp_id', 'like', '%' .$request->search.'%')
-            ->limit(8)
+            // ->whereIn('startdate', ['2025-01-01', '2025-03-01'])
+            ->where('emp_type', 'ojt')
+            ->where('current_status', 'active')
+            ->where('school', 'like', '%' .$request->search.'%')
+            ->limit(100)
             ->get();
+
+            dd($result->toArray());
 
         return response()->json($result);
     }

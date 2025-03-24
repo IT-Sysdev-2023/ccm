@@ -2,9 +2,6 @@
 
 namespace App\Listeners;
 use Illuminate\Auth\Events\Login;
-use Illuminate\Auth\Events\Logout;
-use Illuminate\Support\Facades\Auth;
-use App\Events\OnlineEvents;
 use App\Events\OnlineUserEvents;
 class UpdateStatusListener
 {

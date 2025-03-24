@@ -19,16 +19,13 @@ class ImportUpdateService
     use ImportUpateTraits;
 
     protected $record;
-    public function __construct()
-    {
-    }
+    public function __construct() {}
     function record($data): self
     {
 
         $this->record = $data;
 
         return $this;
-
     }
     public function importResult()
     {
@@ -112,20 +109,16 @@ class ImportUpdateService
                 }
                 if ($key == 9) {
                     $bank = $val_r[1];
-
                 }
                 if ($key == 10) {
                     $checkamount = $val_r[1];
-
                 }
                 if ($key == 11) {
                     $daterec = $val_r[1];
-
                 }
                 if ($key == 12) {
                     $approving_officer = $val_r[1];
                 }
-
             }
 
             $cleaned_expire = trim(str_replace('/', '', $expire));
@@ -148,7 +141,6 @@ class ImportUpdateService
                 $customerid = $id;
             } else {
                 $customerid = $this->autoCreateCustomer($customer);
-
             }
             // Check the bank when exist else create
 
@@ -208,7 +200,6 @@ class ImportUpdateService
             );
 
             ImportUpdateEvents::dispatch('Importing Textfile...', $counting++, $tfCounts, Auth::user());
-
         }
 
         if ($dbtransaction) {
@@ -220,17 +211,16 @@ class ImportUpdateService
                 File::move($sourceFilePath, $destinationFilePath);
             }
         } else {
-
         }
 
         sleep(2);
 
         return Inertia::render('Components/ImportUpdatePartials/ImportUpdateResult');
-
     }
 
     public function updateResult()
     {
+
 
 
         $bunitAtpGetData = BusinessUnit::where('businessunit_id', Auth::user()->businessunit_id)->whereNotNull('b_atpgetdata')->get();
@@ -249,6 +239,7 @@ class ImportUpdateService
 
         if ($checksOnDatabase == 0) {
             try {
+                dd('here');
                 $checkPostDatedCheck = DB::connection('sqlsrv')
                     ->table('chk_dtl')
                     ->join('chk_mst', 'chk_mst.issue_no', '=', 'chk_dtl.issue_no')
@@ -279,48 +270,54 @@ class ImportUpdateService
                         'customer.extension'
                     )
                     ->get();
-
             } catch (\Exception $e) {
 
                 return redirect()->back();
             }
         }
 
-            try {
+        try {
 
-                $checkDatedCheck = DB::connection('sqlsrv')
-                    ->table('chk_dtl')
-                    ->join('chk_mst', 'chk_mst.issue_no', '=', 'chk_dtl.issue_no')
-                    ->join('customer', 'customer.custid', '=', 'chk_mst.custid')
-                    ->where('chk_mst.loc_code', Auth::user()->businessunit->loc_code_atp)
-                    ->where('chk_dtl.issue_no', '>', $this->getATPLastIssueNo())
-                    ->where('chk_mst.atp_date', '>=', $dateStartAtp . ' 00:00:00')
-                    ->orderBy('entry_no', 'asc')
-                    ->select(
-                        'chk_mst.issue_no',
-                        'chk_mst.atp_date',
-                        'chk_dtl.entry_no',
-                        'chk_dtl.chkclass',
-                        'chk_dtl.chktype',
-                        'chk_dtl.chkdate',
-                        'chk_dtl.chkno',
-                        'chk_dtl.bankname',
-                        'chk_dtl.brstn_rtno',
-                        'chk_dtl.actno',
-                        'chk_dtl.actname',
-                        'chk_dtl.chkamt',
-                        'chk_dtl.chkexpiry',
-                        'chk_dtl.category',
-                        'chk_dtl.approvedby',
-                        'customer.clastname',
-                        'customer.cfirstname',
-                        'customer.cmiddname',
-                        'customer.extension'
-                    )
-                    ->get();
-            } catch (\Exception $e) {
-                return redirect()->back();
-            }
+            $checkDatedCheck = DB::connection('sqlsrv')
+                ->table('chk_dtl')
+                ->join('chk_mst', 'chk_mst.issue_no', '=', 'chk_dtl.issue_no')
+                ->join('customer', 'customer.custid', '=', 'chk_mst.custid')
+                ->where('chk_mst.loc_code', Auth::user()->businessunit->loc_code_atp)
+                ->where('chk_dtl.issue_no', '>', $this->getATPLastIssueNo())
+                ->where('chk_mst.atp_date', '>=', $dateStartAtp . ' 00:00:00')
+                ->where(function ($query) {
+                    $query->where('chk_mst.Remarks', '!=', 'cancelled')
+                        ->orWhereNull('chk_mst.Remarks');
+                })
+                ->orderBy('entry_no', 'asc')
+                ->select(
+                    'chk_mst.issue_no',
+                    'chk_mst.*',
+                    'chk_mst.atp_date',
+                    'chk_mst.Remarks',
+                    'chk_dtl.entry_no',
+                    'chk_dtl.chkclass',
+                    'chk_dtl.chktype',
+                    'chk_dtl.chkdate',
+                    'chk_dtl.chkno',
+                    'chk_dtl.bankname',
+                    'chk_dtl.brstn_rtno',
+                    'chk_dtl.actno',
+                    'chk_dtl.actname',
+                    'chk_dtl.chkamt',
+                    'chk_dtl.chkexpiry',
+                    'chk_dtl.category',
+                    'chk_dtl.approvedby',
+                    'customer.clastname',
+                    'customer.cfirstname',
+                    'customer.cmiddname',
+                    'customer.extension',
+                )
+                ->get();
+
+        } catch (\Exception $e) {
+            return redirect()->back();
+        }
 
 
 
@@ -352,8 +349,6 @@ class ImportUpdateService
                     'customer.extension'
                 )
                 ->get();
-
-
         } catch (\Exception $e) {
             return redirect()->back();
         }
@@ -437,7 +432,6 @@ class ImportUpdateService
                     $customerid = $id;
                 } else {
                     $customerid = $this->autoCreateCustomer($customer);
-
                 }
 
                 $bankname = trim($check->bankname);
@@ -491,10 +485,9 @@ class ImportUpdateService
                 $countPersistent++;
                 ImportUpdateAtpAllEvent::dispatch('Updating all checks...', $countPersistent++, $noChecks, Auth::user());
                 ImportUpdateAtpEvent::dispatch('Updating Atp Database..', $count++, $noChecksDc, Auth::user());
-
             }
 
-            $count = 1 ;
+            $count = 1;
             sleep(1);
             foreach ($checkEnCash as $check) {
 
@@ -534,7 +527,6 @@ class ImportUpdateService
                     $customerid = $id;
                 } else {
                     $customerid = $this->autoCreateCustomer($customer);
-
                 }
 
                 $bankname = trim($check->BankName);
@@ -591,7 +583,6 @@ class ImportUpdateService
         });
         sleep(1);
         return Inertia::render('Components/ImportUpdatePartials/ImportUpdateAtpResult');
-
     }
 
     public function getATPLastIssueNo()
@@ -608,9 +599,5 @@ class ImportUpdateService
             return 0;
         }
         return $issueno->atp_issueno;
-
     }
-
-
-
 }

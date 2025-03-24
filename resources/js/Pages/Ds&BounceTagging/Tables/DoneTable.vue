@@ -4,7 +4,7 @@
             :loading="isFetching" />
     </div>
     <a-table :data-source="records.data" :loading="isLoading" :pagination="false" :columns="columns" size="small"
-        class="components-table-demo-nested" bordered :row-class-name="(_record, index) =>
+    class="no-hover-table" bordered :row-class-name="(_record, index) =>
             _record.type === 'POST-DATED'
                 ? 'POST-DATED'
                 : 'DATED'
@@ -100,6 +100,9 @@ export default {
 </script>
 
 <style>
+.no-hover-table .ant-table-tbody > tr:hover > td {
+  background-color: black;
+}
 .DATED {
     background-color: rgba(94, 169, 255, 0.274);
     /* Set background color for DATED type */
