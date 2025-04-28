@@ -9,6 +9,7 @@ use App\Models\Customer;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class SearchInputController extends Controller
 {
@@ -38,18 +39,44 @@ class SearchInputController extends Controller
     {
         $result = DB::connection('pis')
             ->table('employee3')
+            ->select('photo', 'firstname', 'lastname')
             ->join('applicant', 'app_id', '=', 'emp_id')
-            // ->whereIn('startdate', ['2025-01-01', '2025-03-01'])
+            ->whereYear('startdate', '2025')
             ->where('emp_type', 'ojt')
             ->where('current_status', 'active')
-            ->where('school', 'like', '%' .$request->search.'%')
+            ->where('gender', 'Female')
+            ->where('tag_as', 'new')
+            // ->where('school', 'Bohol Island State University')
             ->limit(100)
             ->get();
-
             dd($result->toArray());
 
-        return response()->json($result);
+        return Inertia::render('SearchIndex', [
+            'data' => collect($result)
+        ]);
+
+        // return inertia('se', [
+        //     'data' => $result
+        // ]);
     }
+    // public function searchEmployee(Request $request)
+    // {
+    //     $result = DB::connection('pis')
+    //         ->table('employee3')
+    //         ->join('applicant', 'app_id', '=', 'emp_id')
+    //         ->whereYear('startdate', '2025')
+    //         ->where('emp_type', 'ojt')
+    //         ->where('current_status', 'active')
+    //         ->where('gender', 'Female')
+    //         ->where('tag_as', 'new')
+    //         // ->where('school', 'Bohol Island State University')
+    //         ->limit(100)
+    //         ->get();
+
+    //         dd($result->toArray());
+
+    //     return response()->json($result);
+    // }
 
     public function searchBunit(Request $request)
     {
