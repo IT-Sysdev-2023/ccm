@@ -4,6 +4,21 @@ namespace App\Helper;
 
 class ColumnsHelper
 {
+
+    //   +"id": 274530
+    //   +"checks_id": 294249
+    //   +"check_type": "2024-10-04"
+    //   +"remarks": null
+    //   +"status": ""
+    //   +"ds_status": ""
+    //   +"receive_status": ""
+    //   +"done": ""
+    //   +"user": "21"
+    //   +"date_time": "2024-09-20 20:02:04"
+    //   +"is_check": 0
+    //   +"check_received": "2444-09-20"
+    //   +"businessunit_id": 4
+    //   +"fullname": "MARJUN A. GALIA"
     public static $columns_ds_tagging = [
         [
             'title' => 'Checkreceived',

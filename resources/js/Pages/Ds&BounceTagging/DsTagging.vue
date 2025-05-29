@@ -1,236 +1,157 @@
 <template>
-
-    <Head title="Ds Tagging" />
-
-    <div class="py-4">
-        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
-            <a-breadcrumb class="mb-5">
-                <a-breadcrumb-item href="">
-                    <HomeOutlined />
-                </a-breadcrumb-item>
-                <a-breadcrumb-item href="">
-                    <user-outlined />
-                    <span>Ds&Bounce Tagging</span>
-                </a-breadcrumb-item>
-                <a-breadcrumb-item>Ds Taggings</a-breadcrumb-item>
-                <a-breadcrumb-item></a-breadcrumb-item>
-            </a-breadcrumb>
-
+    <TreasuryLayout>
+        <a-card>
+            <template #title>
+                <div class="flex justify-between">
+                    <div>
+                        DS TAGGING
+                    </div>
+                    <div class="flex gap-5">
+                        <span class="text-blue-500">
+                            Count: {{ doneCount }}
+                        </span>
+                        <span>
+                            Total: {{ totalAmount?.toLocaleString() }}
+                        </span>
+                        <span class="text-red-400">
+                            Due Checks: {{ dsData.due_dates }}
+                        </span>
+                    </div>
+                </div>
+            </template>
             <a-row :gutter="[16, 16]">
-                <a-col :span="4">
-                    <Statistics v-if="tab == '2'" :title="'Check Count'" :count="total.count" />
+                <a-col :span="8">
+                    <a-input v-model:value="value" placeholder="Basic usage" />
                 </a-col>
-                <a-col :span="5">
-                    <Statistics v-if="tab == '2'" :title="'Total.'" :count="total.totalSum" />
+                <a-col :span="8">
+                    <a-date-picker class="w-full" v-model:value="value" placeholder="Select Date" />
                 </a-col>
-                <a-col :span="3">
-                    <Statistics v-if="tab == '2'" :title="'Due Dates.'" :count="due_dates" />
-                </a-col>
-                <a-col :span="12">
-                    <a-row :gutter="[16, 16]">
-                        <a-col :span="8">
-                            <a-tooltip :open="isTooltipVisibleNo" title="Ds Number is required">
-                                <a-input placeholder="Ds Number" v-model:value="dsNo">
-
-                                    <template #suffix>
-                                        <a-tooltip title="Please Enter a Ds Number">
-                                            <info-circle-outlined style="color: rgba(0, 0, 0, 0.45);" />
-                                        </a-tooltip>
-                                    </template>
-                                </a-input>
-                            </a-tooltip>
-                        </a-col>
-                        <a-col :span="8">
-                            <a-tooltip :open="isTooltipVisibleDt" title="Return Date is required ">
-                                <a-date-picker v-model:value="dateDeposit" style="width: 100%" />
-                            </a-tooltip>
-                        </a-col>
-                        <a-col :span="8">
-
-                            <a-button :loading="isLoadingbutton" style="width: 100%;" type="primary"
-                                @click="submitToConButton()">
-                                <template #icon>
-                                    <SaveOutlined />
-                                </template>
-                                submit ds number</a-button>
-                        </a-col>
-                    </a-row>
-
+                <a-col :span="8">
+                    <a-button block type="primary">
+                        Submit Ds Number
+                    </a-button>
                 </a-col>
             </a-row>
-            <a-tabs v-model:activeKey="activeKey" type="card" @change="changeTab">
-                <a-tab-pane key="1">
-                    <template #tab>
-                        <span>
-                            <apple-outlined />
-                            To be Check Checks
-                        </span>
+            <div class="flex justify-end ">
+                <a-input-search style="width: 450px;" v-model:value="form.search" block class="mb-3 mt-5"
+                    placeholder="Search Checks" />
+            </div>
+            <div class="mt-3">
+
+                <a-table :loading="isFetching" size="small" bordered :data-source="dsData.data"
+                    :columns="dsData.columns" class="no-hover-table" :row-class-name="(_record, index) =>
+                        _record.type === 'POST-DATED'
+                            ? 'POST-DATED'
+                            : 'DATED'
+                        ">
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'select'">
+                            <a-switch v-model:checked="record.done" @change="handleSwitchChange(record)">
+                                <template #checkedChildren><check-outlined /></template>
+                                <template #unCheckedChildren><close-outlined /></template>
+                            </a-switch>
+                        </template>
+
                     </template>
-
-                    <NotDone :filters="filters" :records="data" :columns="columns" :total="total"
-                        :def-total="defaultTotal" />
-
-                </a-tab-pane>
-                <a-tab-pane key="2">
-                    <template #tab>
-                        <a-badge :count="total.count" :number-style="{ backgroundColor: '#52c41a' }">
-                            <span>
-                                <android-outlined />
-                                Checked Total
-                            </span>
-                        </a-badge>
-                    </template>
-                    <DoneTable :filters="filters" :records="data" :columns="columns" :total="total"
-                        :def-total="defaultTotal" />
-                </a-tab-pane>
-            </a-tabs>
-
-        </div>
-    </div>
+                </a-table>
+            </div>
+        </a-card>
+    </TreasuryLayout>
 </template>
-
-<script>
+<script setup>
 import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
-import { Head } from "@inertiajs/vue3";
-import { message } from "ant-design-vue";
-import dayjs from "dayjs";
-import DoneTable from "./Tables/DoneTable.vue";
-export default {
-    layout: TreasuryLayout,
+import axios from "axios";
+import { computed } from "vue";
+import { watch } from "vue";
+import { ref } from "vue";
+import { onMounted } from "vue";
+import { debounce } from 'lodash';
 
-    data() {
-        return {
-            countDs: 0,
-            totalAmount: 0,
-            dataAmount: [],
-            defaultTotal: this.total,
-            dateDeposit: null,
-            dsNo: "",
-            isTooltipVisibleDt: false,
-            isTooltipVisibleNo: false,
-            isLoadingbutton: false,
-            isFetching: false,
-            activeKey: this.tab,
-        };
-    },
-    props: {
-        columns: Array,
-        data: Object,
-        type: Object,
-        total: Object,
-        due_dates: Number,
-        filters: Object,
-        tab: String,
-    },
-    computed: {},
-    methods: {
-        changeTab(tab) {
-            this.$inertia.get(route('ds_tagging'), {
-                tab
-            })
-        },
-        async submitToConButton() {
-            this.isLoadingbutton = true;
-            const selected = this.data.data.filter((value) => value.done);
+const dsData = ref([]);
+const isFetching = ref(false);
+const fetchData = async () => {
+    try {
+        isFetching.value = true;
 
-            if (
-                !this.data.data.some((value) => value.done === true) &&
-                !this.dsNo &&
-                this.dateDeposit == null
-            ) {
-                this.isLoadingbutton = false;
-                this.isTooltipVisibleDt = true;
-                this.isTooltipVisibleNo = true;
-                message.error({
-                    content: "Oppss Select Checks First!",
-                    duration: 5,
-                });
-            } else if (
-                !this.data.data.some((value) => value.done === true) &&
-                this.dsNo &&
-                this.dateDeposit == null
-            ) {
-                this.isLoadingbutton = false;
-                this.isTooltipVisibleDt = true;
-                this.isTooltipVisibleNo = false;
-                message.error({
-                    content: "Oppss Select Checks First!",
-                    duration: 5,
-                });
-            } else if (
-                !this.data.data.some((value) => value.done === true) &&
-                !this.dsNo &&
-                this.dateDeposit != null
-            ) {
-                this.isLoadingbutton = false;
-                this.isTooltipVisibleDt = false;
-                this.isTooltipVisibleNo = true;
-                message.error({
-                    content: "Oppss Select Checks First!",
-                    duration: 5,
-                });
-            } else if (
-                this.data.data.some((value) => value.done === true) &&
-                !this.dsNo &&
-                this.dateDeposit == null
-            ) {
-                this.isLoadingbutton = false;
-                this.isTooltipVisibleDt = true;
-                this.isTooltipVisibleNo = true;
-            } else if (
-                this.data.data.some((value) => value.done === true) &&
-                this.dsNo &&
-                this.dateDeposit == null
-            ) {
-                this.isTooltipVisibleDt = true;
-                this.isTooltipVisibleNo = false;
-                this.isLoadingbutton = false;
-            } else if (
-                !this.data.data.some((value) => value.done === true) &&
-                this.dsNo &&
-                this.dateDeposit != null
-            ) {
-                this.isTooltipVisibleDt = false;
-                this.isTooltipVisibleNo = false;
-                this.isLoadingbutton = false;
-                message.error({
-                    content: "Oppss Select Checks First!",
-                    duration: 5,
-                });
-            } else if (
-                this.data.data.some((value) => value.done === true) &&
-                this.dsNo &&
-                this.dateDeposit !== null
-            ) {
-                this.isTooltipVisibleDt = false;
-                this.isTooltipVisibleNo = false;
+        const { data } = await axios.get(route('axios.get.tagging'));
 
-                this.$inertia.post(
-                    route("submit.ds.tagging"),
-                    {
-                        selected,
-                        dsNo: this.dsNo,
-                        dateDeposit: dayjs(this.dateDeposit).format(
-                            "YYYY-MM-DD"
-                        ),
-                    },
-                    {
-                        onFinish: () => {
-                            this.isLoadingbutton = false;
-                            message.success({
-                                content: "Successfully submitted",
-                                duration: 5,
-                            });
-                            this.dsNo = "";
-                            this.dateDeposit = null;
-                        },
-                    }
-                );
-            }
-        },
+        dsData.value = data;
+    } catch {
+        isFetching.value = false;
+    } finally {
+        isFetching.value = false;
+    }
+
+}
+
+const doneCount = computed(() => dsData?.value?.data?.filter(item => item.done).length);
+
+const totalAmount = computed(() => {
+    return dsData?.value?.data?.filter(item => item.done)
+        .reduce((sum, item) => sum + (item.check_amount || 0), 0);
+});
+
+const handleSwitchChange = async (item) => {
+    try {
+
+        await axios.put(route('update.switch'), {
+            id: item.checks_id,
+            isCheck: item.done,
+        })
+
+    } catch (error) {
+
+    } finally {
+
+    }
+}
+
+onMounted(() => {
+    fetchData();
+})
+
+const form = ref({
+    search: '',
+})
+
+watch(
+    form,
+    debounce(async () => {
+        try {
+            isFetching.value = true;
+            const { data } = await axios.get(route('search.dstagging'), {
+                params: {
+                    search: form.value.search
+                }
+            });
+            dsData.value = data;
+        } catch (error) {
+            // Optionally log or handle the error
+            console.error(error);
+        } finally {
+            isFetching.value = false;
+        }
+    }, 500),
+    { deep: true }
+);
 
 
-    },
-
-};
 </script>
+
+<style>
+.no-hover-table .ant-table-tbody>tr.ant-table-row:hover>td {
+    background: transparent !important;
+}
+
+.DATED {
+    color: rgb(56, 56, 255);
+    /* Set background color for DATED type */
+}
+
+.POST-DATED {
+
+    color: rgb(255, 56, 56);
+    /* background-color: rgba(253, 132, 132, 0.233); */
+    /* Set background color for POST-DATED type */
+}
+</style>

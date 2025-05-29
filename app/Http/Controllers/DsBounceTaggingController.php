@@ -14,9 +14,7 @@ use Illuminate\Http\Request;
 class DsBounceTaggingController extends Controller
 {
 
-    public function __construct(public DsBounceTaggingService $dsBounceTaggingService)
-    {
-    }
+    public function __construct(public DsBounceTaggingService $dsBounceTaggingService) {}
     public function indexBounceTagging(Request $request)
     {
         return inertia('Ds&BounceTagging/BounceTagging', [
@@ -27,20 +25,41 @@ class DsBounceTaggingController extends Controller
     }
     public function indexDsTagging(Request $request)
     {
+
+        return inertia('Ds&BounceTagging/DsTagging');
+
+    }
+    public function getDsTaggings(Request $request)
+    {
         $data = $this->dsBounceTaggingService->indexDsTagging($request);
 
-        return inertia('Ds&BounceTagging/DsTagging', [
+        return response()->json([
+            'data' => NewSavedCheckResource::collection($data),
             'due_dates' => self::duedatesCounts($request),
             'total' => [
-                'totalSum' => (float) $data->sum('check_amount'),
-                'count' => $data->count(),
+                'totalSum' => (float) $data->where('done', 'check')->sum('check_amount'),
+                'count' => $data->where('done', 'check')->count(),
             ],
-            'data' => NewSavedCheckResource::collection($data->paginate(10)->withQueryString()),
             'columns' => ColumnsHelper::$columns_ds_tagging,
-            'filters' => $request->only(['search']),
-            'tab' => $request->tab ?? '1',
         ]);
     }
+
+    public function searchDsTagging(Request $request)
+    {
+        $data = $this->dsBounceTaggingService->searchDsTagging($request);
+
+        return response()->json([
+            'data' => NewSavedCheckResource::collection($data),
+            'due_dates' => self::duedatesCounts($request),
+            'total' => [
+                'totalSum' => (float) $data->where('done', 'check')->sum('check_amount'),
+                'count' => $data->where('done', 'check')->count(),
+            ],
+            'columns' => ColumnsHelper::$columns_ds_tagging,
+        ]);
+    }
+
+
 
     public static function duedatesCounts($request)
     {

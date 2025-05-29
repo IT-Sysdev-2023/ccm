@@ -22,9 +22,7 @@ class DsBounceTaggingService
 {
 
 
-    public function __construct(public NewSavedChecks $newSavedChecks)
-    {
-    }
+    public function __construct(public NewSavedChecks $newSavedChecks) {}
 
     public function updateSwitch(Request $request)
     {
@@ -33,19 +31,73 @@ class DsBounceTaggingService
                 'done' => $request->isCheck ? "check" : "",
             ]);
 
-        return redirect()->back();
+        return response()->json([
+            'status' => 'success'
+        ], 200);
     }
 
     public function indexDsTagging(Request $request)
     {
-        $filter = (is_null($request->tab) || $request->tab == '1') ? '' : 'check';
-
-        $data = NewSavedChecks::dsTaggingQuery($request->user()->businessunit_id)
-            ->whereSearchFilter($request)
-            ->selectFilter()
-            ->where('done', $filter)
-            ->orderBy('checks.check_received', 'DESC');
-
+        $data = DB::table('new_saved_checks')
+            ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->where('new_saved_checks.status', '')
+            ->where('checks.businessunit_id', Auth::user()->businessunit_id)
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('new_ds_checks')
+                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+            })
+            ->orderBy('checks.check_received', 'DESC')
+            ->select([
+                'new_saved_checks.*',
+                'checks.check_received',
+                'checks.check_date',
+                'checks.check_no',
+                'checks.check_amount',
+                'checks.businessunit_id',
+                'checks.check_category',
+                'customers.fullname',
+            ])
+            ->get();
+        $data->transform(function ($item) {
+            $item->type = Date::parse($item->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST-DATED';
+            return $item;
+        });
+        return $data;
+    }
+    public function searchDsTagging(Request $request)
+    {
+        $data = DB::table('new_saved_checks')
+            ->join('checks', 'new_saved_checks.checks_id', '=', 'checks.checks_id')
+            ->join('customers', 'checks.customer_id', '=', 'customers.customer_id')
+            ->where('new_saved_checks.status', '')
+            ->where('checks.businessunit_id', Auth::user()->businessunit_id)
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('new_ds_checks')
+                    ->whereRaw('checks.checks_id = new_ds_checks.checks_id');
+            })
+            ->orderBy('checks.check_received', 'DESC')
+            ->select([
+                'new_saved_checks.*',
+                'checks.check_received',
+                'checks.check_date',
+                'checks.check_no',
+                'checks.check_amount',
+                'checks.businessunit_id',
+                'checks.check_category',
+                'customers.fullname',
+            ])->whereAny([
+                'check_no',
+                'check_amount',
+                'fullname',
+            ], 'like', '%' . $request->search . '%')
+            ->get();
+        $data->transform(function ($item) {
+            $item->type = Date::parse($item->check_date)->lessThanOrEqualTo(today()) ? 'DATED' : 'POST-DATED';
+            return $item;
+        });
         return $data;
     }
 
@@ -59,7 +111,7 @@ class DsBounceTaggingService
             'user:id,',
         )->whereHas(
             'check',
-            fn ($query) =>
+            fn($query) =>
             $query->where('businessunit_id',  $request->user()->businessunit_id)
                 ->whereYear('check_received', $datedYear)
         )->where('new_ds_checks.status', '=', '')

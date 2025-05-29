@@ -102,6 +102,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('bouncetaggings')->group(function () {
         Route::get('bounce/tagging/index', [DsBounceTaggingController::class, 'indexBounceTagging'])->name('bounce.tagging');
         Route::get('dstagging', [DsBounceTaggingController::class, 'indexDsTagging'])->name('ds_tagging');
+        Route::get('search/dsTagging', [DsBounceTaggingController::class, 'searchDsTagging'])->name('search.dstagging');
+        Route::get('dstagging-axios', [DsBounceTaggingController::class, 'getDsTaggings'])->name('axios.get.tagging');
         Route::get('bounce/tagging', [DsBounceTaggingController::class, 'get_bounce_tagging'])->name('get_bounce_tagging');
         Route::post('tag_check_bounce', [DsBounceTaggingController::class, 'tagCheckBounce'])->name('tag_check_bounce');
         Route::post('submit-ds-tagging', [DsBounceTaggingController::class, 'submiCheckDs'])->name('submit.ds.tagging');

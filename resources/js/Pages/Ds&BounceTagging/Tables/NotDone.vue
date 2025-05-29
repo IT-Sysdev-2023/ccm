@@ -99,7 +99,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .no-hover-table .ant-table-tbody > tr.ant-table-row:hover > td {
   background: transparent !important;
 }
