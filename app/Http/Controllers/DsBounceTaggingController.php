@@ -27,7 +27,6 @@ class DsBounceTaggingController extends Controller
     {
 
         return inertia('Ds&BounceTagging/DsTagging');
-
     }
     public function getDsTaggings(Request $request)
     {
@@ -86,6 +85,19 @@ class DsBounceTaggingController extends Controller
 
     public function submiCheckDs(Request $request)
     {
+        $request->validate([
+            'dsNo' => 'required',
+            'dateDeposit' => 'required|date',
+            'selected' => 'required|array|min:1',
+        ]);
+        
+        if (empty($request->selected)) {
+            return redirect()->back()->with([
+                'status' => 'error',
+                'title' => 'Please Select Atleast One Cheques'
+            ]);
+        }
+
         return $this->dsBounceTaggingService->submiCheckDs($request);
     }
 }

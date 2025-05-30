@@ -19,15 +19,26 @@
                     </div>
                 </div>
             </template>
+            <a-alert v-if="errors" message="Opps Something went wrong!" class="mb-3"  type="error"
+                show-icon >
+                <template #description>
+                    <div v-for="err in errors">
+                        <p>{{ err }}</p>
+                    </div>
+                </template>
+            </a-alert>
             <a-row :gutter="[16, 16]">
                 <a-col :span="8">
-                    <a-input v-model:value="value" placeholder="Basic usage" />
+                    <a-input placeholder="Ds Number" v-model:value="form.dsNo" />
                 </a-col>
                 <a-col :span="8">
-                    <a-date-picker class="w-full" v-model:value="value" placeholder="Select Date" />
+                    <a-date-picker v-model:value="form.date" style="width: 100%" />
                 </a-col>
                 <a-col :span="8">
-                    <a-button block type="primary">
+                    <a-button :loading="form.processing" block type="primary" @click="submitToConButton">
+                        <template #icon>
+                            <FastForwardOutlined />
+                        </template>
                         Submit Ds Number
                     </a-button>
                 </a-col>
@@ -37,7 +48,6 @@
                     placeholder="Search Checks" />
             </div>
             <div class="mt-3">
-
                 <a-table :loading="isFetching" size="small" bordered :data-source="dsData.data"
                     :columns="dsData.columns" class="no-hover-table" :row-class-name="(_record, index) =>
                         _record.type === 'POST-DATED'
@@ -66,6 +76,9 @@ import { watch } from "vue";
 import { ref } from "vue";
 import { onMounted } from "vue";
 import { debounce } from 'lodash';
+import { router, useForm } from "@inertiajs/vue3";
+import dayjs from "dayjs";
+import { message } from "ant-design-vue";
 
 const dsData = ref([]);
 const isFetching = ref(false);
@@ -110,18 +123,20 @@ onMounted(() => {
     fetchData();
 })
 
-const form = ref({
+const form = useForm({
     search: '',
+    date: '',
+    dsNo: '',
 })
 
 watch(
-    form,
+    form.search,
     debounce(async () => {
         try {
             isFetching.value = true;
             const { data } = await axios.get(route('search.dstagging'), {
                 params: {
-                    search: form.value.search
+                    search: form.search
                 }
             });
             dsData.value = data;
@@ -134,7 +149,34 @@ watch(
     }, 500),
     { deep: true }
 );
+const errors = ref();
+const submitToConButton = async () => {
+    const selected = dsData.value.data.filter((value) => value.done)
+    await router.post(
+        route("submit.ds.tagging"),
+        {
+            selected,
+            dsNo: form.dsNo,
+            dateDeposit: dayjs(form.date).format(
+                "YYYY-MM-DD"
+            ),
+        },
+        {
+            onSuccess: (e) => {
+                console.log(e);
+                message.success({
+                    content: "Successfully submitted",
+                    duration: 5,
+                });
+                window.location.reload();
 
+            },
+            onError: (err) => {
+                errors.value = err;
+            }
+        }
+    );
+}
 
 </script>
 

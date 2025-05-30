@@ -148,13 +148,8 @@ class DsBounceTaggingService
             ]);
         });
     }
-    public function submiCheckDs(Request $request): RedirectResponse
+    public function submiCheckDs(Request $request)
     {
-        $request->validate([
-            'dsNo' => 'required',
-            'dateDeposit' => 'required|date',
-        ]);
-
         collect($request->selected)->each(function ($check) use ($request) {
 
             DB::transaction(function () use ($check, $request) {
