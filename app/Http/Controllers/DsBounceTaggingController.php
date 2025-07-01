@@ -25,7 +25,6 @@ class DsBounceTaggingController extends Controller
     }
     public function indexDsTagging(Request $request)
     {
-
         return inertia('Ds&BounceTagging/DsTagging');
     }
     public function getDsTaggings(Request $request)
@@ -90,7 +89,7 @@ class DsBounceTaggingController extends Controller
             'dateDeposit' => 'required|date',
             'selected' => 'required|array|min:1',
         ]);
-        
+
         if (empty($request->selected)) {
             return redirect()->back()->with([
                 'status' => 'error',

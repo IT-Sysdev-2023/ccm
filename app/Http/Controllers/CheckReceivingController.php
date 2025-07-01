@@ -16,8 +16,8 @@ class CheckReceivingController extends Controller
 {
     public function getCheckForClearing(Request $request)
     {
-
-        $dataChecksFn = Checks::joinCheckRecCustomerDepartmentBanks()
+        $dataChecksFn = Checks::select('checks_id', 'is_exist')
+            ->joinCheckRecCustomerDepartmentBanks()
             ->whereDateTimeNotZero()
             ->whereColumn('check_date', '<=', 'check_received')
             ->where('check_status', 'PENDING')
@@ -42,8 +42,15 @@ class CheckReceivingController extends Controller
             default => $q
         };
 
+
+
         $data = $q->paginate(10)->withQueryString();
 
+        $data->map(function ($item) {
+            $item->chrec = Date::parse($item->check_received)->toFormattedDateString();
+            $item->chdate = Date::parse($item->check_date)->toFormattedDateString();
+            return $item;
+        });
         return Inertia::render('CheckReceiving/CheckForClearing', [
             'data' => $data,
             'columns' => ColumnsHelper::$check_for_clearing_columns,
@@ -82,7 +89,6 @@ class CheckReceivingController extends Controller
                     'style' => 'green'
                 ]);
             }
-
         } else {
             Checks::where('checks_id', $request->checksId)->update(['is_exist' => 0]);
             return redirect()->back()->with([
@@ -94,10 +100,13 @@ class CheckReceivingController extends Controller
     public function savedDatedLeasingpPdcChecks(Request $request)
     {
         collect($request->selected)->each(function ($check) use ($request) {
-            $formdate = Carbon::createFromFormat('M d, Y', $check['check_date'])->format('Y-m-d');
+
+            $formdate = Carbon::parse($check['check_date'])->format('Y-m-d');
+
             DB::transaction(function () use ($check, $request, $formdate) {
 
                 Checks::findChecks($check['checks_id'])->update(['check_status' => 'CLEARED']);
+
                 NewSavedChecks::create([
                     'checks_id' => $check['checks_id'],
                     'remarks' => $request->remarks,
@@ -109,9 +118,7 @@ class CheckReceivingController extends Controller
                     'receive_status' => '',
                     'done' => ''
                 ]);
-
             });
-
         });
 
         return redirect()->back()->with('success', 'Checks have been successfully saved.');
@@ -198,6 +205,5 @@ class CheckReceivingController extends Controller
             ]),
             'dataFn' => $dataChecksFn,
         ]);
-
     }
 }

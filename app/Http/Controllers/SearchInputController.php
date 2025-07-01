@@ -35,34 +35,11 @@ class SearchInputController extends Controller
 
         return response()->json($result);
     }
-    public function searchEmployee(Request $request)
-    {
-        $result = DB::connection('pis')
-            ->table('employee3')
-            ->select('photo', 'firstname', 'lastname')
-            ->join('applicant', 'app_id', '=', 'emp_id')
-            ->whereYear('startdate', '2025')
-            ->where('emp_type', 'ojt')
-            ->where('current_status', 'active')
-            ->where('gender', 'Female')
-            ->where('tag_as', 'new')
-            // ->where('school', 'Bohol Island State University')
-            ->limit(100)
-            ->get();
-            dd($result->toArray());
-
-        return Inertia::render('SearchIndex', [
-            'data' => collect($result)
-        ]);
-
-        // return inertia('se', [
-        //     'data' => $result
-        // ]);
-    }
     // public function searchEmployee(Request $request)
     // {
     //     $result = DB::connection('pis')
     //         ->table('employee3')
+    //         ->select('photo', 'firstname', 'lastname')
     //         ->join('applicant', 'app_id', '=', 'emp_id')
     //         ->whereYear('startdate', '2025')
     //         ->where('emp_type', 'ojt')
@@ -73,10 +50,30 @@ class SearchInputController extends Controller
     //         ->limit(100)
     //         ->get();
 
-    //         dd($result->toArray());
+    //     return Inertia::render('SearchIndex', [
+    //         'data' => collect($result)
+    //     ]);
 
-    //     return response()->json($result);
+    //     // return inertia('se', [
+    //     //     'data' => $result
+    //     // ]);
     // }
+    public function searchEmployee(Request $request)
+    {
+        $result = DB::connection('pis')
+            ->table('employee3')
+            ->join('applicant', 'app_id', '=', 'emp_id')
+            ->whereYear('startdate', '2025')
+            ->where('emp_type', 'ojt')
+            ->where('current_status', 'active')
+            ->where('gender', 'Female')
+            ->where('tag_as', 'new')
+            // ->where('school', 'Bohol Island State University')
+            ->limit(100)
+            ->get();
+
+        return response()->json($result);
+    }
 
     public function searchBunit(Request $request)
     {

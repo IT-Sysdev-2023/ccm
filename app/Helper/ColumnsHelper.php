@@ -202,14 +202,14 @@ class ColumnsHelper
         ],
         [
             'title' => 'Check Received',
-            'dataIndex' => 'check_received',
+            'dataIndex' => 'chrec',
             'key' => 'check_r',
             'ellipsis' => true,
             'width' => '15%',
         ],
         [
             'title' => 'Check Date',
-            'dataIndex' => 'check_date',
+            'dataIndex' => 'chdate',
             'key' => 'check_r',
             'ellipsis' => true,
             'width' => '15%',

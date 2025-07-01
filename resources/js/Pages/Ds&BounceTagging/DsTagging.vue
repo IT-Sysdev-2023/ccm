@@ -19,8 +19,7 @@
                     </div>
                 </div>
             </template>
-            <a-alert v-if="errors" message="Opps Something went wrong!" class="mb-3"  type="error"
-                show-icon >
+            <a-alert v-if="errors" message="Opps Something went wrong!" class="mb-3" type="error" show-icon>
                 <template #description>
                     <div v-for="err in errors">
                         <p>{{ err }}</p>
@@ -71,14 +70,12 @@
 <script setup>
 import TreasuryLayout from "@/Layouts/TreasuryLayout.vue";
 import axios from "axios";
-import { computed } from "vue";
-import { watch } from "vue";
-import { ref } from "vue";
-import { onMounted } from "vue";
+import { computed, watch, ref, onMounted } from "vue";
 import { debounce } from 'lodash';
 import { router, useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import { message } from "ant-design-vue";
+import { notification } from 'ant-design-vue';
 
 const dsData = ref([]);
 const isFetching = ref(false);
@@ -130,7 +127,7 @@ const form = useForm({
 })
 
 watch(
-    form.search,
+    () => form.search,
     debounce(async () => {
         try {
             isFetching.value = true;
@@ -163,14 +160,20 @@ const submitToConButton = async () => {
         },
         {
             onSuccess: (e) => {
-                console.log(e);
                 message.success({
                     content: "Successfully submitted",
                     duration: 5,
                 });
-                window.location.reload();
-
+                notification['success']({
+                    message: 'Successfully Submmitted',
+                    description:
+                        'Successfully Submitting Checks',
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             },
+
             onError: (err) => {
                 errors.value = err;
             }

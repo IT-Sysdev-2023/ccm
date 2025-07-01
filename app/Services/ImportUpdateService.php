@@ -239,7 +239,6 @@ class ImportUpdateService
 
         if ($checksOnDatabase == 0) {
             try {
-                dd('here');
                 $checkPostDatedCheck = DB::connection('sqlsrv')
                     ->table('chk_dtl')
                     ->join('chk_mst', 'chk_mst.issue_no', '=', 'chk_dtl.issue_no')

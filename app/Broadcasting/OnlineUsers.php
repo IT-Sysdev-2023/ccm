@@ -21,7 +21,6 @@ class OnlineUsers
      */
     public function join(User $user)
     {
-    dd($user);
 
         $image = "/storage/users-image/$user->id";
 
