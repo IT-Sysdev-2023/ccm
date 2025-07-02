@@ -65,7 +65,6 @@
                     <div class="flex">
                         <a-input-search v-model:value="form.search" class="mx-2" placeholder="Search here..."
                             style="width: 350px" />
-
                         <a-button :disabled="dataFn.find(
                             (item) =>
                                 item.is_exist === true &&

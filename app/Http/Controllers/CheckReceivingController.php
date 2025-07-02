@@ -16,7 +16,7 @@ class CheckReceivingController extends Controller
 {
     public function getCheckForClearing(Request $request)
     {
-        $dataChecksFn = Checks::select('checks_id', 'is_exist')
+        $dataChecksFn = Checks::select('checks_id', 'is_exist', 'check_status')
             ->joinCheckRecCustomerDepartmentBanks()
             ->whereDateTimeNotZero()
             ->whereColumn('check_date', '<=', 'check_received')
@@ -41,8 +41,6 @@ class CheckReceivingController extends Controller
             'ALL' => $q,
             default => $q
         };
-
-
 
         $data = $q->paginate(10)->withQueryString();
 
