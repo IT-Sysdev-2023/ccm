@@ -45,6 +45,17 @@ Route::fallback(function () {
 
 });
 
+Route::get('/check-openssl', function () {
+    // dd(1);
+    return [
+        'PHP version' => phpversion(),
+        'OpenSSL loaded' => extension_loaded('openssl'),
+        'Function available' => function_exists('openssl_cipher_iv_length'),
+        'Extension dir' => ini_get('extension_dir'),
+        'Loaded ini' => php_ini_loaded_file(),
+    ];
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('admin/dashboard', [DashboardController::class, 'adminDashboardComponent'])->name('admin.dashboard');
     Route::get('accounting/dashboard', [DashboardController::class, 'accountingDashboard'])->name('accounting.dashboard');
