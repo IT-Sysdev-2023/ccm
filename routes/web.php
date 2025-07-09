@@ -36,7 +36,7 @@ use App\Http\Controllers\DetailsController;
 // });
 
 Route::middleware('guest')->get('/', [AuthenticatedSessionController::class, 'create'])->name('index');
-Route::get('/employee/name', [SearchInputController::class, 'searchEmployee'])->name('search.employeeName');
+// Route::get('/employee/name', [SearchInputController::class, 'searchEmployee'])->name('search.employeeName');
 Route::fallback(function () {
     // $previousUrl = url()->previous();
     return Inertia::render('NotFoundPage/NotFound', [

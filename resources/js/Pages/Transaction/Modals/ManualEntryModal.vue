@@ -1,7 +1,7 @@
 <template>
     <a-modal :footer="null" style="width: 90%; top: 50px;">
         <a-typography-title :level="5">
-            <ToolFilled /> Check Manual Entry
+            <ToolFilled /> Check Manual Entrys
         </a-typography-title>
         <a-card class="mt-3">
             <a-form layout="horizontal">

@@ -63,12 +63,7 @@ class SearchInputController extends Controller
         $result = DB::connection('pis')
             ->table('employee3')
             ->join('applicant', 'app_id', '=', 'emp_id')
-            ->whereYear('startdate', '2025')
-            ->where('emp_type', 'ojt')
-            ->where('current_status', 'active')
-            ->where('gender', 'Female')
-            ->where('tag_as', 'new')
-            // ->where('school', 'Bohol Island State University')
+            ->where('name', 'like', '%' . $request->search . '%')
             ->limit(100)
             ->get();
 
